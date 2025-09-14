@@ -15,8 +15,8 @@ interface ProcessedSignal {
   signal: Signal;
   aiAnalysis?: {
     insights: string[];
-    urgentActions: any[];
-    riskAlerts: any[];
+    risks: Array<{ accountId: string; risk: string; severity: 'medium' | 'high' | 'critical' }>;
+    recommendations: Array<{ accountId: string; action: string; priority: 'low' | 'medium' | 'high'; effort: 'low' | 'medium' | 'high'; estimatedImpact: string }>;
   };
   processedAt: string;
   confidence?: number;
@@ -75,26 +75,26 @@ export function RealTimeSignalProcessor() {
       });
       
       // Generate risk alerts
-      analysis.riskAlerts.forEach(alert => {
+      analysis.risks.forEach(risk => {
         addInsight({
           type: 'risk_alert',
-          content: alert.risk,
-          accountId: alert.accountId,
-          accountName: accounts.find(a => a.id === alert.accountId)?.name,
-          priority: alert.severity,
+          content: risk.risk,
+          accountId: risk.accountId,
+          accountName: accounts.find(a => a.id === risk.accountId)?.name,
+          priority: risk.severity as 'low' | 'medium' | 'high' | 'critical',
           confidence: 0.90,
           autoApproved: false
         });
       });
       
       // Generate urgent action recommendations
-      analysis.urgentActions.forEach(action => {
+      analysis.recommendations.forEach(rec => {
         addInsight({
           type: 'recommendation',
-          content: `URGENT: ${action.title} - ${action.description}`,
-          accountId: action.accountId,
-          accountName: accounts.find(a => a.id === action.accountId)?.name,
-          priority: 'critical',
+          content: `URGENT: ${rec.action}`,
+          accountId: rec.accountId,
+          accountName: accounts.find(a => a.id === rec.accountId)?.name,
+          priority: rec.priority as 'low' | 'medium' | 'high' | 'critical',
           confidence: 0.88,
           autoApproved: false
         });
@@ -107,21 +107,21 @@ export function RealTimeSignalProcessor() {
         type: 'signal_processed',
         accountId: signal.accountId,
         accountName: signal.accountName,
-        description: `AI processed ${signal.type} signal - generated ${analysis.insights.length} insights, ${analysis.riskAlerts.length} risk alerts, ${analysis.urgentActions.length} urgent actions`,
+        description: `AI processed ${signal.type} signal - generated ${analysis.insights.length} insights, ${analysis.risks.length} risk alerts, ${analysis.recommendations.length} urgent actions`,
         metadata: {
           signalId: signal.id,
           signalType: signal.type,
           signalSeverity: signal.severity,
           insightsCount: analysis.insights.length,
-          riskAlertsCount: analysis.riskAlerts.length,
-          urgentActionsCount: analysis.urgentActions.length
+          riskAlertsCount: analysis.risks.length,
+          urgentActionsCount: analysis.recommendations.length
         },
         outcome: 'success'
       });
       
       // Show notification for critical items
-      if (analysis.riskAlerts.length > 0 || analysis.urgentActions.length > 0) {
-        toast.warning(`AI detected ${analysis.riskAlerts.length} risks and ${analysis.urgentActions.length} urgent actions for ${signal.accountName}`);
+      if (analysis.risks.length > 0 || analysis.recommendations.length > 0) {
+        toast.warning(`AI detected ${analysis.risks.length} risks and ${analysis.recommendations.length} urgent actions for ${signal.accountName}`);
       }
       
     } catch (error) {
@@ -333,23 +333,23 @@ export function RealTimeSignalProcessor() {
                           </div>
                         )}
                         
-                        {processed.aiAnalysis.riskAlerts.length > 0 && (
+                        {processed.aiAnalysis.risks.length > 0 && (
                           <div className="text-xs">
                             <strong className="text-red-600">Risk Alerts:</strong>
                             <ul className="ml-2 mt-1 space-y-1">
-                              {processed.aiAnalysis.riskAlerts.map((alert, index) => (
-                                <li key={index} className="text-muted-foreground">⚠️ {alert.risk}</li>
+                              {processed.aiAnalysis.risks.map((risk, index) => (
+                                <li key={index} className="text-muted-foreground">⚠️ {risk.risk}</li>
                               ))}
                             </ul>
                           </div>
                         )}
                         
-                        {processed.aiAnalysis.urgentActions.length > 0 && (
+                        {processed.aiAnalysis.recommendations.length > 0 && (
                           <div className="text-xs">
                             <strong className="text-orange-600">Urgent Actions:</strong>
                             <ul className="ml-2 mt-1 space-y-1">
-                              {processed.aiAnalysis.urgentActions.map((action, index) => (
-                                <li key={index} className="text-muted-foreground">🚨 {action.title}</li>
+                              {processed.aiAnalysis.recommendations.map((rec, index) => (
+                                <li key={index} className="text-muted-foreground">🚨 {rec.action}</li>
                               ))}
                             </ul>
                           </div>

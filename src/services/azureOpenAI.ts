@@ -54,34 +54,6 @@ export class AzureOpenAIService {
   }
 
   /**
-   * Analyze signals in real-time and generate contextual insights
-   */
-  async analyzeSignalsRealTime(signals: Signal[], accounts: Account[]): Promise<{
-    insights: string[];
-    urgentActions: NextBestAction[];
-    riskAlerts: { accountId: string; risk: string; severity: 'medium' | 'high' | 'critical' }[];
-  }> {
-    try {
-      const prompt = this.buildSignalAnalysisPrompt(signals, accounts);
-      const response = await (window as any).spark.llm(prompt, 'gpt-4o', true);
-      const parsed = JSON.parse(response);
-      
-      return {
-        insights: parsed.insights || [],
-        urgentActions: parsed.urgentActions || [],
-        riskAlerts: parsed.riskAlerts || []
-      };
-    } catch (error) {
-      console.error('Error analyzing signals:', error);
-      return {
-        insights: ['Signal analysis temporarily unavailable'],
-        urgentActions: [],
-        riskAlerts: []
-      };
-    }
-  }
-
-  /**
    * Generate adaptive orchestration plans
    */
   async generateOrchestrationPlan(nba: NextBestAction, context: RecommendationContext): Promise<{
@@ -112,10 +84,38 @@ export class AzureOpenAIService {
     } catch (error) {
       console.error('Error generating orchestration plan:', error);
       return {
-        steps: [],
-        timeline: 'Plan generation failed',
-        riskMitigation: [],
-        successMetrics: []
+        steps: [
+          {
+            id: 'step_1',
+            title: 'Preparation',
+            description: 'Gather context and prepare for execution',
+            order: 1,
+            estimatedDuration: '30 minutes',
+            dependencies: [],
+            assignedTo: 'CSM'
+          },
+          {
+            id: 'step_2',
+            title: 'Execute Action',
+            description: nba.description,
+            order: 2,
+            estimatedDuration: '1-2 hours',
+            dependencies: ['step_1'],
+            assignedTo: nba.assignedTo || 'CSM'
+          },
+          {
+            id: 'step_3',
+            title: 'Follow-up',
+            description: 'Monitor results and plan next steps',
+            order: 3,
+            estimatedDuration: '1 hour',
+            dependencies: ['step_2'],
+            assignedTo: 'CSM'
+          }
+        ],
+        timeline: nba.timeToComplete || '3-5 days',
+        riskMitigation: ['Regular check-ins with stakeholders'],
+        successMetrics: ['Improved engagement metrics', 'Positive stakeholder feedback']
       };
     }
   }
@@ -129,127 +129,83 @@ export class AzureOpenAIService {
       
       Account Context: ${JSON.stringify(context.account, null, 2)}
       Recent Signals: ${JSON.stringify(context.recentSignals.slice(0, 5), null, 2)}
+      Recent Actions: ${JSON.stringify(context.historicalNBAs.slice(0, 3), null, 2)}
       
-      User Query: ${query}
+      Question: ${query}
       
-      Provide a helpful, actionable response that leverages the account context. Be specific and professional.`;
+      Provide a helpful, specific answer based on the account context. Keep it concise but actionable.`;
       
-      return await (window as any).spark.llm(prompt, 'gpt-4o-mini');
+      return await (window as any).spark.llm(prompt, 'gpt-4o');
     } catch (error) {
       console.error('Error getting AI assistance:', error);
-      return 'I apologize, but I am temporarily unable to provide assistance. Please try again in a moment.';
+      return 'I apologize, but I am currently unable to process your request. Please try again later or contact support for assistance.';
+    }
+  }
+
+  /**
+   * Analyze signals in real-time
+   */
+  async analyzeSignalsRealTime(signals: Signal[], accounts: Account[]): Promise<{
+    insights: string[];
+    risks: Array<{ accountId: string; risk: string; severity: 'medium' | 'high' | 'critical' }>;
+    recommendations: Array<{ accountId: string; action: string; priority: 'low' | 'medium' | 'high'; effort: 'low' | 'medium' | 'high'; estimatedImpact: string }>;
+  }> {
+    try {
+      const prompt = this.buildSignalAnalysisPrompt(signals, accounts);
+      const response = await (window as any).spark.llm(prompt, 'gpt-4o', true);
+      const parsed = JSON.parse(response);
+      
+      return {
+        insights: parsed.insights || [],
+        risks: parsed.risks || [],
+        recommendations: parsed.recommendations || []
+      };
+    } catch (error) {
+      console.error('Error analyzing signals:', error);
+      return {
+        insights: ['Signal analysis temporarily unavailable'],
+        risks: [],
+        recommendations: []
+      };
     }
   }
 
   private buildRecommendationPrompt(context: RecommendationContext): string {
-    return (window as any).spark.llmPrompt`You are an expert Customer Success AI analyzing account health and generating Next Best Actions based on comprehensive business value signals.
+    return (window as any).spark.llmPrompt`You are an AI Customer Success expert. Analyze this account and generate 2-3 smart NBA recommendations.
 
-Account Profile:
-- Name: ${context.account.name}
-- Industry: ${context.account.industry}
-- ARR: $${context.account.arr.toLocaleString()}
-- Health Score: ${context.account.healthScore}/100
-- Status: ${context.account.status}
-- CSM: ${context.account.csm}
-- Contract End: ${context.account.contractEnd}
-- Last Activity: ${context.account.lastActivity}
+Account Information:
+${JSON.stringify(context.account, null, 2)}
 
-Recent Signals (last 7 days):
+Recent Signals (last 10):
 ${JSON.stringify(context.recentSignals, null, 2)}
 
-Signal Categories Analysis:
-- COST signals: Focus on cloud spend optimization, resource utilization, financial efficiency
-- AGILITY signals: Development velocity, deployment automation, operational agility
-- DATA signals: Usage patterns, feature adoption, data quality, customer engagement
-- RISK signals: Security posture, compliance status, operational risks
-- CULTURE signals: Training engagement, stakeholder alignment, change readiness
+Historical NBAs:
+${JSON.stringify(context.historicalNBAs, null, 2)}
 
-Historical NBA Performance:
-${JSON.stringify(context.historicalNBAs.slice(0, 3), null, 2)}
+Agent Memory:
+${JSON.stringify(context.agentMemory, null, 2)}
 
-Agent Memory (recent actions):
-${JSON.stringify(context.agentMemory.slice(0, 5), null, 2)}
-
-Generate 2-3 intelligent Next Best Action recommendations that leverage business value signals. Each should be highly contextual, data-driven, and focus on measurable business outcomes. Consider cross-category signal correlations.
-
-Return a JSON object with this exact structure:
+Generate recommendations as a JSON object with this structure:
 {
   "recommendations": [
     {
       "nba": {
-        "id": "nba_${Date.now()}_1",
-        "accountId": "${context.account.id}",
-        "title": "Specific, actionable title focused on business value",
-        "description": "Detailed description with context from business value signals",
-        "priority": "high|medium|low|critical",
-        "category": "engagement|retention|expansion|support|onboarding|cost_optimization|risk_mitigation",
-        "estimatedImpact": "Specific measurable business impact (ARR, efficiency, risk reduction)",
+        "title": "Concise action title",
+        "description": "Detailed description of the action",
+        "priority": "low|medium|high|critical",
+        "category": "engagement|retention|expansion|support|onboarding",
+        "estimatedImpact": "Expected business impact",
         "effort": "low|medium|high",
-        "suggestedActions": ["Action 1", "Action 2", "Action 3"],
-        "reasoning": "Data-driven reasoning referencing specific business value signals",
-        "generatedAt": "${new Date().toISOString()}",
-        "timeToComplete": "Estimated timeline",
-        "assignedTo": "Suggested owner"
+        "suggestedActions": ["Specific step 1", "Specific step 2"],
+        "reasoning": "Why this action is recommended",
+        "timeToComplete": "1-2 weeks",
+        "assignedTo": "${context.account.csm}"
       },
       "confidence": 0.85,
-      "rationale": "Why this recommendation is high confidence based on signal patterns",
+      "rationale": "Why this recommendation is valuable",
       "supportingSignals": ["signal_id_1", "signal_id_2"],
-      "riskFactors": ["Potential risk 1", "Potential risk 2"],
-      "successProbability": 0.78
-    }
-  ]
-}`;
-  }
-
-  private buildSignalAnalysisPrompt(signals: Signal[], accounts: Account[]): string {
-    return (window as any).spark.llmPrompt`You are a real-time Customer Success AI analyzing incoming signals for immediate insights and urgent actions.
-
-Recent Signals (last 30 minutes):
-${JSON.stringify(signals.slice(0, 10), null, 2)}
-
-Account Context:
-${JSON.stringify(accounts.slice(0, 5), null, 2)}
-
-Signal Categories:
-- COST: Cloud spend, resource utilization, financial optimization signals
-- AGILITY: Development velocity, deployment metrics, operational efficiency
-- DATA: Usage analytics, feature adoption, customer engagement metrics  
-- RISK: Security, compliance, availability, and operational risks
-- CULTURE: Training, adoption, stakeholder engagement, change readiness
-
-Analyze these signals for:
-1. Immediate insights and patterns across business value dimensions
-2. Urgent actions needed within 24 hours based on signal severity and trends
-3. Risk alerts requiring immediate attention from cost, security, or operational perspectives
-4. Correlation between different signal types that might indicate larger trends
-
-Return a JSON object with this structure:
-{
-  "insights": [
-    "Pattern or insight from signal analysis, especially cross-category correlations"
-  ],
-  "urgentActions": [
-    {
-      "id": "urgent_${Date.now()}_1",
-      "accountId": "account_id",
-      "title": "Urgent action title",
-      "description": "What needs to be done immediately",
-      "priority": "critical",
-      "category": "support|retention|engagement|cost_optimization|risk_mitigation",
-      "estimatedImpact": "Immediate impact if completed",
-      "effort": "low|medium|high",
-      "suggestedActions": ["Immediate step 1", "Immediate step 2"],
-      "reasoning": "Why this is urgent based on signals and business value impact",
-      "generatedAt": "${new Date().toISOString()}",
-      "timeToComplete": "Within 24 hours"
-    }
-  ],
-  "riskAlerts": [
-    {
-      "accountId": "account_id", 
-      "risk": "Specific risk description with business value context",
-      "severity": "medium|high|critical",
-      "category": "cost|agility|data|risk|culture"
+      "riskFactors": ["Potential risk 1"],
+      "successProbability": 0.80
     }
   ]
 }`;
@@ -282,6 +238,38 @@ Return a JSON object with this structure:
   "timeline": "Overall timeline estimate",
   "riskMitigation": ["Risk mitigation strategy 1"],
   "successMetrics": ["Metric to measure success"]
+}`;
+  }
+
+  private buildSignalAnalysisPrompt(signals: Signal[], accounts: Account[]): string {
+    return (window as any).spark.llmPrompt`Analyze these recent signals across accounts and provide insights.
+
+Signals:
+${JSON.stringify(signals.slice(0, 20), null, 2)}
+
+Accounts:
+${JSON.stringify(accounts.slice(0, 10), null, 2)}
+
+Provide analysis as JSON:
+{
+  "insights": ["General insight about patterns", "Another insight"],
+  "risks": [
+    {
+      "accountId": "account_id",
+      "risk": "Specific risk description with business value context",
+      "severity": "medium|high|critical",
+      "category": "cost|agility|data|risk|culture"
+    }
+  ],
+  "recommendations": [
+    {
+      "accountId": "account_id",
+      "action": "Specific recommended action",
+      "priority": "low|medium|high",
+      "effort": "low|medium|high",
+      "estimatedImpact": "Expected impact description"
+    }
+  ]
 }`;
   }
 

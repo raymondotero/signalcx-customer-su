@@ -4,9 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
-import { Brain, Play, Clock, Target, Sparkle, TrendUp } from '@phosphor-icons/react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Brain, Play, Clock, Target, Sparkle, TrendUp, CheckCircle } from '@phosphor-icons/react';
 import { Account, NextBestAction, Signal, MemoryEntry } from '@/types';
 import { useNBAs, useAgentMemory, useSignals } from '@/hooks/useData';
+import { useTargetAwareRecommendations } from '@/hooks/useTargetAwareRecommendations';
 import { azureOpenAI, RecommendationContext, SmartRecommendation } from '@/services/azureOpenAI';
 import { toast } from 'sonner';
 
@@ -18,6 +20,7 @@ interface NBADisplayProps {
 export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentRecommendations, setCurrentRecommendations] = useState<SmartRecommendation[]>([]);
+  const [targetRecommendation, setTargetRecommendation] = useState<any>(null);
   const [selectedNBA, setSelectedNBA] = useState<NextBestAction | null>(null);
   const [orchestrationPlan, setOrchestrationPlan] = useState<any>(null);
   const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
@@ -25,10 +28,12 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
   const { addNBA, nbas } = useNBAs();
   const { addMemoryEntry, memory } = useAgentMemory();
   const { signals } = useSignals();
+  const { generateTargetAwareNBA, isGenerating: isGeneratingTargetNBA, availableTargets } = useTargetAwareRecommendations();
 
   const generateSmartNBAs = async () => {
     setIsGenerating(true);
     setCurrentRecommendations([]);
+    setTargetRecommendation(null);
     setSelectedNBA(null);
     setOrchestrationPlan(null);
     
@@ -41,20 +46,30 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
         agentMemory: memory.filter(m => m.accountId === account.id).slice(0, 10)
       };
 
-      // Generate smart recommendations using Azure OpenAI
-      const recommendations = await azureOpenAI.generateSmartRecommendations(context);
+      // Generate both regular and target-aware recommendations
+      const [aiRecommendations, targetRecommendation] = await Promise.all([
+        azureOpenAI.generateSmartRecommendations(context),
+        generateTargetAwareNBA(account, signals)
+      ]);
       
-      setCurrentRecommendations(recommendations);
+      setCurrentRecommendations(aiRecommendations);
+      setTargetRecommendation(targetRecommendation);
       
-      // Auto-select the highest confidence recommendation
-      const topRecommendation = recommendations.reduce((top, current) => 
-        current.confidence > top.confidence ? current : top, 
-        recommendations[0]
-      );
+      // Auto-select the target recommendation if available and high confidence, otherwise AI recommendation
+      let topRecommendation: NextBestAction | null = null;
       
+      if (targetRecommendation && targetRecommendation.confidence > 0.7) {
+        topRecommendation = targetRecommendation.nba;
+      } else if (aiRecommendations.length > 0) {
+        const bestAI = aiRecommendations.reduce((top, current) => 
+          current.confidence > top.confidence ? current : top, aiRecommendations[0]
+        );
+        topRecommendation = bestAI.nba;
+      }
+
       if (topRecommendation) {
-        setSelectedNBA(topRecommendation.nba);
-        addNBA(topRecommendation.nba);
+        setSelectedNBA(topRecommendation);
+        addNBA(topRecommendation);
       }
       
       // Add to agent memory
@@ -64,19 +79,19 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
         type: 'nba_generated',
         accountId: account.id,
         accountName: account.name,
-        description: `Generated ${recommendations.length} AI-powered recommendations`,
+        description: `Generated ${aiRecommendations.length} AI recommendations${targetRecommendation ? ' + 1 target-aware recommendation' : ''}`,
         metadata: { 
-          recommendationsCount: recommendations.length,
-          topConfidence: topRecommendation?.confidence,
-          topNBAId: topRecommendation?.nba.id
+          aiRecommendations: aiRecommendations.length,
+          targetRecommendation: !!targetRecommendation,
+          confidence: targetRecommendation?.confidence || (aiRecommendations[0]?.confidence || 0)
         },
         outcome: 'success'
       });
-      
-      toast.success(`Generated ${recommendations.length} smart recommendations for ${account.name}`);
-      
+
+      const totalRecs = aiRecommendations.length + (targetRecommendation ? 1 : 0);
+      toast.success(`Generated ${totalRecs} smart recommendations for ${account.name}`);
     } catch (error) {
-      console.error('Failed to generate smart NBAs:', error);
+      console.error('Error generating NBA:', error);
       
       // Fallback to basic recommendation
       const fallbackNBA = generateFallbackNBA();
@@ -101,58 +116,46 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
   };
 
   const generateFallbackNBA = (): NextBestAction => {
-    const nbaTemplates = {
-      'Good': {
-        title: 'Expansion Opportunity Assessment',
-        description: 'Identify and pursue additional product upsells based on current usage patterns',
-        reasoning: 'Account shows high engagement and satisfaction metrics, making them ideal for expansion',
-        category: 'expansion' as const,
-        estimatedImpact: '+$45K ARR',
-        timeToComplete: '2-3 weeks'
-      },
-      'Watch': {
-        title: 'Proactive Health Check',
-        description: 'Schedule comprehensive account review to identify and address potential issues',
-        reasoning: 'Declining engagement metrics require immediate attention to prevent churn',
-        category: 'retention' as const,
-        estimatedImpact: 'Prevent $50K churn',
-        timeToComplete: '1 week'
-      },
-      'At Risk': {
-        title: 'Executive Intervention Required',
-        description: 'Escalate to executive team for immediate retention strategy implementation',
-        reasoning: 'Critical health score and contract renewal approaching - executive intervention needed',
-        category: 'retention' as const,
-        estimatedImpact: 'Save $320K ARR',
-        timeToComplete: 'Immediate'
-      }
-    };
-
-    const template = nbaTemplates[account.status];
+    const accountSignals = signals.filter(s => s.accountId === account.id);
+    const criticalSignals = accountSignals.filter(s => s.severity === 'critical');
     
+    let title = 'Review Account Health';
+    let description = 'Conduct comprehensive review of account status and engagement';
+    let priority: NextBestAction['priority'] = 'medium';
+    
+    if (account.status === 'At Risk') {
+      title = 'Urgent: Address At-Risk Status';
+      description = 'Immediate intervention required for at-risk account';
+      priority = 'critical';
+    } else if (criticalSignals.length > 0) {
+      title = 'Resolve Critical Issues';
+      description = `Address ${criticalSignals.length} critical signal(s) affecting account health`;
+      priority = 'high';
+    }
+
     return {
-      id: `nba-fallback-${Date.now()}`,
+      id: `fallback-nba-${Date.now()}`,
       accountId: account.id,
-      title: template.title,
-      description: template.description,
-      reasoning: template.reasoning,
-      priority: account.status === 'At Risk' ? 'critical' : account.status === 'Watch' ? 'high' : 'medium',
-      category: template.category,
-      estimatedImpact: template.estimatedImpact,
+      title,
+      description,
+      priority,
+      category: account.status === 'At Risk' ? 'retention' : 'engagement',
+      estimatedImpact: `Improve account health score by 10-20 points`,
       effort: 'medium',
-      suggestedActions: [template.title, template.description],
+      suggestedActions: [
+        'Schedule account review meeting',
+        'Analyze recent usage patterns',
+        'Identify key stakeholder concerns'
+      ],
+      reasoning: 'Standard account management best practices',
       generatedAt: new Date().toISOString(),
-      timeToComplete: template.timeToComplete,
-      assignedTo: account.csm,
-      createdAt: new Date().toISOString()
+      timeToComplete: '1-2 weeks',
+      assignedTo: account.csm
     };
   };
 
   const generateOrchestrationPlan = async (nba: NextBestAction) => {
-    if (!nba) return;
-    
     setIsGeneratingPlan(true);
-    
     try {
       const context: RecommendationContext = {
         account,
@@ -160,10 +163,8 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
         historicalNBAs: nbas.filter(n => n.accountId === account.id).slice(0, 5),
         agentMemory: memory.filter(m => m.accountId === account.id).slice(0, 10)
       };
-
       const plan = await azureOpenAI.generateOrchestrationPlan(nba, context);
       setOrchestrationPlan(plan);
-      
       toast.success('Generated orchestration plan');
     } catch (error) {
       console.error('Failed to generate orchestration plan:', error);
@@ -173,17 +174,10 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
     }
   };
 
-  const selectRecommendation = (recommendation: SmartRecommendation) => {
-    setSelectedNBA(recommendation.nba);
-    setOrchestrationPlan(null);
-    addNBA(recommendation.nba);
-  };
-
   const handlePlanAndRun = () => {
-    if (!selectedNBA) return;
-    
-    generateOrchestrationPlan(selectedNBA);
-    onPlanAndRun(selectedNBA);
+    if (selectedNBA) {
+      onPlanAndRun(selectedNBA);
+    }
   };
 
   const getPriorityColor = (priority: NextBestAction['priority']) => {
@@ -195,178 +189,268 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
     }
   };
 
-  const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 0.8) return 'text-green-600';
-    if (confidence >= 0.6) return 'text-yellow-600';
-    return 'text-red-600';
+  const getCategoryColor = (category: NextBestAction['category']) => {
+    switch (category) {
+      case 'engagement': return 'bg-blue-50 text-blue-700 border-blue-200';
+      case 'retention': return 'bg-red-50 text-red-700 border-red-200';
+      case 'expansion': return 'bg-green-50 text-green-700 border-green-200';
+      case 'support': return 'bg-orange-50 text-orange-700 border-orange-200';
+      case 'onboarding': return 'bg-purple-50 text-purple-700 border-purple-200';
+    }
   };
 
   return (
-    <Card className="h-fit">
+    <Card>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Brain className="w-5 h-5 text-accent" />
-            AI-Powered Recommendations
+            <Brain className={`w-5 h-5 text-accent ${isGenerating ? 'animate-pulse-ai' : ''}`} />
+            Next Best Actions
+            {availableTargets.length > 0 && (
+              <Badge variant="outline" className="text-xs">
+                <Target className="w-3 h-3 mr-1" />
+                {availableTargets.length} targets
+              </Badge>
+            )}
           </div>
           <Button 
             onClick={generateSmartNBAs}
-            disabled={isGenerating}
+            disabled={isGenerating || isGeneratingTargetNBA}
             size="sm"
-            className="bg-accent hover:bg-accent/90"
           >
-            {isGenerating ? (
-              <div className="animate-pulse-ai flex items-center gap-2">
-                <Brain className="w-4 h-4" />
-                Analyzing...
-              </div>
-            ) : (
-              <>
-                <Sparkle className="w-4 h-4 mr-2" />
-                Generate Smart NBA
-              </>
-            )}
+            <Sparkle className="w-4 h-4 mr-2" />
+            {isGenerating ? 'Generating...' : 'Generate NBA'}
           </Button>
         </CardTitle>
       </CardHeader>
       
-      <CardContent className="space-y-4">
-        {!currentRecommendations.length && !isGenerating && (
-          <div className="text-center py-8 text-muted-foreground">
-            <Brain className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
-            <p>Click "Generate Smart NBA" to get AI-powered recommendations tailored to this account</p>
-          </div>
-        )}
-        
-        {isGenerating && (
-          <div className="text-center py-8">
-            <div className="animate-pulse-ai">
-              <Brain className="w-12 h-12 mx-auto mb-4 text-accent" />
-            </div>
-            <p className="text-sm text-muted-foreground">AI is analyzing account data, signals, and history...</p>
-            <div className="mt-4 max-w-xs mx-auto">
-              <Progress value={33} className="h-2" />
-              <p className="text-xs text-muted-foreground mt-2">Processing with Azure OpenAI</p>
-            </div>
-          </div>
-        )}
-
-        {/* Recommendation Selection */}
-        {currentRecommendations.length > 0 && (
-          <div className="space-y-3">
-            <h4 className="font-medium text-sm">AI Recommendations ({currentRecommendations.length})</h4>
-            <div className="space-y-2">
-              {currentRecommendations.map((rec, index) => (
-                <div 
-                  key={rec.nba.id}
-                  className={`border rounded-lg p-3 cursor-pointer transition-colors ${
-                    selectedNBA?.id === rec.nba.id ? 'bg-accent/10 border-accent' : 'hover:bg-muted/50'
-                  }`}
-                  onClick={() => selectRecommendation(rec)}
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <Badge className={getPriorityColor(rec.nba.priority)}>
-                        {rec.nba.priority}
+      <CardContent>
+        {selectedNBA ? (
+          <Tabs defaultValue="selected" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="selected">Selected NBA</TabsTrigger>
+              <TabsTrigger value="ai-recommendations">AI Recommendations ({currentRecommendations.length})</TabsTrigger>
+              <TabsTrigger value="target-recommendation">
+                Target-Based
+                {targetRecommendation && <Badge className="ml-1 h-4 text-xs">NEW</Badge>}
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="selected">
+              <div className="space-y-4">
+                <div className="p-4 rounded-lg border bg-gradient-to-r from-blue-50 to-purple-50">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg">{selectedNBA.title}</h3>
+                      <p className="text-sm text-muted-foreground mt-1">{selectedNBA.description}</p>
+                    </div>
+                    <div className="flex gap-2 ml-4">
+                      <Badge className={getPriorityColor(selectedNBA.priority)}>
+                        {selectedNBA.priority}
                       </Badge>
-                      <span className={`text-xs font-medium ${getConfidenceColor(rec.confidence)}`}>
-                        {Math.round(rec.confidence * 100)}% confidence
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <TrendUp className="w-3 h-3 text-green-500" />
-                      <span className="text-xs text-green-600">
-                        {Math.round(rec.successProbability * 100)}% success
-                      </span>
+                      <Badge className={getCategoryColor(selectedNBA.category)}>
+                        {selectedNBA.category}
+                      </Badge>
                     </div>
                   </div>
-                  <h5 className="font-medium text-sm mb-1">{rec.nba.title}</h5>
-                  <p className="text-xs text-muted-foreground">{rec.rationale}</p>
-                  {rec.riskFactors.length > 0 && (
-                    <div className="mt-2 text-xs text-orange-600">
-                      <strong>Risks:</strong> {rec.riskFactors.join(', ')}
+                  
+                  <div className="grid grid-cols-2 gap-4 text-sm mb-4">
+                    <div>
+                      <span className="font-medium">Estimated Impact:</span>
+                      <p className="text-muted-foreground">{selectedNBA.estimatedImpact}</p>
                     </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Selected NBA Details */}
-        {selectedNBA && (
-          <div className="space-y-4 border-t pt-4">
-            <div className="flex items-start justify-between">
-              <h3 className="font-semibold text-lg">{selectedNBA.title}</h3>
-              <Badge className={getPriorityColor(selectedNBA.priority)}>
-                {selectedNBA.priority}
-              </Badge>
-            </div>
-            
-            <p className="text-sm text-muted-foreground">{selectedNBA.description}</p>
-            
-            <div className="space-y-3">
-              <div>
-                <h4 className="font-medium text-sm mb-1">AI Reasoning</h4>
-                <p className="text-sm text-muted-foreground">{selectedNBA.reasoning}</p>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <div className="flex items-center gap-1 mb-1">
-                    <Target className="w-4 h-4 text-accent" />
-                    <span className="font-medium">Estimated Impact</span>
+                    <div>
+                      <span className="font-medium">Effort Required:</span>
+                      <p className="text-muted-foreground capitalize">{selectedNBA.effort}</p>
+                    </div>
                   </div>
-                  <p className="text-muted-foreground">{selectedNBA.estimatedImpact}</p>
+                  
+                  <div className="mb-4">
+                    <h4 className="font-medium mb-2">Suggested Actions:</h4>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                      {selectedNBA.suggestedActions.map((action, index) => (
+                        <li key={index}>{action}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  <Separator className="my-4" />
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm text-muted-foreground">
+                      <p><strong>Reasoning:</strong> {selectedNBA.reasoning}</p>
+                      <p><strong>Assigned to:</strong> {selectedNBA.assignedTo}</p>
+                      <p><strong>Time to complete:</strong> {selectedNBA.timeToComplete}</p>
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => generateOrchestrationPlan(selectedNBA)}
+                        disabled={isGeneratingPlan}
+                      >
+                        <Clock className="w-4 h-4 mr-1" />
+                        {isGeneratingPlan ? 'Planning...' : 'Plan'}
+                      </Button>
+                      <Button 
+                        onClick={handlePlanAndRun}
+                        size="sm"
+                      >
+                        <Play className="w-4 h-4 mr-1" />
+                        Plan & Run
+                      </Button>
+                    </div>
+                  </div>
                 </div>
                 
-                <div>
-                  <div className="flex items-center gap-1 mb-1">
-                    <Clock className="w-4 h-4 text-accent" />
-                    <span className="font-medium">Time to Complete</span>
-                  </div>
-                  <p className="text-muted-foreground">{selectedNBA.timeToComplete}</p>
-                </div>
-              </div>
-            </div>
-            
-            {/* Orchestration Plan Preview */}
-            {orchestrationPlan && (
-              <div className="bg-muted/50 rounded-lg p-3 space-y-2">
-                <h4 className="font-medium text-sm">Orchestration Plan</h4>
-                <p className="text-xs text-muted-foreground">Timeline: {orchestrationPlan.timeline}</p>
-                <div className="space-y-1">
-                  {orchestrationPlan.steps?.slice(0, 3).map((step: any, index: number) => (
-                    <div key={step.id} className="text-xs">
-                      <span className="font-medium">{index + 1}.</span> {step.title}
+                {orchestrationPlan && (
+                  <div className="p-4 rounded-lg border bg-slate-50">
+                    <h4 className="font-medium mb-2 flex items-center gap-2">
+                      <Clock className="w-4 h-4" />
+                      Orchestration Plan
+                    </h4>
+                    <div className="space-y-2 text-sm">
+                      {orchestrationPlan.steps?.map((step: any, index: number) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs">
+                            {index + 1}
+                          </div>
+                          <span>{step.description}</span>
+                          <Badge variant="outline" className="text-xs">
+                            {step.estimatedTime}
+                          </Badge>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                  {orchestrationPlan.steps?.length > 3 && (
-                    <p className="text-xs text-muted-foreground">
-                      +{orchestrationPlan.steps.length - 3} more steps
-                    </p>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
-            )}
+            </TabsContent>
             
-            <Button 
-              onClick={handlePlanAndRun}
-              className="w-full"
-              size="lg"
-              disabled={isGeneratingPlan}
-            >
-              {isGeneratingPlan ? (
-                <div className="flex items-center gap-2">
-                  <Brain className="w-4 h-4 animate-pulse-ai" />
-                  Generating Plan...
-                </div>
-              ) : (
-                <>
-                  <Play className="w-4 h-4 mr-2" />
-                  Plan & Run
-                </>
-              )}
+            <TabsContent value="ai-recommendations">
+              <div className="space-y-3">
+                {currentRecommendations.length > 0 ? (
+                  currentRecommendations.map((rec, index) => (
+                    <div key={index} className="p-3 rounded-lg border cursor-pointer hover:bg-muted/50" 
+                         onClick={() => setSelectedNBA(rec.nba)}>
+                      <div className="flex items-start justify-between mb-2">
+                        <h4 className="font-medium">{rec.nba.title}</h4>
+                        <div className="flex gap-1">
+                          <Badge variant="outline" className="text-xs">
+                            {Math.round(rec.confidence * 100)}% confidence
+                          </Badge>
+                          <Badge className={getPriorityColor(rec.nba.priority)}>
+                            {rec.nba.priority}
+                          </Badge>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-2">{rec.nba.description}</p>
+                      <div className="text-xs text-muted-foreground">
+                        <strong>Success probability:</strong> {Math.round(rec.successProbability * 100)}%
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Brain className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
+                    <p>No AI recommendations generated yet.</p>
+                    <p className="text-sm">Click "Generate NBA" to get AI-powered suggestions.</p>
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="target-recommendation">
+              <div className="space-y-3">
+                {targetRecommendation ? (
+                  <div className="p-4 rounded-lg border bg-gradient-to-r from-green-50 to-blue-50">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Target className="w-4 h-4 text-green-600" />
+                          <h4 className="font-medium">Target-Aware Recommendation</h4>
+                          <Badge className="bg-green-100 text-green-800">
+                            <CheckCircle className="w-3 h-3 mr-1" />
+                            {Math.round(targetRecommendation.confidence * 100)}% confidence
+                          </Badge>
+                        </div>
+                        <h3 className="font-semibold">{targetRecommendation.nba.title}</h3>
+                        <p className="text-sm text-muted-foreground mt-1">{targetRecommendation.nba.description}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <div>
+                        <h5 className="font-medium text-sm mb-2">Target Impact Analysis:</h5>
+                        <div className="grid grid-cols-3 gap-3 text-sm">
+                          <div className="text-center p-2 bg-white rounded border">
+                            <div className="font-bold text-green-600">
+                              {targetRecommendation.targetImpact.affectedTargets.length}
+                            </div>
+                            <div className="text-xs text-muted-foreground">Targets Affected</div>
+                          </div>
+                          <div className="text-center p-2 bg-white rounded border">
+                            <div className="font-bold text-blue-600">
+                              {Math.round(targetRecommendation.targetImpact.improvementPotential)}%
+                            </div>
+                            <div className="text-xs text-muted-foreground">Improvement Potential</div>
+                          </div>
+                          <div className="text-center p-2 bg-white rounded border">
+                            <div className="font-bold text-orange-600">
+                              {Math.round(targetRecommendation.targetImpact.riskReduction)}%
+                            </div>
+                            <div className="text-xs text-muted-foreground">Risk Reduction</div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <h5 className="font-medium text-sm mb-2">Affected Targets:</h5>
+                        <div className="space-y-1">
+                          {targetRecommendation.targetImpact.affectedTargets.map((target: any, index: number) => (
+                            <div key={index} className="flex items-center justify-between text-xs p-2 bg-white rounded border">
+                              <span className="font-medium">{target.signalName}</span>
+                              <Badge className={`text-xs ${target.priority === 'critical' ? 'bg-red-100 text-red-800' : target.priority === 'high' ? 'bg-orange-100 text-orange-800' : 'bg-blue-100 text-blue-800'}`}>
+                                {target.priority}
+                              </Badge>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <Button 
+                        onClick={() => setSelectedNBA(targetRecommendation.nba)}
+                        className="w-full"
+                      >
+                        <Target className="w-4 h-4 mr-2" />
+                        Use Target-Based Recommendation
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Target className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
+                    <p>No target-based recommendations available.</p>
+                    <p className="text-sm">
+                      {availableTargets.length === 0 
+                        ? 'Configure signal targets to enable target-aware recommendations.'
+                        : 'All targets are currently being met for this account.'
+                      }
+                    </p>
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
+        ) : (
+          <div className="text-center py-12 text-muted-foreground">
+            <Brain className="w-16 h-16 mx-auto mb-4 text-muted-foreground/50" />
+            <h3 className="text-lg font-medium mb-2">No recommendations yet</h3>
+            <p className="text-sm mb-4">Generate AI-powered next best actions for this account</p>
+            <Button onClick={generateSmartNBAs} disabled={isGenerating}>
+              <Sparkle className="w-4 h-4 mr-2" />
+              {isGenerating ? 'Generating...' : 'Generate Smart Recommendations'}
             </Button>
           </div>
         )}

@@ -1,9 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { CurrencyDollar, Rocket, Database, Shield, Users, TrendUp, TrendDown, Minus } from '@phosphor-icons/react';
+import { Progress } from '@/components/ui/progress';
+import { CurrencyDollar, Rocket, Database, Shield, Users, TrendUp, TrendDown, Minus, Target, CheckCircle, Warning } from '@phosphor-icons/react';
 import { useSignals } from '@/hooks/useData';
+import { useKV } from '@github/spark/hooks';
 import { Signal } from '@/types';
+import { TargetSettingsDialog, SignalTarget } from '@/components/TargetSettingsDialog';
 
 interface SignalCategoryStats {
   category: string;
@@ -15,10 +18,30 @@ interface SignalCategoryStats {
   averageValue?: number;
   unit?: string;
   trending: 'up' | 'down' | 'stable';
+  targetsConfigured: number;
+  targetsOnTrack: number;
+  targetsMissed: number;
 }
 
 export function BusinessValueDashboard() {
   const { signals } = useSignals();
+  const [targets] = useKV<SignalTarget[]>('signal-targets', []);
+  const safeTargets = targets || [];
+
+  const checkTargetCompliance = (signal: Signal, target: SignalTarget): 'on_track' | 'missed' | 'unknown' => {
+    if (signal.value === undefined) return 'unknown';
+    
+    switch (target.threshold) {
+      case 'below':
+        return signal.value <= target.targetValue ? 'on_track' : 'missed';
+      case 'above':
+        return signal.value >= target.targetValue ? 'on_track' : 'missed';
+      case 'exactly':
+        return Math.abs(signal.value - target.targetValue) < 0.1 ? 'on_track' : 'missed';
+      default:
+        return 'unknown';
+    }
+  };
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
@@ -44,6 +67,8 @@ export function BusinessValueDashboard() {
     
     return categories.map(category => {
       const categorySignals = signals.filter(s => s.category === category || s.type === category);
+      const categoryTargets = safeTargets.filter(t => t.category === category);
+      
       const severityCounts = {
         critical: categorySignals.filter(s => s.severity === 'critical').length,
         high: categorySignals.filter(s => s.severity === 'high').length,
@@ -66,13 +91,33 @@ export function BusinessValueDashboard() {
       if (improvingCount > decliningCount) trending = 'up';
       else if (decliningCount > improvingCount) trending = 'down';
       
+      // Calculate target compliance
+      let targetsOnTrack = 0;
+      let targetsMissed = 0;
+      
+      categoryTargets.forEach(target => {
+        const matchingSignals = categorySignals.filter(s => 
+          s.signalName === target.signalName || s.type === target.signalName.toLowerCase().replace(/\s+/g, '_')
+        );
+        
+        if (matchingSignals.length > 0) {
+          const latestSignal = matchingSignals[0]; // Most recent
+          const compliance = checkTargetCompliance(latestSignal, target);
+          if (compliance === 'on_track') targetsOnTrack++;
+          else if (compliance === 'missed') targetsMissed++;
+        }
+      });
+
       return {
         category,
         count: categorySignals.length,
         ...severityCounts,
         averageValue,
         unit: signalsWithValues[0]?.unit,
-        trending
+        trending,
+        targetsConfigured: categoryTargets.length,
+        targetsOnTrack,
+        targetsMissed
       };
     });
   };
@@ -80,6 +125,10 @@ export function BusinessValueDashboard() {
   const categoryStats = getCategoryStats();
   const totalSignals = signals.length;
   const criticalSignals = signals.filter(s => s.severity === 'critical').length;
+  const totalTargets = safeTargets.length;
+  const totalOnTrack = categoryStats.reduce((sum, cat) => sum + cat.targetsOnTrack, 0);
+  const totalMissed = categoryStats.reduce((sum, cat) => sum + cat.targetsMissed, 0);
+  const targetCompliance = totalTargets > 0 ? Math.round((totalOnTrack / totalTargets) * 100) : 0;
 
   return (
     <Card className="h-[600px] flex flex-col">
@@ -88,12 +137,21 @@ export function BusinessValueDashboard() {
           <Database className="w-5 h-5 text-primary" />
           Business Value Signal Dashboard
         </CardTitle>
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <span>Total Signals: {totalSignals}</span>
-          <span>Critical: {criticalSignals}</span>
-          <Badge variant={criticalSignals > 5 ? "destructive" : "secondary"}>
-            {criticalSignals > 5 ? "High Alert" : "Normal"}
-          </Badge>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <span>Total Signals: {totalSignals}</span>
+            <span>Critical: {criticalSignals}</span>
+            <span>Targets: {totalTargets}</span>
+            <Badge variant={criticalSignals > 5 ? "destructive" : "secondary"}>
+              {criticalSignals > 5 ? "High Alert" : "Normal"}
+            </Badge>
+            {totalTargets > 0 && (
+              <Badge variant={targetCompliance >= 80 ? "default" : targetCompliance >= 60 ? "secondary" : "destructive"}>
+                {targetCompliance}% Target Compliance
+              </Badge>
+            )}
+          </div>
+          <TargetSettingsDialog />
         </div>
       </CardHeader>
       
@@ -119,9 +177,31 @@ export function BusinessValueDashboard() {
                         Avg: {Math.round(stats.averageValue * 10) / 10}{stats.unit}
                       </Badge>
                     )}
+                    {stats.targetsConfigured > 0 && (
+                      <Badge variant="outline" className="text-xs">
+                        <Target className="w-3 h-3 mr-1" />
+                        {stats.targetsOnTrack}/{stats.targetsConfigured}
+                      </Badge>
+                    )}
                     {getTrendIcon(stats.trending)}
                   </div>
                 </div>
+                
+                {/* Target Progress Bar */}
+                {stats.targetsConfigured > 0 && (
+                  <div className="mb-3">
+                    <div className="flex items-center justify-between text-xs mb-1">
+                      <span className="text-muted-foreground">Target Compliance</span>
+                      <span className="font-medium">
+                        {stats.targetsOnTrack}/{stats.targetsConfigured} targets met
+                      </span>
+                    </div>
+                    <Progress 
+                      value={(stats.targetsOnTrack / stats.targetsConfigured) * 100} 
+                      className="h-2"
+                    />
+                  </div>
+                )}
                 
                 <div className="grid grid-cols-4 gap-2 text-xs">
                   <div className="text-center p-2 rounded bg-red-50">
@@ -142,33 +222,53 @@ export function BusinessValueDashboard() {
                   </div>
                 </div>
                 
-                {stats.count > 0 && (
-                  <div className="mt-2 text-xs text-muted-foreground">
-                    Most common: {(() => {
-                      const signalCounts = signals
-                        .filter(s => s.category === stats.category || s.type === stats.category)
-                        .reduce((acc, signal) => {
-                          const name = signal.signalName || signal.type;
-                          acc[name] = (acc[name] || 0) + 1;
-                          return acc;
-                        }, {} as Record<string, number>);
-                      
-                      const topSignal = Object.entries(signalCounts)
-                        .sort(([,a], [,b]) => b - a)[0];
-                      
-                      return topSignal ? topSignal[0] : 'N/A';
-                    })()}
+                {(stats.count > 0 || stats.targetsConfigured > 0) && (
+                  <div className="mt-2 text-xs text-muted-foreground space-y-1">
+                    {stats.count > 0 && (
+                      <div>
+                        Most common: {(() => {
+                          const signalCounts = signals
+                            .filter(s => s.category === stats.category || s.type === stats.category)
+                            .reduce((acc, signal) => {
+                              const name = signal.signalName || signal.type;
+                              acc[name] = (acc[name] || 0) + 1;
+                              return acc;
+                            }, {} as Record<string, number>);
+                          
+                          const topSignal = Object.entries(signalCounts)
+                            .sort(([,a], [,b]) => b - a)[0];
+                          
+                          return topSignal ? topSignal[0] : 'N/A';
+                        })()}
+                      </div>
+                    )}
+                    {stats.targetsConfigured > 0 && (
+                      <div className="flex items-center gap-1">
+                        {stats.targetsOnTrack > 0 && (
+                          <span className="inline-flex items-center gap-1 text-green-600">
+                            <CheckCircle className="w-3 h-3" />
+                            {stats.targetsOnTrack} on track
+                          </span>
+                        )}
+                        {stats.targetsMissed > 0 && (
+                          <span className="inline-flex items-center gap-1 text-red-600 ml-2">
+                            <Warning className="w-3 h-3" />
+                            {stats.targetsMissed} missed
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
               </CardContent>
             </Card>
           ))}
           
-          {categoryStats.every(s => s.count === 0) && (
+          {categoryStats.every(s => s.count === 0 && s.targetsConfigured === 0) && (
             <div className="text-center py-8 text-muted-foreground">
               <Database className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
-              <p>No business value signals detected yet.</p>
-              <p className="text-sm">Start the live signal stream to see real-time data.</p>
+              <p>No business value signals or targets configured yet.</p>
+              <p className="text-sm">Start the live signal stream or configure targets to see data.</p>
             </div>
           )}
         </div>
