@@ -61,14 +61,40 @@ export function AdaptiveCardPreview({ nba, accountName, onApprovalDecision }: Ad
   };
 
   const adaptiveCard: AdaptiveCard = {
-    type: 'approval',
+    type: 'AdaptiveCard',
+    version: '1.4',
     accountId: nba.accountId,
     accountName: accountName,
     action: nba.title,
     reasoning: nba.reasoning,
     estimatedImpact: nba.estimatedImpact,
     requestedBy: 'SignalCX AI Agent',
-    requestedAt: nba.createdAt
+    requestedAt: nba.createdAt,
+    body: [
+      {
+        type: 'TextBlock',
+        text: `Approval Request: ${nba.title}`,
+        size: 'Large',
+        weight: 'Bolder'
+      },
+      {
+        type: 'TextBlock',
+        text: nba.description
+      }
+    ],
+    actions: [
+      {
+        type: 'Action.Submit',
+        title: 'Approve',
+        style: 'positive',
+        data: { approved: true, nbaId: nba.id }
+      },
+      {
+        type: 'Action.Submit',
+        title: 'Reject',
+        data: { approved: false, nbaId: nba.id }
+      }
+    ]
   };
 
   return (
@@ -139,7 +165,7 @@ export function AdaptiveCardPreview({ nba, accountName, onApprovalDecision }: Ad
                 <p className="text-sm font-medium text-muted-foreground">Requested At</p>
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4 text-muted-foreground" />
-                  <p className="text-sm">{new Date(adaptiveCard.requestedAt).toLocaleString()}</p>
+                  <p className="text-sm">{new Date(adaptiveCard.requestedAt || Date.now()).toLocaleString()}</p>
                 </div>
               </div>
             </div>

@@ -4,13 +4,13 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Brain, Clock, CheckCircle, XCircle, ClockCounterClockwise, Trash } from '@phosphor-icons/react';
-import { AgentMemoryEntry } from '@/types';
+import { MemoryEntry } from '@/types';
 import { useAgentMemory } from '@/hooks/useData';
 
 export function AgentMemory() {
   const { memory, clearMemory } = useAgentMemory();
 
-  const getTypeIcon = (type: AgentMemoryEntry['type']) => {
+  const getTypeIcon = (type: MemoryEntry['type']) => {
     switch (type) {
       case 'nba_generated': return <Brain className="w-4 h-4 text-accent" />;
       case 'workflow_executed': return <CheckCircle className="w-4 h-4 text-green-500" />;
@@ -19,16 +19,17 @@ export function AgentMemory() {
     }
   };
 
-  const getTypeLabel = (type: AgentMemoryEntry['type']) => {
+  const getTypeLabel = (type: MemoryEntry['type']) => {
     switch (type) {
       case 'nba_generated': return 'NBA Generated';
       case 'workflow_executed': return 'Workflow Executed';
       case 'approval_requested': return 'Approval Requested';
       case 'approval_decided': return 'Approval Decided';
+      case 'signal_processed': return 'Signal Processed';
     }
   };
 
-  const getOutcomeIcon = (outcome?: AgentMemoryEntry['outcome']) => {
+  const getOutcomeIcon = (outcome?: MemoryEntry['outcome']) => {
     switch (outcome) {
       case 'success': return <CheckCircle className="w-4 h-4 text-green-500" />;
       case 'failure': return <XCircle className="w-4 h-4 text-red-500" />;
@@ -37,7 +38,7 @@ export function AgentMemory() {
     }
   };
 
-  const getOutcomeColor = (outcome?: AgentMemoryEntry['outcome']) => {
+  const getOutcomeColor = (outcome?: MemoryEntry['outcome']) => {
     switch (outcome) {
       case 'success': return 'bg-green-100 text-green-800 border-green-200';
       case 'failure': return 'bg-red-100 text-red-800 border-red-200';

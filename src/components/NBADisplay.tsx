@@ -94,6 +94,9 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
         priority: account.status === 'At Risk' ? 'critical' : account.status === 'Watch' ? 'high' : 'medium',
         category: selectedRecommendation.category,
         estimatedImpact: selectedRecommendation.estimatedImpact,
+        effort: 'medium',
+        suggestedActions: [selectedRecommendation.title, selectedRecommendation.description],
+        generatedAt: new Date().toISOString(),
         timeToComplete: selectedRecommendation.timeToComplete,
         assignedTo: account.csm,
         createdAt: new Date().toISOString()

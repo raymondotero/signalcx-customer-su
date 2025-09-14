@@ -4,14 +4,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Play, Pause, Pulse, Warning, Info, WarningCircle } from '@phosphor-icons/react';
+import { Play, Pause, Pulse, Warning, Info, WarningCircle, Brain } from '@phosphor-icons/react';
 import { Signal } from '@/types';
 import { useSignals, useAccounts } from '@/hooks/useData';
+import { useSignalProcessor } from '@/hooks/useSignalProcessor';
 
 export function LiveSignals() {
   const [isStreaming, setIsStreaming] = useState(true);
   const { signals, addSignal } = useSignals();
   const { accounts } = useAccounts();
+  const { isProcessing } = useSignalProcessor();
 
   useEffect(() => {
     if (!isStreaming) return;
@@ -49,7 +51,7 @@ export function LiveSignals() {
           ]
         },
         {
-          type: 'billing' as const,
+          type: 'financial' as const,
           descriptions: [
             'Payment method expires next month',
             'Invoice overdue by 15 days',
@@ -107,8 +109,10 @@ export function LiveSignals() {
       case 'usage': return 'bg-purple-100 text-purple-800 border-purple-200';
       case 'engagement': return 'bg-green-100 text-green-800 border-green-200';
       case 'support': return 'bg-red-100 text-red-800 border-red-200';
-      case 'billing': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'feature': return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'financial': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'feature_request': return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'churn_risk': return 'bg-red-100 text-red-800 border-red-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
@@ -123,6 +127,9 @@ export function LiveSignals() {
           <div className="flex items-center gap-2">
             <Pulse className={`w-5 h-5 ${isStreaming ? 'text-green-500 animate-pulse' : 'text-gray-400'}`} />
             Live Signals
+            {isProcessing && (
+              <Brain className="w-4 h-4 text-accent animate-pulse-ai" />
+            )}
           </div>
           <Button
             onClick={() => setIsStreaming(!isStreaming)}

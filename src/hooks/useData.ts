@@ -1,116 +1,126 @@
 import { useKV } from '@github/spark/hooks';
-import { Account, Signal, NextBestAction, AgentMemoryEntry } from '@/types';
+import { Account, NextBestAction, Signal, MemoryEntry } from '@/types';
 
-// Mock data for demo
-const mockAccounts: Account[] = [
+// Sample seed data
+const sampleAccounts: Account[] = [
   {
-    id: 'acc-001',
-    name: 'Contoso Corp',
+    id: 'acc-1',
+    name: 'TechCorp Solutions',
+    industry: 'Technology',
     arr: 250000,
     healthScore: 85,
     status: 'Good',
-    industry: 'Technology',
     csm: 'Sarah Chen',
-    lastActivity: '2024-01-15',
     contractEnd: '2024-12-31',
+    lastActivity: '2024-01-15',
     expansionOpportunity: 75000
   },
   {
-    id: 'acc-002',
-    name: 'Fabrikam Industries',
-    arr: 180000,
+    id: 'acc-2', 
+    name: 'Global Manufacturing Inc',
+    industry: 'Manufacturing',
+    arr: 450000,
     healthScore: 65,
     status: 'Watch',
-    industry: 'Manufacturing',
     csm: 'Mike Rodriguez',
-    lastActivity: '2024-01-10',
     contractEnd: '2024-08-15',
-    expansionOpportunity: 45000
+    lastActivity: '2024-01-10',
+    expansionOpportunity: 120000
   },
   {
-    id: 'acc-003',
-    name: 'Adventure Works',
-    arr: 320000,
+    id: 'acc-3',
+    name: 'FinanceFirst Bank',
+    industry: 'Financial Services',
+    arr: 800000,
     healthScore: 45,
     status: 'At Risk',
-    industry: 'Retail',
-    csm: 'Emily Watson',
-    lastActivity: '2024-01-05',
+    csm: 'Lisa Wang',
     contractEnd: '2024-06-30',
-    expansionOpportunity: 0
+    lastActivity: '2024-01-05',
+    expansionOpportunity: 200000
   },
   {
-    id: 'acc-004',
-    name: 'Northwind Traders',
-    arr: 420000,
-    healthScore: 92,
+    id: 'acc-4',
+    name: 'HealthTech Innovations',
+    industry: 'Healthcare',
+    arr: 180000,
+    healthScore: 90,
     status: 'Good',
-    industry: 'Logistics',
     csm: 'David Kim',
-    lastActivity: '2024-01-16',
     contractEnd: '2025-03-31',
-    expansionOpportunity: 125000
+    lastActivity: '2024-01-16',
+    expansionOpportunity: 90000
   },
   {
-    id: 'acc-005',
-    name: 'Wide World Importers',
-    arr: 150000,
-    healthScore: 55,
-    status: 'Watch',
-    industry: 'Import/Export',
-    csm: 'Lisa Park',
-    lastActivity: '2024-01-08',
-    contractEnd: '2024-09-30',
-    expansionOpportunity: 30000
+    id: 'acc-5',
+    name: 'RetailMax Corporation',
+    industry: 'Retail',
+    arr: 320000,
+    healthScore: 72,
+    status: 'Good',
+    csm: 'Emily Johnson',
+    contractEnd: '2024-11-15',
+    lastActivity: '2024-01-14',
+    expansionOpportunity: 110000
   }
 ];
 
-export const useAccounts = () => {
-  const [accounts, setAccounts] = useKV<Account[]>('signalcx-accounts', mockAccounts);
+export function useAccounts() {
+  const [accounts, setAccounts] = useKV<Account[]>('signalcx-accounts', sampleAccounts);
   
   const addAccount = (account: Account) => {
-    setAccounts(current => [...(current || []), account]);
+    setAccounts(currentAccounts => [...(currentAccounts || []), account]);
   };
   
-  const updateAccount = (id: string, updates: Partial<Account>) => {
-    setAccounts(current => 
-      (current || []).map(acc => acc.id === id ? { ...acc, ...updates } : acc)
-    );
+  return { 
+    accounts: accounts || [], 
+    setAccounts,
+    addAccount
   };
-  
-  return { accounts: accounts || [], setAccounts, addAccount, updateAccount };
-};
+}
 
-export const useSignals = () => {
-  const [signals, setSignals] = useKV<Signal[]>('signalcx-signals', []);
-  
-  const addSignal = (signal: Signal) => {
-    setSignals(current => [signal, ...(current || []).slice(0, 49)]); // Keep last 50 signals
-  };
-  
-  return { signals: signals || [], setSignals, addSignal };
-};
-
-export const useNBAs = () => {
+export function useNBAs() {
   const [nbas, setNBAs] = useKV<NextBestAction[]>('signalcx-nbas', []);
   
   const addNBA = (nba: NextBestAction) => {
-    setNBAs(current => [nba, ...(current || [])]);
+    setNBAs(currentNBAs => [...(currentNBAs || []), nba]);
   };
   
-  return { nbas: nbas || [], setNBAs, addNBA };
-};
+  return { 
+    nbas: nbas || [], 
+    setNBAs,
+    addNBA
+  };
+}
 
-export const useAgentMemory = () => {
-  const [memory, setMemory] = useKV<AgentMemoryEntry[]>('signalcx-memory', []);
+export function useSignals() {
+  const [signals, setSignals] = useKV<Signal[]>('signalcx-signals', []);
   
-  const addMemoryEntry = (entry: AgentMemoryEntry) => {
-    setMemory(current => [entry, ...(current || [])]);
+  const addSignal = (signal: Signal) => {
+    setSignals(currentSignals => [signal, ...(currentSignals || [])].slice(0, 50)); // Keep last 50 signals
+  };
+  
+  return { 
+    signals: signals || [], 
+    setSignals, 
+    addSignal 
+  };
+}
+
+export function useAgentMemory() {
+  const [memory, setMemory] = useKV<MemoryEntry[]>('signalcx-memory', []);
+  
+  const addMemoryEntry = (entry: MemoryEntry) => {
+    setMemory(currentMemory => [entry, ...(currentMemory || [])]);
   };
   
   const clearMemory = () => {
     setMemory([]);
   };
   
-  return { memory: memory || [], setMemory, addMemoryEntry, clearMemory };
-};
+  return { 
+    memory: memory || [], 
+    addMemoryEntry, 
+    clearMemory 
+  };
+}

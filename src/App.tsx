@@ -4,14 +4,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { ArrowClockwise, Database, Shield, Activity } from '@phosphor-icons/react';
+import { ArrowClockwise, Database, Shield, Activity, Brain } from '@phosphor-icons/react';
 import { AccountsTable } from '@/components/AccountsTable';
 import { NBADisplay } from '@/components/NBADisplay';
 import { LiveSignals } from '@/components/LiveSignals';
 import { AgentMemory } from '@/components/AgentMemory';
 import { AdaptiveCardPreview } from '@/components/AdaptiveCardPreview';
 import { CSVUpload } from '@/components/CSVUpload';
+import { AIRecommendationEngine } from '@/components/AIRecommendationEngine';
 import { useAccounts, useNBAs, useAgentMemory } from '@/hooks/useData';
+import { useSignalProcessor } from '@/hooks/useSignalProcessor';
+import { useRealtimeNotifications } from '@/hooks/useRealtimeNotifications';
 import { Account, NextBestAction } from '@/types';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
@@ -22,6 +25,10 @@ function App() {
   const { accounts, setAccounts } = useAccounts();
   const { setNBAs } = useNBAs();
   const { clearMemory, addMemoryEntry } = useAgentMemory();
+  const { isProcessing } = useSignalProcessor();
+  
+  // Enable real-time notifications
+  useRealtimeNotifications();
 
   const handleSelectAccount = (account: Account) => {
     setSelectedAccount(account);
@@ -122,7 +129,12 @@ function App() {
                 <Activity className="w-5 h-5 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold">SignalCX</h1>
+                <h1 className="text-2xl font-bold flex items-center gap-2">
+                  SignalCX
+                  {isProcessing && (
+                    <Brain className="w-5 h-5 text-accent animate-pulse-ai" />
+                  )}
+                </h1>
                 <p className="text-sm text-muted-foreground">Agentic AI Platform for Customer Success</p>
               </div>
             </div>
@@ -267,13 +279,18 @@ function App() {
           {/* Right Column - Signals & Memory */}
           <div className="space-y-6">
             <Tabs defaultValue="signals" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
+              <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="signals">Live Signals</TabsTrigger>
+                <TabsTrigger value="ai-rec">AI Recommendations</TabsTrigger>
                 <TabsTrigger value="memory">Agent Memory</TabsTrigger>
               </TabsList>
               
               <TabsContent value="signals" className="mt-4">
                 <LiveSignals />
+              </TabsContent>
+              
+              <TabsContent value="ai-rec" className="mt-4">
+                <AIRecommendationEngine />
               </TabsContent>
               
               <TabsContent value="memory" className="mt-4">
