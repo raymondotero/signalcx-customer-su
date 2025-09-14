@@ -3,9 +3,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Brain, Play, Clock, Target } from '@phosphor-icons/react';
-import { Account, NextBestAction } from '@/types';
-import { useNBAs, useAgentMemory } from '@/hooks/useData';
+import { Progress } from '@/components/ui/progress';
+import { Brain, Play, Clock, Target, Sparkle, TrendUp } from '@phosphor-icons/react';
+import { Account, NextBestAction, Signal, MemoryEntry } from '@/types';
+import { useNBAs, useAgentMemory, useSignals } from '@/hooks/useData';
+import { azureOpenAI, RecommendationContext, SmartRecommendation } from '@/services/azureOpenAI';
+import { toast } from 'sonner';
 
 interface NBADisplayProps {
   account: Account;
@@ -14,96 +17,45 @@ interface NBADisplayProps {
 
 export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
   const [isGenerating, setIsGenerating] = useState(false);
-  const [currentNBA, setCurrentNBA] = useState<NextBestAction | null>(null);
-  const { addNBA } = useNBAs();
-  const { addMemoryEntry } = useAgentMemory();
+  const [currentRecommendations, setCurrentRecommendations] = useState<SmartRecommendation[]>([]);
+  const [selectedNBA, setSelectedNBA] = useState<NextBestAction | null>(null);
+  const [orchestrationPlan, setOrchestrationPlan] = useState<any>(null);
+  const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
+  
+  const { addNBA, nbas } = useNBAs();
+  const { addMemoryEntry, memory } = useAgentMemory();
+  const { signals } = useSignals();
 
-  const generateNBA = async () => {
+  const generateSmartNBAs = async () => {
     setIsGenerating(true);
+    setCurrentRecommendations([]);
+    setSelectedNBA(null);
+    setOrchestrationPlan(null);
     
     try {
-      // Simulate AI processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const nbaRecommendations = {
-        'Good': [
-          {
-            title: 'Expansion Opportunity Assessment',
-            description: 'Identify and pursue additional product upsells based on current usage patterns',
-            reasoning: 'Account shows high engagement and satisfaction metrics, making them ideal for expansion',
-            category: 'expansion' as const,
-            estimatedImpact: '+$45K ARR',
-            timeToComplete: '2-3 weeks'
-          },
-          {
-            title: 'Success Story Case Study',
-            description: 'Develop customer success story for marketing and reference purposes',
-            reasoning: 'Strong health score and positive outcomes make this account ideal for case study development',
-            category: 'engagement' as const,
-            estimatedImpact: 'Brand value +$10K',
-            timeToComplete: '1-2 weeks'
-          }
-        ],
-        'Watch': [
-          {
-            title: 'Proactive Health Check',
-            description: 'Schedule comprehensive account review to identify and address potential issues',
-            reasoning: 'Declining engagement metrics require immediate attention to prevent churn',
-            category: 'retention' as const,
-            estimatedImpact: 'Prevent $50K churn',
-            timeToComplete: '1 week'
-          },
-          {
-            title: 'Training Enhancement Program',
-            description: 'Implement targeted training to improve user adoption and engagement',
-            reasoning: 'Low usage patterns suggest training gaps that can be addressed proactively',
-            category: 'engagement' as const,
-            estimatedImpact: '+15% usage',
-            timeToComplete: '2-4 weeks'
-          }
-        ],
-        'At Risk': [
-          {
-            title: 'Executive Intervention Required',
-            description: 'Escalate to executive team for immediate retention strategy implementation',
-            reasoning: 'Critical health score and contract renewal approaching - executive intervention needed',
-            category: 'retention' as const,
-            estimatedImpact: 'Save $320K ARR',
-            timeToComplete: 'Immediate'
-          },
-          {
-            title: 'Emergency Support Package',
-            description: 'Deploy dedicated support resources to address critical issues and improve satisfaction',
-            reasoning: 'Immediate support intervention required to stabilize relationship and prevent churn',
-            category: 'support' as const,
-            estimatedImpact: 'Stabilize account',
-            timeToComplete: '3-5 days'
-          }
-        ]
+      // Build context for AI
+      const context: RecommendationContext = {
+        account,
+        recentSignals: signals.filter(s => s.accountId === account.id).slice(0, 10),
+        historicalNBAs: nbas.filter(n => n.accountId === account.id).slice(0, 5),
+        agentMemory: memory.filter(m => m.accountId === account.id).slice(0, 10)
       };
 
-      const recommendations = nbaRecommendations[account.status];
-      const selectedRecommendation = recommendations[Math.floor(Math.random() * recommendations.length)];
+      // Generate smart recommendations using Azure OpenAI
+      const recommendations = await azureOpenAI.generateSmartRecommendations(context);
       
-      const nba: NextBestAction = {
-        id: `nba-${Date.now()}`,
-        accountId: account.id,
-        title: selectedRecommendation.title,
-        description: selectedRecommendation.description,
-        reasoning: selectedRecommendation.reasoning,
-        priority: account.status === 'At Risk' ? 'critical' : account.status === 'Watch' ? 'high' : 'medium',
-        category: selectedRecommendation.category,
-        estimatedImpact: selectedRecommendation.estimatedImpact,
-        effort: 'medium',
-        suggestedActions: [selectedRecommendation.title, selectedRecommendation.description],
-        generatedAt: new Date().toISOString(),
-        timeToComplete: selectedRecommendation.timeToComplete,
-        assignedTo: account.csm,
-        createdAt: new Date().toISOString()
-      };
-
-      setCurrentNBA(nba);
-      addNBA(nba);
+      setCurrentRecommendations(recommendations);
+      
+      // Auto-select the highest confidence recommendation
+      const topRecommendation = recommendations.reduce((top, current) => 
+        current.confidence > top.confidence ? current : top, 
+        recommendations[0]
+      );
+      
+      if (topRecommendation) {
+        setSelectedNBA(topRecommendation.nba);
+        addNBA(topRecommendation.nba);
+      }
       
       // Add to agent memory
       addMemoryEntry({
@@ -112,25 +64,126 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
         type: 'nba_generated',
         accountId: account.id,
         accountName: account.name,
-        description: `Generated NBA: ${nba.title}`,
-        metadata: { nbaId: nba.id },
+        description: `Generated ${recommendations.length} AI-powered recommendations`,
+        metadata: { 
+          recommendationsCount: recommendations.length,
+          topConfidence: topRecommendation?.confidence,
+          topNBAId: topRecommendation?.nba.id
+        },
         outcome: 'success'
       });
       
+      toast.success(`Generated ${recommendations.length} smart recommendations for ${account.name}`);
+      
     } catch (error) {
-      console.error('Failed to generate NBA:', error);
+      console.error('Failed to generate smart NBAs:', error);
+      
+      // Fallback to basic recommendation
+      const fallbackNBA = generateFallbackNBA();
+      setSelectedNBA(fallbackNBA);
+      addNBA(fallbackNBA);
+      
       addMemoryEntry({
         id: `memory-${Date.now()}`,
         timestamp: new Date().toISOString(),
         type: 'nba_generated',
         accountId: account.id,
         accountName: account.name,
-        description: 'Failed to generate NBA due to AI service error',
-        outcome: 'failure'
+        description: 'Used fallback recommendation due to AI service unavailability',
+        metadata: { fallback: true },
+        outcome: 'success'
       });
+      
+      toast.warning('AI service unavailable - generated basic recommendation');
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const generateFallbackNBA = (): NextBestAction => {
+    const nbaTemplates = {
+      'Good': {
+        title: 'Expansion Opportunity Assessment',
+        description: 'Identify and pursue additional product upsells based on current usage patterns',
+        reasoning: 'Account shows high engagement and satisfaction metrics, making them ideal for expansion',
+        category: 'expansion' as const,
+        estimatedImpact: '+$45K ARR',
+        timeToComplete: '2-3 weeks'
+      },
+      'Watch': {
+        title: 'Proactive Health Check',
+        description: 'Schedule comprehensive account review to identify and address potential issues',
+        reasoning: 'Declining engagement metrics require immediate attention to prevent churn',
+        category: 'retention' as const,
+        estimatedImpact: 'Prevent $50K churn',
+        timeToComplete: '1 week'
+      },
+      'At Risk': {
+        title: 'Executive Intervention Required',
+        description: 'Escalate to executive team for immediate retention strategy implementation',
+        reasoning: 'Critical health score and contract renewal approaching - executive intervention needed',
+        category: 'retention' as const,
+        estimatedImpact: 'Save $320K ARR',
+        timeToComplete: 'Immediate'
+      }
+    };
+
+    const template = nbaTemplates[account.status];
+    
+    return {
+      id: `nba-fallback-${Date.now()}`,
+      accountId: account.id,
+      title: template.title,
+      description: template.description,
+      reasoning: template.reasoning,
+      priority: account.status === 'At Risk' ? 'critical' : account.status === 'Watch' ? 'high' : 'medium',
+      category: template.category,
+      estimatedImpact: template.estimatedImpact,
+      effort: 'medium',
+      suggestedActions: [template.title, template.description],
+      generatedAt: new Date().toISOString(),
+      timeToComplete: template.timeToComplete,
+      assignedTo: account.csm,
+      createdAt: new Date().toISOString()
+    };
+  };
+
+  const generateOrchestrationPlan = async (nba: NextBestAction) => {
+    if (!nba) return;
+    
+    setIsGeneratingPlan(true);
+    
+    try {
+      const context: RecommendationContext = {
+        account,
+        recentSignals: signals.filter(s => s.accountId === account.id).slice(0, 10),
+        historicalNBAs: nbas.filter(n => n.accountId === account.id).slice(0, 5),
+        agentMemory: memory.filter(m => m.accountId === account.id).slice(0, 10)
+      };
+
+      const plan = await azureOpenAI.generateOrchestrationPlan(nba, context);
+      setOrchestrationPlan(plan);
+      
+      toast.success('Generated orchestration plan');
+    } catch (error) {
+      console.error('Failed to generate orchestration plan:', error);
+      toast.error('Failed to generate orchestration plan');
+    } finally {
+      setIsGeneratingPlan(false);
+    }
+  };
+
+  const selectRecommendation = (recommendation: SmartRecommendation) => {
+    setSelectedNBA(recommendation.nba);
+    setOrchestrationPlan(null);
+    addNBA(recommendation.nba);
+  };
+
+  const handlePlanAndRun = () => {
+    if (!selectedNBA) return;
+    
+    generateOrchestrationPlan(selectedNBA);
+    onPlanAndRun(selectedNBA);
   };
 
   const getPriorityColor = (priority: NextBestAction['priority']) => {
@@ -142,16 +195,22 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
     }
   };
 
+  const getConfidenceColor = (confidence: number) => {
+    if (confidence >= 0.8) return 'text-green-600';
+    if (confidence >= 0.6) return 'text-yellow-600';
+    return 'text-red-600';
+  };
+
   return (
     <Card className="h-fit">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Brain className="w-5 h-5 text-accent" />
-            Next Best Action
+            AI-Powered Recommendations
           </div>
           <Button 
-            onClick={generateNBA}
+            onClick={generateSmartNBAs}
             disabled={isGenerating}
             size="sm"
             className="bg-accent hover:bg-accent/90"
@@ -163,18 +222,19 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
               </div>
             ) : (
               <>
-                <Brain className="w-4 h-4 mr-2" />
-                Generate NBA
+                <Sparkle className="w-4 h-4 mr-2" />
+                Generate Smart NBA
               </>
             )}
           </Button>
         </CardTitle>
       </CardHeader>
+      
       <CardContent className="space-y-4">
-        {!currentNBA && !isGenerating && (
+        {!currentRecommendations.length && !isGenerating && (
           <div className="text-center py-8 text-muted-foreground">
             <Brain className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
-            <p>Select an account and click "Generate NBA" to get AI-powered recommendations</p>
+            <p>Click "Generate Smart NBA" to get AI-powered recommendations tailored to this account</p>
           </div>
         )}
         
@@ -183,27 +243,72 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
             <div className="animate-pulse-ai">
               <Brain className="w-12 h-12 mx-auto mb-4 text-accent" />
             </div>
-            <p className="text-sm text-muted-foreground">AI is analyzing account data and generating recommendations...</p>
+            <p className="text-sm text-muted-foreground">AI is analyzing account data, signals, and history...</p>
+            <div className="mt-4 max-w-xs mx-auto">
+              <Progress value={33} className="h-2" />
+              <p className="text-xs text-muted-foreground mt-2">Processing with Azure OpenAI</p>
+            </div>
           </div>
         )}
 
-        {currentNBA && (
-          <div className="space-y-4">
+        {/* Recommendation Selection */}
+        {currentRecommendations.length > 0 && (
+          <div className="space-y-3">
+            <h4 className="font-medium text-sm">AI Recommendations ({currentRecommendations.length})</h4>
+            <div className="space-y-2">
+              {currentRecommendations.map((rec, index) => (
+                <div 
+                  key={rec.nba.id}
+                  className={`border rounded-lg p-3 cursor-pointer transition-colors ${
+                    selectedNBA?.id === rec.nba.id ? 'bg-accent/10 border-accent' : 'hover:bg-muted/50'
+                  }`}
+                  onClick={() => selectRecommendation(rec)}
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Badge className={getPriorityColor(rec.nba.priority)}>
+                        {rec.nba.priority}
+                      </Badge>
+                      <span className={`text-xs font-medium ${getConfidenceColor(rec.confidence)}`}>
+                        {Math.round(rec.confidence * 100)}% confidence
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <TrendUp className="w-3 h-3 text-green-500" />
+                      <span className="text-xs text-green-600">
+                        {Math.round(rec.successProbability * 100)}% success
+                      </span>
+                    </div>
+                  </div>
+                  <h5 className="font-medium text-sm mb-1">{rec.nba.title}</h5>
+                  <p className="text-xs text-muted-foreground">{rec.rationale}</p>
+                  {rec.riskFactors.length > 0 && (
+                    <div className="mt-2 text-xs text-orange-600">
+                      <strong>Risks:</strong> {rec.riskFactors.join(', ')}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Selected NBA Details */}
+        {selectedNBA && (
+          <div className="space-y-4 border-t pt-4">
             <div className="flex items-start justify-between">
-              <h3 className="font-semibold text-lg">{currentNBA.title}</h3>
-              <Badge className={getPriorityColor(currentNBA.priority)}>
-                {currentNBA.priority}
+              <h3 className="font-semibold text-lg">{selectedNBA.title}</h3>
+              <Badge className={getPriorityColor(selectedNBA.priority)}>
+                {selectedNBA.priority}
               </Badge>
             </div>
             
-            <p className="text-sm text-muted-foreground">{currentNBA.description}</p>
-            
-            <Separator />
+            <p className="text-sm text-muted-foreground">{selectedNBA.description}</p>
             
             <div className="space-y-3">
               <div>
                 <h4 className="font-medium text-sm mb-1">AI Reasoning</h4>
-                <p className="text-sm text-muted-foreground">{currentNBA.reasoning}</p>
+                <p className="text-sm text-muted-foreground">{selectedNBA.reasoning}</p>
               </div>
               
               <div className="grid grid-cols-2 gap-4 text-sm">
@@ -212,7 +317,7 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
                     <Target className="w-4 h-4 text-accent" />
                     <span className="font-medium">Estimated Impact</span>
                   </div>
-                  <p className="text-muted-foreground">{currentNBA.estimatedImpact}</p>
+                  <p className="text-muted-foreground">{selectedNBA.estimatedImpact}</p>
                 </div>
                 
                 <div>
@@ -220,20 +325,48 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
                     <Clock className="w-4 h-4 text-accent" />
                     <span className="font-medium">Time to Complete</span>
                   </div>
-                  <p className="text-muted-foreground">{currentNBA.timeToComplete}</p>
+                  <p className="text-muted-foreground">{selectedNBA.timeToComplete}</p>
                 </div>
               </div>
             </div>
             
-            <Separator />
+            {/* Orchestration Plan Preview */}
+            {orchestrationPlan && (
+              <div className="bg-muted/50 rounded-lg p-3 space-y-2">
+                <h4 className="font-medium text-sm">Orchestration Plan</h4>
+                <p className="text-xs text-muted-foreground">Timeline: {orchestrationPlan.timeline}</p>
+                <div className="space-y-1">
+                  {orchestrationPlan.steps?.slice(0, 3).map((step: any, index: number) => (
+                    <div key={step.id} className="text-xs">
+                      <span className="font-medium">{index + 1}.</span> {step.title}
+                    </div>
+                  ))}
+                  {orchestrationPlan.steps?.length > 3 && (
+                    <p className="text-xs text-muted-foreground">
+                      +{orchestrationPlan.steps.length - 3} more steps
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
             
             <Button 
-              onClick={() => onPlanAndRun(currentNBA)}
+              onClick={handlePlanAndRun}
               className="w-full"
               size="lg"
+              disabled={isGeneratingPlan}
             >
-              <Play className="w-4 h-4 mr-2" />
-              Plan & Run
+              {isGeneratingPlan ? (
+                <div className="flex items-center gap-2">
+                  <Brain className="w-4 h-4 animate-pulse-ai" />
+                  Generating Plan...
+                </div>
+              ) : (
+                <>
+                  <Play className="w-4 h-4 mr-2" />
+                  Plan & Run
+                </>
+              )}
             </Button>
           </div>
         )}

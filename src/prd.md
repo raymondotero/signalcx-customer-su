@@ -2,52 +2,78 @@
 
 ## Core Purpose & Success
 
-**Mission Statement**: SignalCX is an intelligent AI-powered platform that automatically monitors customer signals, generates contextual recommendations, and orchestrates approval workflows to maximize customer success outcomes.
+**Mission Statement**: SignalCX is an intelligent AI-powered platform that automatically monitors customer signals, generates contextual recommendations using Azure OpenAI, and orchestrates approval workflows to maximize customer success outcomes through real-time intelligence.
 
 **Success Indicators**: 
-- Real-time signal processing and automated AI recommendations
-- Streamlined approval workflows with adaptive cards
-- Comprehensive agent memory for decision tracking
+- Real-time signal processing with Azure OpenAI analysis
+- Intelligent NBA generation with confidence scoring and rationale
+- Smart orchestration plans with step-by-step execution guidance
+- Automated approval workflows with adaptive cards
+- Comprehensive agent memory for decision tracking and learning
 - Seamless CSV data ingestion and account management
+- AI performance metrics and approval rate tracking
 
-**Experience Qualities**: Professional, Intelligent, Responsive
+**Experience Qualities**: Professional, Intelligent, Responsive, Predictive
 
 ## Project Classification & Approach
 
-**Complexity Level**: Complex Application (advanced functionality, AI integration, real-time processing)
+**Complexity Level**: Complex Application (advanced AI functionality, real-time processing, Azure OpenAI integration)
 
-**Primary User Activity**: Acting and Interacting (CSMs managing accounts, approving recommendations, monitoring signals)
+**Primary User Activity**: Acting and Interacting (CSMs managing accounts, approving AI recommendations, monitoring real-time intelligence)
 
 ## Core Problem Analysis
 
 Customer Success teams struggle with:
 - Manual monitoring of customer health signals
 - Reactive rather than proactive customer interventions  
-- Lack of centralized decision tracking and memory
+- Lack of intelligent analysis of signal patterns and context
+- Generic recommendations that don't account for account history
 - Time-consuming approval processes for customer actions
+- No centralized decision tracking and AI learning
 
-SignalCX solves this by providing an AI-powered system that automatically processes signals, generates smart recommendations, and streamlines approval workflows.
+SignalCX solves this by providing an Azure OpenAI-powered system that:
+- Automatically processes signals with intelligent analysis
+- Generates contextual smart recommendations based on account history
+- Creates detailed orchestration plans for execution
+- Provides conversational AI assistance for account insights
+- Streamlines approval workflows with confidence-based automation
 
 ## Essential Features
 
-### Live Signal Streaming
-- **Functionality**: Real-time ingestion and display of customer signals from various sources
-- **Purpose**: Provide immediate visibility into account health changes
-- **Success Criteria**: Signals appear in real-time with proper categorization and severity indicators
+### Real-Time AI Signal Processor
+- **Functionality**: Automatic processing of incoming signals with Azure OpenAI analysis
+- **Purpose**: Transform raw signals into actionable insights, risk alerts, and urgent actions
+- **Success Criteria**: Signals processed in real-time with AI-generated insights, risk assessments, and confidence scoring
 
-### AI-Powered Recommendations
-- **Functionality**: Automatic analysis of signals to generate Next Best Actions (NBAs)
-- **Purpose**: Transform raw signals into actionable recommendations with reasoning
-- **Success Criteria**: Relevant recommendations generated automatically with clear reasoning and priority
+### Smart NBA Generation (Azure OpenAI)
+- **Functionality**: Context-aware Next Best Action generation using account history, signals, and AI reasoning
+- **Purpose**: Provide highly relevant, data-driven recommendations with confidence scoring
+- **Success Criteria**: Multiple NBA options with confidence levels, success probability, and risk factors
 
-### Approval Workflows
-- **Functionality**: Adaptive card-style approval interface for high-impact recommendations
-- **Purpose**: Ensure proper governance while maintaining speed of execution
-- **Success Criteria**: Clear approval/rejection flow with automatic logging to agent memory
+### AI Orchestration Planning
+- **Functionality**: Detailed step-by-step execution plans for approved recommendations
+- **Purpose**: Guide CSMs through optimal execution of complex customer success workflows
+- **Success Criteria**: Clear timelines, dependencies, risk mitigation strategies, and success metrics
 
-### Agent Memory System
-- **Functionality**: Persistent logging of all AI decisions, approvals, and outcomes
-- **Purpose**: Provide transparency and learning for the AI system
+### Conversational AI Assistant
+- **Functionality**: Natural language interface for account-specific questions and insights
+- **Purpose**: Provide instant access to AI-powered analysis and recommendations
+- **Success Criteria**: Contextual responses leveraging account data, signals, and historical patterns
+
+### Intelligent Approval Workflows
+- **Functionality**: Confidence-based auto-approval with manual override for critical actions
+- **Purpose**: Balance automation with governance based on AI confidence and risk assessment
+- **Success Criteria**: Appropriate auto-approval rates with clear escalation paths
+
+### Real-Time AI Metrics
+- **Functionality**: Live tracking of AI performance, approval rates, and processing times
+- **Purpose**: Monitor and optimize AI system performance and user adoption
+- **Success Criteria**: Clear visibility into AI effectiveness and recommendation quality
+
+### Enhanced Agent Memory
+- **Functionality**: Comprehensive logging of AI decisions, reasoning, and outcomes for learning
+- **Purpose**: Enable continuous improvement and provide full audit trail
+- **Success Criteria**: Complete decision history with AI rationale and outcome tracking
 - **Success Criteria**: Complete audit trail of all system actions and decisions
 
 ### Account Management

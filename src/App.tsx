@@ -12,9 +12,11 @@ import { AgentMemory } from '@/components/AgentMemory';
 import { AdaptiveCardPreview } from '@/components/AdaptiveCardPreview';
 import { CSVUpload } from '@/components/CSVUpload';
 import { AIRecommendationEngine } from '@/components/AIRecommendationEngine';
+import { RealTimeSignalProcessor } from '@/components/RealTimeSignalProcessor';
 import { useAccounts, useNBAs, useAgentMemory } from '@/hooks/useData';
 import { useSignalProcessor } from '@/hooks/useSignalProcessor';
 import { useRealtimeNotifications } from '@/hooks/useRealtimeNotifications';
+import { useRealTimeAI, useAIMetrics } from '@/hooks/useRealTimeAI';
 import { Account, NextBestAction } from '@/types';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
@@ -26,6 +28,8 @@ function App() {
   const { setNBAs } = useNBAs();
   const { clearMemory, addMemoryEntry } = useAgentMemory();
   const { isProcessing } = useSignalProcessor();
+  const realTimeAI = useRealTimeAI();
+  const aiMetrics = useAIMetrics();
   
   // Enable real-time notifications
   useRealtimeNotifications();
@@ -72,8 +76,12 @@ function App() {
         outcome: 'success'
       });
       
+      // Update AI metrics
+      aiMetrics.updateMetrics({ approved: true, recommendation: true });
+      
       toast.success('Workflow approved and executed successfully');
     } else {
+      aiMetrics.updateMetrics({ approved: false, recommendation: true });
       toast.info('Workflow rejected - no action will be taken');
     }
     
@@ -86,11 +94,24 @@ function App() {
     clearMemory();
     setSelectedAccount(null);
     setSelectedNBA(null);
+    realTimeAI.clearQueue();
+    realTimeAI.clearResults();
+    aiMetrics.resetMetrics();
     toast.success('Demo data reset successfully');
   };
 
   const handleHealthCheck = () => {
-    toast.success('All systems operational ✓');
+    const systemStatus = {
+      aiProcessing: !realTimeAI.isProcessing ? 'Healthy' : 'Processing',
+      queueSize: realTimeAI.queueSize,
+      approvalRate: Math.round(aiMetrics.getApprovalRate()),
+      avgProcessingTime: Math.round(aiMetrics.getAverageProcessingTime())
+    };
+    
+    toast.success('All systems operational ✓', {
+      description: `AI: ${systemStatus.aiProcessing} | Queue: ${systemStatus.queueSize} | Approval: ${systemStatus.approvalRate}%`
+    });
+    
     addMemoryEntry({
       id: `memory-${Date.now()}`,
       timestamp: new Date().toISOString(),
@@ -99,7 +120,11 @@ function App() {
       metadata: { 
         status: 'healthy',
         accountsCount: accounts.length,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        aiProcessing: systemStatus.aiProcessing,
+        queueSize: systemStatus.queueSize,
+        approvalRate: systemStatus.approvalRate,
+        avgProcessingTime: systemStatus.avgProcessingTime
       },
       outcome: 'success'
     });
@@ -131,8 +156,13 @@ function App() {
               <div>
                 <h1 className="text-2xl font-bold flex items-center gap-2">
                   SignalCX
-                  {isProcessing && (
+                  {(isProcessing || realTimeAI.isProcessing) && (
                     <Brain className="w-5 h-5 text-accent animate-pulse-ai" />
+                  )}
+                  {realTimeAI.queueSize > 0 && (
+                    <Badge variant="outline" className="animate-pulse">
+                      AI Queue: {realTimeAI.queueSize}
+                    </Badge>
                   )}
                 </h1>
                 <p className="text-sm text-muted-foreground">Agentic AI Platform for Customer Success</p>
@@ -140,6 +170,12 @@ function App() {
             </div>
             
             <div className="flex items-center gap-2">
+              {/* AI Metrics */}
+              <div className="text-right text-xs text-muted-foreground mr-2">
+                <div>AI Approval: {Math.round(aiMetrics.getApprovalRate())}%</div>
+                <div>Avg Processing: {Math.round(aiMetrics.getAverageProcessingTime())}ms</div>
+              </div>
+              
               <CSVUpload />
               <Button 
                 variant="outline" 
@@ -276,20 +312,25 @@ function App() {
             )}
           </div>
 
-          {/* Right Column - Signals & Memory */}
+          {/* Right Column - AI Systems */}
           <div className="space-y-6">
-            <Tabs defaultValue="signals" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+            <Tabs defaultValue="ai-processor" className="w-full">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="ai-processor">AI Processor</TabsTrigger>
                 <TabsTrigger value="signals">Live Signals</TabsTrigger>
-                <TabsTrigger value="ai-rec">AI Recommendations</TabsTrigger>
-                <TabsTrigger value="memory">Agent Memory</TabsTrigger>
+                <TabsTrigger value="ai-engine">AI Engine</TabsTrigger>
+                <TabsTrigger value="memory">Memory</TabsTrigger>
               </TabsList>
+              
+              <TabsContent value="ai-processor" className="mt-4">
+                <RealTimeSignalProcessor />
+              </TabsContent>
               
               <TabsContent value="signals" className="mt-4">
                 <LiveSignals />
               </TabsContent>
               
-              <TabsContent value="ai-rec" className="mt-4">
+              <TabsContent value="ai-engine" className="mt-4">
                 <AIRecommendationEngine />
               </TabsContent>
               
