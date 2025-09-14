@@ -4,10 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Play, Pause, Pulse, Warning, Info, WarningCircle, Brain } from '@phosphor-icons/react';
+import { Play, Pause, Pulse, Warning, Info, WarningCircle, Brain, TrendUp, TrendDown, Minus } from '@phosphor-icons/react';
 import { Signal } from '@/types';
 import { useSignals, useAccounts } from '@/hooks/useData';
 import { useSignalProcessor } from '@/hooks/useSignalProcessor';
+import { generateBusinessValueSignal } from '@/services/signalCatalog';
 
 export function LiveSignals() {
   const [isStreaming, setIsStreaming] = useState(true);
@@ -22,6 +23,12 @@ export function LiveSignals() {
       const account = accounts[Math.floor(Math.random() * accounts.length)];
       if (!account) return null as any;
 
+      // 70% chance for business value signals, 30% for legacy signals
+      if (Math.random() < 0.7) {
+        return generateBusinessValueSignal(account.id, account.name);
+      }
+
+      // Legacy signal types for compatibility
       const signalTypes = [
         {
           type: 'usage' as const,
@@ -106,13 +113,27 @@ export function LiveSignals() {
 
   const getTypeColor = (type: Signal['type']) => {
     switch (type) {
-      case 'usage': return 'bg-purple-100 text-purple-800 border-purple-200';
+      case 'cost': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
+      case 'agility': return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'data': return 'bg-purple-100 text-purple-800 border-purple-200';
+      case 'risk': return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'culture': return 'bg-pink-100 text-pink-800 border-pink-200';
+      case 'usage': return 'bg-indigo-100 text-indigo-800 border-indigo-200';
       case 'engagement': return 'bg-green-100 text-green-800 border-green-200';
       case 'support': return 'bg-red-100 text-red-800 border-red-200';
       case 'financial': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'feature_request': return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'churn_risk': return 'bg-red-100 text-red-800 border-red-200';
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const getTrendIcon = (trend?: Signal['trend']) => {
+    if (!trend) return null;
+    switch (trend) {
+      case 'improving': return <TrendUp className="w-3 h-3 text-green-500" />;
+      case 'declining': return <TrendDown className="w-3 h-3 text-red-500" />;
+      case 'stable': return <Minus className="w-3 h-3 text-gray-500" />;
     }
   };
 
@@ -168,18 +189,37 @@ export function LiveSignals() {
                     <div className="flex items-center gap-2">
                       {getSeverityIcon(signal.severity)}
                       <span className="font-medium text-sm">{signal.accountName}</span>
+                      {signal.signalName && (
+                        <Badge variant="outline" className="text-xs">
+                          {signal.signalName}
+                        </Badge>
+                      )}
                     </div>
                     <div className="flex items-center gap-2">
+                      {getTrendIcon(signal.trend)}
                       <Badge className={getSeverityColor(signal.severity)}>
                         {signal.severity}
                       </Badge>
                       <Badge className={getTypeColor(signal.type)}>
-                        {signal.type}
+                        {signal.category || signal.type}
                       </Badge>
                     </div>
                   </div>
                   
                   <p className="text-sm text-muted-foreground mb-2">{signal.description}</p>
+                  
+                  {signal.value !== undefined && (
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground mb-2">
+                      <span>
+                        Current: <span className="font-medium">{signal.value.toFixed(1)}{signal.unit}</span>
+                      </span>
+                      {signal.target !== undefined && (
+                        <span>
+                          Target: <span className="font-medium">{signal.target.toFixed(1)}{signal.unit}</span>
+                        </span>
+                      )}
+                    </div>
+                  )}
                   
                   <div className="flex justify-between items-center text-xs text-muted-foreground">
                     <span>Account ID: {signal.accountId}</span>

@@ -15,10 +15,16 @@ export interface Signal {
   id: string;
   accountId: string;
   accountName: string;
-  type: 'usage' | 'engagement' | 'support' | 'billing' | 'feature';
+  type: 'cost' | 'agility' | 'data' | 'risk' | 'culture' | 'usage' | 'engagement' | 'support' | 'billing' | 'feature';
+  signalName: string;
   description: string;
+  value: number;
+  unit?: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
   timestamp: string;
+  category: 'cost' | 'agility' | 'data' | 'risk' | 'culture';
+  trend?: 'improving' | 'stable' | 'declining';
+  target?: number;
   metadata?: Record<string, any>;
 }
 

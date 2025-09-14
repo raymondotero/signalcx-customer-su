@@ -13,6 +13,7 @@ import { AdaptiveCardPreview } from '@/components/AdaptiveCardPreview';
 import { CSVUpload } from '@/components/CSVUpload';
 import { AIRecommendationEngine } from '@/components/AIRecommendationEngine';
 import { RealTimeSignalProcessor } from '@/components/RealTimeSignalProcessor';
+import { BusinessValueDashboard } from '@/components/BusinessValueDashboard';
 import { useAccounts, useNBAs, useAgentMemory } from '@/hooks/useData';
 import { useSignalProcessor } from '@/hooks/useSignalProcessor';
 import { useRealtimeNotifications } from '@/hooks/useRealtimeNotifications';
@@ -314,13 +315,18 @@ function App() {
 
           {/* Right Column - AI Systems */}
           <div className="space-y-6">
-            <Tabs defaultValue="ai-processor" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+            <Tabs defaultValue="business-value" className="w-full">
+              <TabsList className="grid w-full grid-cols-5">
+                <TabsTrigger value="business-value">Business Value</TabsTrigger>
                 <TabsTrigger value="ai-processor">AI Processor</TabsTrigger>
                 <TabsTrigger value="signals">Live Signals</TabsTrigger>
                 <TabsTrigger value="ai-engine">AI Engine</TabsTrigger>
                 <TabsTrigger value="memory">Memory</TabsTrigger>
               </TabsList>
+              
+              <TabsContent value="business-value" className="mt-4">
+                <BusinessValueDashboard />
+              </TabsContent>
               
               <TabsContent value="ai-processor" className="mt-4">
                 <RealTimeSignalProcessor />

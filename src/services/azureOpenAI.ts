@@ -142,7 +142,7 @@ export class AzureOpenAIService {
   }
 
   private buildRecommendationPrompt(context: RecommendationContext): string {
-    return (window as any).spark.llmPrompt`You are an expert Customer Success AI analyzing account health and generating Next Best Actions.
+    return (window as any).spark.llmPrompt`You are an expert Customer Success AI analyzing account health and generating Next Best Actions based on comprehensive business value signals.
 
 Account Profile:
 - Name: ${context.account.name}
@@ -157,13 +157,20 @@ Account Profile:
 Recent Signals (last 7 days):
 ${JSON.stringify(context.recentSignals, null, 2)}
 
+Signal Categories Analysis:
+- COST signals: Focus on cloud spend optimization, resource utilization, financial efficiency
+- AGILITY signals: Development velocity, deployment automation, operational agility
+- DATA signals: Usage patterns, feature adoption, data quality, customer engagement
+- RISK signals: Security posture, compliance status, operational risks
+- CULTURE signals: Training engagement, stakeholder alignment, change readiness
+
 Historical NBA Performance:
 ${JSON.stringify(context.historicalNBAs.slice(0, 3), null, 2)}
 
 Agent Memory (recent actions):
 ${JSON.stringify(context.agentMemory.slice(0, 5), null, 2)}
 
-Generate 2-3 intelligent Next Best Action recommendations. Each should be highly contextual, data-driven, and actionable.
+Generate 2-3 intelligent Next Best Action recommendations that leverage business value signals. Each should be highly contextual, data-driven, and focus on measurable business outcomes. Consider cross-category signal correlations.
 
 Return a JSON object with this exact structure:
 {
@@ -172,20 +179,20 @@ Return a JSON object with this exact structure:
       "nba": {
         "id": "nba_${Date.now()}_1",
         "accountId": "${context.account.id}",
-        "title": "Specific, actionable title",
-        "description": "Detailed description with context",
+        "title": "Specific, actionable title focused on business value",
+        "description": "Detailed description with context from business value signals",
         "priority": "high|medium|low|critical",
-        "category": "engagement|retention|expansion|support|onboarding",
-        "estimatedImpact": "Specific measurable impact",
+        "category": "engagement|retention|expansion|support|onboarding|cost_optimization|risk_mitigation",
+        "estimatedImpact": "Specific measurable business impact (ARR, efficiency, risk reduction)",
         "effort": "low|medium|high",
         "suggestedActions": ["Action 1", "Action 2", "Action 3"],
-        "reasoning": "Data-driven reasoning with signal references",
+        "reasoning": "Data-driven reasoning referencing specific business value signals",
         "generatedAt": "${new Date().toISOString()}",
         "timeToComplete": "Estimated timeline",
         "assignedTo": "Suggested owner"
       },
       "confidence": 0.85,
-      "rationale": "Why this recommendation is high confidence",
+      "rationale": "Why this recommendation is high confidence based on signal patterns",
       "supportingSignals": ["signal_id_1", "signal_id_2"],
       "riskFactors": ["Potential risk 1", "Potential risk 2"],
       "successProbability": 0.78
@@ -203,15 +210,23 @@ ${JSON.stringify(signals.slice(0, 10), null, 2)}
 Account Context:
 ${JSON.stringify(accounts.slice(0, 5), null, 2)}
 
+Signal Categories:
+- COST: Cloud spend, resource utilization, financial optimization signals
+- AGILITY: Development velocity, deployment metrics, operational efficiency
+- DATA: Usage analytics, feature adoption, customer engagement metrics  
+- RISK: Security, compliance, availability, and operational risks
+- CULTURE: Training, adoption, stakeholder engagement, change readiness
+
 Analyze these signals for:
-1. Immediate insights and patterns
-2. Urgent actions needed within 24 hours
-3. Risk alerts requiring immediate attention
+1. Immediate insights and patterns across business value dimensions
+2. Urgent actions needed within 24 hours based on signal severity and trends
+3. Risk alerts requiring immediate attention from cost, security, or operational perspectives
+4. Correlation between different signal types that might indicate larger trends
 
 Return a JSON object with this structure:
 {
   "insights": [
-    "Pattern or insight from signal analysis"
+    "Pattern or insight from signal analysis, especially cross-category correlations"
   ],
   "urgentActions": [
     {
@@ -220,20 +235,21 @@ Return a JSON object with this structure:
       "title": "Urgent action title",
       "description": "What needs to be done immediately",
       "priority": "critical",
-      "category": "support|retention|engagement",
+      "category": "support|retention|engagement|cost_optimization|risk_mitigation",
       "estimatedImpact": "Immediate impact if completed",
       "effort": "low|medium|high",
       "suggestedActions": ["Immediate step 1", "Immediate step 2"],
-      "reasoning": "Why this is urgent based on signals",
+      "reasoning": "Why this is urgent based on signals and business value impact",
       "generatedAt": "${new Date().toISOString()}",
       "timeToComplete": "Within 24 hours"
     }
   ],
   "riskAlerts": [
     {
-      "accountId": "account_id",
-      "risk": "Specific risk description",
-      "severity": "medium|high|critical"
+      "accountId": "account_id", 
+      "risk": "Specific risk description with business value context",
+      "severity": "medium|high|critical",
+      "category": "cost|agility|data|risk|culture"
     }
   ]
 }`;

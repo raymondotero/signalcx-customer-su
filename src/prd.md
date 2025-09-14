@@ -2,18 +2,18 @@
 
 ## Core Purpose & Success
 
-**Mission Statement**: SignalCX is an intelligent AI-powered platform that automatically monitors customer signals, generates contextual recommendations using Azure OpenAI, and orchestrates approval workflows to maximize customer success outcomes through real-time intelligence.
+**Mission Statement**: SignalCX is an intelligent AI-powered platform that automatically monitors comprehensive business value signals across Cost, Agility, Data, Risk, and Culture dimensions, generates contextual recommendations using Azure OpenAI, and orchestrates approval workflows to maximize customer success outcomes through real-time intelligence.
 
 **Success Indicators**: 
-- Real-time signal processing with Azure OpenAI analysis
-- Intelligent NBA generation with confidence scoring and rationale
-- Smart orchestration plans with step-by-step execution guidance
-- Automated approval workflows with adaptive cards
-- Comprehensive agent memory for decision tracking and learning
-- Seamless CSV data ingestion and account management
-- AI performance metrics and approval rate tracking
+- Real-time processing of business value signals (Cost, Agility, Data, Risk, Culture) with Azure OpenAI analysis
+- Intelligent NBA generation with confidence scoring, business impact assessment, and signal correlation analysis
+- Smart orchestration plans with step-by-step execution guidance leveraging business metrics
+- Automated approval workflows with adaptive cards and trend analysis
+- Comprehensive agent memory for decision tracking and learning from business value signals
+- Seamless CSV data ingestion and account management with signal categorization
+- AI performance metrics, approval rate tracking, and business value impact measurement
 
-**Experience Qualities**: Professional, Intelligent, Responsive, Predictive
+**Experience Qualities**: Professional, Intelligent, Data-Driven, Business-Value-Focused
 
 ## Project Classification & Approach
 
@@ -24,30 +24,40 @@
 ## Core Problem Analysis
 
 Customer Success teams struggle with:
-- Manual monitoring of customer health signals
-- Reactive rather than proactive customer interventions  
-- Lack of intelligent analysis of signal patterns and context
-- Generic recommendations that don't account for account history
-- Time-consuming approval processes for customer actions
-- No centralized decision tracking and AI learning
+- Manual monitoring of fragmented customer health signals across multiple business dimensions
+- Reactive rather than proactive customer interventions based on incomplete signal visibility
+- Lack of intelligent analysis connecting cost optimization, operational agility, data insights, risk management, and cultural adoption signals
+- Generic recommendations that don't account for comprehensive business value context and account history
+- Time-consuming approval processes for customer actions without business impact visibility
+- No centralized decision tracking and AI learning from business value signal patterns
 
 SignalCX solves this by providing an Azure OpenAI-powered system that:
-- Automatically processes signals with intelligent analysis
-- Generates contextual smart recommendations based on account history
-- Creates detailed orchestration plans for execution
-- Provides conversational AI assistance for account insights
-- Streamlines approval workflows with confidence-based automation
+- Automatically processes comprehensive business value signals (Cost, Agility, Data, Risk, Culture) with intelligent cross-category analysis
+- Generates contextual smart recommendations based on holistic business health and account history
+- Creates detailed orchestration plans leveraging business value metrics for execution guidance
+- Provides conversational AI assistance incorporating multi-dimensional business insights
+- Streamlines approval workflows with confidence-based automation and business impact assessment
 
 ## Essential Features
 
+### Comprehensive Business Value Signal Monitoring
+- **Functionality**: Real-time ingestion and processing of 200+ business value signals across five key dimensions:
+  - **Cost Signals**: Cloud spend variance, resource utilization, license optimization, FinOps metrics
+  - **Agility Signals**: Development velocity, deployment automation, feature cycle time, operational efficiency
+  - **Data Signals**: Usage patterns, feature adoption, data quality, customer engagement analytics
+  - **Risk Signals**: Security vulnerabilities, compliance status, operational risks, availability metrics
+  - **Culture Signals**: Training engagement, stakeholder alignment, change readiness, adoption committee activity
+- **Purpose**: Provide 360-degree visibility into customer business health across all value dimensions
+- **Success Criteria**: Signals categorized, correlated, and presented with trend analysis and target comparisons
+
 ### Real-Time AI Signal Processor
-- **Functionality**: Automatic processing of incoming signals with Azure OpenAI analysis
-- **Purpose**: Transform raw signals into actionable insights, risk alerts, and urgent actions
-- **Success Criteria**: Signals processed in real-time with AI-generated insights, risk assessments, and confidence scoring
+- **Functionality**: Automatic processing of incoming business value signals with Azure OpenAI analysis for cross-category insights
+- **Purpose**: Transform raw business metrics into actionable insights, identifying patterns between cost optimization, operational risks, and adoption trends
+- **Success Criteria**: Signals processed in real-time with AI-generated insights, business impact assessments, and confidence scoring
 
 ### Smart NBA Generation (Azure OpenAI)
-- **Functionality**: Context-aware Next Best Action generation using account history, signals, and AI reasoning
-- **Purpose**: Provide highly relevant, data-driven recommendations with confidence scoring
+- **Functionality**: Context-aware Next Best Action generation using comprehensive business value context, account history, signal correlations, and AI reasoning
+- **Purpose**: Provide highly relevant, data-driven recommendations that optimize for business value across all dimensions
 - **Success Criteria**: Multiple NBA options with confidence levels, success probability, and risk factors
 
 ### AI Orchestration Planning

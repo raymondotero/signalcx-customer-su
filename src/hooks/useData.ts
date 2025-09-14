@@ -1,5 +1,7 @@
 import { useKV } from '@github/spark/hooks';
 import { Account, NextBestAction, Signal, MemoryEntry } from '@/types';
+import { generateBusinessValueSignal } from '@/services/signalCatalog';
+import { useEffect } from 'react';
 
 // Sample seed data
 const sampleAccounts: Account[] = [
@@ -67,6 +69,30 @@ const sampleAccounts: Account[] = [
 
 export function useAccounts() {
   const [accounts, setAccounts] = useKV<Account[]>('signalcx-accounts', sampleAccounts);
+  const [initialized, setInitialized] = useKV<boolean>('signalcx-initialized', false);
+  
+  // Initialize with seed business value signals
+  useEffect(() => {
+    if (!initialized && accounts && accounts.length > 0) {
+      // Generate some initial business value signals for demo
+      const initialSignals: Signal[] = [];
+      
+      accounts.forEach(account => {
+        // Generate 2-3 business value signals per account
+        for (let i = 0; i < 3; i++) {
+          initialSignals.push(generateBusinessValueSignal(account.id, account.name));
+        }
+      });
+      
+      // Add signals to storage
+      const signalsData = JSON.parse(localStorage.getItem('signalcx-signals') || '[]');
+      if (signalsData.length === 0) {
+        localStorage.setItem('signalcx-signals', JSON.stringify(initialSignals));
+      }
+      
+      setInitialized(true);
+    }
+  }, [accounts, initialized, setInitialized]);
   
   const addAccount = (account: Account) => {
     setAccounts(currentAccounts => [...(currentAccounts || []), account]);

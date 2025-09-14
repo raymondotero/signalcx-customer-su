@@ -16,9 +16,15 @@ export interface Signal {
   timestamp: string;
   accountId: string;
   accountName: string;
-  type: 'engagement' | 'usage' | 'support' | 'financial' | 'feature_request' | 'churn_risk' | 'billing' | 'feature';
+  type: 'engagement' | 'usage' | 'support' | 'financial' | 'feature_request' | 'churn_risk' | 'billing' | 'feature' | 'cost' | 'agility' | 'data' | 'risk' | 'culture';
+  signalName?: string;
   description: string;
+  value?: number;
+  unit?: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
+  category?: 'cost' | 'agility' | 'data' | 'risk' | 'culture';
+  trend?: 'improving' | 'stable' | 'declining';
+  target?: number;
   metadata?: Record<string, any>;
 }
 

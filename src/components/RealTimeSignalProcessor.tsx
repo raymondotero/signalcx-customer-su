@@ -154,11 +154,16 @@ export function RealTimeSignalProcessor() {
 
   const getTypeIcon = (type: Signal['type']) => {
     switch (type) {
+      case 'cost': return <Activity className="w-4 h-4 text-emerald-500" />;
+      case 'agility': return <Activity className="w-4 h-4 text-blue-500" />;
+      case 'data': return <Activity className="w-4 h-4 text-purple-500" />;
+      case 'risk': return <Warning className="w-4 h-4 text-orange-500" />;
+      case 'culture': return <Activity className="w-4 h-4 text-pink-500" />;
       case 'churn_risk': return <Warning className="w-4 h-4 text-red-500" />;
       case 'support': return <Activity className="w-4 h-4 text-blue-500" />;
       case 'financial': return <Activity className="w-4 h-4 text-green-500" />;
-      case 'usage': return <Activity className="w-4 h-4 text-purple-500" />;
-      case 'engagement': return <Activity className="w-4 h-4 text-indigo-500" />;
+      case 'usage': return <Activity className="w-4 h-4 text-indigo-500" />;
+      case 'engagement': return <Activity className="w-4 h-4 text-green-500" />;
       default: return <Activity className="w-4 h-4 text-gray-500" />;
     }
   };
@@ -220,6 +225,11 @@ export function RealTimeSignalProcessor() {
                       <div className="flex items-center gap-2">
                         {getTypeIcon(signal.type)}
                         <span className="font-medium text-sm">{signal.accountName}</span>
+                        {signal.signalName && (
+                          <Badge variant="outline" className="text-xs">
+                            {signal.signalName}
+                          </Badge>
+                        )}
                         <Badge className={getSeverityColor(signal.severity)}>
                           {signal.severity}
                         </Badge>
@@ -235,6 +245,18 @@ export function RealTimeSignalProcessor() {
                       </Button>
                     </div>
                     <p className="text-sm text-muted-foreground mt-1">{signal.description}</p>
+                    {signal.value !== undefined && (
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground mt-1">
+                        <span>
+                          Value: <span className="font-medium">{signal.value.toFixed(1)}{signal.unit}</span>
+                        </span>
+                        {signal.target !== undefined && (
+                          <span>
+                            Target: <span className="font-medium">{signal.target.toFixed(1)}{signal.unit}</span>
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
                 {unprocessedSignals.length > 5 && (
@@ -263,6 +285,11 @@ export function RealTimeSignalProcessor() {
                       <div className="flex items-center gap-2">
                         {getTypeIcon(processed.signal.type)}
                         <span className="font-medium text-sm">{processed.signal.accountName}</span>
+                        {processed.signal.signalName && (
+                          <Badge variant="outline" className="text-xs">
+                            {processed.signal.signalName}
+                          </Badge>
+                        )}
                         <Badge className={getSeverityColor(processed.signal.severity)}>
                           {processed.signal.severity}
                         </Badge>
@@ -279,6 +306,19 @@ export function RealTimeSignalProcessor() {
                     </div>
                     
                     <p className="text-sm text-muted-foreground mt-1">{processed.signal.description}</p>
+                    
+                    {processed.signal.value !== undefined && (
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground mt-1">
+                        <span>
+                          Value: <span className="font-medium">{processed.signal.value.toFixed(1)}{processed.signal.unit}</span>
+                        </span>
+                        {processed.signal.target !== undefined && (
+                          <span>
+                            Target: <span className="font-medium">{processed.signal.target.toFixed(1)}{processed.signal.unit}</span>
+                          </span>
+                        )}
+                      </div>
+                    )}
                     
                     {processed.aiAnalysis && (
                       <div className="mt-2 space-y-1">
