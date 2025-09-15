@@ -209,7 +209,7 @@ export function BusinessValueDashboard() {
   const targetCompliance = totalTargets > 0 ? Math.round((totalOnTrack / totalTargets) * 100) : 0;
 
   return (
-    <Card className="h-[600px] flex flex-col border-visible">
+    <Card className="h-[800px] flex flex-col border-visible">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Database className="w-5 h-5 text-primary" />
