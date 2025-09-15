@@ -12,7 +12,8 @@ const sampleAccounts: Account[] = [
     arr: 250000,
     healthScore: 85,
     status: 'Good',
-    csm: 'Sarah Chen',
+    csam: 'Sarah Chen',
+    ae: 'Michael Thompson',
     contractEnd: '2024-12-31',
     lastActivity: '2024-01-15',
     expansionOpportunity: 75000
@@ -24,7 +25,8 @@ const sampleAccounts: Account[] = [
     arr: 450000,
     healthScore: 65,
     status: 'Watch',
-    csm: 'Mike Rodriguez',
+    csam: 'Mike Rodriguez',
+    ae: 'Jennifer Davis',
     contractEnd: '2024-08-15',
     lastActivity: '2024-01-10',
     expansionOpportunity: 120000
@@ -36,7 +38,8 @@ const sampleAccounts: Account[] = [
     arr: 800000,
     healthScore: 45,
     status: 'At Risk',
-    csm: 'Lisa Wang',
+    csam: 'Lisa Wang',
+    ae: 'Robert Martinez',
     contractEnd: '2024-06-30',
     lastActivity: '2024-01-05',
     expansionOpportunity: 200000
@@ -48,7 +51,8 @@ const sampleAccounts: Account[] = [
     arr: 180000,
     healthScore: 90,
     status: 'Good',
-    csm: 'David Kim',
+    csam: 'David Kim',
+    ae: 'Amanda Foster',
     contractEnd: '2025-03-31',
     lastActivity: '2024-01-16',
     expansionOpportunity: 90000
@@ -60,7 +64,8 @@ const sampleAccounts: Account[] = [
     arr: 320000,
     healthScore: 72,
     status: 'Good',
-    csm: 'Emily Johnson',
+    csam: 'Emily Johnson',
+    ae: 'Christopher Lee',
     contractEnd: '2024-11-15',
     lastActivity: '2024-01-14',
     expansionOpportunity: 110000

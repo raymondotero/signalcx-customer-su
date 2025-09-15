@@ -172,7 +172,7 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
       reasoning: 'Standard account management best practices',
       generatedAt: new Date().toISOString(),
       timeToComplete: '1-2 weeks',
-      assignedTo: account.csm
+      assignedTo: account.csam
     };
   };
 

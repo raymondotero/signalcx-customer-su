@@ -304,7 +304,8 @@ function App() {
                         <p className="text-muted-foreground">{selectedAccount.industry}</p>
                       </div>
                       <div>
-                        <p className="font-medium">CSM: {selectedAccount.csm}</p>
+                        <p className="font-medium">CSAM: {selectedAccount.csam}</p>
+                        <p className="font-medium">AE: {selectedAccount.ae}</p>
                         <p className="text-muted-foreground">
                           Contract ends: {new Date(selectedAccount.contractEnd).toLocaleDateString()}
                         </p>

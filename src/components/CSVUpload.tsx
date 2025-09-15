@@ -134,7 +134,8 @@ export function CSVUpload() {
           healthScore: accountData.healthScore || 50,
           status: accountData.status || 'Good',
           industry: accountData.industry || 'Unknown',
-          csm: accountData.csm || 'Unassigned',
+          csam: (accountData as any).csam || (accountData as any).csm || 'Unassigned',
+          ae: accountData.ae || 'Unassigned',
           lastActivity: accountData.lastActivity || new Date().toISOString().split('T')[0],
           contractEnd: accountData.contractEnd || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
           expansionOpportunity: accountData.expansionOpportunity || 0

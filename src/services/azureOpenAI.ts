@@ -226,7 +226,7 @@ Generate recommendations as a JSON object with this structure:
         "suggestedActions": ["Specific step 1", "Specific step 2"],
         "reasoning": "Why this action is recommended",
         "timeToComplete": "1-2 weeks",
-        "assignedTo": "${context.account.csm}"
+        "assignedTo": "${context.account.csam}"
       },
       "confidence": 0.85,
       "rationale": "Why this recommendation is valuable",
@@ -343,7 +343,7 @@ Provide analysis as JSON:
           reasoning: 'Low health score indicates potential churn risk',
           generatedAt: new Date().toISOString(),
           timeToComplete: '3-5 days',
-          assignedTo: account.csm
+          assignedTo: account.csam
         },
         confidence: 0.80,
         rationale: 'Health score below optimal threshold',
@@ -373,7 +373,7 @@ Provide analysis as JSON:
           reasoning: 'At-risk status requires immediate executive attention',
           generatedAt: new Date().toISOString(),
           timeToComplete: '1-2 weeks',
-          assignedTo: account.csm
+          assignedTo: account.csam
         },
         confidence: 0.85,
         rationale: 'Account in at-risk status requires immediate intervention',
@@ -400,7 +400,7 @@ Provide analysis as JSON:
           reasoning: 'Proactive intervention can prevent account deterioration',
           generatedAt: new Date().toISOString(),
           timeToComplete: '1 week',
-          assignedTo: account.csm
+          assignedTo: account.csam
         },
         confidence: 0.75,
         rationale: 'Watch status indicates need for increased attention',
@@ -433,7 +433,7 @@ Provide analysis as JSON:
           reasoning: 'Proactive renewal process improves success rates',
           generatedAt: new Date().toISOString(),
           timeToComplete: '2-4 weeks',
-          assignedTo: account.csm
+          assignedTo: account.csam
         },
         confidence: 0.70,
         rationale: 'Contract expiration approaching',
@@ -463,7 +463,7 @@ Provide analysis as JSON:
           reasoning: 'Strong account health supports expansion discussions',
           generatedAt: new Date().toISOString(),
           timeToComplete: '3-6 weeks',
-          assignedTo: account.csm
+          assignedTo: account.csam
         },
         confidence: 0.65,
         rationale: 'Healthy account with identified expansion potential',
@@ -494,7 +494,7 @@ Provide analysis as JSON:
           reasoning: 'Critical signals indicate urgent operational issues',
           generatedAt: new Date().toISOString(),
           timeToComplete: '1-3 days',
-          assignedTo: account.csm
+          assignedTo: account.csam
         },
         confidence: 0.90,
         rationale: 'Critical signals require immediate attention',
@@ -524,7 +524,7 @@ Provide analysis as JSON:
           reasoning: 'Regular engagement maintains account health',
           generatedAt: new Date().toISOString(),
           timeToComplete: '1-2 weeks',
-          assignedTo: account.csm
+          assignedTo: account.csam
         },
         confidence: 0.60,
         rationale: 'Standard account management best practice',

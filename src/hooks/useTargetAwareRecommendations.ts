@@ -196,7 +196,7 @@ Respond with JSON only.`;
         reasoning: aiNBA.reasoning || `Target-driven recommendation for ${target.signalName}`,
         generatedAt: new Date().toISOString(),
         timeToComplete: '1-2 weeks',
-        assignedTo: account.csm
+        assignedTo: account.csam
       };
     } catch (error) {
       console.error('Error generating AI NBA:', error);
@@ -219,7 +219,7 @@ Respond with JSON only.`;
         reasoning: `Target compliance issue detected - ${compliance} status requires immediate attention`,
         generatedAt: new Date().toISOString(),
         timeToComplete: deviation > 0.5 ? '2-4 weeks' : '1-2 weeks',
-        assignedTo: account.csm
+        assignedTo: account.csam
       };
     }
   };

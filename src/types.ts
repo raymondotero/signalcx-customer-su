@@ -5,7 +5,8 @@ export interface Account {
   arr: number;
   healthScore: number;
   status: 'Good' | 'Watch' | 'At Risk';
-  csm: string;
+  csam: string;
+  ae: string;
   contractEnd: string;
   lastActivity: string;
   expansionOpportunity?: number;

@@ -45,7 +45,8 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
               <TableHead>ARR</TableHead>
               <TableHead>Health Score</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>CSM</TableHead>
+              <TableHead>CSAM</TableHead>
+              <TableHead>AE</TableHead>
               <TableHead>Contract End</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -80,7 +81,8 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
                     {account.status}
                   </Badge>
                 </TableCell>
-                <TableCell>{account.csm}</TableCell>
+                <TableCell>{account.csam}</TableCell>
+                <TableCell>{account.ae}</TableCell>
                 <TableCell>{new Date(account.contractEnd).toLocaleDateString()}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
