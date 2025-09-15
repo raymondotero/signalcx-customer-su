@@ -55,14 +55,6 @@
   --font-sans: Outfit;
   --font-serif: Cormorant;
   --font-mono: Fira Code;
-  
-  /* Layout-specific heights */
-  --header-height: 80px;
-  --summary-height: 120px;
-  --content-padding: 2rem;
-  --tab-padding: 4rem;
-  --content-height: calc(100vh - var(--header-height) - var(--summary-height) - var(--content-padding));
-  --tab-content-height: calc(var(--content-height) - var(--tab-padding));
 }
 
 @theme {
@@ -142,182 +134,77 @@ table thead th {
 }
 
 /* Responsive height utilities */
-.responsive-height {
-  height: var(--tab-content-height);
-  min-height: 300px;
-  max-height: calc(100vh - 200px);
-  transition: height 0.3s ease-in-out;
+.h-fit {
+  height: fit-content !important;
 }
 
-.adaptive-container {
-  height: var(--content-height);
-  min-height: 400px;
-  max-height: calc(100vh - 160px);
-  transition: all 0.3s ease-in-out;
+.min-h-0 {
+  min-height: 0 !important;
 }
 
-.content-fit {
-  height: fit-content;
-  min-height: 0;
+/* Auto-sizing grid cells */
+.grid-auto-fit {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }
 
-.viewport-aware {
-  min-height: 200px;
-  max-height: calc(100vh - 300px);
-  height: auto;
-  overflow-y: auto;
-  resize: vertical;
+/* Responsive containers */
+.container {
+  width: 100%;
+  max-width: none;
 }
 
-.dynamic-height {
-  height: clamp(300px, var(--tab-content-height), calc(100vh - 200px));
-  transition: height 0.2s ease-out;
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
 }
 
-/* Flex container optimizations */
-.flex-container-responsive {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  height: 100%;
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
 }
 
-.flex-content-adaptive {
-  flex: 1;
-  min-height: 0;
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1536px;
+  }
+}
+
+/* Prevent content overflow */
+.overflow-auto {
   overflow: auto;
 }
 
-/* Scrollable area improvements */
-.scroll-container {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  min-height: 0;
+.overflow-hidden {
+  overflow: hidden;
 }
 
-/* Responsive breakpoint adjustments */
-@media (max-width: 1280px) {
-  :root {
-    --header-height: 85px;
-    --summary-height: 130px;
-    --tab-content-height: calc(100vh - 8rem);
-  }
-  
-  .responsive-height {
-    max-height: calc(100vh - 220px);
-  }
+/* Flexible layouts */
+.flex-1 {
+  flex: 1 1 0%;
 }
 
-@media (max-width: 1024px) {
-  :root {
-    --header-height: 90px;
-    --summary-height: 140px;
-    --tab-content-height: calc(100vh - 10rem);
-  }
-  
-  .responsive-height {
-    max-height: calc(100vh - 240px);
-  }
-  
-  .adaptive-container {
-    min-height: 350px;
-  }
+.flex-auto {
+  flex: 1 1 auto;
 }
 
-@media (max-width: 768px) {
-  :root {
-    --header-height: 100px;
-    --summary-height: 160px;
-    --content-padding: 1rem;
-    --tab-padding: 3rem;
-    --content-height: calc(100vh - var(--header-height) - var(--summary-height) - var(--content-padding));
-    --tab-content-height: calc(var(--content-height) - var(--tab-padding));
-  }
-  
-  .responsive-height {
-    min-height: 250px;
-    max-height: calc(100vh - 260px);
-  }
-  
-  .adaptive-container {
-    min-height: 300px;
-    max-height: calc(100vh - 200px);
-  }
+.flex-initial {
+  flex: 0 1 auto;
 }
 
-@media (max-width: 640px) {
-  :root {
-    --header-height: 120px;
-    --summary-height: 180px;
-    --tab-content-height: calc(100vh - 12rem);
-  }
-  
-  .responsive-height {
-    min-height: 200px;
-    max-height: calc(100vh - 280px);
-  }
-  
-  .adaptive-container {
-    min-height: 250px;
-    max-height: calc(100vh - 220px);
-  }
+.flex-none {
+  flex: none;
 }
-
-@media (max-width: 480px) {
-  :root {
-    --header-height: 140px;
-    --summary-height: 200px;
-    --tab-content-height: calc(100vh - 14rem);
-  }
-  
-  .responsive-height {
-    min-height: 180px;
-    max-height: calc(100vh - 300px);
-  }
-  
-  .adaptive-container {
-    min-height: 200px;
-    max-height: calc(100vh - 240px);
-  }
-}
-
-/* Visual height indicators for testing */
-.height-indicator::before {
-  content: 'H: ' attr(data-height);
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  background: var(--accent);
-  color: var(--accent-foreground);
-  padding: 2px 6px;
-  border-radius: 3px;
-  font-size: 10px;
-  font-weight: 600;
-  z-index: 10;
-  opacity: 0.8;
-}
-
-/* Transition debugging - add visible transitions during resize */
-@media (prefers-reduced-motion: no-preference) {
-  .responsive-height,
-  .adaptive-container,
-  .dynamic-height,
-  .viewport-aware {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
-  /* Add a subtle glow during transition */
-  .responsive-height:hover,
-  .adaptive-container:hover {
-    box-shadow: 0 0 0 1px var(--primary);
-  }
-}
-
-/* Debug mode for testing - uncomment to see all containers */
-/* 
-.responsive-height { border: 2px dashed green !important; }
-.adaptive-container { border: 2px dashed blue !important; }
-.dynamic-height { border: 2px dashed orange !important; }
-.viewport-aware { border: 2px dashed purple !important; }
-*/

@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Monitor, DeviceTablet, Phone } from '@phosphor-icons/react';
+
+interface Dimensions {
+  width: number;
+  height: number;
+}
+
+export function ResponsiveHeightDemo() {
+  const [dimensions, setDimensions] = useState<Dimensions>({
     width: typeof window !== 'undefined' ? window.innerWidth : 0,
+    height: typeof window !== 'undefined' ? window.innerHeight : 0,
+  });
 
   useEffect(() => {
+    const handleResize = () => {
       setDimensions({
-        height: window.innerHeight,
-    };
-    w
-
-  const getDeviceTy
-    if (dimensions.width >= 768)
-  };
-  const device = getDeviceType();
+        width: window.innerWidth,
         height: window.innerHeight,
       });
     };
@@ -24,8 +28,8 @@ import { Button } from '@/components/ui/button';
 
   const getDeviceType = () => {
     if (dimensions.width >= 1024) return { type: 'Desktop', icon: Monitor, color: 'bg-green-100 text-green-800' };
-    if (dimensions.width >= 768) return { type: 'Tablet', icon: Tablet, color: 'bg-blue-100 text-blue-800' };
-    return { type: 'Mobile', icon: Smartphone, color: 'bg-orange-100 text-orange-800' };
+    if (dimensions.width >= 768) return { type: 'Tablet', icon: DeviceTablet, color: 'bg-blue-100 text-blue-800' };
+    return { type: 'Mobile', icon: Phone, color: 'bg-orange-100 text-orange-800' };
   };
 
   const device = getDeviceType();
@@ -40,33 +44,30 @@ import { Button } from '@/components/ui/button';
   };
 
   return (
-        <div className="grid grid-cols-1 g
+    <Card className="border-visible mb-4">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm">
           <DeviceIcon className="w-4 h-4" />
           Responsive Height Testing
         </CardTitle>
-        <div classN
+      </CardHeader>
       <CardContent className="space-y-3">
-            <div className="flex gap-2">
+        <div className="grid grid-cols-3 gap-4 text-xs">
           <div>
-                variant="outline" 
+            <div className="font-medium text-muted-foreground">Viewport Size</div>
             <div className="font-mono">{dimensions.width} × {dimensions.height}</div>
-              >
+          </div>
           <div>
             <div className="font-medium text-muted-foreground">Breakpoint</div>
             <Badge variant="outline" className="text-xs">
               {getBreakpointInfo()}
             </Badge>
-                
-        </div>
-        
-        <div className="grid grid-cols-1 gap-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">Device Type:</span>
+          </div>
+          <div>
+            <div className="font-medium text-muted-foreground">Device Type</div>
             <Badge className={device.color}>
               {device.type}
-              Watch 
+            </Badge>
           </div>
         </div>
 
@@ -74,7 +75,7 @@ import { Button } from '@/components/ui/button';
           <strong>Test Instructions:</strong> Resize your browser window to see components adapt their height automatically. 
           Watch the height indicators on each tab and observe smooth transitions.
         </div>
-
+      </CardContent>
     </Card>
-
+  );
 }

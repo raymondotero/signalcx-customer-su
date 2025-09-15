@@ -14,8 +14,6 @@ import { CSVUpload } from '@/components/CSVUpload';
 import { AIRecommendationEngine } from '@/components/AIRecommendationEngine';
 import { RealTimeSignalProcessor } from '@/components/RealTimeSignalProcessor';
 import { BusinessValueDashboard } from '@/components/BusinessValueDashboard';
-import { ResponsiveHeightDemo } from '@/components/ResponsiveHeightDemo';
-import { HeightIndicator } from '@/components/HeightIndicator';
 import { SparkTestButton } from '@/components/SparkTestButton';
 import { useAccounts, useNBAs, useAgentMemory } from '@/hooks/useData';
 import { useSignalProcessor } from '@/hooks/useSignalProcessor';
@@ -216,11 +214,9 @@ function App() {
       </div>
 
       {/* Summary Cards */}
-      <div className="container mx-auto px-4 py-6 min-h-0">
-        <ResponsiveHeightDemo />
-        
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-          <Card className="border-visible">
+      <div className="container mx-auto px-4 py-6 max-w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+          <Card className="border-visible h-fit">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -284,18 +280,20 @@ function App() {
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start adaptive-container">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Left Column - Accounts & NBA */}
-          <div className="lg:col-span-2 space-y-6 min-h-0 flex-container-responsive">
-            <AccountsTable 
-              accounts={accounts}
-              onSelectAccount={handleSelectAccount}
-              selectedAccount={selectedAccount || undefined}
-            />
+          <div className="xl:col-span-2 space-y-6 min-h-0">
+            <div className="h-fit">
+              <AccountsTable 
+                accounts={accounts}
+                onSelectAccount={handleSelectAccount}
+                selectedAccount={selectedAccount || undefined}
+              />
+            </div>
             
             {selectedAccount && (
-              <div className="space-y-4 flex-content-adaptive">
-                <Card className="border-visible">
+              <div className="space-y-4">
+                <Card className="border-visible h-fit">
                   <CardHeader>
                     <CardTitle>Selected Account</CardTitle>
                   </CardHeader>
@@ -336,44 +334,44 @@ function App() {
           </div>
 
           {/* Right Column - AI Systems */}
-          <div className="space-y-6 min-h-0 flex-container-responsive">
-            <Tabs defaultValue="business-value" className="w-full dynamic-height flex flex-col">
-              <TabsList className="grid w-full grid-cols-5 flex-shrink-0">
-                <TabsTrigger value="business-value">Business Value</TabsTrigger>
-                <TabsTrigger value="ai-processor">AI Processor</TabsTrigger>
-                <TabsTrigger value="signals">Live Signals</TabsTrigger>
-                <TabsTrigger value="ai-engine">AI Engine</TabsTrigger>
-                <TabsTrigger value="memory">Memory</TabsTrigger>
+          <div className="space-y-6 min-h-0 h-fit">
+            <Tabs defaultValue="business-value" className="w-full h-fit">
+              <TabsList className="grid w-full grid-cols-5 h-fit">
+                <TabsTrigger value="business-value" className="text-xs px-2">Business</TabsTrigger>
+                <TabsTrigger value="ai-processor" className="text-xs px-2">AI Proc</TabsTrigger>
+                <TabsTrigger value="signals" className="text-xs px-2">Signals</TabsTrigger>
+                <TabsTrigger value="ai-engine" className="text-xs px-2">AI Engine</TabsTrigger>
+                <TabsTrigger value="memory" className="text-xs px-2">Memory</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="business-value" className="mt-4 flex-1 viewport-aware relative">
-                <HeightIndicator label="BV">
+              <TabsContent value="business-value" className="mt-4 h-fit">
+                <div className="h-fit">
                   <BusinessValueDashboard />
-                </HeightIndicator>
+                </div>
               </TabsContent>
               
-              <TabsContent value="ai-processor" className="mt-4 flex-1 viewport-aware relative">
-                <HeightIndicator label="AI">
+              <TabsContent value="ai-processor" className="mt-4 h-fit">
+                <div className="h-fit">
                   <RealTimeSignalProcessor />
-                </HeightIndicator>
+                </div>
               </TabsContent>
               
-              <TabsContent value="signals" className="mt-4 flex-1 viewport-aware relative">
-                <HeightIndicator label="Signals">
+              <TabsContent value="signals" className="mt-4 h-fit">
+                <div className="h-fit">
                   <LiveSignals />
-                </HeightIndicator>
+                </div>
               </TabsContent>
               
-              <TabsContent value="ai-engine" className="mt-4 flex-1 viewport-aware relative">
-                <HeightIndicator label="Engine">
+              <TabsContent value="ai-engine" className="mt-4 h-fit">
+                <div className="h-fit">
                   <AIRecommendationEngine />
-                </HeightIndicator>
+                </div>
               </TabsContent>
               
-              <TabsContent value="memory" className="mt-4 flex-1 viewport-aware relative">
-                <HeightIndicator label="Memory">
+              <TabsContent value="memory" className="mt-4 h-fit">
+                <div className="h-fit">
                   <AgentMemory />
-                </HeightIndicator>
+                </div>
               </TabsContent>
             </Tabs>
           </div>

@@ -173,8 +173,8 @@ export function RealTimeSignalProcessor() {
   );
 
   return (
-    <Card className="min-h-0 max-h-[var(--tab-content-height)] flex flex-col border-visible">
-      <CardHeader className="flex-shrink-0">
+    <Card className="h-[600px] flex flex-col border-visible">
+      <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Brain className={`w-5 h-5 text-accent ${realTimeAI.isProcessing ? 'animate-pulse-ai' : ''}`} />
@@ -203,7 +203,7 @@ export function RealTimeSignalProcessor() {
         </CardTitle>
       </CardHeader>
       
-      <CardContent className="flex-1 overflow-hidden min-h-0">
+      <CardContent className="flex-1 overflow-hidden">
         <div className="mb-4 flex items-center justify-between text-sm text-muted-foreground">
           <span>Queue: {realTimeAI.queueSize} tasks</span>
           <span>Processed: {processedSignals.length} signals</span>
