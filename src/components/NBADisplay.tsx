@@ -222,7 +222,7 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
   };
 
   return (
-    <Card>
+    <Card className="border-visible">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">

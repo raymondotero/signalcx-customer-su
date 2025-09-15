@@ -29,8 +29,8 @@
   --accent-foreground: oklch(0.12 0.02 270);
   --destructive: oklch(0.65 0.25 15);
   --destructive-foreground: oklch(0.98 0.003 270);
-  --border: oklch(0.85 0.02 270);
-  --input: oklch(0.85 0.02 270);
+  --border: oklch(0.75 0.08 270);
+  --input: oklch(0.75 0.08 270);
   --ring: oklch(0.60 0.25 320);
   --radius: 0.25rem;
   --chart-1: oklch(0.60 0.25 320);
@@ -77,6 +77,14 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  /* Map radius variables to create a consistent rounding system */
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) * 1.5);
+  --radius-xl: calc(var(--radius) * 2);
+  --radius-2xl: calc(var(--radius) * 3);
+  --radius-full: 9999px;
 }
 
 /* Custom animations for AI states */
@@ -93,3 +101,34 @@
 .status-good { @apply bg-green-100 text-green-800 border-green-200; }
 .status-watch { @apply bg-yellow-100 text-yellow-800 border-yellow-200; }
 .status-risk { @apply bg-red-100 text-red-800 border-red-200; }
+
+/* Ensure borders are visible on all cards and components */
+.border-visible {
+  border: 1px solid var(--border) !important;
+}
+
+/* Enhanced table borders */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+table th,
+table td {
+  border-bottom: 1px solid var(--border);
+}
+
+table thead th {
+  border-bottom: 2px solid var(--border);
+}
+
+/* Enhanced card borders */
+[data-slot="card"] {
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Tab content borders */
+[data-state="active"] {
+  border-bottom: 2px solid var(--primary);
+}

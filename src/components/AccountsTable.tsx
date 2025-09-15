@@ -29,7 +29,7 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
   };
 
   return (
-    <Card>
+    <Card className="border-visible">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <TrendUp className="w-5 h-5 text-primary" />

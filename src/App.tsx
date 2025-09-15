@@ -216,7 +216,7 @@ function App() {
       {/* Summary Cards */}
       <div className="container mx-auto px-4 py-6">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-          <Card>
+          <Card className="border-visible">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -228,7 +228,7 @@ function App() {
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="border-visible">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -242,7 +242,7 @@ function App() {
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="border-visible">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -254,7 +254,7 @@ function App() {
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="border-visible">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -266,7 +266,7 @@ function App() {
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="border-visible">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -291,7 +291,7 @@ function App() {
             
             {selectedAccount && (
               <div className="space-y-4">
-                <Card>
+                <Card className="border-visible">
                   <CardHeader>
                     <CardTitle>Selected Account</CardTitle>
                   </CardHeader>
