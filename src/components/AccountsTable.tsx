@@ -1,67 +1,68 @@
 import React from 'react';
-import { Button } from '@/components/ui/button
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 import { Brain, TrendUp, CurrencyDollar } from '@phosphor-icons/react';
-  accounts: Account[];
+import { Account } from '@/types';
 
-}
+interface AccountsTableProps {
   accounts: Account[];
-  const getStatusColor = (status: Account['sta
+  onSelectAccount: (account: Account) => void;
   selectedAccount?: Account;
- 
+}
 
 export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: AccountsTableProps) {
   const getStatusColor = (status: Account['status']) => {
-    <Card className="
-        <CardTitle className="flex items
+    switch (status) {
+      case 'Good':
+        return 'status-good';
+      case 'Watch':
+        return 'status-watch';
+      case 'At Risk':
+        return 'status-risk';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  return (
+    <Card className="border-visible">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <TrendUp className="w-5 h-5" />
           Customer Accounts
+        </CardTitle>
       </CardHeader>
-     
-    
-
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Account</TableHead>
+              <TableHead>Industry</TableHead>
+              <TableHead>ARR</TableHead>
+              <TableHead>Health Score</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>CSAM</TableHead>
               <TableHead>AE</TableHead>
-              <TableHead
-          </TableHeade
-            {accounts.map((acc
-                key={a
-    
-
-          
-                <TableCell>
-                  
-                        className={`h-2 rounded-full ${
-                          account.healthScore >= 60 ? 
-                        sty
-                    
-                  <
-                <Ta
-               
-                </Table
-                <Table
-                <TableCell>
-                    <Button 
-                      variant="outline"
-                        e.stopPropagation()
-                      }}
-                    >
-                      Select
-                    {account.expansionOpport
-                       
-                      </
-                  </d
-              </TableRow>
-          </TableBody>
-      </CardContent>
-  );
-
-
-
-
-
-
+              <TableHead>Contract End</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {accounts.map((account) => (
+              <TableRow 
+                key={account.id}
+                className={`cursor-pointer hover:bg-muted/50 ${
+                  selectedAccount?.id === account.id ? 'bg-primary/5 border-primary/20' : ''
+                }`}
+                onClick={() => onSelectAccount(account)}
+              >
+                <TableCell className="font-medium">{account.name}</TableCell>
+                <TableCell>{account.industry}</TableCell>
+                <TableCell className="font-mono">
+                  ${(account.arr / 1000000).toFixed(1)}M
+                </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <div className="w-16 bg-gray-200 rounded-full h-2">
