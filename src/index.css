@@ -55,6 +55,11 @@
   --font-sans: Outfit;
   --font-serif: Cormorant;
   --font-mono: Fira Code;
+  
+  /* Layout-specific heights */
+  --header-height: 80px;
+  --content-height: calc(100vh - var(--header-height) - 2rem);
+  --tab-content-height: calc(var(--content-height) - 4rem);
 }
 
 @theme {
@@ -131,4 +136,59 @@ table thead th {
 /* Tab content borders */
 [data-state="active"] {
   border-bottom: 2px solid var(--primary);
+}
+
+/* Responsive height utilities */
+.responsive-height {
+  min-height: 300px;
+  max-height: calc(100vh - 200px);
+}
+
+.content-fit {
+  height: fit-content;
+  min-height: 0;
+}
+
+/* Flex container optimizations */
+.flex-container-responsive {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+
+.flex-content-adaptive {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+/* Scrollable area improvements */
+.scroll-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+}
+
+/* Responsive breakpoint adjustments */
+@media (max-width: 1024px) {
+  :root {
+    --tab-content-height: calc(100vh - 6rem);
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --header-height: 100px;
+    --content-height: calc(100vh - var(--header-height) - 1rem);
+    --tab-content-height: calc(var(--content-height) - 2rem);
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --header-height: 120px;
+    --tab-content-height: calc(100vh - 8rem);
+  }
 }

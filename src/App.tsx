@@ -214,7 +214,7 @@ function App() {
       </div>
 
       {/* Summary Cards */}
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-4 py-6 min-h-0">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
           <Card className="border-visible">
             <CardContent className="p-4">

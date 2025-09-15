@@ -142,7 +142,7 @@ export function LiveSignals() {
   };
 
   return (
-    <Card className="min-h-0 max-h-[calc(100vh-200px)] flex flex-col border-visible">
+    <Card className="min-h-0 max-h-[var(--tab-content-height)] flex flex-col border-visible">
       <CardHeader className="flex-shrink-0">
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
