@@ -68,8 +68,8 @@ export function AgentMemory() {
   };
 
   return (
-    <Card className="h-[600px] flex flex-col border-visible">
-      <CardHeader>
+    <Card className="min-h-0 max-h-[calc(100vh-200px)] flex flex-col border-visible">
+      <CardHeader className="flex-shrink-0">
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ClockCounterClockwise className="w-5 h-5 text-primary" />
@@ -86,7 +86,7 @@ export function AgentMemory() {
           </Button>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 overflow-hidden">
+      <CardContent className="flex-1 overflow-hidden min-h-0">
         <ScrollArea className="h-full">
           <div className="space-y-4">
             {memory.length === 0 ? (

@@ -280,9 +280,9 @@ function App() {
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
           {/* Left Column - Accounts & NBA */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-6 min-h-0">
             <AccountsTable 
               accounts={accounts}
               onSelectAccount={handleSelectAccount}
@@ -328,9 +328,9 @@ function App() {
           </div>
 
           {/* Right Column - AI Systems */}
-          <div className="space-y-6">
-            <Tabs defaultValue="business-value" className="w-full">
-              <TabsList className="grid w-full grid-cols-5">
+          <div className="space-y-6 min-h-0">
+            <Tabs defaultValue="business-value" className="w-full h-full flex flex-col">
+              <TabsList className="grid w-full grid-cols-5 flex-shrink-0">
                 <TabsTrigger value="business-value">Business Value</TabsTrigger>
                 <TabsTrigger value="ai-processor">AI Processor</TabsTrigger>
                 <TabsTrigger value="signals">Live Signals</TabsTrigger>
@@ -338,23 +338,23 @@ function App() {
                 <TabsTrigger value="memory">Memory</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="business-value" className="mt-4">
+              <TabsContent value="business-value" className="mt-4 flex-1 min-h-0">
                 <BusinessValueDashboard />
               </TabsContent>
               
-              <TabsContent value="ai-processor" className="mt-4">
+              <TabsContent value="ai-processor" className="mt-4 flex-1 min-h-0">
                 <RealTimeSignalProcessor />
               </TabsContent>
               
-              <TabsContent value="signals" className="mt-4">
+              <TabsContent value="signals" className="mt-4 flex-1 min-h-0">
                 <LiveSignals />
               </TabsContent>
               
-              <TabsContent value="ai-engine" className="mt-4">
+              <TabsContent value="ai-engine" className="mt-4 flex-1 min-h-0">
                 <AIRecommendationEngine />
               </TabsContent>
               
-              <TabsContent value="memory" className="mt-4">
+              <TabsContent value="memory" className="mt-4 flex-1 min-h-0">
                 <AgentMemory />
               </TabsContent>
             </Tabs>

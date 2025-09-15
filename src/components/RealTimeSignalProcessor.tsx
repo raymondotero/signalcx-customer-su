@@ -173,8 +173,8 @@ export function RealTimeSignalProcessor() {
   );
 
   return (
-    <Card className="h-[600px] flex flex-col border-visible">
-      <CardHeader>
+    <Card className="min-h-0 max-h-[calc(100vh-200px)] flex flex-col border-visible">
+      <CardHeader className="flex-shrink-0">
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Brain className={`w-5 h-5 text-accent ${realTimeAI.isProcessing ? 'animate-pulse-ai' : ''}`} />

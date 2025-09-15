@@ -209,8 +209,8 @@ export function BusinessValueDashboard() {
   const targetCompliance = totalTargets > 0 ? Math.round((totalOnTrack / totalTargets) * 100) : 0;
 
   return (
-    <Card className="h-[800px] flex flex-col border-visible">
-      <CardHeader>
+    <Card className="min-h-0 max-h-[calc(100vh-200px)] flex flex-col border-visible">
+      <CardHeader className="flex-shrink-0">
         <CardTitle className="flex items-center gap-2">
           <Database className="w-5 h-5 text-primary" />
           Business Value Signal Dashboard
@@ -239,7 +239,7 @@ export function BusinessValueDashboard() {
         </div>
       </CardHeader>
       
-      <CardContent className="flex-1 overflow-auto">
+      <CardContent className="flex-1 overflow-y-auto overflow-x-hidden">
         <div className="space-y-4">
           {categoryStats.map(stats => (
             <Card key={stats.category} className="border-l-4 border-l-primary/20 border-visible">

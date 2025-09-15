@@ -142,8 +142,8 @@ export function LiveSignals() {
   };
 
   return (
-    <Card className="h-[600px] flex flex-col border-visible">
-      <CardHeader>
+    <Card className="min-h-0 max-h-[calc(100vh-200px)] flex flex-col border-visible">
+      <CardHeader className="flex-shrink-0">
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Pulse className={`w-5 h-5 ${isStreaming ? 'text-green-500 animate-pulse' : 'text-gray-400'}`} />
@@ -171,7 +171,7 @@ export function LiveSignals() {
           </Button>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 overflow-hidden">
+      <CardContent className="flex-1 overflow-hidden min-h-0">
         <ScrollArea className="h-full">
           <div className="space-y-3">
             {signals.length === 0 ? (
