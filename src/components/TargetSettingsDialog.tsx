@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Gear, Target, Plus, Trash, FloppyDisk } from '@phosphor-icons/react';
+import { Gear, Plus, FloppyDisk, Target, Trash } from '@phosphor-icons/react';
 import { useKV } from '@github/spark/hooks';
 import { toast } from 'sonner';
 
@@ -62,7 +62,7 @@ const DEFAULT_TARGETS: SignalTarget[] = [
     targetValue: 2,
     unit: 'hours',
     threshold: 'below',
-    priority: 'medium',
+    priority: 'high',
     description: 'Keep data fresh and current'
   },
   {
@@ -91,7 +91,9 @@ interface TargetSettingsDialogProps {
 
 export function TargetSettingsDialog({ onTargetsUpdated }: TargetSettingsDialogProps) {
   const [targets, setTargets] = useKV<SignalTarget[]>('signal-targets', DEFAULT_TARGETS);
-  const safeTargets = targets || [];
+  
+  // Ensure targets is always an array
+  const safeTargets = targets || DEFAULT_TARGETS;
   const [isOpen, setIsOpen] = useState(false);
   const [editingTarget, setEditingTarget] = useState<SignalTarget>({
     signalName: '',
@@ -135,34 +137,36 @@ export function TargetSettingsDialog({ onTargetsUpdated }: TargetSettingsDialogP
     toast.success('Target saved successfully');
   };
 
+  const handleEditTarget = (target: SignalTarget) => {
+    setEditingTarget(target);
+    setIsAdding(true);
+  };
+
   const handleDeleteTarget = (signalName: string) => {
     const newTargets = safeTargets.filter(t => t.signalName !== signalName);
     setTargets(newTargets);
     onTargetsUpdated?.(newTargets);
-    toast.success('Target deleted');
+    toast.success('Target deleted successfully');
   };
 
-  const handleEditTarget = (target: SignalTarget) => {
-    setEditingTarget({ ...target });
-    setIsAdding(true);
-  };
-
-  const getCategoryColor = (category: SignalTarget['category']) => {
+  const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'cost': return 'bg-emerald-100 text-emerald-800';
-      case 'agility': return 'bg-blue-100 text-blue-800';
+      case 'cost': return 'bg-blue-100 text-blue-800';
+      case 'agility': return 'bg-green-100 text-green-800';
       case 'data': return 'bg-purple-100 text-purple-800';
-      case 'risk': return 'bg-orange-100 text-orange-800';
-      case 'culture': return 'bg-pink-100 text-pink-800';
+      case 'risk': return 'bg-red-100 text-red-800';
+      case 'culture': return 'bg-orange-100 text-orange-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const getPriorityColor = (priority: SignalTarget['priority']) => {
+  const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'low': return 'bg-gray-100 text-gray-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
       case 'critical': return 'bg-red-100 text-red-800';
+      case 'high': return 'bg-orange-100 text-orange-800';
+      case 'medium': return 'bg-yellow-100 text-yellow-800';
+      case 'low': return 'bg-green-100 text-green-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -171,150 +175,157 @@ export function TargetSettingsDialog({ onTargetsUpdated }: TargetSettingsDialogP
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
           <Gear className="w-4 h-4 mr-2" />
-          Signal Targets
+          Target Settings
         </Button>
       </DialogTrigger>
       
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Target className="w-5 h-5 text-primary" />
-            Signal Target Configuration
-          </DialogTitle>
-          <DialogDescription>
-            Set custom targets for business value signals to improve AI recommendations and prioritization.
-            The AI will use these targets to determine signal severity and generate better next best actions.
-          </DialogDescription>
+          <DialogTitle>Business Value Signal Targets</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Add New Target */}
+          {/* Add/Edit Target Form */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Plus className="w-4 h-4" />
-                {isAdding ? 'Edit Target' : 'Add New Target'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signalName">Signal Name</Label>
-                  <Input
-                    id="signalName"
-                    value={editingTarget.signalName}
-                    onChange={(e) => setEditingTarget(prev => ({ ...prev, signalName: e.target.value }))}
-                    placeholder="e.g., Cloud Spend Variance"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="category">Category</Label>
-                  <select
-                    id="category"
-                    className="w-full px-3 py-2 border border-input rounded-md"
-                    value={editingTarget.category}
-                    onChange={(e) => setEditingTarget(prev => ({ ...prev, category: e.target.value as SignalTarget['category'] }))}
-                  >
-                    <option value="cost">Cost</option>
-                    <option value="agility">Agility</option>
-                    <option value="data">Data</option>
-                    <option value="risk">Risk</option>
-                    <option value="culture">Culture</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="targetValue">Target Value</Label>
-                  <Input
-                    id="targetValue"
-                    type="number"
-                    value={editingTarget.targetValue}
-                    onChange={(e) => setEditingTarget(prev => ({ ...prev, targetValue: parseFloat(e.target.value) || 0 }))}
-                    placeholder="0"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="unit">Unit</Label>
-                  <Input
-                    id="unit"
-                    value={editingTarget.unit}
-                    onChange={(e) => setEditingTarget(prev => ({ ...prev, unit: e.target.value }))}
-                    placeholder="%, count, minutes"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="threshold">Threshold</Label>
-                  <select
-                    id="threshold"
-                    className="w-full px-3 py-2 border border-input rounded-md"
-                    value={editingTarget.threshold}
-                    onChange={(e) => setEditingTarget(prev => ({ ...prev, threshold: e.target.value as SignalTarget['threshold'] }))}
-                  >
-                    <option value="below">Below target (good)</option>
-                    <option value="above">Above target (good)</option>
-                    <option value="exactly">Exactly target</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="priority">Priority</Label>
-                  <select
-                    id="priority"
-                    className="w-full px-3 py-2 border border-input rounded-md"
-                    value={editingTarget.priority}
-                    onChange={(e) => setEditingTarget(prev => ({ ...prev, priority: e.target.value as SignalTarget['priority'] }))}
-                  >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                    <option value="critical">Critical</option>
-                  </select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Input
-                    id="description"
-                    value={editingTarget.description}
-                    onChange={(e) => setEditingTarget(prev => ({ ...prev, description: e.target.value }))}
-                    placeholder="Brief description of the target"
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-2">
-                <Button onClick={handleSaveTarget}>
-                  <FloppyDisk className="w-4 h-4 mr-2" />
-                  Save Target
-                </Button>
-                {isAdding && (
+              <div className="flex items-center justify-between">
+                <CardTitle>
+                  {isAdding ? 'Add New Target' : 'Signal Targets'}
+                </CardTitle>
+                {!isAdding && (
                   <Button 
                     variant="outline" 
-                    onClick={() => {
-                      setIsAdding(false);
-                      setEditingTarget({
-                        signalName: '',
-                        category: 'cost',
-                        targetValue: 0,
-                        unit: '',
-                        threshold: 'below',
-                        priority: 'medium',
-                        description: ''
-                      });
-                    }}
+                    size="sm"
+                    onClick={() => setIsAdding(true)}
                   >
-                    Cancel
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Target
                   </Button>
                 )}
               </div>
-            </CardContent>
+            </CardHeader>
+            
+            {isAdding && (
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="signal-name">Signal Name</Label>
+                    <Input
+                      id="signal-name"
+                      value={editingTarget.signalName}
+                      onChange={(e) => setEditingTarget(prev => ({ ...prev, signalName: e.target.value }))}
+                      placeholder="e.g., Cloud Spend Variance"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Category</Label>
+                    <select
+                      id="category"
+                      className="w-full px-3 py-2 border border-input rounded-md"
+                      value={editingTarget.category}
+                      onChange={(e) => setEditingTarget(prev => ({ ...prev, category: e.target.value as SignalTarget['category'] }))}
+                    >
+                      <option value="cost">Cost</option>
+                      <option value="agility">Agility</option>
+                      <option value="data">Data</option>
+                      <option value="risk">Risk</option>
+                      <option value="culture">Culture</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="target-value">Target Value</Label>
+                    <Input
+                      id="target-value"
+                      type="number"
+                      value={editingTarget.targetValue}
+                      onChange={(e) => setEditingTarget(prev => ({ ...prev, targetValue: parseFloat(e.target.value) || 0 }))}
+                      placeholder="e.g., 10"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="unit">Unit</Label>
+                    <Input
+                      id="unit"
+                      value={editingTarget.unit}
+                      onChange={(e) => setEditingTarget(prev => ({ ...prev, unit: e.target.value }))}
+                      placeholder="e.g., %, count, minutes"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="threshold">Threshold</Label>
+                    <select
+                      id="threshold"
+                      className="w-full px-3 py-2 border border-input rounded-md"
+                      value={editingTarget.threshold}
+                      onChange={(e) => setEditingTarget(prev => ({ ...prev, threshold: e.target.value as SignalTarget['threshold'] }))}
+                    >
+                      <option value="below">Below target (good)</option>
+                      <option value="above">Above target (good)</option>
+                      <option value="exactly">Exactly target</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="priority">Priority</Label>
+                    <select
+                      id="priority"
+                      className="w-full px-3 py-2 border border-input rounded-md"
+                      value={editingTarget.priority}
+                      onChange={(e) => setEditingTarget(prev => ({ ...prev, priority: e.target.value as SignalTarget['priority'] }))}
+                    >
+                      <option value="low">Low</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
+                      <option value="critical">Critical</option>
+                    </select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="description">Description</Label>
+                    <Input
+                      id="description"
+                      value={editingTarget.description}
+                      onChange={(e) => setEditingTarget(prev => ({ ...prev, description: e.target.value }))}
+                      placeholder="Brief description of the target"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <Button onClick={handleSaveTarget}>
+                    <FloppyDisk className="w-4 h-4 mr-2" />
+                    Save Target
+                  </Button>
+                  {isAdding && (
+                    <Button 
+                      variant="outline" 
+                      onClick={() => {
+                        setIsAdding(false);
+                        setEditingTarget({
+                          signalName: '',
+                          category: 'cost',
+                          targetValue: 0,
+                          unit: '',
+                          threshold: 'below',
+                          priority: 'medium',
+                          description: ''
+                        });
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            )}
           </Card>
 
           {/* Existing Targets */}
