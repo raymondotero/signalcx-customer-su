@@ -14,6 +14,8 @@ import { CSVUpload } from '@/components/CSVUpload';
 import { AIRecommendationEngine } from '@/components/AIRecommendationEngine';
 import { RealTimeSignalProcessor } from '@/components/RealTimeSignalProcessor';
 import { BusinessValueDashboard } from '@/components/BusinessValueDashboard';
+import { ResponsiveHeightDemo } from '@/components/ResponsiveHeightDemo';
+import { HeightIndicator } from '@/components/HeightIndicator';
 import { SparkTestButton } from '@/components/SparkTestButton';
 import { useAccounts, useNBAs, useAgentMemory } from '@/hooks/useData';
 import { useSignalProcessor } from '@/hooks/useSignalProcessor';
@@ -215,6 +217,8 @@ function App() {
 
       {/* Summary Cards */}
       <div className="container mx-auto px-4 py-6 min-h-0">
+        <ResponsiveHeightDemo />
+        
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
           <Card className="border-visible">
             <CardContent className="p-4">
@@ -280,9 +284,9 @@ function App() {
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start adaptive-container">
           {/* Left Column - Accounts & NBA */}
-          <div className="lg:col-span-2 space-y-6 min-h-0">
+          <div className="lg:col-span-2 space-y-6 min-h-0 flex-container-responsive">
             <AccountsTable 
               accounts={accounts}
               onSelectAccount={handleSelectAccount}
@@ -290,7 +294,7 @@ function App() {
             />
             
             {selectedAccount && (
-              <div className="space-y-4">
+              <div className="space-y-4 flex-content-adaptive">
                 <Card className="border-visible">
                   <CardHeader>
                     <CardTitle>Selected Account</CardTitle>
@@ -328,8 +332,8 @@ function App() {
           </div>
 
           {/* Right Column - AI Systems */}
-          <div className="space-y-6 min-h-0">
-            <Tabs defaultValue="business-value" className="w-full h-full flex flex-col">
+          <div className="space-y-6 min-h-0 flex-container-responsive">
+            <Tabs defaultValue="business-value" className="w-full dynamic-height flex flex-col">
               <TabsList className="grid w-full grid-cols-5 flex-shrink-0">
                 <TabsTrigger value="business-value">Business Value</TabsTrigger>
                 <TabsTrigger value="ai-processor">AI Processor</TabsTrigger>
@@ -338,24 +342,34 @@ function App() {
                 <TabsTrigger value="memory">Memory</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="business-value" className="mt-4 flex-1 min-h-0">
-                <BusinessValueDashboard />
+              <TabsContent value="business-value" className="mt-4 flex-1 viewport-aware relative">
+                <HeightIndicator label="BV">
+                  <BusinessValueDashboard />
+                </HeightIndicator>
               </TabsContent>
               
-              <TabsContent value="ai-processor" className="mt-4 flex-1 min-h-0">
-                <RealTimeSignalProcessor />
+              <TabsContent value="ai-processor" className="mt-4 flex-1 viewport-aware relative">
+                <HeightIndicator label="AI">
+                  <RealTimeSignalProcessor />
+                </HeightIndicator>
               </TabsContent>
               
-              <TabsContent value="signals" className="mt-4 flex-1 min-h-0">
-                <LiveSignals />
+              <TabsContent value="signals" className="mt-4 flex-1 viewport-aware relative">
+                <HeightIndicator label="Signals">
+                  <LiveSignals />
+                </HeightIndicator>
               </TabsContent>
               
-              <TabsContent value="ai-engine" className="mt-4 flex-1 min-h-0">
-                <AIRecommendationEngine />
+              <TabsContent value="ai-engine" className="mt-4 flex-1 viewport-aware relative">
+                <HeightIndicator label="Engine">
+                  <AIRecommendationEngine />
+                </HeightIndicator>
               </TabsContent>
               
-              <TabsContent value="memory" className="mt-4 flex-1 min-h-0">
-                <AgentMemory />
+              <TabsContent value="memory" className="mt-4 flex-1 viewport-aware relative">
+                <HeightIndicator label="Memory">
+                  <AgentMemory />
+                </HeightIndicator>
               </TabsContent>
             </Tabs>
           </div>
