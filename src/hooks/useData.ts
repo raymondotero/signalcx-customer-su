@@ -69,6 +69,71 @@ const sampleAccounts: Account[] = [
     contractEnd: '2024-11-15',
     lastActivity: '2024-01-14',
     expansionOpportunity: 110000
+  },
+  {
+    id: 'acc-6',
+    name: 'CloudSoft Dynamics',
+    industry: 'Technology',
+    arr: 420000,
+    healthScore: 78,
+    status: 'Good',
+    csam: 'Jessica Parker',
+    ae: 'Daniel Wright',
+    contractEnd: '2025-01-31',
+    lastActivity: '2024-01-18',
+    expansionOpportunity: 140000
+  },
+  {
+    id: 'acc-7',
+    name: 'AutoParts Universe',
+    industry: 'Automotive',
+    arr: 290000,
+    healthScore: 55,
+    status: 'Watch',
+    csam: 'Carlos Hernandez',
+    ae: 'Sarah Wilson',
+    contractEnd: '2024-10-15',
+    lastActivity: '2024-01-08',
+    expansionOpportunity: 85000
+  },
+  {
+    id: 'acc-8',
+    name: 'EduTech Systems',
+    industry: 'Education',
+    arr: 150000,
+    healthScore: 92,
+    status: 'Good',
+    csam: 'Maria Gonzales',
+    ae: 'Kevin Brown',
+    contractEnd: '2025-05-30',
+    lastActivity: '2024-01-20',
+    expansionOpportunity: 60000
+  },
+  {
+    id: 'acc-9',
+    name: 'AgriBusiness Connect',
+    industry: 'Agriculture',
+    arr: 380000,
+    healthScore: 40,
+    status: 'At Risk',
+    csam: 'Ahmed Ali',
+    ae: 'Rachel Green',
+    contractEnd: '2024-07-31',
+    lastActivity: '2024-01-03',
+    expansionOpportunity: 150000
+  },
+  {
+    id: 'acc-10',
+    name: 'Energy Solutions Pro',
+    industry: 'Energy',
+    arr: 650000,
+    healthScore: 88,
+    status: 'Good',
+    csam: 'Nina Petrov',
+    ae: 'James Miller',
+    contractEnd: '2024-12-15',
+    lastActivity: '2024-01-17',
+    expansionOpportunity: 220000
   }
 ];
 

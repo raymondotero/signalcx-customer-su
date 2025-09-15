@@ -1,0 +1,11 @@
+name,arr,health_score,status,industry,csam,ae,last_activity,contract_end,expansion_opportunity
+"TechCorp Solutions",250000,85,"Good","Technology","Sarah Chen","Michael Thompson","2024-01-15","2024-12-31",75000
+"Global Manufacturing Inc",450000,65,"Watch","Manufacturing","Mike Rodriguez","Jennifer Davis","2024-01-10","2024-08-15",120000
+"FinanceFirst Bank",800000,45,"At Risk","Financial Services","Lisa Wang","Robert Martinez","2024-01-05","2024-06-30",200000
+"HealthTech Innovations",180000,90,"Good","Healthcare","David Kim","Amanda Foster","2024-01-16","2025-03-31",90000
+"RetailMax Corporation",320000,72,"Good","Retail","Emily Johnson","Christopher Lee","2024-01-14","2024-11-15",110000
+"CloudSoft Dynamics",420000,78,"Good","Technology","Jessica Parker","Daniel Wright","2024-01-18","2025-01-31",140000
+"AutoParts Universe",290000,55,"Watch","Automotive","Carlos Hernandez","Sarah Wilson","2024-01-08","2024-10-15",85000
+"EduTech Systems",150000,92,"Good","Education","Maria Gonzales","Kevin Brown","2024-01-20","2025-05-30",60000
+"AgriBusiness Connect",380000,40,"At Risk","Agriculture","Ahmed Ali","Rachel Green","2024-01-03","2024-07-31",150000
+"Energy Solutions Pro",650000,88,"Good","Energy","Nina Petrov","James Miller","2024-01-17","2024-12-15",220000

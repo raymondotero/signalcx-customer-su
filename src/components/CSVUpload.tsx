@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Upload, FileText, CheckCircle, XCircle } from '@phosphor-icons/react';
+import { Upload, FileText, CheckCircle, XCircle, Download } from '@phosphor-icons/react';
 import { Account } from '@/types';
 import { useAccounts, useAgentMemory } from '@/hooks/useData';
 import { toast } from 'sonner';
@@ -54,7 +54,12 @@ export function CSVUpload() {
               break;
             case 'csm':
             case 'customer_success_manager':
-              account.csm = values[i];
+            case 'csam':
+              account.csam = values[i];
+              break;
+            case 'ae':
+            case 'account_executive':
+              account.ae = values[i];
               break;
             case 'last_activity':
             case 'lastactivity':
@@ -96,6 +101,25 @@ export function CSVUpload() {
     return errors;
   };
 
+  const downloadSampleCSV = () => {
+    const sampleData = `name,arr,health_score,status,industry,csam,ae,last_activity,contract_end,expansion_opportunity
+"TechCorp Solutions",250000,85,"Good","Technology","Sarah Chen","Michael Thompson","2024-01-15","2024-12-31",75000
+"Global Manufacturing Inc",450000,65,"Watch","Manufacturing","Mike Rodriguez","Jennifer Davis","2024-01-10","2024-08-15",120000
+"FinanceFirst Bank",800000,45,"At Risk","Financial Services","Lisa Wang","Robert Martinez","2024-01-05","2024-06-30",200000`;
+    
+    const blob = new Blob([sampleData], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'signalcx_sample_accounts.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    
+    toast.success('Sample CSV downloaded');
+  };
+
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -134,8 +158,8 @@ export function CSVUpload() {
           healthScore: accountData.healthScore || 50,
           status: accountData.status || 'Good',
           industry: accountData.industry || 'Unknown',
-          csam: (accountData as any).csam || (accountData as any).csm || 'Unassigned',
-          ae: accountData.ae || 'Unassigned',
+          csam: (accountData as any).csam || 'Unassigned',
+          ae: (accountData as any).ae || 'Unassigned',
           lastActivity: accountData.lastActivity || new Date().toISOString().split('T')[0],
           contractEnd: accountData.contractEnd || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
           expansionOpportunity: accountData.expansionOpportunity || 0
@@ -239,7 +263,18 @@ export function CSVUpload() {
           <Separator />
 
           <div>
-            <h4 className="font-medium mb-2">Expected CSV Format</h4>
+            <div className="flex items-center justify-between mb-2">
+              <h4 className="font-medium">Expected CSV Format</h4>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={downloadSampleCSV}
+                className="text-xs"
+              >
+                <Download className="w-3 h-3 mr-1" />
+                Sample CSV
+              </Button>
+            </div>
             <p className="text-sm text-muted-foreground mb-4">
               Your CSV should include these columns (column names are flexible):
             </p>
@@ -258,7 +293,8 @@ export function CSVUpload() {
                   <p className="font-medium mb-2">Optional:</p>
                   <ul className="space-y-1">
                     <li>• industry</li>
-                    <li>• csm / customer_success_manager</li>
+                    <li>• csam / customer_success_manager</li>
+                    <li>• ae / account_executive</li>
                     <li>• last_activity</li>
                     <li>• contract_end</li>
                     <li>• expansion_opportunity</li>
