@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { ArrowClockwise, Database, Shield, Activity, Brain } from '@phosphor-icons/react';
+import { ArrowClockwise, Database, Shield, Activity, Brain, Target } from '@phosphor-icons/react';
 import { AccountsTable } from '@/components/AccountsTable';
 import { NBADisplay } from '@/components/NBADisplay';
 import { LiveSignals } from '@/components/LiveSignals';
@@ -19,6 +19,8 @@ import { useAccounts, useNBAs, useAgentMemory } from '@/hooks/useData';
 import { useSignalProcessor } from '@/hooks/useSignalProcessor';
 import { useRealtimeNotifications } from '@/hooks/useRealtimeNotifications';
 import { useRealTimeAI, useAIMetrics } from '@/hooks/useRealTimeAI';
+import { useKV } from '@github/spark/hooks';
+import { SignalTarget } from '@/components/TargetSettingsDialog';
 import { Account, NextBestAction } from '@/types';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
@@ -32,6 +34,8 @@ function App() {
   const { isProcessing } = useSignalProcessor();
   const realTimeAI = useRealTimeAI();
   const aiMetrics = useAIMetrics();
+  const [targets] = useKV<SignalTarget[]>('signal-targets', []);
+  const safeTargets = targets || [];
   
   // Enable real-time notifications
   useRealtimeNotifications();
@@ -172,10 +176,18 @@ function App() {
             </div>
             
             <div className="flex items-center gap-2">
-              {/* AI Metrics */}
-              <div className="text-right text-xs text-muted-foreground mr-2">
-                <div>AI Approval: {Math.round(aiMetrics.getApprovalRate())}%</div>
-                <div>Avg Processing: {Math.round(aiMetrics.getAverageProcessingTime())}ms</div>
+              <div className="flex items-center gap-2 ml-2">
+                <div className="text-right text-xs text-muted-foreground mr-2">
+                  <div>AI Approval: {Math.round(aiMetrics.getApprovalRate())}%</div>
+                  <div>Avg Processing: {Math.round(aiMetrics.getAverageProcessingTime())}ms</div>
+                </div>
+                
+                {safeTargets.length > 0 && (
+                  <Badge variant="outline" className="bg-gradient-to-r from-green-50 to-blue-50 border-green-200 text-green-700">
+                    <Target className="w-3 h-3 mr-1" />
+                    {safeTargets.length} Targets Active
+                  </Badge>
+                )}
               </div>
               
               <SparkTestButton />

@@ -20,6 +20,7 @@ export interface SignalTarget {
 }
 
 const DEFAULT_TARGETS: SignalTarget[] = [
+  // Cost Optimization Targets
   {
     signalName: 'Cloud Spend Variance',
     category: 'cost',
@@ -30,6 +31,44 @@ const DEFAULT_TARGETS: SignalTarget[] = [
     description: 'Keep cloud spend variance under 10%'
   },
   {
+    signalName: 'Idle Resource Ratio',
+    category: 'cost',
+    targetValue: 5,
+    unit: '%',
+    threshold: 'below',
+    priority: 'medium',
+    description: 'Minimize idle resource waste'
+  },
+  {
+    signalName: 'Reserved Coverage',
+    category: 'cost',
+    targetValue: 80,
+    unit: '%',
+    threshold: 'above',
+    priority: 'medium',
+    description: 'Maintain optimal reserved instance coverage'
+  },
+  {
+    signalName: 'Rightsizing Opportunity',
+    category: 'cost',
+    targetValue: 15,
+    unit: '%',
+    threshold: 'below',
+    priority: 'high',
+    description: 'Limit rightsizing opportunities to 15%'
+  },
+  {
+    signalName: 'FinOps Score',
+    category: 'cost',
+    targetValue: 85,
+    unit: 'score',
+    threshold: 'above',
+    priority: 'high',
+    description: 'Maintain excellent FinOps practices'
+  },
+
+  // Agility & Performance Targets
+  {
     signalName: 'Release Frequency',
     category: 'agility',
     targetValue: 2,
@@ -38,6 +77,44 @@ const DEFAULT_TARGETS: SignalTarget[] = [
     priority: 'medium',
     description: 'Maintain frequent release cadence'
   },
+  {
+    signalName: 'Lead Time for Changes',
+    category: 'agility',
+    targetValue: 2,
+    unit: 'days',
+    threshold: 'below',
+    priority: 'high',
+    description: 'Keep lead time under 2 days'
+  },
+  {
+    signalName: 'Change Failure Rate',
+    category: 'agility',
+    targetValue: 5,
+    unit: '%',
+    threshold: 'below',
+    priority: 'critical',
+    description: 'Maintain low change failure rate'
+  },
+  {
+    signalName: 'MTTR Application',
+    category: 'agility',
+    targetValue: 30,
+    unit: 'minutes',
+    threshold: 'below',
+    priority: 'high',
+    description: 'Quick recovery from incidents'
+  },
+  {
+    signalName: 'Test Automation Coverage',
+    category: 'agility',
+    targetValue: 80,
+    unit: '%',
+    threshold: 'above',
+    priority: 'medium',
+    description: 'Maintain high test automation coverage'
+  },
+
+  // Data Quality & Intelligence Targets
   {
     signalName: 'Data Freshness (Hours)',
     category: 'data',
@@ -48,6 +125,44 @@ const DEFAULT_TARGETS: SignalTarget[] = [
     description: 'Keep data fresh and current'
   },
   {
+    signalName: 'Data Quality Score',
+    category: 'data',
+    targetValue: 95,
+    unit: 'score',
+    threshold: 'above',
+    priority: 'high',
+    description: 'Maintain excellent data quality'
+  },
+  {
+    signalName: 'AI Agent Usage Rate',
+    category: 'data',
+    targetValue: 60,
+    unit: '%',
+    threshold: 'above',
+    priority: 'medium',
+    description: 'Drive AI agent adoption'
+  },
+  {
+    signalName: 'MAU/WAU Ratio',
+    category: 'data',
+    targetValue: 25,
+    unit: '%',
+    threshold: 'above',
+    priority: 'medium',
+    description: 'Maintain healthy user engagement'
+  },
+  {
+    signalName: 'Conversion Rate',
+    category: 'data',
+    targetValue: 3,
+    unit: '%',
+    threshold: 'above',
+    priority: 'high',
+    description: 'Optimize conversion funnel'
+  },
+
+  // Risk & Security Targets
+  {
     signalName: 'Open Critical Vulns',
     category: 'risk',
     targetValue: 0,
@@ -57,6 +172,44 @@ const DEFAULT_TARGETS: SignalTarget[] = [
     description: 'Zero critical vulnerabilities'
   },
   {
+    signalName: 'MFA Coverage',
+    category: 'risk',
+    targetValue: 100,
+    unit: '%',
+    threshold: 'exactly',
+    priority: 'critical',
+    description: 'Complete MFA coverage required'
+  },
+  {
+    signalName: 'SLA Uptime 30d',
+    category: 'risk',
+    targetValue: 99.9,
+    unit: '%',
+    threshold: 'above',
+    priority: 'critical',
+    description: 'Maintain high availability SLA'
+  },
+  {
+    signalName: 'Backup Success Rate',
+    category: 'risk',
+    targetValue: 99,
+    unit: '%',
+    threshold: 'above',
+    priority: 'high',
+    description: 'Ensure reliable backup operations'
+  },
+  {
+    signalName: 'Certificate Expiry < 30d',
+    category: 'risk',
+    targetValue: 0,
+    unit: 'count',
+    threshold: 'exactly',
+    priority: 'high',
+    description: 'No certificates expiring within 30 days'
+  },
+
+  // Culture & Engagement Targets
+  {
     signalName: 'Champion Count',
     category: 'culture',
     targetValue: 3,
@@ -64,6 +217,42 @@ const DEFAULT_TARGETS: SignalTarget[] = [
     threshold: 'above',
     priority: 'high',
     description: 'Maintain strong champion network'
+  },
+  {
+    signalName: 'Training Hours Last 90d',
+    category: 'culture',
+    targetValue: 20,
+    unit: 'hours',
+    threshold: 'above',
+    priority: 'medium',
+    description: 'Ensure continuous learning and development'
+  },
+  {
+    signalName: 'QBR Cadence',
+    category: 'culture',
+    targetValue: 90,
+    unit: 'days',
+    threshold: 'below',
+    priority: 'high',
+    description: 'Regular quarterly business reviews'
+  },
+  {
+    signalName: 'CSM Touches Last 14d',
+    category: 'culture',
+    targetValue: 2,
+    unit: 'count',
+    threshold: 'above',
+    priority: 'medium',
+    description: 'Regular customer success engagement'
+  },
+  {
+    signalName: 'Enablement NPS',
+    category: 'culture',
+    targetValue: 50,
+    unit: 'score',
+    threshold: 'above',
+    priority: 'medium',
+    description: 'High enablement satisfaction'
   }
 ];
 
@@ -131,6 +320,23 @@ export function TargetSettingsDialog({ onTargetsUpdated }: TargetSettingsDialogP
     toast.success('Target deleted successfully');
   };
 
+  const handleBulkAddTargets = (category: SignalTarget['category']) => {
+    const categoryTargets = DEFAULT_TARGETS.filter(t => t.category === category);
+    const existingSignals = currentTargets.map(t => t.signalName);
+    const newTargets = categoryTargets.filter(t => !existingSignals.includes(t.signalName));
+    
+    if (newTargets.length === 0) {
+      toast.info(`All ${category} targets are already configured`);
+      return;
+    }
+    
+    const updatedTargets = [...currentTargets, ...newTargets];
+    setTargets(updatedTargets);
+    onTargetsUpdated?.(updatedTargets);
+    
+    toast.success(`Added ${newTargets.length} ${category} targets`);
+  };
+
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'cost': return 'bg-blue-100 text-blue-800';
@@ -189,6 +395,60 @@ export function TargetSettingsDialog({ onTargetsUpdated }: TargetSettingsDialogP
             
             {isAdding && (
               <CardContent className="space-y-4">
+                {/* Quick Add from Presets */}
+                <div className="space-y-2">
+                  <Label>Quick Add from Common Targets</Label>
+                  <select
+                    className="w-full px-3 py-2 border border-input rounded-md"
+                    value=""
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        const preset = DEFAULT_TARGETS.find(t => t.signalName === e.target.value);
+                        if (preset) {
+                          setEditingTarget(preset);
+                        }
+                      }
+                    }}
+                  >
+                    <option value="">Select a common target to add...</option>
+                    <optgroup label="Cost Optimization">
+                      {DEFAULT_TARGETS.filter(t => t.category === 'cost').map(target => (
+                        <option key={target.signalName} value={target.signalName}>
+                          {target.signalName} (Target: {target.threshold} {target.targetValue}{target.unit})
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Agility & Performance">
+                      {DEFAULT_TARGETS.filter(t => t.category === 'agility').map(target => (
+                        <option key={target.signalName} value={target.signalName}>
+                          {target.signalName} (Target: {target.threshold} {target.targetValue}{target.unit})
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Data Quality">
+                      {DEFAULT_TARGETS.filter(t => t.category === 'data').map(target => (
+                        <option key={target.signalName} value={target.signalName}>
+                          {target.signalName} (Target: {target.threshold} {target.targetValue}{target.unit})
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Risk & Security">
+                      {DEFAULT_TARGETS.filter(t => t.category === 'risk').map(target => (
+                        <option key={target.signalName} value={target.signalName}>
+                          {target.signalName} (Target: {target.threshold} {target.targetValue}{target.unit})
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Culture & Engagement">
+                      {DEFAULT_TARGETS.filter(t => t.category === 'culture').map(target => (
+                        <option key={target.signalName} value={target.signalName}>
+                          {target.signalName} (Target: {target.threshold} {target.targetValue}{target.unit})
+                        </option>
+                      ))}
+                    </optgroup>
+                  </select>
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="signal-name">Signal Name</Label>
@@ -312,7 +572,46 @@ export function TargetSettingsDialog({ onTargetsUpdated }: TargetSettingsDialogP
           {/* Existing Targets */}
           <Card>
             <CardHeader>
-              <CardTitle>Current Targets ({currentTargets.length})</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle>Current Targets ({currentTargets.length})</CardTitle>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleBulkAddTargets('cost')}
+                  >
+                    Add Cost Targets
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleBulkAddTargets('agility')}
+                  >
+                    Add Agility Targets
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleBulkAddTargets('data')}
+                  >
+                    Add Data Targets
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleBulkAddTargets('risk')}
+                  >
+                    Add Risk Targets
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleBulkAddTargets('culture')}
+                  >
+                    Add Culture Targets
+                  </Button>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">

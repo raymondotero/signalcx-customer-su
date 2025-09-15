@@ -150,6 +150,12 @@ export function BusinessValueDashboard() {
                 {targetCompliance}% Target Compliance
               </Badge>
             )}
+            {totalTargets > 0 && (
+              <Badge variant="outline" className="bg-gradient-to-r from-green-50 to-blue-50 border-green-200">
+                <Target className="w-3 h-3 mr-1 text-green-600" />
+                AI Target-Enhanced
+              </Badge>
+            )}
           </div>
           <TargetSettingsDialog />
         </div>
