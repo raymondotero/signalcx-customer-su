@@ -152,9 +152,9 @@ function App() {
       <Toaster />
       
       {/* Header */}
-      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <Activity className="w-5 h-5 text-primary-foreground" />
@@ -175,9 +175,9 @@ function App() {
               </div>
             </div>
             
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-2 ml-2">
-                <div className="text-right text-xs text-muted-foreground mr-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center gap-2">
+                <div className="text-right text-xs text-muted-foreground">
                   <div>AI Approval: {Math.round(aiMetrics.getApprovalRate())}%</div>
                   <div>Avg Processing: {Math.round(aiMetrics.getAverageProcessingTime())}ms</div>
                 </div>
@@ -214,9 +214,9 @@ function App() {
       </div>
 
       {/* Summary Cards */}
-      <div className="container mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-          <Card className="border-visible">
+      <div className="container mx-auto px-4 py-6 max-w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+          <Card className="border-visible h-fit">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -228,7 +228,7 @@ function App() {
             </CardContent>
           </Card>
           
-          <Card className="border-visible">
+          <Card className="border-visible h-fit">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -242,7 +242,7 @@ function App() {
             </CardContent>
           </Card>
           
-          <Card className="border-visible">
+          <Card className="border-visible h-fit">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -254,7 +254,7 @@ function App() {
             </CardContent>
           </Card>
           
-          <Card className="border-visible">
+          <Card className="border-visible h-fit">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -266,7 +266,7 @@ function App() {
             </CardContent>
           </Card>
           
-          <Card className="border-visible">
+          <Card className="border-visible h-fit">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -280,23 +280,25 @@ function App() {
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Left Column - Accounts & NBA */}
-          <div className="lg:col-span-2 space-y-6">
-            <AccountsTable 
-              accounts={accounts}
-              onSelectAccount={handleSelectAccount}
-              selectedAccount={selectedAccount || undefined}
-            />
+          <div className="xl:col-span-2 space-y-6 min-h-0">
+            <div className="h-fit">
+              <AccountsTable 
+                accounts={accounts}
+                onSelectAccount={handleSelectAccount}
+                selectedAccount={selectedAccount || undefined}
+              />
+            </div>
             
             {selectedAccount && (
               <div className="space-y-4">
-                <Card className="border-visible">
+                <Card className="border-visible h-fit">
                   <CardHeader>
                     <CardTitle>Selected Account</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                       <div>
                         <p className="font-medium">{selectedAccount.name}</p>
                         <p className="text-muted-foreground">{selectedAccount.industry}</p>
@@ -311,51 +313,65 @@ function App() {
                   </CardContent>
                 </Card>
                 
-                <NBADisplay 
-                  account={selectedAccount}
-                  onPlanAndRun={handlePlanAndRun}
-                />
+                <div className="h-fit">
+                  <NBADisplay 
+                    account={selectedAccount}
+                    onPlanAndRun={handlePlanAndRun}
+                  />
+                </div>
                 
                 {selectedNBA && (
-                  <AdaptiveCardPreview
-                    nba={selectedNBA}
-                    accountName={selectedAccount.name}
-                    onApprovalDecision={handleApprovalDecision}
-                  />
+                  <div className="h-fit">
+                    <AdaptiveCardPreview
+                      nba={selectedNBA}
+                      accountName={selectedAccount.name}
+                      onApprovalDecision={handleApprovalDecision}
+                    />
+                  </div>
                 )}
               </div>
             )}
           </div>
 
           {/* Right Column - AI Systems */}
-          <div className="space-y-6">
-            <Tabs defaultValue="business-value" className="w-full">
-              <TabsList className="grid w-full grid-cols-5">
-                <TabsTrigger value="business-value">Business Value</TabsTrigger>
-                <TabsTrigger value="ai-processor">AI Processor</TabsTrigger>
-                <TabsTrigger value="signals">Live Signals</TabsTrigger>
-                <TabsTrigger value="ai-engine">AI Engine</TabsTrigger>
-                <TabsTrigger value="memory">Memory</TabsTrigger>
+          <div className="space-y-6 min-h-0 h-fit">
+            <Tabs defaultValue="business-value" className="w-full h-fit">
+              <TabsList className="grid w-full grid-cols-5 h-fit">
+                <TabsTrigger value="business-value" className="text-xs px-2">Business</TabsTrigger>
+                <TabsTrigger value="ai-processor" className="text-xs px-2">AI Proc</TabsTrigger>
+                <TabsTrigger value="signals" className="text-xs px-2">Signals</TabsTrigger>
+                <TabsTrigger value="ai-engine" className="text-xs px-2">AI Engine</TabsTrigger>
+                <TabsTrigger value="memory" className="text-xs px-2">Memory</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="business-value" className="mt-4">
-                <BusinessValueDashboard />
+              <TabsContent value="business-value" className="mt-4 h-fit">
+                <div className="h-fit">
+                  <BusinessValueDashboard />
+                </div>
               </TabsContent>
               
-              <TabsContent value="ai-processor" className="mt-4">
-                <RealTimeSignalProcessor />
+              <TabsContent value="ai-processor" className="mt-4 h-fit">
+                <div className="h-fit">
+                  <RealTimeSignalProcessor />
+                </div>
               </TabsContent>
               
-              <TabsContent value="signals" className="mt-4">
-                <LiveSignals />
+              <TabsContent value="signals" className="mt-4 h-fit">
+                <div className="h-fit">
+                  <LiveSignals />
+                </div>
               </TabsContent>
               
-              <TabsContent value="ai-engine" className="mt-4">
-                <AIRecommendationEngine />
+              <TabsContent value="ai-engine" className="mt-4 h-fit">
+                <div className="h-fit">
+                  <AIRecommendationEngine />
+                </div>
               </TabsContent>
               
-              <TabsContent value="memory" className="mt-4">
-                <AgentMemory />
+              <TabsContent value="memory" className="mt-4 h-fit">
+                <div className="h-fit">
+                  <AgentMemory />
+                </div>
               </TabsContent>
             </Tabs>
           </div>
