@@ -1,12 +1,16 @@
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
-import { CurrencyDollar, Rocket, Database, Shield, Users, TrendUp, TrendDown, Minus, Target, CheckCircle, Warning } from '@phosphor-icons/react';
-import { useSignals } from '@/hooks/useData';
+import { Button } from '@/components/ui/button';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { CurrencyDollar, Rocket, Database, Shield, Users, TrendUp, TrendDown, Minus, Target, CheckCircle, Warning, Brain, CaretDown, CaretUp, Lightbulb, ArrowRight } from '@phosphor-icons/react';
+import { useSignals, useNBAs, useAccounts } from '@/hooks/useData';
 import { useKV } from '@github/spark/hooks';
-import { Signal } from '@/types';
+import { Signal, NextBestAction, Account } from '@/types';
 import { TargetSettingsDialog, SignalTarget } from '@/components/TargetSettingsDialog';
+import { toast } from 'sonner';
 
 interface SignalCategoryStats {
   category: string;
@@ -21,12 +25,85 @@ interface SignalCategoryStats {
   targetsConfigured: number;
   targetsOnTrack: number;
   targetsMissed: number;
+  signals: Signal[];
+}
+
+interface SignalRecommendationMap {
+  signal: Signal;
+  recommendations: NextBestAction[];
+  accounts: Account[];
 }
 
 export function BusinessValueDashboard() {
   const { signals } = useSignals();
+  const { nbas } = useNBAs();
+  const { accounts } = useAccounts();
   const [targets] = useKV<SignalTarget[]>('signal-targets', []);
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+  const [selectedSignal, setSelectedSignal] = useState<Signal | null>(null);
   const safeTargets = targets || [];
+
+  const toggleCategory = (category: string) => {
+    const newExpanded = new Set(expandedCategories);
+    if (newExpanded.has(category)) {
+      newExpanded.delete(category);
+    } else {
+      newExpanded.add(category);
+    }
+    setExpandedCategories(newExpanded);
+  };
+
+  const getSignalRecommendations = (signal: Signal): SignalRecommendationMap => {
+    // Find NBAs that could be related to this signal based on:
+    // 1. Signal category matching NBA context
+    // 2. Account health status correlation
+    // 3. Signal severity matching NBA priority
+
+    const relatedAccounts = accounts.filter(account => {
+      // Match accounts that might be affected by this signal
+      if (signal.severity === 'critical' && account.status === 'At Risk') return true;
+      if (signal.severity === 'high' && (account.status === 'At Risk' || account.status === 'Watch')) return true;
+      if (signal.category === 'cost' && account.healthScore < 0.7) return true;
+      if (signal.category === 'risk' && account.status !== 'Good') return true;
+      return signal.severity === 'medium' && account.status === 'Watch';
+    });
+
+    const relatedNBAs = nbas.filter(nba => {
+      // Find NBAs for accounts that might be affected by this signal
+      const accountAffected = relatedAccounts.some(acc => acc.id === nba.accountId);
+      if (accountAffected) return true;
+
+      // Match based on signal category and NBA type
+      const signalKeywords = [signal.category, signal.signalName?.toLowerCase(), signal.type?.toLowerCase()].filter(Boolean);
+      const nbaKeywords = [nba.category?.toLowerCase(), nba.title?.toLowerCase(), nba.description?.toLowerCase()].filter(Boolean);
+      
+      return signalKeywords.some(keyword => 
+        nbaKeywords.some(nbaKeyword => nbaKeyword?.includes(keyword || ''))
+      );
+    });
+
+    return {
+      signal,
+      recommendations: relatedNBAs,
+      accounts: relatedAccounts
+    };
+  };
+
+  const generateRecommendationsForSignal = async (signal: Signal) => {
+    const signalMap = getSignalRecommendations(signal);
+    
+    if (signalMap.recommendations.length === 0) {
+      toast.info(`No existing recommendations found for ${signal.signalName}`, {
+        description: 'Consider generating new NBAs for affected accounts'
+      });
+    } else {
+      toast.success(`Found ${signalMap.recommendations.length} related recommendations`, {
+        description: `Affecting ${signalMap.accounts.length} accounts`
+      });
+    }
+    
+    setSelectedSignal(signal);
+  };
 
   const checkTargetCompliance = (signal: Signal, target: SignalTarget): 'on_track' | 'missed' | 'unknown' => {
     if (signal.value === undefined) return 'unknown';
@@ -117,7 +194,8 @@ export function BusinessValueDashboard() {
         trending,
         targetsConfigured: categoryTargets.length,
         targetsOnTrack,
-        targetsMissed
+        targetsMissed,
+        signals: categorySignals
       };
     });
   };
@@ -166,67 +244,168 @@ export function BusinessValueDashboard() {
           {categoryStats.map(stats => (
             <Card key={stats.category} className="border-l-4 border-l-primary/20 border-visible">
               <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    {getCategoryIcon(stats.category)}
-                    <div>
-                      <h4 className="font-semibold capitalize">{stats.category}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {stats.count} active signal{stats.count !== 1 ? 's' : ''}
-                      </p>
-                    </div>
-                  </div>
+                <Collapsible>
+                  <CollapsibleTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="w-full p-0 h-auto justify-start"
+                      onClick={() => toggleCategory(stats.category)}
+                    >
+                      <div className="flex items-center justify-between w-full mb-3">
+                        <div className="flex items-center gap-3">
+                          {getCategoryIcon(stats.category)}
+                          <div className="text-left">
+                            <h4 className="font-semibold capitalize">{stats.category}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              {stats.count} active signal{stats.count !== 1 ? 's' : ''}
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-2">
+                          {stats.averageValue !== undefined && (
+                            <Badge variant="outline" className="text-xs">
+                              Avg: {Math.round(stats.averageValue * 10) / 10}{stats.unit}
+                            </Badge>
+                          )}
+                          {stats.targetsConfigured > 0 && (
+                            <Badge variant="outline" className="text-xs">
+                              <Target className="w-3 h-3 mr-1" />
+                              {stats.targetsOnTrack}/{stats.targetsConfigured}
+                            </Badge>
+                          )}
+                          {getTrendIcon(stats.trending)}
+                          {expandedCategories.has(stats.category) ? (
+                            <CaretUp className="w-4 h-4" />
+                          ) : (
+                            <CaretDown className="w-4 h-4" />
+                          )}
+                        </div>
+                      </div>
+                    </Button>
+                  </CollapsibleTrigger>
                   
-                  <div className="flex items-center gap-2">
-                    {stats.averageValue !== undefined && (
-                      <Badge variant="outline" className="text-xs">
-                        Avg: {Math.round(stats.averageValue * 10) / 10}{stats.unit}
-                      </Badge>
-                    )}
-                    {stats.targetsConfigured > 0 && (
-                      <Badge variant="outline" className="text-xs">
-                        <Target className="w-3 h-3 mr-1" />
-                        {stats.targetsOnTrack}/{stats.targetsConfigured}
-                      </Badge>
-                    )}
-                    {getTrendIcon(stats.trending)}
-                  </div>
-                </div>
-                
-                {/* Target Progress Bar */}
-                {stats.targetsConfigured > 0 && (
-                  <div className="mb-3">
-                    <div className="flex items-center justify-between text-xs mb-1">
-                      <span className="text-muted-foreground">Target Compliance</span>
-                      <span className="font-medium">
-                        {stats.targetsOnTrack}/{stats.targetsConfigured} targets met
-                      </span>
+                  {/* Target Progress Bar */}
+                  {stats.targetsConfigured > 0 && (
+                    <div className="mb-3">
+                      <div className="flex items-center justify-between text-xs mb-1">
+                        <span className="text-muted-foreground">Target Compliance</span>
+                        <span className="font-medium">
+                          {stats.targetsOnTrack}/{stats.targetsConfigured} targets met
+                        </span>
+                      </div>
+                      <Progress 
+                        value={(stats.targetsOnTrack / stats.targetsConfigured) * 100} 
+                        className="h-2"
+                      />
                     </div>
-                    <Progress 
-                      value={(stats.targetsOnTrack / stats.targetsConfigured) * 100} 
-                      className="h-2"
-                    />
+                  )}
+                  
+                  <div className="grid grid-cols-4 gap-2 text-xs mb-3">
+                    <div className="text-center p-2 rounded bg-red-50">
+                      <div className="font-bold text-red-700">{stats.critical}</div>
+                      <div className="text-red-600">Critical</div>
+                    </div>
+                    <div className="text-center p-2 rounded bg-orange-50">
+                      <div className="font-bold text-orange-700">{stats.high}</div>
+                      <div className="text-orange-600">High</div>
+                    </div>
+                    <div className="text-center p-2 rounded bg-yellow-50">
+                      <div className="font-bold text-yellow-700">{stats.medium}</div>
+                      <div className="text-yellow-600">Medium</div>
+                    </div>
+                    <div className="text-center p-2 rounded bg-blue-50">
+                      <div className="font-bold text-blue-700">{stats.low}</div>
+                      <div className="text-blue-600">Low</div>
+                    </div>
                   </div>
-                )}
-                
-                <div className="grid grid-cols-4 gap-2 text-xs">
-                  <div className="text-center p-2 rounded bg-red-50">
-                    <div className="font-bold text-red-700">{stats.critical}</div>
-                    <div className="text-red-600">Critical</div>
-                  </div>
-                  <div className="text-center p-2 rounded bg-orange-50">
-                    <div className="font-bold text-orange-700">{stats.high}</div>
-                    <div className="text-orange-600">High</div>
-                  </div>
-                  <div className="text-center p-2 rounded bg-yellow-50">
-                    <div className="font-bold text-yellow-700">{stats.medium}</div>
-                    <div className="text-yellow-600">Medium</div>
-                  </div>
-                  <div className="text-center p-2 rounded bg-blue-50">
-                    <div className="font-bold text-blue-700">{stats.low}</div>
-                    <div className="text-blue-600">Low</div>
-                  </div>
-                </div>
+
+                  <CollapsibleContent>
+                    {stats.signals.length > 0 && (
+                      <div className="space-y-2 mt-4 border-t pt-4">
+                        <h5 className="text-sm font-medium flex items-center gap-2">
+                          <Brain className="w-4 h-4 text-primary" />
+                          Active Signals & AI Recommendations
+                        </h5>
+                        
+                        {stats.signals.slice(0, 5).map((signal, index) => {
+                          const signalMap = getSignalRecommendations(signal);
+                          
+                          return (
+                            <div key={index} className="p-3 border rounded-lg bg-muted/20">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-2">
+                                  <Badge 
+                                    variant={
+                                      signal.severity === 'critical' ? 'destructive' :
+                                      signal.severity === 'high' ? 'default' :
+                                      signal.severity === 'medium' ? 'secondary' : 'outline'
+                                    }
+                                    className="text-xs"
+                                  >
+                                    {signal.severity}
+                                  </Badge>
+                                  <span className="text-sm font-medium">
+                                    {signal.signalName || signal.type}
+                                  </span>
+                                  {signal.value !== undefined && (
+                                    <span className="text-xs text-muted-foreground">
+                                      {signal.value}{signal.unit}
+                                    </span>
+                                  )}
+                                </div>
+                                
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => generateRecommendationsForSignal(signal)}
+                                  className="text-xs h-7"
+                                >
+                                  <Lightbulb className="w-3 h-3 mr-1" />
+                                  View AI Recommendations
+                                </Button>
+                              </div>
+                              
+                              {signalMap.recommendations.length > 0 && (
+                                <div className="text-xs text-muted-foreground">
+                                  <div className="flex items-center gap-1 mb-1">
+                                    <ArrowRight className="w-3 h-3" />
+                                    {signalMap.recommendations.length} related recommendation{signalMap.recommendations.length !== 1 ? 's' : ''}
+                                    {signalMap.accounts.length > 0 && (
+                                      <span> affecting {signalMap.accounts.length} account{signalMap.accounts.length !== 1 ? 's' : ''}</span>
+                                    )}
+                                  </div>
+                                  {signalMap.recommendations.slice(0, 2).map((nba, nbaIndex) => (
+                                    <div key={nbaIndex} className="ml-4 text-xs text-blue-600">
+                                      • {nba.title}
+                                    </div>
+                                  ))}
+                                  {signalMap.recommendations.length > 2 && (
+                                    <div className="ml-4 text-xs text-muted-foreground">
+                                      +{signalMap.recommendations.length - 2} more...
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                              
+                              {signal.description && (
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  {signal.description}
+                                </p>
+                              )}
+                            </div>
+                          );
+                        })}
+                        
+                        {stats.signals.length > 5 && (
+                          <div className="text-center text-xs text-muted-foreground py-2">
+                            +{stats.signals.length - 5} more signals in this category
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </CollapsibleContent>
+                </Collapsible>
                 
                 {(stats.count > 0 || stats.targetsConfigured > 0) && (
                   <div className="mt-2 text-xs text-muted-foreground space-y-1">
@@ -269,6 +448,89 @@ export function BusinessValueDashboard() {
               </CardContent>
             </Card>
           ))}
+          
+          {/* Selected Signal Recommendations Detail */}
+          {selectedSignal && (
+            <Card className="border-visible border-2 border-primary/50 bg-primary/5">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-primary">
+                  <Brain className="w-5 h-5" />
+                  AI Recommendations for {selectedSignal.signalName || selectedSignal.type}
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setSelectedSignal(null)}
+                    className="ml-auto"
+                  >
+                    ×
+                  </Button>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {(() => {
+                  const signalMap = getSignalRecommendations(selectedSignal);
+                  
+                  if (signalMap.recommendations.length === 0) {
+                    return (
+                      <div className="text-center py-4 text-muted-foreground">
+                        <Lightbulb className="w-8 h-8 mx-auto mb-2 text-muted-foreground/50" />
+                        <p>No related recommendations found for this signal.</p>
+                        <p className="text-sm">Generate new NBAs for affected accounts to see AI recommendations.</p>
+                      </div>
+                    );
+                  }
+                  
+                  return (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-4 text-sm">
+                        <Badge variant="outline">
+                          {signalMap.recommendations.length} Recommendations
+                        </Badge>
+                        <Badge variant="outline">
+                          {signalMap.accounts.length} Affected Accounts
+                        </Badge>
+                        <Badge variant={selectedSignal.severity === 'critical' ? 'destructive' : 'default'}>
+                          {selectedSignal.severity} Priority
+                        </Badge>
+                      </div>
+                      
+                      <div className="grid gap-3">
+                        {signalMap.recommendations.map((nba, index) => {
+                          const account = accounts.find(a => a.id === nba.accountId);
+                          return (
+                            <div key={index} className="p-3 border rounded-lg bg-background">
+                              <div className="flex items-center justify-between mb-2">
+                                <h6 className="font-medium">{nba.title}</h6>
+                                <Badge variant="outline" className="text-xs">
+                                  {nba.priority} Priority
+                                </Badge>
+                              </div>
+                              
+                              {account && (
+                                <div className="text-sm text-muted-foreground mb-2">
+                                  Account: {account.name} ({account.status})
+                                </div>
+                              )}
+                              
+                              <p className="text-sm text-muted-foreground mb-2">
+                                {nba.description}
+                              </p>
+                              
+                              {nba.estimatedImpact && (
+                                <div className="text-xs text-green-600">
+                                  Estimated Impact: {nba.estimatedImpact}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })()}
+              </CardContent>
+            </Card>
+          )}
           
           {categoryStats.every(s => s.count === 0 && s.targetsConfigured === 0) && (
             <div className="text-center py-8 text-muted-foreground">
