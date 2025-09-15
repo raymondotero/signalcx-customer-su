@@ -142,8 +142,14 @@ export function useTargetAwareRecommendations() {
   ): Promise<NextBestAction> => {
     const { target, signal, compliance, deviation } = issue;
     
-    // Use the Spark AI to generate contextual recommendations
-    const prompt = (window as any).spark.llmPrompt`Generate a specific next best action for account "${account.name}" to address this target issue:
+    try {
+      // Check if spark is available before attempting AI generation
+      if (!(window as any).spark || !(window as any).spark.llmPrompt || !(window as any).spark.llm) {
+        throw new Error('Spark AI service not available');
+      }
+      
+      // Use the Spark AI to generate contextual recommendations
+      const prompt = (window as any).spark.llmPrompt`Generate a specific next best action for account "${account.name}" to address this target issue:
 
 Target: ${target.signalName}
 Current Value: ${signal.value}${target.unit}
@@ -170,7 +176,6 @@ Generate a concise, actionable recommendation that would help achieve the target
 
 Respond with JSON only.`;
 
-    try {
       const response = await (window as any).spark.llm(prompt, "gpt-4o-mini", true);
       const aiNBA = JSON.parse(response);
       

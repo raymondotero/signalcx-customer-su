@@ -31,6 +31,8 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
   const { generateTargetAwareNBA, isGenerating: isGeneratingTargetNBA, availableTargets } = useTargetAwareRecommendations();
 
   const generateSmartNBAs = async () => {
+    console.log('NBA Generation Started', { account: account.name, accountId: account.id });
+    
     setIsGenerating(true);
     setCurrentRecommendations([]);
     setTargetRecommendation(null);
@@ -46,11 +48,23 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
         agentMemory: memory.filter(m => m.accountId === account.id).slice(0, 10)
       };
 
+      console.log('NBA Context Built', { 
+        signalsCount: context.recentSignals.length, 
+        nbasCount: context.historicalNBAs.length,
+        memoryCount: context.agentMemory.length 
+      });
+
       // Generate both regular and target-aware recommendations
+      console.log('Starting AI recommendation generation...');
       const [aiRecommendations, targetRecommendation] = await Promise.all([
         azureOpenAI.generateSmartRecommendations(context),
         generateTargetAwareNBA(account, signals)
       ]);
+      
+      console.log('AI Recommendations Generated', { 
+        aiCount: aiRecommendations.length, 
+        hasTargetRec: !!targetRecommendation 
+      });
       
       setCurrentRecommendations(aiRecommendations);
       setTargetRecommendation(targetRecommendation);
@@ -60,16 +74,21 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
       
       if (targetRecommendation && targetRecommendation.confidence > 0.7) {
         topRecommendation = targetRecommendation.nba;
+        console.log('Selected target-aware recommendation', { confidence: targetRecommendation.confidence });
       } else if (aiRecommendations.length > 0) {
         const bestAI = aiRecommendations.reduce((top, current) => 
           current.confidence > top.confidence ? current : top, aiRecommendations[0]
         );
         topRecommendation = bestAI.nba;
+        console.log('Selected AI recommendation', { confidence: bestAI.confidence });
       }
 
       if (topRecommendation) {
         setSelectedNBA(topRecommendation);
         addNBA(topRecommendation);
+        console.log('NBA Added to Storage', { nbaId: topRecommendation.id, title: topRecommendation.title });
+      } else {
+        console.warn('No recommendations generated');
       }
       
       // Add to agent memory
@@ -90,6 +109,7 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
 
       const totalRecs = aiRecommendations.length + (targetRecommendation ? 1 : 0);
       toast.success(`Generated ${totalRecs} smart recommendations for ${account.name}`);
+      console.log('NBA Generation Completed Successfully', { totalRecommendations: totalRecs });
     } catch (error) {
       console.error('Error generating NBA:', error);
       
@@ -110,8 +130,10 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
       });
       
       toast.warning('AI service unavailable - generated basic recommendation');
+      console.log('Used fallback NBA due to error');
     } finally {
       setIsGenerating(false);
+      console.log('NBA Generation Process Completed');
     }
   };
 
@@ -447,11 +469,33 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
           <div className="text-center py-12 text-muted-foreground">
             <Brain className="w-16 h-16 mx-auto mb-4 text-muted-foreground/50" />
             <h3 className="text-lg font-medium mb-2">No recommendations yet</h3>
-            <p className="text-sm mb-4">Generate AI-powered next best actions for this account</p>
-            <Button onClick={generateSmartNBAs} disabled={isGenerating}>
-              <Sparkle className="w-4 h-4 mr-2" />
-              {isGenerating ? 'Generating...' : 'Generate Smart Recommendations'}
-            </Button>
+            <p className="text-sm mb-6">Generate AI-powered next best actions for this account</p>
+            
+            <div className="flex flex-col items-center gap-4">
+              <Button 
+                onClick={generateSmartNBAs} 
+                disabled={isGenerating}
+                size="lg"
+                className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
+              >
+                <Sparkle className="w-5 h-5 mr-2" />
+                {isGenerating ? 'Generating Smart Recommendations...' : 'Generate Smart NBA Recommendations'}
+              </Button>
+              
+              {isGenerating && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <div className="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full"></div>
+                  AI is analyzing account data and business signals...
+                </div>
+              )}
+              
+              <div className="text-xs text-muted-foreground max-w-md">
+                <p className="mb-2">🤖 <strong>AI-Powered Analysis:</strong></p>
+                <p>• Reviews account health, signals, and historical patterns</p>
+                <p>• Considers business value targets and priorities</p>
+                <p>• Generates contextual, actionable recommendations</p>
+              </div>
+            </div>
           </div>
         )}
       </CardContent>

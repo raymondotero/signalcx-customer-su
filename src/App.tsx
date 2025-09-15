@@ -14,6 +14,7 @@ import { CSVUpload } from '@/components/CSVUpload';
 import { AIRecommendationEngine } from '@/components/AIRecommendationEngine';
 import { RealTimeSignalProcessor } from '@/components/RealTimeSignalProcessor';
 import { BusinessValueDashboard } from '@/components/BusinessValueDashboard';
+import { SparkTestButton } from '@/components/SparkTestButton';
 import { useAccounts, useNBAs, useAgentMemory } from '@/hooks/useData';
 import { useSignalProcessor } from '@/hooks/useSignalProcessor';
 import { useRealtimeNotifications } from '@/hooks/useRealtimeNotifications';
@@ -177,6 +178,7 @@ function App() {
                 <div>Avg Processing: {Math.round(aiMetrics.getAverageProcessingTime())}ms</div>
               </div>
               
+              <SparkTestButton />
               <CSVUpload />
               <Button 
                 variant="outline" 

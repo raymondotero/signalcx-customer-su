@@ -82,17 +82,26 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
                 <TableCell>{account.csm}</TableCell>
                 <TableCell>{new Date(account.contractEnd).toLocaleDateString()}</TableCell>
                 <TableCell>
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onSelectAccount(account);
-                    }}
-                  >
-                    <Brain className="w-4 h-4 mr-1" />
-                    Generate NBA
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSelectAccount(account);
+                      }}
+                      className="hover:bg-primary/10"
+                    >
+                      <Brain className="w-4 h-4 mr-1" />
+                      Select
+                    </Button>
+                    {account.expansionOpportunity && account.expansionOpportunity > 0 && (
+                      <Badge variant="outline" className="text-xs bg-green-50 text-green-700">
+                        <CurrencyDollar className="w-3 h-3 mr-1" />
+                        ${(account.expansionOpportunity / 1000).toFixed(0)}K
+                      </Badge>
+                    )}
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
