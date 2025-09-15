@@ -154,9 +154,9 @@ function App() {
       <Toaster />
       
       {/* Header */}
-      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <Activity className="w-5 h-5 text-primary-foreground" />
@@ -177,9 +177,9 @@ function App() {
               </div>
             </div>
             
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-2 ml-2">
-                <div className="text-right text-xs text-muted-foreground mr-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center gap-2">
+                <div className="text-right text-xs text-muted-foreground">
                   <div>AI Approval: {Math.round(aiMetrics.getApprovalRate())}%</div>
                   <div>Avg Processing: {Math.round(aiMetrics.getAverageProcessingTime())}ms</div>
                 </div>
@@ -232,7 +232,7 @@ function App() {
             </CardContent>
           </Card>
           
-          <Card className="border-visible">
+          <Card className="border-visible h-fit">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -246,7 +246,7 @@ function App() {
             </CardContent>
           </Card>
           
-          <Card className="border-visible">
+          <Card className="border-visible h-fit">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -258,7 +258,7 @@ function App() {
             </CardContent>
           </Card>
           
-          <Card className="border-visible">
+          <Card className="border-visible h-fit">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -270,7 +270,7 @@ function App() {
             </CardContent>
           </Card>
           
-          <Card className="border-visible">
+          <Card className="border-visible h-fit">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -300,7 +300,7 @@ function App() {
                     <CardTitle>Selected Account</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                       <div>
                         <p className="font-medium">{selectedAccount.name}</p>
                         <p className="text-muted-foreground">{selectedAccount.industry}</p>
@@ -315,17 +315,21 @@ function App() {
                   </CardContent>
                 </Card>
                 
-                <NBADisplay 
-                  account={selectedAccount}
-                  onPlanAndRun={handlePlanAndRun}
-                />
+                <div className="h-fit">
+                  <NBADisplay 
+                    account={selectedAccount}
+                    onPlanAndRun={handlePlanAndRun}
+                  />
+                </div>
                 
                 {selectedNBA && (
-                  <AdaptiveCardPreview
-                    nba={selectedNBA}
-                    accountName={selectedAccount.name}
-                    onApprovalDecision={handleApprovalDecision}
-                  />
+                  <div className="h-fit">
+                    <AdaptiveCardPreview
+                      nba={selectedNBA}
+                      accountName={selectedAccount.name}
+                      onApprovalDecision={handleApprovalDecision}
+                    />
+                  </div>
                 )}
               </div>
             )}
