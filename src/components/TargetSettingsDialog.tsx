@@ -1,68 +1,68 @@
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, Di
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Gear, Plus, FloppyDisk, Target, Trash } from '@phosphor-icons/react';
+import { useKV } from '@github/spark/hooks';
+
+  signalName: string;
+  targetValue: number;
 import { useKV } from '@github/spark/hooks';
 import { toast } from 'sonner';
 
-export interface SignalTarget {
+interface SignalTarget {
   signalName: string;
   category: 'cost' | 'agility' | 'data' | 'risk' | 'culture';
   targetValue: number;
   unit: string;
-  threshold: 'above' | 'below' | 'exactly';
+    category: 'cost',
   priority: 'low' | 'medium' | 'high' | 'critical';
-  description: string;
+    threshold: 'below'
 }
 
 const DEFAULT_TARGETS: SignalTarget[] = [
-  {
+   
     signalName: 'Cloud Spend Variance',
-    category: 'cost',
+    threshold: 'below
     targetValue: 10,
-    unit: '%',
+  },
     threshold: 'below',
-    priority: 'high',
+    category: 'agilit
     description: 'Keep cloud spend variance under 10%'
-  },
-  {
-    signalName: 'CPU Utilization',
-    category: 'cost',
-    targetValue: 80,
-    unit: '%',
-    threshold: 'below',
-    priority: 'medium',
-    description: 'Maintain CPU utilization efficiency'
-  },
-  {
-    signalName: 'Release Frequency',
-    category: 'agility',
-    targetValue: 4,
-    unit: 'releases/month',
-    threshold: 'above',
+    
+   
     priority: 'high',
-    description: 'Maintain high deployment velocity'
   },
+    signalName: 'Ope
+    targetValu
+    threshold: 'exactly
+    description: 'Zero 
   {
-    signalName: 'MTTR Application',
-    category: 'agility',
-    targetValue: 30,
-    unit: 'minutes',
-    threshold: 'below',
-    priority: 'critical',
-    description: 'Fast incident recovery'
-  },
-  {
-    signalName: 'Data Freshness (Hours)',
-    category: 'data',
-    targetValue: 2,
-    unit: 'hours',
-    threshold: 'below',
+    
+   
     priority: 'high',
+  }
+
+  onTargetsUpdated?: (targe
+
+    priority: 'high',
+  // Ensure targets is always an array
+  co
+   
+    targetValue: 0,
+    threshold: 'below',
+    description: ''
+  const [isAdding, s
+  const handleSaveTarge
+      toast.error('Please
+    }
+    
+   
+      newTargets[existingIndex] = editing
+      newTargets.push
+    
+    onTargetsUpdat
+    setEditingTarget({
+      category: 'cost
     description: 'Keep data fresh and current'
   },
   {
@@ -91,9 +91,6 @@ interface TargetSettingsDialogProps {
 
 export function TargetSettingsDialog({ onTargetsUpdated }: TargetSettingsDialogProps) {
   const [targets, setTargets] = useKV<SignalTarget[]>('signal-targets', DEFAULT_TARGETS);
-  
-  // Ensure targets is always an array
-  const safeTargets = targets || DEFAULT_TARGETS;
   const [isOpen, setIsOpen] = useState(false);
   const [editingTarget, setEditingTarget] = useState<SignalTarget>({
     signalName: '',
@@ -112,7 +109,7 @@ export function TargetSettingsDialog({ onTargetsUpdated }: TargetSettingsDialogP
       return;
     }
 
-    const newTargets = [...safeTargets];
+    const newTargets = [...targets];
     const existingIndex = newTargets.findIndex(t => t.signalName === editingTarget.signalName);
     
     if (existingIndex >= 0) {
@@ -131,11 +128,11 @@ export function TargetSettingsDialog({ onTargetsUpdated }: TargetSettingsDialogP
       unit: '',
       threshold: 'below',
       priority: 'medium',
-      description: ''
+                  <Bu
     });
     
     toast.success('Target saved successfully');
-  };
+    
 
   const handleEditTarget = (target: SignalTarget) => {
     setEditingTarget(target);
@@ -143,7 +140,7 @@ export function TargetSettingsDialog({ onTargetsUpdated }: TargetSettingsDialogP
   };
 
   const handleDeleteTarget = (signalName: string) => {
-    const newTargets = safeTargets.filter(t => t.signalName !== signalName);
+    const newTargets = targets.filter(t => t.signalName !== signalName);
     setTargets(newTargets);
     onTargetsUpdated?.(newTargets);
     toast.success('Target deleted successfully');
@@ -157,7 +154,7 @@ export function TargetSettingsDialog({ onTargetsUpdated }: TargetSettingsDialogP
       case 'risk': return 'bg-red-100 text-red-800';
       case 'culture': return 'bg-orange-100 text-orange-800';
       default: return 'bg-gray-100 text-gray-800';
-    }
+     
   };
 
   const getPriorityColor = (priority: string) => {
@@ -167,17 +164,17 @@ export function TargetSettingsDialog({ onTargetsUpdated }: TargetSettingsDialogP
       case 'medium': return 'bg-yellow-100 text-yellow-800';
       case 'low': return 'bg-green-100 text-green-800';
       default: return 'bg-gray-100 text-gray-800';
-    }
+     
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
-          <Gear className="w-4 h-4 mr-2" />
-          Target Settings
+          <Settings className="w-4 h-4 mr-2" />
+                    <sele
         </Button>
-      </DialogTrigger>
+                      
       
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
@@ -185,11 +182,11 @@ export function TargetSettingsDialog({ onTargetsUpdated }: TargetSettingsDialogP
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Add/Edit Target Form */}
+                    <Label htmlFor="pr
           <Card>
-            <CardHeader>
+                      cl
               <div className="flex items-center justify-between">
-                <CardTitle>
+                    >
                   {isAdding ? 'Add New Target' : 'Signal Targets'}
                 </CardTitle>
                 {!isAdding && (
@@ -201,7 +198,7 @@ export function TargetSettingsDialog({ onTargetsUpdated }: TargetSettingsDialogP
                     <Plus className="w-4 h-4 mr-2" />
                     Add Target
                   </Button>
-                )}
+
               </div>
             </CardHeader>
             
@@ -215,7 +212,7 @@ export function TargetSettingsDialog({ onTargetsUpdated }: TargetSettingsDialogP
                       value={editingTarget.signalName}
                       onChange={(e) => setEditingTarget(prev => ({ ...prev, signalName: e.target.value }))}
                       placeholder="e.g., Cloud Spend Variance"
-                    />
+                    >
                   </div>
                   
                   <div className="space-y-2">
@@ -225,18 +222,18 @@ export function TargetSettingsDialog({ onTargetsUpdated }: TargetSettingsDialogP
                       className="w-full px-3 py-2 border border-input rounded-md"
                       value={editingTarget.category}
                       onChange={(e) => setEditingTarget(prev => ({ ...prev, category: e.target.value as SignalTarget['category'] }))}
-                    >
+              <div cl
                       <option value="cost">Cost</option>
                       <option value="agility">Agility</option>
                       <option value="data">Data</option>
                       <option value="risk">Risk</option>
                       <option value="culture">Culture</option>
-                    </select>
+                        <Badg
                   </div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-4">
-                  <div className="space-y-2">
+                ))}
                     <Label htmlFor="target-value">Target Value</Label>
                     <Input
                       id="target-value"
@@ -259,7 +256,7 @@ export function TargetSettingsDialog({ onTargetsUpdated }: TargetSettingsDialogP
                   
                   <div className="space-y-2">
                     <Label htmlFor="threshold">Threshold</Label>
-                    <select
+
                       id="threshold"
                       className="w-full px-3 py-2 border border-input rounded-md"
                       value={editingTarget.threshold}
@@ -268,7 +265,7 @@ export function TargetSettingsDialog({ onTargetsUpdated }: TargetSettingsDialogP
                       <option value="below">Below target (good)</option>
                       <option value="above">Above target (good)</option>
                       <option value="exactly">Exactly target</option>
-                    </select>
+
                   </div>
                 </div>
 
@@ -287,31 +284,31 @@ export function TargetSettingsDialog({ onTargetsUpdated }: TargetSettingsDialogP
                       <option value="critical">Critical</option>
                     </select>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="description">Description</Label>
                     <Input
-                      id="description"
+
                       value={editingTarget.description}
                       onChange={(e) => setEditingTarget(prev => ({ ...prev, description: e.target.value }))}
                       placeholder="Brief description of the target"
                     />
                   </div>
-                </div>
+
 
                 <div className="flex gap-2">
                   <Button onClick={handleSaveTarget}>
-                    <FloppyDisk className="w-4 h-4 mr-2" />
+
                     Save Target
-                  </Button>
+
                   {isAdding && (
-                    <Button 
+
                       variant="outline" 
-                      onClick={() => {
+
                         setIsAdding(false);
-                        setEditingTarget({
+
                           signalName: '',
-                          category: 'cost',
+
                           targetValue: 0,
                           unit: '',
                           threshold: 'below',
@@ -319,30 +316,30 @@ export function TargetSettingsDialog({ onTargetsUpdated }: TargetSettingsDialogP
                           description: ''
                         });
                       }}
-                    >
+
                       Cancel
                     </Button>
                   )}
-                </div>
+
               </CardContent>
-            )}
+
           </Card>
 
           {/* Existing Targets */}
-          <Card>
+
             <CardHeader>
-              <CardTitle>Current Targets ({safeTargets.length})</CardTitle>
+              <CardTitle>Current Targets ({targets.length})</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {safeTargets.map((target, index) => (
+                {targets.map((target, index) => (
                   <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-medium">{target.signalName}</span>
                         <Badge className={getCategoryColor(target.category)}>
-                          {target.category}
-                        </Badge>
+
+
                         <Badge className={getPriorityColor(target.priority)}>
                           {target.priority}
                         </Badge>
@@ -357,38 +354,37 @@ export function TargetSettingsDialog({ onTargetsUpdated }: TargetSettingsDialogP
                         variant="outline"
                         size="sm"
                         onClick={() => handleEditTarget(target)}
-                      >
+
                         Edit
                       </Button>
                       <Button
-                        variant="outline"
+
                         size="sm"
                         onClick={() => handleDeleteTarget(target.signalName)}
                       >
-                        <Trash className="w-4 h-4" />
+                        <Trash2 className="w-4 h-4" />
                       </Button>
-                    </div>
+
                   </div>
-                ))}
-                
-                {safeTargets.length === 0 && (
+
+
+                {targets.length === 0 && (
                   <div className="text-center py-8 text-muted-foreground">
                     <Target className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
                     <p>No signal targets configured yet.</p>
                     <p className="text-sm">Add targets to improve AI recommendations.</p>
                   </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
 
-        <DialogFooter>
+              </div>
+
+          </Card>
+
+
+
           <Button variant="outline" onClick={() => setIsOpen(false)}>
-            Close
+
           </Button>
-        </DialogFooter>
+
       </DialogContent>
-    </Dialog>
+
   );
-}
