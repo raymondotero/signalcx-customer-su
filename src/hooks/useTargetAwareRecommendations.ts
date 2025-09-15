@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useKV } from '@github/spark/hooks';
 import { Account, NextBestAction, Signal } from '@/types';
 import { SignalTarget } from '@/components/TargetSettingsDialog';

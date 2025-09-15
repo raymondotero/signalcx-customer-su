@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useKV } from '@github/spark/hooks';
 import { Signal, Account, NextBestAction, MemoryEntry } from '@/types';
 import { azureOpenAI, SmartRecommendation, RecommendationContext } from '@/services/azureOpenAI';

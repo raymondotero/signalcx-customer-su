@@ -1,7 +1,7 @@
 import { useKV } from '@github/spark/hooks';
 import { Account, NextBestAction, Signal, MemoryEntry } from '@/types';
 import { generateBusinessValueSignal } from '@/services/signalCatalog';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 // Sample seed data
 const sampleAccounts: Account[] = [

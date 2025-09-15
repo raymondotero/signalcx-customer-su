@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSignals, useAgentMemory } from '@/hooks/useData';
 import { Signal } from '@/types';
 

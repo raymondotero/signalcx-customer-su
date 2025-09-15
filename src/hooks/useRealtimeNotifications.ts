@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSignals, useAgentMemory } from '@/hooks/useData';
 import { toast } from 'sonner';
 
