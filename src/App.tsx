@@ -15,7 +15,7 @@ import { AIRecommendationEngine } from '@/components/AIRecommendationEngine';
 import { RealTimeSignalProcessor } from '@/components/RealTimeSignalProcessor';
 import { BusinessValueDashboard } from '@/components/BusinessValueDashboard';
 import { SparkTestButton } from '@/components/SparkTestButton';
-import { useAccounts, useNBAs, useAgentMemory } from '@/hooks/useData';
+import { useAccounts, useNBAs, useAgentMemory, sampleAccounts } from '@/hooks/useData';
 import { useSignalProcessor } from '@/hooks/useSignalProcessor';
 import { useRealtimeNotifications } from '@/hooks/useRealtimeNotifications';
 import { useRealTimeAI, useAIMetrics } from '@/hooks/useRealTimeAI';
@@ -95,7 +95,8 @@ function App() {
   };
 
   const handleResetDemo = () => {
-    setAccounts([]);
+    // Reset to sample data with CSAM and AE information
+    setAccounts(sampleAccounts);
     setNBAs([]);
     clearMemory();
     setSelectedAccount(null);

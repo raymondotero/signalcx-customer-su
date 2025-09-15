@@ -3,8 +3,8 @@ import { Account, NextBestAction, Signal, MemoryEntry } from '@/types';
 import { generateBusinessValueSignal } from '@/services/signalCatalog';
 import React, { useEffect } from 'react';
 
-// Sample seed data
-const sampleAccounts: Account[] = [
+// Sample seed data - exported for reset functionality
+export const sampleAccounts: Account[] = [
   {
     id: 'acc-1',
     name: 'TechCorp Solutions',
@@ -140,6 +140,13 @@ const sampleAccounts: Account[] = [
 export function useAccounts() {
   const [accounts, setAccounts] = useKV<Account[]>('signalcx-accounts', sampleAccounts);
   const [initialized, setInitialized] = useKV<boolean>('signalcx-initialized', false);
+  
+  // Ensure sample data is always loaded if accounts are empty
+  React.useEffect(() => {
+    if (!accounts || accounts.length === 0) {
+      setAccounts(sampleAccounts);
+    }
+  }, [accounts, setAccounts]);
   
   // Initialize with seed business value signals
   useEffect(() => {

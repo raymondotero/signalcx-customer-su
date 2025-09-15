@@ -81,8 +81,8 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
                     {account.status}
                   </Badge>
                 </TableCell>
-                <TableCell>{account.csam}</TableCell>
-                <TableCell>{account.ae}</TableCell>
+                <TableCell>{account.csam || 'N/A'}</TableCell>
+                <TableCell>{account.ae || 'N/A'}</TableCell>
                 <TableCell>{new Date(account.contractEnd).toLocaleDateString()}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
