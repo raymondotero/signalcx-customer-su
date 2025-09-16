@@ -12,6 +12,26 @@ export interface Account {
   expansionOpportunity?: number;
 }
 
+export interface AIRecommendation {
+  title: string;
+  description: string;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  category: 'engagement' | 'retention' | 'expansion' | 'support' | 'onboarding' | 'optimization';
+  targetAccounts: string[];
+  estimatedImpact: string;
+  effort: 'low' | 'medium' | 'high';
+  timeline: string;
+  successMetrics: string[];
+  reasoning: string;
+}
+
+export interface SignalAnalysis {
+  impact: string;
+  urgency: 'low' | 'medium' | 'high' | 'critical';
+  affectedAccountsCount: number;
+  businessValueAtRisk: string;
+}
+
 export interface Signal {
   id: string;
   timestamp: string;
@@ -27,6 +47,8 @@ export interface Signal {
   trend?: 'improving' | 'stable' | 'declining';
   target?: number;
   metadata?: Record<string, any>;
+  aiRecommendations?: AIRecommendation[];
+  aiAnalysis?: SignalAnalysis;
 }
 
 export interface NextBestAction {
