@@ -33,15 +33,22 @@ export const getSparkAIStatus = (): SparkAIStatus => {
       };
     }
 
+    // Check if we're in the Spark environment by looking for the global spark object
     const spark = (window as any).spark;
     
     if (!spark) {
+      // Check if we're in development/preview mode where Spark might not be available
+      const isDev = window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1');
+      const isPreview = window.location.hostname.includes('preview') || window.location.hostname.includes('staging');
+      
       return {
         available: false,
         initialized: false,
         llmReady: false,
         promptReady: false,
-        error: 'Spark runtime not initialized'
+        error: isDev || isPreview ? 
+          'Development mode - Spark runtime not available (this is normal)' : 
+          'Spark runtime not initialized - please refresh the page'
       };
     }
 
