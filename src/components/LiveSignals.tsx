@@ -212,11 +212,21 @@ export function LiveSignals() {
                   {signal.value !== undefined && (
                     <div className="flex items-center gap-4 text-xs text-muted-foreground mb-2">
                       <span>
-                        Current: <span className="font-medium">{signal.value.toFixed(1)}{signal.unit}</span>
+                        Current: <span className="font-medium">
+                          {typeof signal.value === 'number' && signal.unit === '%' ? 
+                            `${signal.value.toFixed(1)}${signal.unit}` : 
+                            `${signal.value}${signal.unit}`
+                          }
+                        </span>
                       </span>
                       {signal.target !== undefined && (
                         <span>
-                          Target: <span className="font-medium">{signal.target.toFixed(1)}{signal.unit}</span>
+                          Target: <span className="font-medium">
+                            {typeof signal.target === 'number' && signal.unit === '%' ? 
+                              `${signal.target.toFixed(1)}${signal.unit}` : 
+                              `${signal.target}${signal.unit}`
+                            }
+                          </span>
                         </span>
                       )}
                     </div>

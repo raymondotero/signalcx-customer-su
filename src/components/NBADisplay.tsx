@@ -360,7 +360,7 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
                         <h4 className="font-medium">{rec.nba.title}</h4>
                         <div className="flex gap-1">
                           <Badge variant="outline" className="text-xs">
-                            {Math.round(rec.confidence * 100)}% confidence
+                            {(rec.confidence * 100).toFixed(1)}% confidence
                           </Badge>
                           <Badge className={getPriorityColor(rec.nba.priority)}>
                             {rec.nba.priority}
@@ -369,7 +369,7 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
                       </div>
                       <p className="text-sm text-muted-foreground mb-2">{rec.nba.description}</p>
                       <div className="text-xs text-muted-foreground">
-                        <strong>Success probability:</strong> {Math.round(rec.successProbability * 100)}%
+                        <strong>Success probability:</strong> {(rec.successProbability * 100).toFixed(1)}%
                       </div>
                     </div>
                   ))
@@ -394,7 +394,7 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
                           <h4 className="font-medium">Target-Aware Recommendation</h4>
                           <Badge className="bg-green-100 text-green-800">
                             <CheckCircle className="w-3 h-3 mr-1" />
-                            {Math.round(targetRecommendation.confidence * 100)}% confidence
+                            {(targetRecommendation.confidence * 100).toFixed(1)}% confidence
                           </Badge>
                         </div>
                         <h3 className="font-semibold">{targetRecommendation.nba.title}</h3>

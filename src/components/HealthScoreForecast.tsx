@@ -518,7 +518,7 @@ export function HealthScoreForecast({ accounts, selectedAccount }: ForecastingPr
                 {progressStep}
               </p>
               <p className="text-xs font-medium">
-                {progressPercent}%
+                {progressPercent.toFixed(1)}%
               </p>
             </div>
             <Progress value={progressPercent} className="h-2" />
@@ -555,7 +555,7 @@ export function HealthScoreForecast({ accounts, selectedAccount }: ForecastingPr
               <div className="flex items-center justify-between mb-2">
                 <p className="text-sm font-medium">Detailed Forecast Breakdown</p>
                 <Badge variant="outline">
-                  {selectedForecast.confidence}% confidence
+                  {selectedForecast.confidence.toFixed(1)}% confidence
                 </Badge>
               </div>
               
@@ -609,7 +609,7 @@ export function HealthScoreForecast({ accounts, selectedAccount }: ForecastingPr
                           {intervention.priority}
                         </Badge>
                         <span className="text-xs text-muted-foreground">
-                          +{intervention.expectedImpact}% impact
+                          +{intervention.expectedImpact.toFixed(1)}% impact
                         </span>
                       </div>
                       <p className="text-sm">{intervention.action}</p>
@@ -690,7 +690,7 @@ export function HealthScoreForecast({ accounts, selectedAccount }: ForecastingPr
                   <p className="text-sm text-muted-foreground">Avg Confidence</p>
                   <div className="flex justify-center items-center gap-1 mt-1">
                     <Progress value={summary.avgConfidence} className="w-16 h-2" />
-                    <span className="text-sm font-medium">{summary.avgConfidence}%</span>
+                    <span className="text-sm font-medium">{summary.avgConfidence.toFixed(1)}%</span>
                   </div>
                 </div>
               </div>
@@ -743,7 +743,7 @@ export function HealthScoreForecast({ accounts, selectedAccount }: ForecastingPr
                     <div className="flex items-center gap-2">
                       {getTrendIcon(forecast.trend)}
                       <Badge variant="outline" className="text-xs">
-                        {forecast.confidence}%
+                        {forecast.confidence.toFixed(1)}%
                       </Badge>
                     </div>
                   </div>

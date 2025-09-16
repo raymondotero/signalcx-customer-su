@@ -530,7 +530,7 @@ Return JSON with this structure:
   const totalTargets = safeTargets.length;
   const totalOnTrack = categoryStats.reduce((sum, cat) => sum + cat.targetsOnTrack, 0);
   const totalMissed = categoryStats.reduce((sum, cat) => sum + cat.targetsMissed, 0);
-  const targetCompliance = totalTargets > 0 ? Math.round((totalOnTrack / totalTargets) * 100) : 0;
+  const targetCompliance = totalTargets > 0 ? (totalOnTrack / totalTargets) * 100 : 0;
 
   return (
     <Card className="flex flex-col border-visible h-fit">
@@ -549,7 +549,7 @@ Return JSON with this structure:
             </Badge>
             {totalTargets > 0 && (
               <Badge variant={targetCompliance >= 80 ? "default" : targetCompliance >= 60 ? "secondary" : "destructive"}>
-                {targetCompliance}% Target Compliance
+                {targetCompliance.toFixed(1)}% Target Compliance
               </Badge>
             )}
             {totalTargets > 0 && (
@@ -589,7 +589,7 @@ Return JSON with this structure:
                         <div className="flex items-center gap-2">
                           {stats.averageValue !== undefined && (
                             <Badge variant="outline" className="text-xs">
-                              Avg: {Math.round(stats.averageValue * 10) / 10}{stats.unit}
+                              Avg: {stats.averageValue.toFixed(1)}{stats.unit}
                             </Badge>
                           )}
                           {stats.targetsConfigured > 0 && (
@@ -674,7 +674,10 @@ Return JSON with this structure:
                                   </span>
                                   {signal.value !== undefined && (
                                     <span className="text-xs text-muted-foreground">
-                                      {signal.value}{signal.unit}
+                                      {typeof signal.value === 'number' && signal.unit === '%' ? 
+                                        `${signal.value.toFixed(1)}${signal.unit}` : 
+                                        `${signal.value}${signal.unit}`
+                                      }
                                     </span>
                                   )}
                                 </div>

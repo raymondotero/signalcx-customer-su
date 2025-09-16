@@ -574,7 +574,7 @@ export function AIRecommendationEngine() {
                       </span>
                       {insight.confidence && (
                         <Badge variant="outline" className="text-xs">
-                          {Math.round(insight.confidence * 100)}% confidence
+                          {(insight.confidence * 100).toFixed(1)}% confidence
                         </Badge>
                       )}
                     </div>

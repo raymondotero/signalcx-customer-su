@@ -248,11 +248,21 @@ export function RealTimeSignalProcessor() {
                     {signal.value !== undefined && (
                       <div className="flex items-center gap-4 text-xs text-muted-foreground mt-1">
                         <span>
-                          Value: <span className="font-medium">{signal.value.toFixed(1)}{signal.unit}</span>
+                          Value: <span className="font-medium">
+                            {typeof signal.value === 'number' && signal.unit === '%' ? 
+                              `${signal.value.toFixed(1)}${signal.unit}` : 
+                              `${signal.value}${signal.unit}`
+                            }
+                          </span>
                         </span>
                         {signal.target !== undefined && (
                           <span>
-                            Target: <span className="font-medium">{signal.target.toFixed(1)}{signal.unit}</span>
+                            Target: <span className="font-medium">
+                              {typeof signal.target === 'number' && signal.unit === '%' ? 
+                                `${signal.target.toFixed(1)}${signal.unit}` : 
+                                `${signal.target}${signal.unit}`
+                              }
+                            </span>
                           </span>
                         )}
                       </div>
@@ -296,7 +306,7 @@ export function RealTimeSignalProcessor() {
                         <CheckCircle className="w-4 h-4 text-green-500" />
                         {processed.confidence && (
                           <Badge variant="outline" className="text-xs">
-                            {Math.round(processed.confidence * 100)}% confidence
+                            {(processed.confidence * 100).toFixed(1)}% confidence
                           </Badge>
                         )}
                       </div>
@@ -310,11 +320,21 @@ export function RealTimeSignalProcessor() {
                     {processed.signal.value !== undefined && (
                       <div className="flex items-center gap-4 text-xs text-muted-foreground mt-1">
                         <span>
-                          Value: <span className="font-medium">{processed.signal.value.toFixed(1)}{processed.signal.unit}</span>
+                          Value: <span className="font-medium">
+                            {typeof processed.signal.value === 'number' && processed.signal.unit === '%' ? 
+                              `${processed.signal.value.toFixed(1)}${processed.signal.unit}` : 
+                              `${processed.signal.value}${processed.signal.unit}`
+                            }
+                          </span>
                         </span>
                         {processed.signal.target !== undefined && (
                           <span>
-                            Target: <span className="font-medium">{processed.signal.target.toFixed(1)}{processed.signal.unit}</span>
+                            Target: <span className="font-medium">
+                              {typeof processed.signal.target === 'number' && processed.signal.unit === '%' ? 
+                                `${processed.signal.target.toFixed(1)}${processed.signal.unit}` : 
+                                `${processed.signal.target}${processed.signal.unit}`
+                              }
+                            </span>
                           </span>
                         )}
                       </div>

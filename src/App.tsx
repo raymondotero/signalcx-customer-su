@@ -155,7 +155,7 @@ function App() {
             <div className="flex items-center gap-2 flex-wrap">
               <div className="flex items-center gap-2">
                 <div className="text-right text-xs text-muted-foreground">
-                  <div>AI Approval: {Math.round(aiMetrics.getApprovalRate())}%</div>
+                  <div>AI Approval: {aiMetrics.getApprovalRate().toFixed(1)}%</div>
                   <div>Avg Processing: {Math.round(aiMetrics.getAverageProcessingTime())}ms</div>
                 </div>
                 

@@ -55,6 +55,7 @@ export function SignalDetailsDialog({ signal, trigger }: SignalDetailsDialogProp
 
   const formatValue = (value?: number, unit?: string) => {
     if (value === undefined) return 'N/A';
+    if (unit === '%') return `${value.toFixed(1)}${unit}`;
     if (unit) return `${value} ${unit}`;
     return value.toString();
   };
@@ -224,7 +225,7 @@ export function SignalDetailsDialog({ signal, trigger }: SignalDetailsDialogProp
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium">Progress to Target</span>
                       <span className="text-sm text-muted-foreground">
-                        {Math.round((signal.value / signal.target) * 100)}%
+                        {((signal.value / signal.target) * 100).toFixed(1)}%
                       </span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">

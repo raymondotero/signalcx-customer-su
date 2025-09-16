@@ -57,7 +57,7 @@ export function SystemHealthDialog({ trigger }: SystemHealthDialogProps) {
         healthy: healthyAccounts,
         watch: watchAccounts,
         risk: riskAccounts,
-        healthPercentage: totalAccounts > 0 ? Math.round((healthyAccounts / totalAccounts) * 100) : 0
+        healthPercentage: totalAccounts > 0 ? Math.round(((healthyAccounts / totalAccounts) * 100) * 10) / 10 : 0
       },
       signals: {
         total: totalSignals,
@@ -72,7 +72,7 @@ export function SystemHealthDialog({ trigger }: SystemHealthDialogProps) {
         avgProcessingTime: Math.round(avgProcessingTime),
         totalNBAs,
         totalMemoryEntries,
-        successRate: totalMemoryEntries > 0 ? Math.round((successfulMemoryEntries / totalMemoryEntries) * 100) : 0
+        successRate: totalMemoryEntries > 0 ? Math.round(((successfulMemoryEntries / totalMemoryEntries) * 100) * 10) / 10 : 0
       }
     };
   };
