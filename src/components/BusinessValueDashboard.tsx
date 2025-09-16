@@ -115,11 +115,23 @@ export function BusinessValueDashboard() {
         return;
       }
 
+      console.log('Attempting AI generation with:', {
+        signal: signal.signalName || signal.type,
+        affectedAccountsCount: affectedAccounts.length,
+        sparkAvailable: typeof (window as any).spark !== 'undefined'
+      });
+
       // Check if spark AI is available
-      const spark = (window as any).spark;
-      if (!spark || !spark.llmPrompt || !spark.llm) {
-        throw new Error('AI service not available');
+      if (typeof window === 'undefined' || !(window as any).spark) {
+        throw new Error('Spark runtime not available');
       }
+      
+      const spark = (window as any).spark;
+      if (!spark.llmPrompt || !spark.llm) {
+        throw new Error('AI service not available - llmPrompt or llm missing');
+      }
+
+      console.log('Spark AI service available, generating prompt...');
 
       const prompt = spark.llmPrompt`You are a Customer Success AI expert specializing in business value signal analysis. 
 
@@ -166,8 +178,12 @@ Return JSON with this structure:
   ]
 }`;
 
+      console.log('Calling spark.llm with model gpt-4o and jsonMode=true...');
       const response = await spark.llm(prompt, 'gpt-4o', true);
+      console.log('AI Response received:', response);
+      
       const aiResponse = JSON.parse(response);
+      console.log('Parsed AI Response:', aiResponse);
 
       // Store the AI-generated recommendations for display
       setSelectedSignal({
@@ -183,16 +199,60 @@ Return JSON with this structure:
     } catch (error) {
       console.error('Error generating AI recommendations:', error);
       
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      console.log('Error details:', {
+        message: errorMessage,
+        sparkAvailable: typeof (window as any).spark !== 'undefined',
+        llmPromptAvailable: typeof (window as any).spark?.llmPrompt !== 'undefined',
+        llmAvailable: typeof (window as any).spark?.llm !== 'undefined'
+      });
+      
+      // Find affected accounts again for error fallback
+      const errorFallbackAccounts = accounts.filter(account => {
+        if (signal.accountId && signal.accountId === account.id) return true;
+        if (signal.severity === 'critical' && account.status === 'At Risk') return true;
+        if (signal.severity === 'high' && (account.status === 'At Risk' || account.status === 'Watch')) return true;
+        if (signal.category === 'cost' && account.healthScore < 0.7) return true;
+        if (signal.category === 'risk' && account.status !== 'Good') return true;
+        return signal.severity === 'medium' && account.status === 'Watch';
+      });
+      
       // Fall back to existing logic 
       const signalMap = getSignalRecommendations(signal);
       
       if (signalMap.recommendations.length === 0) {
-        toast.error('Failed to generate AI recommendations', {
-          description: 'Using fallback analysis - no related recommendations found'
+        toast.error(`AI generation failed: ${errorMessage}`, {
+          description: 'No related recommendations found. Try the real-time AI engine.'
+        });
+        
+        // Set a placeholder to show the error state
+        setSelectedSignal({
+          ...signal,
+          aiRecommendations: [],
+          aiAnalysis: { 
+            impact: 'AI generation failed',
+            urgency: signal.severity as any,
+            affectedAccountsCount: errorFallbackAccounts.length,
+            businessValueAtRisk: 'Unable to calculate due to AI error',
+            error: errorMessage
+          }
         });
       } else {
-        toast.warning('AI generation failed, showing related recommendations', {
-          description: `Found ${signalMap.recommendations.length} existing recommendations`
+        toast.warning(`AI generation failed, showing ${signalMap.recommendations.length} related recommendations`, {
+          description: `Error: ${errorMessage}`
+        });
+        
+        // Show existing recommendations with error note
+        setSelectedSignal({
+          ...signal,
+          aiRecommendations: [],
+          aiAnalysis: { 
+            impact: 'Using fallback recommendations due to AI error',
+            urgency: signal.severity as any,
+            affectedAccountsCount: errorFallbackAccounts.length,
+            businessValueAtRisk: 'Calculation unavailable',
+            error: errorMessage
+          }
         });
       }
     }
@@ -567,18 +627,37 @@ Return JSON with this structure:
                       <div className="space-y-6">
                         {/* AI Analysis Summary */}
                         {selectedSignal.aiAnalysis && (
-                          <div className="p-4 border rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
-                            <h6 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                          <div className={`p-4 border rounded-lg ${
+                            selectedSignal.aiAnalysis.error 
+                              ? 'bg-gradient-to-r from-red-50 to-orange-50 border-red-200' 
+                              : 'bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200'
+                          }`}>
+                            <h6 className={`font-semibold mb-2 flex items-center gap-2 ${
+                              selectedSignal.aiAnalysis.error ? 'text-red-900' : 'text-blue-900'
+                            }`}>
                               <Brain className="w-4 h-4" />
-                              AI Signal Analysis
+                              {selectedSignal.aiAnalysis.error ? 'AI Analysis Error' : 'AI Signal Analysis'}
                             </h6>
+                            
+                            {selectedSignal.aiAnalysis.error && (
+                              <div className="mb-3 p-2 bg-red-100 border border-red-200 rounded text-red-800 text-sm">
+                                <strong>Error:</strong> {selectedSignal.aiAnalysis.error}
+                              </div>
+                            )}
+                            
                             <div className="grid grid-cols-2 gap-4 text-sm">
                               <div>
-                                <p className="text-blue-700 font-medium">Business Impact</p>
-                                <p className="text-blue-600">{selectedSignal.aiAnalysis.impact}</p>
+                                <p className={`font-medium ${selectedSignal.aiAnalysis.error ? 'text-red-700' : 'text-blue-700'}`}>
+                                  Business Impact
+                                </p>
+                                <p className={selectedSignal.aiAnalysis.error ? 'text-red-600' : 'text-blue-600'}>
+                                  {selectedSignal.aiAnalysis.impact}
+                                </p>
                               </div>
                               <div>
-                                <p className="text-blue-700 font-medium">Urgency Level</p>
+                                <p className={`font-medium ${selectedSignal.aiAnalysis.error ? 'text-red-700' : 'text-blue-700'}`}>
+                                  Urgency Level
+                                </p>
                                 <Badge variant={
                                   selectedSignal.aiAnalysis.urgency === 'critical' ? 'destructive' :
                                   selectedSignal.aiAnalysis.urgency === 'high' ? 'default' : 'secondary'
@@ -587,12 +666,20 @@ Return JSON with this structure:
                                 </Badge>
                               </div>
                               <div>
-                                <p className="text-blue-700 font-medium">Affected Accounts</p>
-                                <p className="text-blue-600">{selectedSignal.aiAnalysis.affectedAccountsCount}</p>
+                                <p className={`font-medium ${selectedSignal.aiAnalysis.error ? 'text-red-700' : 'text-blue-700'}`}>
+                                  Affected Accounts
+                                </p>
+                                <p className={selectedSignal.aiAnalysis.error ? 'text-red-600' : 'text-blue-600'}>
+                                  {selectedSignal.aiAnalysis.affectedAccountsCount}
+                                </p>
                               </div>
                               <div>
-                                <p className="text-blue-700 font-medium">Value at Risk</p>
-                                <p className="text-blue-600">{selectedSignal.aiAnalysis.businessValueAtRisk}</p>
+                                <p className={`font-medium ${selectedSignal.aiAnalysis.error ? 'text-red-700' : 'text-blue-700'}`}>
+                                  Value at Risk
+                                </p>
+                                <p className={selectedSignal.aiAnalysis.error ? 'text-red-600' : 'text-blue-600'}>
+                                  {selectedSignal.aiAnalysis.businessValueAtRisk}
+                                </p>
                               </div>
                             </div>
                           </div>

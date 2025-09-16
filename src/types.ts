@@ -30,6 +30,7 @@ export interface SignalAnalysis {
   urgency: 'low' | 'medium' | 'high' | 'critical';
   affectedAccountsCount: number;
   businessValueAtRisk: string;
+  error?: string;
 }
 
 export interface Signal {
