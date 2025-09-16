@@ -82,10 +82,15 @@ export function ARRGrowthTracker({ accounts, selectedAccount }: ARRGrowthTracker
   const portfolioTrends = useMemo(() => {
     const quarterMap = new Map<string, number>();
     
+    // Determine how many quarters to include based on time range
+    const quartersToInclude = timeRange === '1y' ? 4 : timeRange === '2y' ? 8 : 12;
+    
     accounts.forEach(account => {
       const accountWithHistory = getAccountWithHistory(account);
       if (accountWithHistory.arrHistory) {
-        accountWithHistory.arrHistory.forEach(quarter => {
+        // Take only the most recent quarters based on time range
+        const recentHistory = accountWithHistory.arrHistory.slice(-quartersToInclude);
+        recentHistory.forEach(quarter => {
           const existing = quarterMap.get(quarter.quarter) || 0;
           quarterMap.set(quarter.quarter, existing + quarter.arr);
         });
@@ -122,7 +127,7 @@ export function ARRGrowthTracker({ accounts, selectedAccount }: ARRGrowthTracker
       averageQuarterlyGrowth: averageGrowth,
       trend
     };
-  }, [accounts]);
+  }, [accounts, timeRange]);
 
   const formatCurrency = (amount: number) => {
     if (amount >= 1000000) {
@@ -158,7 +163,30 @@ export function ARRGrowthTracker({ accounts, selectedAccount }: ARRGrowthTracker
     }
   };
 
-  const selectedAccountWithHistory = selectedAccount ? getAccountWithHistory(selectedAccount) : null;
+  const selectedAccountWithHistory = useMemo(() => {
+    if (!selectedAccount) return null;
+    
+    const accountWithHistory = getAccountWithHistory(selectedAccount);
+    
+    // Calculate metrics for the selected time range
+    const quartersToInclude = timeRange === '1y' ? 4 : timeRange === '2y' ? 8 : 12;
+    const recentHistory = accountWithHistory.arrHistory?.slice(-quartersToInclude) || [];
+    
+    const timeRangeTotalGrowth = recentHistory.length > 1 
+      ? ((recentHistory[recentHistory.length - 1].arr - recentHistory[0].arr) / recentHistory[0].arr) * 100 
+      : 0;
+    
+    const timeRangeAvgGrowth = recentHistory.length > 0 
+      ? recentHistory.reduce((sum, q) => sum + q.growth, 0) / recentHistory.length 
+      : 0;
+    
+    return {
+      ...accountWithHistory,
+      timeRangeHistory: recentHistory,
+      timeRangeTotalGrowth,
+      timeRangeAvgGrowth
+    };
+  }, [selectedAccount, timeRange]);
 
   return (
     <Card className="border-visible h-fit">
@@ -249,11 +277,11 @@ export function ARRGrowthTracker({ accounts, selectedAccount }: ARRGrowthTracker
             {/* Quarterly Breakdown */}
             <Card className="border-visible">
               <CardHeader>
-                <CardTitle className="text-lg">Quarterly Performance</CardTitle>
+                <CardTitle className="text-lg">Quarterly Performance ({timeRange.toUpperCase()})</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {portfolioTrends.quarters.slice(-8).map((quarter, index) => (
+                  {portfolioTrends.quarters.map((quarter, index) => (
                     <div key={quarter.quarter} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
                       <div className="flex items-center gap-3">
                         <Calendar className="w-4 h-4 text-muted-foreground" />
@@ -277,13 +305,32 @@ export function ARRGrowthTracker({ accounts, selectedAccount }: ARRGrowthTracker
             {/* Top Performers */}
             <Card className="border-visible">
               <CardHeader>
-                <CardTitle className="text-lg">Top Growth Accounts</CardTitle>
+                <CardTitle className="text-lg">Top Growth Accounts ({timeRange.toUpperCase()})</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   {accounts
-                    .map(getAccountWithHistory)
-                    .sort((a, b) => (b.arrTrend?.averageQuarterlyGrowth || 0) - (a.arrTrend?.averageQuarterlyGrowth || 0))
+                    .map(account => {
+                      const accountWithHistory = getAccountWithHistory(account);
+                      // Calculate growth for the selected time range
+                      const quartersToInclude = timeRange === '1y' ? 4 : timeRange === '2y' ? 8 : 12;
+                      const recentHistory = accountWithHistory.arrHistory?.slice(-quartersToInclude) || [];
+                      
+                      const timeRangeGrowth = recentHistory.length > 1 
+                        ? ((recentHistory[recentHistory.length - 1].arr - recentHistory[0].arr) / recentHistory[0].arr) * 100 
+                        : 0;
+                      
+                      const avgGrowth = recentHistory.length > 0 
+                        ? recentHistory.reduce((sum, q) => sum + q.growth, 0) / recentHistory.length 
+                        : 0;
+                      
+                      return {
+                        ...accountWithHistory,
+                        timeRangeGrowth,
+                        avgGrowthForPeriod: avgGrowth
+                      };
+                    })
+                    .sort((a, b) => b.avgGrowthForPeriod - a.avgGrowthForPeriod)
                     .slice(0, 5)
                     .map((account) => (
                       <div key={account.id} className="flex items-center justify-between p-2 hover:bg-muted/30 rounded">
@@ -293,7 +340,7 @@ export function ARRGrowthTracker({ accounts, selectedAccount }: ARRGrowthTracker
                         </div>
                         <div className="flex items-center gap-2">
                           <Badge className={getTrendColor(account.arrTrend?.trend || 'steady')}>
-                            {formatGrowth(account.arrTrend?.averageQuarterlyGrowth || 0)}
+                            {formatGrowth(account.avgGrowthForPeriod || 0)}
                           </Badge>
                           {getTrendIcon(account.arrTrend?.trend || 'steady')}
                         </div>
@@ -324,15 +371,15 @@ export function ARRGrowthTracker({ accounts, selectedAccount }: ARRGrowthTracker
                         <p className="text-2xl font-bold">{formatCurrency(selectedAccountWithHistory.arr)}</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-sm text-muted-foreground">Avg Quarterly Growth</p>
+                        <p className="text-sm text-muted-foreground">Avg Quarterly Growth ({timeRange.toUpperCase()})</p>
                         <p className="text-2xl font-bold">
-                          {formatGrowth(selectedAccountWithHistory.arrTrend?.averageQuarterlyGrowth || 0)}
+                          {formatGrowth(selectedAccountWithHistory.timeRangeAvgGrowth || 0)}
                         </p>
                       </div>
                       <div className="text-center">
-                        <p className="text-sm text-muted-foreground">Total Growth</p>
+                        <p className="text-sm text-muted-foreground">Total Growth ({timeRange.toUpperCase()})</p>
                         <p className="text-2xl font-bold">
-                          {formatGrowth(selectedAccountWithHistory.arrTrend?.totalGrowth || 0)}
+                          {formatGrowth(selectedAccountWithHistory.timeRangeTotalGrowth || 0)}
                         </p>
                       </div>
                     </div>
@@ -342,11 +389,11 @@ export function ARRGrowthTracker({ accounts, selectedAccount }: ARRGrowthTracker
                 {/* Quarterly History */}
                 <Card className="border-visible">
                   <CardHeader>
-                    <CardTitle className="text-lg">Quarterly History</CardTitle>
+                    <CardTitle className="text-lg">Quarterly History ({timeRange.toUpperCase()})</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      {selectedAccountWithHistory.arrHistory?.slice(-8).map((quarter, index) => (
+                      {selectedAccountWithHistory.timeRangeHistory?.map((quarter, index) => (
                         <div key={quarter.quarter} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
                           <div className="flex items-center gap-3">
                             <Calendar className="w-4 h-4 text-muted-foreground" />
