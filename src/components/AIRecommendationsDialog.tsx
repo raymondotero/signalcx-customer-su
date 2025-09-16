@@ -115,18 +115,33 @@ export function AIRecommendationsDialog({
               <Card className="border-visible border-destructive/50 bg-destructive/5">
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
-                    <Warning className="w-5 h-5 text-destructive mt-0.5" />
-                    <div className="flex-1">
+                    <Warning className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
                       <h4 className="font-semibold text-destructive mb-2">AI Analysis Error</h4>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        {analysis?.error || 'Unable to generate AI recommendations at this time'}
-                      </p>
-                      {onRetry && (
-                        <Button size="sm" variant="outline" onClick={onRetry}>
-                          <Brain className="w-4 h-4 mr-2" />
-                          Retry AI Generation
-                        </Button>
-                      )}
+                      <div className="text-sm text-muted-foreground mb-3 space-y-2">
+                        <p className="font-medium">
+                          {analysis?.error?.split(' - ')[0] || 'Unable to generate AI recommendations at this time'}
+                        </p>
+                        {analysis?.error?.includes(' - ') && (
+                          <p className="text-xs bg-muted/50 p-2 rounded border">
+                            {analysis.error.split(' - ')[1]}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {onRetry && (
+                          <Button size="sm" variant="outline" onClick={onRetry}>
+                            <Brain className="w-4 h-4 mr-2" />
+                            Retry AI Generation
+                          </Button>
+                        )}
+                        <Badge variant="outline" className="text-xs">
+                          Signal: {signal.signalName || signal.type}
+                        </Badge>
+                        <Badge variant="outline" className="text-xs">
+                          Severity: {signal.severity}
+                        </Badge>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -180,11 +195,25 @@ export function AIRecommendationsDialog({
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <Lightbulb className="w-5 h-5 text-yellow-500" />
-                  <h4 className="font-semibold">AI-Generated Recommendations</h4>
+                  <h4 className="font-semibold">
+                    {hasError ? 'Fallback Recommendations' : 'AI-Generated Recommendations'}
+                  </h4>
                   <Badge variant="outline" className="ml-auto">
                     {recommendations.length} Recommendation{recommendations.length !== 1 ? 's' : ''}
                   </Badge>
+                  {hasError && (
+                    <Badge variant="secondary" className="text-xs">
+                      AI Unavailable
+                    </Badge>
+                  )}
                 </div>
+                
+                {hasError && (
+                  <div className="text-sm text-muted-foreground bg-muted/30 p-3 rounded border border-dashed">
+                    <p className="font-medium">ℹ️ These are pre-configured recommendations based on signal patterns.</p>
+                    <p>AI-generated recommendations will provide more tailored insights once the AI service is available.</p>
+                  </div>
+                )}
                 
                 <div className="space-y-4">
                   {recommendations.map((recommendation, index) => (

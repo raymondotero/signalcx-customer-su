@@ -94,6 +94,104 @@ export function BusinessValueDashboard() {
     };
   };
 
+  const generateFallbackRecommendations = (signal: Signal, affectedAccounts: Account[]): AIRecommendation[] => {
+    const recommendations: AIRecommendation[] = [];
+    
+    // Generate recommendations based on signal category and severity
+    switch (signal.category) {
+      case 'cost':
+        recommendations.push({
+          title: 'Cost Optimization Review',
+          description: `Address the ${signal.signalName || signal.type} signal by conducting a comprehensive cost review with affected accounts.`,
+          priority: signal.severity as any,
+          category: 'optimization',
+          targetAccounts: affectedAccounts.slice(0, 3).map(a => a.name),
+          estimatedImpact: `Potential 10-15% cost reduction across ${affectedAccounts.length} account${affectedAccounts.length !== 1 ? 's' : ''}`,
+          effort: signal.severity === 'critical' ? 'high' : 'medium',
+          timeline: signal.severity === 'critical' ? '2-4 weeks' : '4-6 weeks',
+          successMetrics: ['Cost per user reduction', 'Resource utilization improvement', 'Budget variance decrease'],
+          reasoning: 'Cost signals require immediate attention to prevent budget overruns and optimize resource allocation.'
+        });
+        break;
+        
+      case 'risk':
+        recommendations.push({
+          title: 'Risk Mitigation Plan',
+          description: `Implement risk controls to address ${signal.signalName || signal.type} across affected accounts.`,
+          priority: signal.severity as any,
+          category: 'support',
+          targetAccounts: affectedAccounts.slice(0, 3).map(a => a.name),
+          estimatedImpact: 'Reduced security exposure and improved compliance posture',
+          effort: 'high',
+          timeline: '1-3 weeks',
+          successMetrics: ['Vulnerability reduction', 'Compliance score improvement', 'Security incident decrease'],
+          reasoning: 'Risk signals indicate potential security or compliance issues that need immediate attention.'
+        });
+        break;
+        
+      case 'agility':
+        recommendations.push({
+          title: 'Development Process Optimization',
+          description: `Improve development agility by addressing ${signal.signalName || signal.type} bottlenecks.`,
+          priority: signal.severity as any,
+          category: 'optimization',
+          targetAccounts: affectedAccounts.slice(0, 3).map(a => a.name),
+          estimatedImpact: '20-30% faster delivery cycles and improved developer productivity',
+          effort: 'medium',
+          timeline: '3-6 weeks',
+          successMetrics: ['Lead time reduction', 'Deployment frequency increase', 'Change failure rate decrease'],
+          reasoning: 'Agility signals suggest process inefficiencies that impact delivery speed and quality.'
+        });
+        break;
+        
+      case 'data':
+        recommendations.push({
+          title: 'Data Quality Enhancement',
+          description: `Address data quality issues related to ${signal.signalName || signal.type} to improve decision making.`,
+          priority: signal.severity as any,
+          category: 'optimization',
+          targetAccounts: affectedAccounts.slice(0, 3).map(a => a.name),
+          estimatedImpact: 'Improved data accuracy and faster insights generation',
+          effort: 'medium',
+          timeline: '2-4 weeks',
+          successMetrics: ['Data accuracy improvement', 'Report generation speed', 'Data freshness metrics'],
+          reasoning: 'Data quality issues impact analytics capabilities and business intelligence accuracy.'
+        });
+        break;
+        
+      case 'culture':
+        recommendations.push({
+          title: 'Customer Success Engagement',
+          description: `Enhance customer engagement to address ${signal.signalName || signal.type} concerns.`,
+          priority: signal.severity as any,
+          category: 'engagement',
+          targetAccounts: affectedAccounts.slice(0, 3).map(a => a.name),
+          estimatedImpact: 'Improved customer satisfaction and reduced churn risk',
+          effort: 'medium',
+          timeline: '2-6 weeks',
+          successMetrics: ['CSAT score increase', 'Engagement rate improvement', 'Training completion increase'],
+          reasoning: 'Culture signals indicate customer adoption or satisfaction challenges requiring proactive engagement.'
+        });
+        break;
+        
+      default:
+        recommendations.push({
+          title: 'General Signal Investigation',
+          description: `Investigate and address the ${signal.signalName || signal.type} signal to prevent potential issues.`,
+          priority: signal.severity as any,
+          category: 'support',
+          targetAccounts: affectedAccounts.slice(0, 3).map(a => a.name),
+          estimatedImpact: 'Reduced risk and improved account health',
+          effort: 'medium',
+          timeline: '1-3 weeks',
+          successMetrics: ['Signal resolution', 'Account health improvement', 'Issue recurrence prevention'],
+          reasoning: 'Unclassified signals require investigation to understand root cause and appropriate response.'
+        });
+    }
+    
+    return recommendations;
+  };
+
   const generateRecommendationsForSignal = async (signal: Signal) => {
     setSelectedSignal(signal);
     setDialogOpen(true);
@@ -132,13 +230,21 @@ export function BusinessValueDashboard() {
       });
 
       // Check if spark AI is available
-      if (typeof window === 'undefined' || !(window as any).spark) {
-        throw new Error('Spark runtime not available');
+      if (typeof window === 'undefined') {
+        throw new Error('Window context not available');
+      }
+      
+      if (!(window as any).spark) {
+        throw new Error('Spark runtime not initialized - please refresh the page');
       }
       
       const spark = (window as any).spark;
-      if (!spark.llmPrompt || !spark.llm) {
-        throw new Error('AI service not available - llmPrompt or llm missing');
+      if (!spark.llmPrompt) {
+        throw new Error('AI prompt service not available');
+      }
+      
+      if (!spark.llm) {
+        throw new Error('AI language model service not available');
       }
 
       console.log('Spark AI service available, generating prompt...');
@@ -206,9 +312,29 @@ Return JSON with this structure:
     } catch (error) {
       console.error('Error generating AI recommendations:', error);
       
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      let errorMessage = 'Unknown error occurred';
+      let detailedError = '';
+      
+      if (error instanceof Error) {
+        errorMessage = error.message;
+        
+        // Provide specific guidance based on the error
+        if (errorMessage.includes('Spark runtime not initialized')) {
+          detailedError = 'The AI runtime needs to be initialized. Try refreshing the page or restarting the application.';
+        } else if (errorMessage.includes('prompt service not available')) {
+          detailedError = 'The AI prompt service is not configured. This may be a temporary issue.';
+        } else if (errorMessage.includes('language model service not available')) {
+          detailedError = 'The AI model service is not available. Please check your connection and try again.';
+        } else if (errorMessage.includes('Window context not available')) {
+          detailedError = 'This feature requires a browser environment. Server-side rendering is not supported.';
+        } else {
+          detailedError = 'Please try again in a few moments. If the issue persists, contact support.';
+        }
+      }
+      
       console.log('Error details:', {
         message: errorMessage,
+        detailedError,
         sparkAvailable: typeof (window as any).spark !== 'undefined',
         llmPromptAvailable: typeof (window as any).spark?.llmPrompt !== 'undefined',
         llmAvailable: typeof (window as any).spark?.llm !== 'undefined'
@@ -224,17 +350,21 @@ Return JSON with this structure:
         return signal.severity === 'medium' && account.status === 'Watch';
       });
       
-      // Set error state
+      // Set error state with fallback recommendations
       setAiAnalysis({ 
-        impact: 'AI generation failed',
+        impact: 'AI generation failed - using fallback analysis',
         urgency: signal.severity as any,
         affectedAccountsCount: errorFallbackAccounts.length,
         businessValueAtRisk: 'Unable to calculate due to AI error',
-        error: errorMessage
+        error: `${errorMessage}${detailedError ? ` - ${detailedError}` : ''}`
       });
       
+      // Provide fallback recommendations based on signal type and severity
+      const fallbackRecommendations: AIRecommendation[] = generateFallbackRecommendations(signal, errorFallbackAccounts);
+      setAiRecommendations(fallbackRecommendations);
+      
       toast.error(`AI generation failed: ${errorMessage}`, {
-        description: 'Dialog opened with error details'
+        description: detailedError || 'Showing fallback recommendations instead'
       });
     } finally {
       setIsLoadingAI(false);
