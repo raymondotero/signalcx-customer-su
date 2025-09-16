@@ -1,3 +1,21 @@
+export interface QuarterlyARR {
+  quarter: string; // e.g., "Q1 2024"
+  arr: number;
+  growth: number; // percentage growth from previous quarter
+  date: string; // ISO date string
+}
+
+export interface ARRTrend {
+  quarters: QuarterlyARR[];
+  totalGrowth: number; // total growth over the period
+  averageQuarterlyGrowth: number; // average quarterly growth rate
+  trend: 'accelerating' | 'steady' | 'declining';
+  seasonality?: {
+    bestQuarter: string;
+    worstQuarter: string;
+  };
+}
+
 export interface Account {
   id: string;
   name: string;
@@ -10,6 +28,8 @@ export interface Account {
   lastActivity: string;
   contractEnd: string;
   expansionOpportunity: number;
+  arrHistory?: QuarterlyARR[];
+  arrTrend?: ARRTrend;
 }
 
 export interface Signal {

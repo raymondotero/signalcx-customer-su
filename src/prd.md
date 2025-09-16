@@ -40,6 +40,15 @@ SignalCX solves this by providing an Azure OpenAI-powered system that:
 
 ## Essential Features
 
+### ARR Growth Tracking & Analytics
+- **Functionality**: Comprehensive quarterly ARR tracking with growth trend analysis across portfolio and individual accounts
+  - **Portfolio View**: Total ARR metrics, quarterly growth rates, year-over-year performance, top growth performers
+  - **Account View**: Individual account ARR history, quarterly growth patterns, expansion opportunities
+  - **Growth Analytics**: Growth trend classification (accelerating, steady, declining), seasonality analysis, forecasting
+  - **Visual Indicators**: Real-time QoQ growth metrics in account tables, trend icons, growth badges
+- **Purpose**: Provide clear visibility into revenue growth patterns and identify expansion opportunities
+- **Success Criteria**: CSMs can quickly identify growth trends, prioritize expansion efforts, and track revenue performance
+
 ### Comprehensive Business Value Signal Monitoring
 - **Functionality**: Real-time ingestion and processing of 200+ business value signals across five key dimensions:
   - **Cost Signals**: Cloud spend variance, resource utilization, license optimization, FinOps metrics

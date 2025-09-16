@@ -279,6 +279,9 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
                   {getSortIcon('arr')}
                 </div>
               </TableHead>
+              <TableHead className="text-center">
+                QoQ Growth
+              </TableHead>
               <TableHead 
                 className="cursor-pointer hover:bg-muted/50 select-none transition-colors"
                 onClick={() => handleSort('healthScore')}
@@ -314,7 +317,7 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
           <TableBody>
             {filteredAndSortedAccounts.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
                   {hasActiveFilters ? 'No accounts match your filters' : 'No accounts found'}
                 </TableCell>
               </TableRow>
@@ -331,6 +334,35 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
                   <TableCell>{account.industry}</TableCell>
                   <TableCell className="font-mono">
                     ${(account.arr / 1000000).toFixed(1)}M
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <div className="flex items-center justify-center gap-1">
+                      {(() => {
+                        // Generate demo growth based on account status
+                        const growth = account.status === 'Good' ? 
+                          8 + Math.random() * 7 : // 8-15%
+                          account.status === 'Watch' ? 
+                          2 + Math.random() * 6 : // 2-8%
+                          -2 + Math.random() * 4; // -2 to 2%
+                        
+                        const isPositive = growth > 0;
+                        return (
+                          <>
+                            <span className={`text-xs font-medium ${
+                              isPositive ? 'text-green-600' : 'text-red-600'
+                            }`}>
+                              {isPositive ? '+' : ''}{growth.toFixed(1)}%
+                            </span>
+                            {isPositive ? 
+                              <TrendUp className="w-3 h-3 text-green-600" /> :
+                              <div className="w-3 h-3 text-red-600 rotate-180">
+                                <TrendUp className="w-3 h-3" />
+                              </div>
+                            }
+                          </>
+                        );
+                      })()}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">

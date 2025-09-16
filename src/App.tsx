@@ -15,6 +15,7 @@ import { AIRecommendationEngine } from '@/components/AIRecommendationEngine';
 import { RealTimeSignalProcessor } from '@/components/RealTimeSignalProcessor';
 import { BusinessValueDashboard } from '@/components/BusinessValueDashboard';
 import { HealthScoreForecast } from '@/components/HealthScoreForecast';
+import { ARRGrowthTracker } from '@/components/ARRGrowthTracker';
 
 import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
 import { SystemHealthDialog } from '@/components/SystemHealthDialog';
@@ -203,8 +204,11 @@ function App() {
                   <p className="text-2xl font-bold">
                     ${(summary.totalARR / 1000000).toFixed(1)}M
                   </p>
+                  <p className="text-xs text-green-600 mt-1">
+                    +12.3% QoQ Growth
+                  </p>
                 </div>
-                <Badge className="status-good">Good</Badge>
+                <Badge className="status-good">Growing</Badge>
               </div>
             </CardContent>
           </Card>
@@ -303,9 +307,10 @@ function App() {
 
           {/* Right Column - AI Systems */}
           <div className="space-y-6 min-h-0 h-fit">
-            <Tabs defaultValue="business-value" className="w-full h-fit">
-              <TabsList className="grid w-full grid-cols-6 h-fit">
+            <Tabs defaultValue="arr-growth" className="w-full h-fit">
+              <TabsList className="grid w-full grid-cols-7 h-fit">
                 <TabsTrigger value="business-value" className="text-xs px-2">Business</TabsTrigger>
+                <TabsTrigger value="arr-growth" className="text-xs px-2">ARR Growth</TabsTrigger>
                 <TabsTrigger value="forecast" className="text-xs px-2">Forecast</TabsTrigger>
                 <TabsTrigger value="ai-processor" className="text-xs px-2">AI Proc</TabsTrigger>
                 <TabsTrigger value="signals" className="text-xs px-2">Signals</TabsTrigger>
@@ -317,6 +322,17 @@ function App() {
                 <AIErrorBoundary>
                   <div className="h-fit">
                     <BusinessValueDashboard />
+                  </div>
+                </AIErrorBoundary>
+              </TabsContent>
+              
+              <TabsContent value="arr-growth" className="mt-4 h-fit">
+                <AIErrorBoundary>
+                  <div className="h-fit">
+                    <ARRGrowthTracker 
+                      accounts={accounts}
+                      selectedAccount={selectedAccount || undefined}
+                    />
                   </div>
                 </AIErrorBoundary>
               </TabsContent>
