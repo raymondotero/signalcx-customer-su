@@ -9,131 +9,131 @@ export const sampleAccounts: Account[] = [
     id: 'acc-1',
     name: 'TechCorp Solutions',
     industry: 'Technology',
-    arr: 250000,
+    arr: 2850000,
     healthScore: 85,
     status: 'Good',
     csam: 'Sarah Chen',
     ae: 'Michael Thompson',
     contractEnd: '2024-12-31',
     lastActivity: '2024-01-15',
-    expansionOpportunity: 75000
+    expansionOpportunity: 850000
   },
   {
     id: 'acc-2', 
     name: 'Global Manufacturing Inc',
     industry: 'Manufacturing',
-    arr: 450000,
+    arr: 4750000,
     healthScore: 68,
     status: 'Watch',
     csam: 'Mike Rodriguez',
     ae: 'Jennifer Davis',
     contractEnd: '2024-08-15',
     lastActivity: '2024-01-10',
-    expansionOpportunity: 120000
+    expansionOpportunity: 1200000
   },
   {
     id: 'acc-3',
     name: 'FinanceFirst Bank',
     industry: 'Financial Services',
-    arr: 800000,
+    arr: 8900000,
     healthScore: 45,
     status: 'At Risk',
     csam: 'Lisa Wang',
     ae: 'Robert Martinez',
     contractEnd: '2024-06-30',
     lastActivity: '2024-01-05',
-    expansionOpportunity: 200000
+    expansionOpportunity: 2100000
   },
   {
     id: 'acc-4',
     name: 'HealthTech Innovations',
     industry: 'Healthcare',
-    arr: 320000,
+    arr: 3650000,
     healthScore: 78,
     status: 'Good',
     csam: 'David Kim',
     ae: 'Amanda Foster',
     contractEnd: '2024-11-20',
     lastActivity: '2024-01-14',
-    expansionOpportunity: 95000
+    expansionOpportunity: 980000
   },
   {
     id: 'acc-5',
     name: 'RetailMax Corp',
     industry: 'Retail',
-    arr: 150000,
+    arr: 1850000,
     healthScore: 52,
     status: 'At Risk',
     csam: 'Emily Johnson',
     ae: 'Carlos Ruiz',
     contractEnd: '2024-05-15',
     lastActivity: '2024-01-08',
-    expansionOpportunity: 30000
+    expansionOpportunity: 450000
   },
   {
     id: 'acc-6',
     name: 'EduLearn Systems',
     industry: 'Education',
-    arr: 180000,
+    arr: 2100000,
     healthScore: 72,
     status: 'Watch',
     csam: 'Rachel Green',
     ae: 'Kevin Park',
     contractEnd: '2024-09-30',
     lastActivity: '2024-01-12',
-    expansionOpportunity: 45000
+    expansionOpportunity: 580000
   },
   {
     id: 'acc-7',
     name: 'Energy Solutions Ltd',
     industry: 'Energy',
-    arr: 650000,
+    arr: 7250000,
     healthScore: 88,
     status: 'Good',
     csam: 'Tom Wilson',
     ae: 'Lisa Anderson',
     contractEnd: '2025-02-28',
     lastActivity: '2024-01-16',
-    expansionOpportunity: 180000
+    expansionOpportunity: 1800000
   },
   {
     id: 'acc-8',
     name: 'CloudFirst Technologies',
     industry: 'Technology',
-    arr: 425000,
+    arr: 4850000,
     healthScore: 41,
     status: 'At Risk',
     csam: 'Anna Lee',
     ae: 'Mark Johnson',
     contractEnd: '2024-07-10',
     lastActivity: '2024-01-06',
-    expansionOpportunity: 85000
+    expansionOpportunity: 920000
   },
   {
     id: 'acc-9',
     name: 'AgriTech Farms',
     industry: 'Agriculture',
-    arr: 275000,
+    arr: 3150000,
     healthScore: 76,
     status: 'Good',
     csam: 'Steve Miller',
     ae: 'Diana Ross',
     contractEnd: '2024-10-15',
     lastActivity: '2024-01-13',
-    expansionOpportunity: 60000
+    expansionOpportunity: 750000
   },
   {
     id: 'acc-10',
     name: 'TransportCorp',
     industry: 'Transportation',
-    arr: 380000,
+    arr: 4200000,
     healthScore: 63,
     status: 'Watch',
     csam: 'Julia Roberts',
     ae: 'Chris Evans',
     contractEnd: '2024-08-30',
     lastActivity: '2024-01-11',
-    expansionOpportunity: 95000
+    expansionOpportunity: 980000
   }
 ];
 
