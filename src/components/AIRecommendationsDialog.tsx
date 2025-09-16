@@ -112,20 +112,50 @@ export function AIRecommendationsDialog({
 
             {/* Error State */}
             {hasError && !isLoading && (
-              <Card className="border-visible border-destructive/50 bg-destructive/5">
+              <Card className={`border-visible ${analysis?.error?.includes('knowledge base') || analysis?.error?.includes('not available') 
+                ? 'border-blue-200 bg-blue-50' 
+                : 'border-destructive/50 bg-destructive/5'}`}>
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
-                    <Warning className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
+                    <Warning className={`w-5 h-5 mt-0.5 flex-shrink-0 ${analysis?.error?.includes('knowledge base') || analysis?.error?.includes('not available') 
+                      ? 'text-blue-600' 
+                      : 'text-destructive'}`} />
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-destructive mb-2">AI Analysis Error</h4>
+                      <h4 className={`font-semibold mb-2 ${analysis?.error?.includes('knowledge base') || analysis?.error?.includes('not available') 
+                        ? 'text-blue-900' 
+                        : 'text-destructive'}`}>Knowledge-Based Recommendations Available</h4>
                       <div className="text-sm text-muted-foreground mb-3 space-y-2">
                         <p className="font-medium">
-                          {analysis?.error?.split(' - ')[0] || 'Unable to generate AI recommendations at this time'}
+                          {analysis?.error?.includes('not available') || analysis?.error?.includes('knowledge base') 
+                            ? 'AI services are currently unavailable, but we\'ve generated expert recommendations based on our knowledge base.'
+                            : analysis?.error?.split(' - ')[0] || 'Unable to generate AI recommendations at this time'
+                          }
                         </p>
-                        {analysis?.error?.includes(' - ') && (
+                        {analysis?.error?.includes(' - ') && !analysis?.error?.includes('knowledge base') && (
                           <p className="text-xs bg-muted/50 p-2 rounded border">
                             {analysis.error.split(' - ')[1]}
                           </p>
+                        )}
+                        {(analysis?.error?.includes('not available') || analysis?.error?.includes('knowledge base')) ? (
+                          <div className="text-xs bg-blue-50 border border-blue-200 p-2 rounded">
+                            <p className="font-medium text-blue-900 mb-1">About These Recommendations:</p>
+                            <ul className="text-blue-700 space-y-1">
+                              <li>• Generated using Customer Success best practices</li>
+                              <li>• Based on signal category and severity analysis</li>
+                              <li>• Tailored to your account portfolio health</li>
+                              <li>• Try "Test AI" button in header to enable full AI features</li>
+                            </ul>
+                          </div>
+                        ) : (
+                          <div className="text-xs bg-blue-50 border border-blue-200 p-2 rounded">
+                            <p className="font-medium text-blue-900 mb-1">Troubleshooting Tips:</p>
+                            <ul className="text-blue-700 space-y-1">
+                              <li>• Try using the "Test AI" button in the header to verify AI connectivity</li>
+                              <li>• Refresh the page if the Spark runtime needs reinitialization</li>
+                              <li>• Check that your browser supports modern JavaScript features</li>
+                              <li>• Use the "Retry AI Generation" button below to try again</li>
+                            </ul>
+                          </div>
                         )}
                       </div>
                       <div className="flex items-center gap-2 flex-wrap">

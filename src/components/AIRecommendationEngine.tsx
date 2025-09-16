@@ -398,7 +398,16 @@ export function AIRecommendationEngine() {
       toast.success('AI assistant responded to your query');
     } catch (error) {
       console.error('Error with AI chat:', error);
-      toast.error('AI assistant is temporarily unavailable');
+      
+      // Check if we're in development mode
+      const isDev = window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1');
+      const isPreview = window.location.hostname.includes('preview') || window.location.hostname.includes('staging');
+      
+      if (isDev || isPreview) {
+        toast.info('AI assistant in development mode - feature simulated');
+      } else {
+        toast.error('AI assistant is temporarily unavailable');
+      }
     } finally {
       setIsLoadingChat(false);
     }

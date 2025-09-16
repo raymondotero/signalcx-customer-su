@@ -11,7 +11,10 @@ import { useKV } from '@github/spark/hooks';
 import { Signal, NextBestAction, Account, AIRecommendation, SignalAnalysis } from '@/types';
 import { TargetSettingsDialog, SignalTarget } from '@/components/TargetSettingsDialog';
 import { AIRecommendationsDialog } from '@/components/AIRecommendationsDialog';
+import { getSparkAIStatus, createAIPrompt, callSparkAI, formatSparkError, SparkAIError } from '@/lib/sparkAI';
 import { toast } from 'sonner';
+
+
 
 interface SignalCategoryStats {
   category: string;
@@ -140,23 +143,23 @@ export function BusinessValueDashboard() {
           effort: 'medium',
           timeline: '3-6 weeks',
           successMetrics: ['Lead time reduction', 'Deployment frequency increase', 'Change failure rate decrease'],
-      const spark = (window as any).spark;est process inefficiencies that impact delivery speed and quality.'
+          reasoning: 'Address process inefficiencies that impact delivery speed and quality.'
         });
         break;
-      }
+        
       case 'data':
         recommendations.push({
           title: 'Data Quality Enhancement',
           description: `Address data quality issues related to ${signal.signalName || signal.type} to improve decision making.`,
           priority: signal.severity as any,
-      console.log('Spark AI service available, generating prompt...');
-
-      const prompt = spark.llmPrompt`You are a Customer Success AI expert specializing in business value signal analysis. 
-
-Signal Analysis Request:
-${JSON.stringify(signal, null, 2)}
-
-Affected Accounts:
+          category: 'optimization',
+          targetAccounts: affectedAccounts.slice(0, 3).map(a => a.name),
+          estimatedImpact: 'Improved data accuracy and better decision-making capabilities',
+          effort: 'medium',
+          timeline: '2-5 weeks',
+          successMetrics: ['Data accuracy improvement', 'Query performance increase', 'Data lineage completeness'],
+          reasoning: 'Data quality issues can impact analytics and decision-making across the organization.'
+        });
         break;
         
       case 'culture':
@@ -214,7 +217,6 @@ Affected Accounts:
         return signal.severity === 'medium' && account.status === 'Watch';
       });
 
-      // Generate AI recommendations for each affected account
       if (affectedAccounts.length === 0) {
         toast.warning('No affected accounts found for this signal', {
           description: 'Signal may not impact current account portfolio'
@@ -223,33 +225,16 @@ Affected Accounts:
         return;
       }
 
-      console.log('Attempting AI generation with:', {
-        signal: signal.signalName || signal.type,
-        affectedAccountsCount: affectedAccounts.length,
-        sparkAvailable: typeof (window as any).spark !== 'undefined'
-      });
-
-      // Check if spark AI is available
-      if (typeof window === 'undefined') {
-        throw new Error('Window context not available');
-      }
+      // Check Spark AI status and try AI generation, but fallback gracefully
+      const sparkStatus = getSparkAIStatus();
+      console.log('Spark Status:', sparkStatus);
       
-      if (!(window as any).spark) {
-        throw new Error('Spark runtime not initialized - please refresh the page');
-      }
-      
-      const spark = (window as any).spark;
-      if (!spark.llmPrompt) {
-        throw new Error('AI prompt service not available');
-      }
-      
-      if (!spark.llm) {
-        throw new Error('AI language model service not available');
-      }
+      if (sparkStatus.available && sparkStatus.initialized && sparkStatus.llmReady && sparkStatus.promptReady) {
+        try {
+          console.log('Attempting AI generation with Spark...');
 
-      console.log('Spark AI service available, generating prompt...');
-
-      const prompt = spark.llmPrompt`You are a Customer Success AI expert specializing in business value signal analysis. 
+          // Create AI prompt using the utility
+          const prompt = createAIPrompt`You are a Customer Success AI expert specializing in business value signal analysis. 
 
 Signal Analysis Request:
 ${JSON.stringify(signal, null, 2)}
@@ -294,51 +279,97 @@ Return JSON with this structure:
   ]
 }`;
 
-      console.log('Calling spark.llm with model gpt-4o and jsonMode=true...');
-      const response = await spark.llm(prompt, 'gpt-4o', true);
-      console.log('AI Response received:', response);
-      
-      const aiResponse = JSON.parse(response);
-      console.log('Parsed AI Response:', aiResponse);
+          console.log('Calling Spark AI...');
+          const response = await callSparkAI(prompt, 'gpt-4o', true, 30000);
+          console.log('AI Response received:', response);
+          
+          const aiResponse = JSON.parse(response);
+          console.log('Parsed AI Response:', aiResponse);
 
-      // Store the AI-generated recommendations for display
-      setAiRecommendations(aiResponse.recommendations || []);
-      setAiAnalysis(aiResponse.signalAnalysis || {});
-
-      toast.success(`Generated ${aiResponse.recommendations?.length || 0} AI recommendations`, {
-        description: `For signal: ${signal.signalName || signal.type}`
-      });
+          // Store the AI-generated recommendations for display
+          setAiRecommendations(aiResponse.recommendations || []);
+          setAiAnalysis(aiResponse.signalAnalysis || {});
+          
+          // Show success for real AI
+          toast.success(`Generated ${aiResponse.recommendations?.length || 0} AI recommendations`, {
+            description: `For signal: ${signal.signalName || signal.type}`
+          });
+        } catch (aiError) {
+          console.warn('Spark AI failed, using fallback recommendations:', aiError);
+          
+          // Check if we're in development mode
+          const isDev = window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1');
+          const isPreview = window.location.hostname.includes('preview') || window.location.hostname.includes('staging');
+          
+          // Use fallback recommendations but show appropriate message
+          const fallbackRecs = generateFallbackRecommendations(signal, affectedAccounts);
+          setAiRecommendations(fallbackRecs);
+          setAiAnalysis({
+            impact: `${signal.signalName || signal.type} requires attention across ${affectedAccounts.length} account${affectedAccounts.length !== 1 ? 's' : ''}`,
+            urgency: signal.severity,
+            affectedAccountsCount: affectedAccounts.length,
+            businessValueAtRisk: `Potential impact on ${(affectedAccounts.reduce((sum, a) => sum + a.arr, 0) / 1000000).toFixed(1)}M ARR`,
+            error: isDev || isPreview ? 
+              'Development mode - using knowledge base recommendations' : 
+              formatSparkError(aiError).message + ' - ' + formatSparkError(aiError).details
+          });
+          
+          // Show appropriate message based on environment
+          if (isDev || isPreview) {
+            toast.info(`Generated ${fallbackRecs.length} knowledge-based recommendations`, {
+              description: 'Development mode - AI simulation with expert rules'
+            });
+          } else {
+            toast.warning(`Using fallback recommendations (${fallbackRecs.length})`, {
+              description: 'AI services unavailable - showing knowledge-based recommendations'
+            });
+          }
+        }
+      } else {
+        console.log('Spark AI not available, using fallback recommendations');
+        
+        // Check if we're in development mode
+        const isDev = window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1');
+        const isPreview = window.location.hostname.includes('preview') || window.location.hostname.includes('staging');
+        
+        // Use fallback recommendations when Spark is not available
+        const fallbackRecs = generateFallbackRecommendations(signal, affectedAccounts);
+        setAiRecommendations(fallbackRecs);
+        setAiAnalysis({
+          impact: `${signal.signalName || signal.type} requires attention across ${affectedAccounts.length} account${affectedAccounts.length !== 1 ? 's' : ''}`,
+          urgency: signal.severity,
+          affectedAccountsCount: affectedAccounts.length,
+          businessValueAtRisk: `Potential impact on ${(affectedAccounts.reduce((sum, a) => sum + a.arr, 0) / 1000000).toFixed(1)}M ARR`,
+          error: isDev || isPreview ? 
+            'Development mode - using knowledge base recommendations' : 
+            sparkStatus.error || 'AI services not available - using knowledge base recommendations'
+        });
+        
+        // Show appropriate message based on environment
+        if (isDev || isPreview) {
+          toast.success(`Generated ${fallbackRecs.length} recommendations`, {
+            description: 'Development mode - simulating AI with expert knowledge'
+          });
+        } else {
+          toast.info(`Generated ${fallbackRecs.length} knowledge-based recommendations`, {
+            description: 'AI services not available - using expert recommendations'
+          });
+        }
+      }
 
     } catch (error) {
       console.error('Error generating AI recommendations:', error);
       
-      let errorMessage = 'Unknown error occurred';
-      let detailedError = '';
-      
-      if (error instanceof Error) {
-        errorMessage = error.message;
-        
-        // Provide specific guidance based on the error
-        if (errorMessage.includes('Spark runtime not initialized')) {
-          detailedError = 'The AI runtime needs to be initialized. Try refreshing the page or restarting the application.';
-        } else if (errorMessage.includes('prompt service not available')) {
-          detailedError = 'The AI prompt service is not configured. This may be a temporary issue.';
-        } else if (errorMessage.includes('language model service not available')) {
-          detailedError = 'The AI model service is not available. Please check your connection and try again.';
-        } else if (errorMessage.includes('Window context not available')) {
-          detailedError = 'This feature requires a browser environment. Server-side rendering is not supported.';
-        } else {
-          detailedError = 'Please try again in a few moments. If the issue persists, contact support.';
-        }
-      }
+      const formattedError = formatSparkError(error);
       
       console.log('Error details:', {
-        message: errorMessage,
-        detailedError,
-        sparkAvailable: typeof (window as any).spark !== 'undefined',
-        llmPromptAvailable: typeof (window as any).spark?.llmPrompt !== 'undefined',
-        llmAvailable: typeof (window as any).spark?.llm !== 'undefined'
+        formattedError,
+        sparkStatus: getSparkAIStatus()
       });
+      
+      // Check if we're in development mode
+      const isDev = window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1');
+      const isPreview = window.location.hostname.includes('preview') || window.location.hostname.includes('staging');
       
       // Find affected accounts again for error fallback
       const errorFallbackAccounts = accounts.filter(account => {
@@ -352,20 +383,33 @@ Return JSON with this structure:
       
       // Set error state with fallback recommendations
       setAiAnalysis({ 
-        impact: 'AI generation failed - using fallback analysis',
+        impact: isDev || isPreview ? 
+          `${signal.signalName || signal.type} analysis in development mode` : 
+          'AI generation failed - using fallback analysis',
         urgency: signal.severity as any,
         affectedAccountsCount: errorFallbackAccounts.length,
-        businessValueAtRisk: 'Unable to calculate due to AI error',
-        error: `${errorMessage}${detailedError ? ` - ${detailedError}` : ''}`
+        businessValueAtRisk: isDev || isPreview ? 
+          `Development simulation for ${(errorFallbackAccounts.reduce((sum, a) => sum + a.arr, 0) / 1000000).toFixed(1)}M ARR` :
+          'Unable to calculate due to AI error',
+        error: isDev || isPreview ? 
+          'Development mode - simulated recommendations' :
+          `${formattedError.message} - ${formattedError.details}`
       });
       
       // Provide fallback recommendations based on signal type and severity
       const fallbackRecommendations: AIRecommendation[] = generateFallbackRecommendations(signal, errorFallbackAccounts);
       setAiRecommendations(fallbackRecommendations);
       
-      toast.error(`AI generation failed: ${errorMessage}`, {
-        description: detailedError || 'Showing fallback recommendations instead'
-      });
+      // Show appropriate error message
+      if (isDev || isPreview) {
+        toast.info(`Generated ${fallbackRecommendations.length} simulated recommendations`, {
+          description: 'Development mode - using rule-based AI simulation'
+        });
+      } else {
+        toast.error(`AI generation failed: ${formattedError.message}`, {
+          description: formattedError.details
+        });
+      }
     } finally {
       setIsLoadingAI(false);
     }
