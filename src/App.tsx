@@ -14,7 +14,7 @@ import { CSVUpload } from '@/components/CSVUpload';
 import { AIRecommendationEngine } from '@/components/AIRecommendationEngine';
 import { RealTimeSignalProcessor } from '@/components/RealTimeSignalProcessor';
 import { BusinessValueDashboard } from '@/components/BusinessValueDashboard';
-import { SparkTestButton } from '@/components/SparkTestButton';
+
 import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
 import { SystemHealthDialog } from '@/components/SystemHealthDialog';
 import { AIErrorBoundary } from '@/components/AIErrorBoundary';
@@ -164,7 +164,6 @@ function App() {
                 )}
               </div>
               
-              <SparkTestButton />
               <CSVUpload />
               <SystemHealthDialog />
               <Button 
