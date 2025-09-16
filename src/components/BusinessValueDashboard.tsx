@@ -140,23 +140,23 @@ export function BusinessValueDashboard() {
           effort: 'medium',
           timeline: '3-6 weeks',
           successMetrics: ['Lead time reduction', 'Deployment frequency increase', 'Change failure rate decrease'],
-          reasoning: 'Agility signals suggest process inefficiencies that impact delivery speed and quality.'
+      const spark = (window as any).spark;est process inefficiencies that impact delivery speed and quality.'
         });
         break;
-        
+      }
       case 'data':
         recommendations.push({
           title: 'Data Quality Enhancement',
           description: `Address data quality issues related to ${signal.signalName || signal.type} to improve decision making.`,
           priority: signal.severity as any,
-          category: 'optimization',
-          targetAccounts: affectedAccounts.slice(0, 3).map(a => a.name),
-          estimatedImpact: 'Improved data accuracy and faster insights generation',
-          effort: 'medium',
-          timeline: '2-4 weeks',
-          successMetrics: ['Data accuracy improvement', 'Report generation speed', 'Data freshness metrics'],
-          reasoning: 'Data quality issues impact analytics capabilities and business intelligence accuracy.'
-        });
+      console.log('Spark AI service available, generating prompt...');
+
+      const prompt = spark.llmPrompt`You are a Customer Success AI expert specializing in business value signal analysis. 
+
+Signal Analysis Request:
+${JSON.stringify(signal, null, 2)}
+
+Affected Accounts:
         break;
         
       case 'culture':
