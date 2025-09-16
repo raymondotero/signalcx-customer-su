@@ -207,17 +207,6 @@ export function BusinessValueDashboard() {
     });
 
     try {
-      // Check Spark AI status first
-      const sparkStatus = getSparkAIStatus();
-      if (!sparkStatus.available || !sparkStatus.initialized || !sparkStatus.llmReady || !sparkStatus.promptReady) {
-        throw {
-          message: 'Spark AI not ready',
-          details: sparkStatus.error || 'Please refresh the page and try again',
-          code: 'NOT_INITIALIZED',
-          canRetry: true
-        } as SparkAIError;
-      }
-
       // Find affected accounts for this signal
       const affectedAccounts = accounts.filter(account => {
         if (signal.accountId && signal.accountId === account.id) return true;
@@ -236,14 +225,16 @@ export function BusinessValueDashboard() {
         return;
       }
 
-      console.log('Attempting AI generation with:', {
-        signal: signal.signalName || signal.type,
-        affectedAccountsCount: affectedAccounts.length,
-        sparkStatus
-      });
+      // Check Spark AI status and try AI generation, but fallback gracefully
+      const sparkStatus = getSparkAIStatus();
+      console.log('Spark Status:', sparkStatus);
+      
+      if (sparkStatus.available && sparkStatus.initialized && sparkStatus.llmReady && sparkStatus.promptReady) {
+        try {
+          console.log('Attempting AI generation with Spark...');
 
-      // Create AI prompt using the utility
-      const prompt = createAIPrompt`You are a Customer Success AI expert specializing in business value signal analysis. 
+          // Create AI prompt using the utility
+          const prompt = createAIPrompt`You are a Customer Success AI expert specializing in business value signal analysis. 
 
 Signal Analysis Request:
 ${JSON.stringify(signal, null, 2)}
@@ -288,20 +279,59 @@ Return JSON with this structure:
   ]
 }`;
 
-      console.log('Calling Spark AI with improved error handling...');
-      const response = await callSparkAI(prompt, 'gpt-4o', true, 30000);
-      console.log('AI Response received:', response);
-      
-      const aiResponse = JSON.parse(response);
-      console.log('Parsed AI Response:', aiResponse);
+          console.log('Calling Spark AI...');
+          const response = await callSparkAI(prompt, 'gpt-4o', true, 30000);
+          console.log('AI Response received:', response);
+          
+          const aiResponse = JSON.parse(response);
+          console.log('Parsed AI Response:', aiResponse);
 
-      // Store the AI-generated recommendations for display
-      setAiRecommendations(aiResponse.recommendations || []);
-      setAiAnalysis(aiResponse.signalAnalysis || {});
-
-      toast.success(`Generated ${aiResponse.recommendations?.length || 0} AI recommendations`, {
-        description: `For signal: ${signal.signalName || signal.type}`
-      });
+          // Store the AI-generated recommendations for display
+          setAiRecommendations(aiResponse.recommendations || []);
+          setAiAnalysis(aiResponse.signalAnalysis || {});
+          
+          // Show success for real AI
+          toast.success(`Generated ${aiResponse.recommendations?.length || 0} AI recommendations`, {
+            description: `For signal: ${signal.signalName || signal.type}`
+          });
+        } catch (aiError) {
+          console.warn('Spark AI failed, using fallback recommendations:', aiError);
+          
+          // Use fallback recommendations but still show success
+          const fallbackRecs = generateFallbackRecommendations(signal, affectedAccounts);
+          setAiRecommendations(fallbackRecs);
+          setAiAnalysis({
+            impact: `${signal.signalName || signal.type} requires attention across ${affectedAccounts.length} account${affectedAccounts.length !== 1 ? 's' : ''}`,
+            urgency: signal.severity,
+            affectedAccountsCount: affectedAccounts.length,
+            businessValueAtRisk: `Potential impact on ${(affectedAccounts.reduce((sum, a) => sum + a.arr, 0) / 1000000).toFixed(1)}M ARR`,
+            error: formatSparkError(aiError).message + ' - ' + formatSparkError(aiError).details
+          });
+          
+          // Show fallback success for AI error
+          toast.warning(`Using fallback recommendations (${fallbackRecs.length})`, {
+            description: 'AI services unavailable - showing knowledge-based recommendations'
+          });
+        }
+      } else {
+        console.log('Spark AI not available, using fallback recommendations');
+        
+        // Use fallback recommendations when Spark is not available
+        const fallbackRecs = generateFallbackRecommendations(signal, affectedAccounts);
+        setAiRecommendations(fallbackRecs);
+        setAiAnalysis({
+          impact: `${signal.signalName || signal.type} requires attention across ${affectedAccounts.length} account${affectedAccounts.length !== 1 ? 's' : ''}`,
+          urgency: signal.severity,
+          affectedAccountsCount: affectedAccounts.length,
+          businessValueAtRisk: `Potential impact on ${(affectedAccounts.reduce((sum, a) => sum + a.arr, 0) / 1000000).toFixed(1)}M ARR`,
+          error: sparkStatus.error || 'AI services not available - using knowledge base recommendations'
+        });
+        
+        // Show fallback success for no Spark
+        toast.info(`Generated ${fallbackRecs.length} knowledge-based recommendations`, {
+          description: 'AI services not available - using expert recommendations'
+        });
+      }
 
     } catch (error) {
       console.error('Error generating AI recommendations:', error);
