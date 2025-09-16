@@ -17,6 +17,7 @@ import {
 } from '@phosphor-icons/react';
 import { Account } from '@/types';
 import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
+import { ExpansionOpportunitiesDialog } from '@/components/ExpansionOpportunitiesDialog';
 
 interface AccountsTableProps {
   accounts: Account[];
@@ -60,9 +61,9 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
         (healthScoreFilter === 'low' && account.healthScore < 60);
 
       const matchesARR = arrFilter === 'all' ||
-        (arrFilter === 'high' && account.arr >= 5000000) ||
-        (arrFilter === 'medium' && account.arr >= 1000000 && account.arr < 5000000) ||
-        (arrFilter === 'low' && account.arr < 1000000);
+        (arrFilter === 'high' && account.arr >= 50000000) ||
+        (arrFilter === 'medium' && account.arr >= 20000000 && account.arr < 50000000) ||
+        (arrFilter === 'low' && account.arr < 20000000);
 
       return matchesSearch && matchesStatus && matchesIndustry && matchesHealthScore && matchesARR;
     });
@@ -220,9 +221,9 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All ARR</SelectItem>
-                <SelectItem value="high">High ($5M+)</SelectItem>
-                <SelectItem value="medium">Medium ($1M-$5M)</SelectItem>
-                <SelectItem value="low">Low (&lt;$1M)</SelectItem>
+                <SelectItem value="high">Enterprise ($50M+)</SelectItem>
+                <SelectItem value="medium">Strategic ($20M-$50M)</SelectItem>
+                <SelectItem value="low">Commercial (&lt;$20M)</SelectItem>
               </SelectContent>
             </Select>
 
@@ -406,10 +407,15 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
                       </Button>
                       <AccountDetailsDialog account={account} />
                       {account.expansionOpportunity && account.expansionOpportunity > 0 && (
-                        <Badge className="text-xs bg-green-50 text-green-700 border-green-200">
-                          <CurrencyDollar className="w-3 h-3 mr-1" />
-                          ${(account.expansionOpportunity / 1000).toFixed(0)}K
-                        </Badge>
+                        <ExpansionOpportunitiesDialog account={account}>
+                          <Button 
+                            variant="outline" 
+                            className="text-xs px-2 py-1 bg-green-50 text-green-700 border-green-200 hover:bg-green-100"
+                          >
+                            <CurrencyDollar className="w-3 h-3 mr-1" />
+                            ${(account.expansionOpportunity / 1000000).toFixed(1)}M
+                          </Button>
+                        </ExpansionOpportunitiesDialog>
                       )}
                     </div>
                   </TableCell>

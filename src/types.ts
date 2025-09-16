@@ -16,6 +16,19 @@ export interface ARRTrend {
   };
 }
 
+export interface ExpansionOpportunity {
+  value: number;
+  category: 'upsell' | 'cross-sell' | 'user-expansion' | 'feature-upgrade' | 'geographic-expansion';
+  description: string;
+  timeline: '30-60 days' | '60-90 days' | '90-180 days' | '6+ months';
+  probability: 'high' | 'medium' | 'low';
+  requiredActivities: string[];
+  microsoftSolutions: string[];
+  deliveryMotions: string[];
+  stakeholdersRequired: string[];
+  successCriteria: string[];
+}
+
 export interface Account {
   id: string;
   name: string;
@@ -27,7 +40,8 @@ export interface Account {
   ae: string;
   contractEnd: string;
   lastActivity: string;
-  expansionOpportunity: number;
+  expansionOpportunity: number; // Legacy field for backward compatibility
+  expansionOpportunities?: ExpansionOpportunity[];
   arrHistory?: QuarterlyARR[];
   arrTrend?: ARRTrend;
 }
