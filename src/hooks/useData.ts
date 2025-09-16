@@ -1,9 +1,9 @@
 import { useKV } from '@github/spark/hooks';
 import { Account, NextBestAction, Signal, MemoryEntry } from '@/types';
-import { generateBusinessValueSignal } from '@/services/signalCatalog';
+import { generateBusinessValueSignal, generateIndustrySpecificSignal } from '@/services/signalCatalog';
 import React, { useEffect } from 'react';
 
-// Sample seed data - exported for reset functionality
+// Sample seed data - exported for reset functionality with realistic health score patterns
 export const sampleAccounts: Account[] = [
   {
     id: 'acc-1',
@@ -23,7 +23,7 @@ export const sampleAccounts: Account[] = [
     name: 'Global Manufacturing Inc',
     industry: 'Manufacturing',
     arr: 450000,
-    healthScore: 65,
+    healthScore: 68,
     status: 'Watch',
     csam: 'Mike Rodriguez',
     ae: 'Jennifer Davis',
@@ -48,182 +48,195 @@ export const sampleAccounts: Account[] = [
     id: 'acc-4',
     name: 'HealthTech Innovations',
     industry: 'Healthcare',
-    arr: 180000,
-    healthScore: 90,
+    arr: 320000,
+    healthScore: 78,
     status: 'Good',
     csam: 'David Kim',
     ae: 'Amanda Foster',
-    contractEnd: '2025-03-31',
-    lastActivity: '2024-01-16',
-    expansionOpportunity: 90000
+    contractEnd: '2024-11-20',
+    lastActivity: '2024-01-14',
+    expansionOpportunity: 95000
   },
   {
     id: 'acc-5',
-    name: 'RetailMax Corporation',
+    name: 'RetailMax Corp',
     industry: 'Retail',
-    arr: 320000,
-    healthScore: 72,
-    status: 'Good',
+    arr: 150000,
+    healthScore: 52,
+    status: 'At Risk',
     csam: 'Emily Johnson',
-    ae: 'Christopher Lee',
-    contractEnd: '2024-11-15',
-    lastActivity: '2024-01-14',
-    expansionOpportunity: 110000
+    ae: 'Carlos Ruiz',
+    contractEnd: '2024-05-15',
+    lastActivity: '2024-01-08',
+    expansionOpportunity: 30000
   },
   {
     id: 'acc-6',
-    name: 'CloudSoft Dynamics',
-    industry: 'Technology',
-    arr: 420000,
-    healthScore: 78,
-    status: 'Good',
-    csam: 'Jessica Parker',
-    ae: 'Daniel Wright',
-    contractEnd: '2025-01-31',
-    lastActivity: '2024-01-18',
-    expansionOpportunity: 140000
+    name: 'EduLearn Systems',
+    industry: 'Education',
+    arr: 180000,
+    healthScore: 72,
+    status: 'Watch',
+    csam: 'Rachel Green',
+    ae: 'Kevin Park',
+    contractEnd: '2024-09-30',
+    lastActivity: '2024-01-12',
+    expansionOpportunity: 45000
   },
   {
     id: 'acc-7',
-    name: 'AutoParts Universe',
-    industry: 'Automotive',
-    arr: 290000,
-    healthScore: 55,
-    status: 'Watch',
-    csam: 'Carlos Hernandez',
-    ae: 'Sarah Wilson',
-    contractEnd: '2024-10-15',
-    lastActivity: '2024-01-08',
-    expansionOpportunity: 85000
-  },
-  {
-    id: 'acc-8',
-    name: 'EduTech Systems',
-    industry: 'Education',
-    arr: 150000,
-    healthScore: 92,
-    status: 'Good',
-    csam: 'Maria Gonzales',
-    ae: 'Kevin Brown',
-    contractEnd: '2025-05-30',
-    lastActivity: '2024-01-20',
-    expansionOpportunity: 60000
-  },
-  {
-    id: 'acc-9',
-    name: 'AgriBusiness Connect',
-    industry: 'Agriculture',
-    arr: 380000,
-    healthScore: 40,
-    status: 'At Risk',
-    csam: 'Ahmed Ali',
-    ae: 'Rachel Green',
-    contractEnd: '2024-07-31',
-    lastActivity: '2024-01-03',
-    expansionOpportunity: 150000
-  },
-  {
-    id: 'acc-10',
-    name: 'Energy Solutions Pro',
+    name: 'Energy Solutions Ltd',
     industry: 'Energy',
     arr: 650000,
     healthScore: 88,
     status: 'Good',
-    csam: 'Nina Petrov',
-    ae: 'James Miller',
-    contractEnd: '2024-12-15',
-    lastActivity: '2024-01-17',
-    expansionOpportunity: 220000
+    csam: 'Tom Wilson',
+    ae: 'Lisa Anderson',
+    contractEnd: '2025-02-28',
+    lastActivity: '2024-01-16',
+    expansionOpportunity: 180000
+  },
+  {
+    id: 'acc-8',
+    name: 'CloudFirst Technologies',
+    industry: 'Technology',
+    arr: 425000,
+    healthScore: 41,
+    status: 'At Risk',
+    csam: 'Anna Lee',
+    ae: 'Mark Johnson',
+    contractEnd: '2024-07-10',
+    lastActivity: '2024-01-06',
+    expansionOpportunity: 85000
+  },
+  {
+    id: 'acc-9',
+    name: 'AgriTech Farms',
+    industry: 'Agriculture',
+    arr: 275000,
+    healthScore: 76,
+    status: 'Good',
+    csam: 'Steve Miller',
+    ae: 'Diana Ross',
+    contractEnd: '2024-10-15',
+    lastActivity: '2024-01-13',
+    expansionOpportunity: 60000
+  },
+  {
+    id: 'acc-10',
+    name: 'TransportCorp',
+    industry: 'Transportation',
+    arr: 380000,
+    healthScore: 63,
+    status: 'Watch',
+    csam: 'Julia Roberts',
+    ae: 'Chris Evans',
+    contractEnd: '2024-08-30',
+    lastActivity: '2024-01-11',
+    expansionOpportunity: 95000
   }
 ];
 
 export function useAccounts() {
-  const [accounts, setAccounts] = useKV<Account[]>('signalcx-accounts', sampleAccounts);
-  const [initialized, setInitialized] = useKV<boolean>('signalcx-initialized', false);
-  
-  // Ensure sample data is always loaded if accounts are empty
-  React.useEffect(() => {
-    if (!accounts || accounts.length === 0) {
-      setAccounts(sampleAccounts);
-    }
-  }, [accounts, setAccounts]);
-  
-  // Initialize with seed business value signals
-  useEffect(() => {
-    if (!initialized && accounts && accounts.length > 0) {
-      // Generate some initial business value signals for demo
-      const initialSignals: Signal[] = [];
-      
-      accounts.forEach(account => {
-        // Generate 2-3 business value signals per account
-        for (let i = 0; i < 3; i++) {
-          initialSignals.push(generateBusinessValueSignal(account.id, account.name));
-        }
-      });
-      
-      // Add signals to storage
-      const signalsData = JSON.parse(localStorage.getItem('signalcx-signals') || '[]');
-      if (signalsData.length === 0) {
-        localStorage.setItem('signalcx-signals', JSON.stringify(initialSignals));
-      }
-      
-      setInitialized(true);
-    }
-  }, [accounts, initialized, setInitialized]);
-  
-  const addAccount = (account: Account) => {
-    setAccounts(currentAccounts => [...(currentAccounts || []), account]);
+  const [accounts, setAccounts] = useKV<Account[]>('accounts', sampleAccounts);
+
+  const updateAccount = (accountId: string, updates: Partial<Account>) => {
+    setAccounts((prev) => 
+      (prev || []).map(acc => acc.id === accountId ? { ...acc, ...updates } : acc)
+    );
   };
-  
-  return { 
-    accounts: accounts || [], 
+
+  const addAccount = (account: Account) => {
+    setAccounts((prev) => [...(prev || []), account]);
+  };
+
+  const resetAccounts = () => {
+    setAccounts(sampleAccounts);
+  };
+
+  return {
+    accounts: accounts || [],
     setAccounts,
-    addAccount
+    updateAccount,
+    addAccount,
+    resetAccounts
   };
 }
 
 export function useNBAs() {
-  const [nbas, setNBAs] = useKV<NextBestAction[]>('signalcx-nbas', []);
-  
+  const [nbas, setNBAs] = useKV<NextBestAction[]>('nbas', []);
+
   const addNBA = (nba: NextBestAction) => {
-    setNBAs(currentNBAs => [...(currentNBAs || []), nba]);
+    setNBAs((prev) => [...(prev || []), nba]);
   };
-  
-  return { 
-    nbas: nbas || [], 
+
+  const removeNBA = (nbaId: string) => {
+    setNBAs((prev) => (prev || []).filter(nba => nba.id !== nbaId));
+  };
+
+  return {
+    nbas: nbas || [],
     setNBAs,
-    addNBA
+    addNBA,
+    removeNBA
   };
 }
 
 export function useSignals() {
-  const [signals, setSignals] = useKV<Signal[]>('signalcx-signals', []);
-  
+  const [signals, setSignals] = useKV<Signal[]>('signals', []);
+
   const addSignal = (signal: Signal) => {
-    setSignals(currentSignals => [signal, ...(currentSignals || [])].slice(0, 50)); // Keep last 50 signals
+    setSignals((prev) => [...(prev || []), signal]);
   };
-  
-  return { 
-    signals: signals || [], 
-    setSignals, 
-    addSignal 
+
+  const removeSignal = (signalId: string) => {
+    setSignals((prev) => (prev || []).filter(signal => signal.id !== signalId));
+  };
+
+  return {
+    signals: signals || [],
+    setSignals,
+    addSignal,
+    removeSignal
   };
 }
 
 export function useAgentMemory() {
-  const [memory, setMemory] = useKV<MemoryEntry[]>('signalcx-memory', []);
-  
+  const [memory, setMemory] = useKV<MemoryEntry[]>('agent-memory', []);
+
   const addMemoryEntry = (entry: MemoryEntry) => {
-    setMemory(currentMemory => [entry, ...(currentMemory || [])]);
+    setMemory((prev) => [...(prev || []), entry]);
   };
-  
+
   const clearMemory = () => {
     setMemory([]);
   };
-  
-  return { 
-    memory: memory || [], 
-    addMemoryEntry, 
-    clearMemory 
+
+  return {
+    memory: memory || [],
+    setMemory,
+    addMemoryEntry,
+    clearMemory
   };
+}
+
+// Helper function to generate enhanced signals based on accounts
+export function generateEnhancedSignals(accounts: Account[]): Signal[] {
+  const signals: Signal[] = [];
+  
+  accounts.forEach(account => {
+    // Generate 5-8 signals per account for demo purposes
+    const signalCount = Math.floor(Math.random() * 4) + 5;
+    
+    for (let i = 0; i < signalCount; i++) {
+      const signal = generateBusinessValueSignal(account.id, account.name);
+      signals.push(signal);
+    }
+    
+    // Add industry-specific signals
+    const industrySignal = generateIndustrySpecificSignal(account.id, account.name, account.industry);
+    signals.push(industrySignal);
+  });
+  
+  return signals;
 }
