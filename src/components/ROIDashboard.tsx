@@ -20,6 +20,7 @@ import {
 import { ROICalculator } from './ROICalculator';
 import { PowerPointExporter } from './PowerPointExporter';
 import { AdvancedPowerPointGenerator } from './AdvancedPowerPointGenerator';
+import { PowerPointGenerator } from './PowerPointGenerator';
 import { useKV } from '@github/spark/hooks';
 import { toast } from 'sonner';
 
@@ -111,6 +112,7 @@ export function ROIDashboard() {
                     Portfolio Summary
                   </div>
                   <div className="flex gap-2">
+                    <PowerPointGenerator />
                     <PowerPointExporter />
                     <AdvancedPowerPointGenerator />
                   </div>
@@ -184,7 +186,10 @@ export function ROIDashboard() {
                 <CardTitle className="flex items-center justify-between">
                   <span>Recent ROI Calculations</span>
                   {safeROIResults.length > 0 && (
-                    <PowerPointExporter />
+                    <div className="flex gap-2">
+                      <PowerPointGenerator />
+                      <PowerPointExporter />
+                    </div>
                   )}
                 </CardTitle>
               </CardHeader>
