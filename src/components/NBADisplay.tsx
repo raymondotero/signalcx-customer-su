@@ -10,6 +10,7 @@ import { Account, NextBestAction, Signal, MemoryEntry } from '@/types';
 import { useNBAs, useAgentMemory, useSignals } from '@/hooks/useData';
 import { useTargetAwareRecommendations } from '@/hooks/useTargetAwareRecommendations';
 import { azureOpenAI, RecommendationContext, SmartRecommendation } from '@/services/azureOpenAI';
+import { WorkflowAutomation } from '@/components/WorkflowAutomation';
 import { toast } from 'sonner';
 
 interface NBADisplayProps {
@@ -352,7 +353,7 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
                       <p><strong>Time to complete:</strong> {selectedNBA.timeToComplete}</p>
                     </div>
                     
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap">
                       <Button 
                         variant="outline" 
                         size="sm"
@@ -369,6 +370,11 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
                         <Play className="w-4 h-4 mr-1" />
                         Plan & Run
                       </Button>
+                      <WorkflowAutomation 
+                        nba={selectedNBA}
+                        account={account}
+                        onComplete={() => toast.success('Workflow automation completed!')}
+                      />
                     </div>
                   </div>
                 </div>
@@ -401,8 +407,7 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
               <div className="space-y-3">
                 {currentRecommendations.length > 0 ? (
                   currentRecommendations.map((rec, index) => (
-                    <div key={index} className="p-3 rounded-lg border cursor-pointer hover:bg-muted/50" 
-                         onClick={() => setSelectedNBA(rec.nba)}>
+                    <div key={index} className="p-3 rounded-lg border" >
                       <div className="flex items-start justify-between mb-2">
                         <h4 className="font-medium">{rec.nba.title}</h4>
                         <div className="flex gap-1">
@@ -433,8 +438,24 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
                         </div>
                       )}
                       
-                      <div className="text-xs text-muted-foreground">
-                        <strong>Success probability:</strong> {(rec.successProbability * 100).toFixed(1)}%
+                      <div className="flex items-center justify-between">
+                        <div className="text-xs text-muted-foreground">
+                          <strong>Success probability:</strong> {(rec.successProbability * 100).toFixed(1)}%
+                        </div>
+                        <div className="flex gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => setSelectedNBA(rec.nba)}
+                          >
+                            Select
+                          </Button>
+                          <WorkflowAutomation 
+                            nba={rec.nba}
+                            account={account}
+                            onComplete={() => toast.success('Workflow automation completed!')}
+                          />
+                        </div>
                       </div>
                     </div>
                   ))
@@ -506,13 +527,20 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
                         </div>
                       </div>
                       
-                      <Button 
-                        onClick={() => setSelectedNBA(targetRecommendation.nba)}
-                        className="w-full"
-                      >
-                        <Target className="w-4 h-4 mr-2" />
-                        Use Target-Based Recommendation
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button 
+                          onClick={() => setSelectedNBA(targetRecommendation.nba)}
+                          className="flex-1"
+                        >
+                          <Target className="w-4 h-4 mr-2" />
+                          Use Target-Based Recommendation
+                        </Button>
+                        <WorkflowAutomation 
+                          nba={targetRecommendation.nba}
+                          account={account}
+                          onComplete={() => toast.success('Target-based workflow automation completed!')}
+                        />
+                      </div>
                     </div>
                   </div>
                 ) : (

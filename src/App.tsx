@@ -16,6 +16,7 @@ import { RealTimeSignalProcessor } from '@/components/RealTimeSignalProcessor';
 import { BusinessValueDashboard } from '@/components/BusinessValueDashboard';
 import { HealthScoreForecast } from '@/components/HealthScoreForecast';
 import { ARRGrowthTracker } from '@/components/ARRGrowthTracker';
+import { WorkflowDemo } from '@/components/WorkflowDemo';
 
 import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
 import { SystemHealthDialog } from '@/components/SystemHealthDialog';
@@ -318,10 +319,11 @@ function App() {
           {/* Right Column - AI Systems */}
           <div className="space-y-6 min-h-0 h-fit">
             <Tabs defaultValue="arr-growth" className="w-full h-fit">
-              <TabsList className="grid w-full grid-cols-7 h-fit">
+              <TabsList className="grid w-full grid-cols-8 h-fit">
                 <TabsTrigger value="business-value" className="text-xs px-2">Business</TabsTrigger>
                 <TabsTrigger value="arr-growth" className="text-xs px-2">ARR Growth</TabsTrigger>
                 <TabsTrigger value="forecast" className="text-xs px-2">Forecast</TabsTrigger>
+                <TabsTrigger value="workflows" className="text-xs px-2">Workflows</TabsTrigger>
                 <TabsTrigger value="ai-processor" className="text-xs px-2">AI Proc</TabsTrigger>
                 <TabsTrigger value="signals" className="text-xs px-2">Signals</TabsTrigger>
                 <TabsTrigger value="ai-engine" className="text-xs px-2">AI Engine</TabsTrigger>
@@ -356,6 +358,12 @@ function App() {
                     />
                   </div>
                 </AIErrorBoundary>
+              </TabsContent>
+              
+              <TabsContent value="workflows" className="mt-4 h-fit">
+                <div className="h-fit">
+                  <WorkflowDemo />
+                </div>
               </TabsContent>
               
               <TabsContent value="ai-processor" className="mt-4 h-fit">
