@@ -348,41 +348,46 @@ export const generateBusinessValueSignal = (accountId: string, accountName: stri
 export const generateRealisticValue = (signalName: string, forcedSeverity?: Signal['severity']): { value: number; unit?: string; target?: number } => {
   let baseResult = generateRandomValue(signalName);
   
+  // Ensure we have a target value for calculations
+  const target = baseResult.target || 100;
+  
   // Adjust values based on forced severity for demo purposes
-  if (signalName.includes('Cost') || signalName.includes('Spend')) {
+  if (forcedSeverity) {
     switch (forcedSeverity) {
       case 'critical':
         // Generate values that would be critical
         if (signalName.includes('Coverage') || signalName.includes('Utilization') || signalName.includes('Compliance')) {
-        } else if (signalName.includes('Open') || signalName.includes('Findings')) {
-          baseResult.value = baseResult.target * 3 + Math.random() * 10; // High counts are critical
-  if (signalName.includes('Utilization')) {
-          baseResult.value = baseResult.target * 0.3 + Math.random() * 0.2 * baseResult.target;
+          baseResult.value = target * 0.3 + Math.random() * 0.2 * target;
+        } else if (signalName.includes('Open') || signalName.includes('Findings') || signalName.includes('Vulns')) {
+          baseResult.value = target * 3 + Math.random() * 10; // High counts are critical
+        } else if (signalName.includes('Time') || signalName.includes('MTTR') || signalName.includes('Lead Time')) {
+          baseResult.value = target * 2 + Math.random() * target;
+        } else if (signalName.includes('Cost') || signalName.includes('Spend')) {
+          baseResult.value = target * 1.5 + Math.random() * target;
         }
         break;
       case 'high':
         if (signalName.includes('Coverage') || signalName.includes('Utilization') || signalName.includes('Compliance')) {
-  }
-  
-  if (signalName.includes('Time') || signalName.includes('MTTR') || signalName.includes('Lead Time')) {
-    const impactMsg = severity === 'critical' ? 'Performance severely impacted - immediate attention required.' :
-                     severity === 'high' ? 'Performance degradation detected.' :
+          baseResult.value = target * 0.6 + Math.random() * 0.2 * target;
+        } else if (signalName.includes('Open') || signalName.includes('Findings') || signalName.includes('Vulns')) {
+          baseResult.value = target * 1.5 + Math.random() * 5;
+        } else if (signalName.includes('Time') || signalName.includes('MTTR') || signalName.includes('Lead Time')) {
+          baseResult.value = target * 1.3 + Math.random() * 0.5 * target;
+        } else if (signalName.includes('Cost') || signalName.includes('Spend')) {
+          baseResult.value = target * 1.2 + Math.random() * 0.3 * target;
         }
         break;
-  }
-  
-  if (signalName.includes('Score') || signalName.includes('NPS') || signalName.includes('CSAT')) {
-    const impactMsg = value > 80 ? 'Excellent customer satisfaction.' :
-                     value > 60 ? 'Good performance with room for improvement.' :
-        }
+      case 'medium':
+        // Keep base values with slight variance
+        baseResult.value = target * (0.8 + Math.random() * 0.4);
         break;
       case 'low':
-  }
-  
-  if (signalName.includes('Open') || signalName.includes('Findings') || signalName.includes('Vulns')) {
-    const impactMsg = severity === 'critical' ? 'High volume of open issues - prioritize resolution.' :
+        if (signalName.includes('Coverage') || signalName.includes('Utilization') || signalName.includes('Compliance')) {
+          baseResult.value = target * 0.95 + Math.random() * 0.1 * target;
+        } else if (signalName.includes('Open') || signalName.includes('Findings') || signalName.includes('Vulns')) {
+          baseResult.value = Math.random() * 2; // Very low counts
         } else {
-          baseResult.value = baseResult.target * 0.95 + Math.random() * 0.1 * baseResult.target;
+          baseResult.value = target * 0.9 + Math.random() * 0.2 * target;
         }
         break;
     }
@@ -401,7 +406,7 @@ const generateSignalDescription = (
   const valueStr = unit ? `${Math.round(value * 100) / 100}${unit}` : Math.round(value * 100) / 100;
   const trendStr = trend ? ` (${trend})` : '';
   
-};  // Generate contextual descriptions based on signal type and severity
+  // Generate contextual descriptions based on signal type and severity
   if (signalName.includes('Coverage') || signalName.includes('Compliance')) {
     const impactMsg = severity === 'critical' ? 'Critical compliance gap detected - immediate action required.' :
                      severity === 'high' ? 'Coverage below target - review and optimize.' :
