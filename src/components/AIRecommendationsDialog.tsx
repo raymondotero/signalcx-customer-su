@@ -127,6 +127,15 @@ export function AIRecommendationsDialog({
                             {analysis.error.split(' - ')[1]}
                           </p>
                         )}
+                        <div className="text-xs bg-blue-50 border border-blue-200 p-2 rounded">
+                          <p className="font-medium text-blue-900 mb-1">Troubleshooting Tips:</p>
+                          <ul className="text-blue-700 space-y-1">
+                            <li>• Try using the "Test AI" button in the header to verify AI connectivity</li>
+                            <li>• Refresh the page if the Spark runtime needs reinitialization</li>
+                            <li>• Check that your browser supports modern JavaScript features</li>
+                            <li>• Use the "Retry AI Generation" button below to try again</li>
+                          </ul>
+                        </div>
                       </div>
                       <div className="flex items-center gap-2 flex-wrap">
                         {onRetry && (

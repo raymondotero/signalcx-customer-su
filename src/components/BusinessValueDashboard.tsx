@@ -13,6 +13,33 @@ import { TargetSettingsDialog, SignalTarget } from '@/components/TargetSettingsD
 import { AIRecommendationsDialog } from '@/components/AIRecommendationsDialog';
 import { toast } from 'sonner';
 
+// Utility function to safely access Spark AI with better error handling
+const getSparkAI = () => {
+  try {
+    if (typeof window === 'undefined') {
+      throw new Error('Browser environment required - this feature only works in web browsers');
+    }
+    
+    const spark = (window as any).spark;
+    if (!spark) {
+      throw new Error('Spark runtime not initialized - please refresh the page to reload the AI services');
+    }
+    
+    if (!spark.llmPrompt || typeof spark.llmPrompt !== 'function') {
+      throw new Error('AI prompt service not available - the Spark AI system may be loading');
+    }
+    
+    if (!spark.llm || typeof spark.llm !== 'function') {
+      throw new Error('AI language model service not available - check your network connection');
+    }
+    
+    return spark;
+  } catch (error) {
+    console.error('Spark AI access error:', error);
+    throw error;
+  }
+};
+
 interface SignalCategoryStats {
   category: string;
   count: number;
@@ -225,29 +252,13 @@ export function BusinessValueDashboard() {
 
       console.log('Attempting AI generation with:', {
         signal: signal.signalName || signal.type,
-        affectedAccountsCount: affectedAccounts.length,
-        sparkAvailable: typeof (window as any).spark !== 'undefined'
+        affectedAccountsCount: affectedAccounts.length
       });
 
-      // Check if spark AI is available
-      if (typeof window === 'undefined') {
-        throw new Error('Window context not available');
-      }
+      // Use improved Spark AI access
+      const spark = getSparkAI();
       
-      if (!(window as any).spark) {
-        throw new Error('Spark runtime not initialized - please refresh the page');
-      }
-      
-      const spark = (window as any).spark;
-      if (!spark.llmPrompt) {
-        throw new Error('AI prompt service not available');
-      }
-      
-      if (!spark.llm) {
-        throw new Error('AI language model service not available');
-      }
-
-      console.log('Spark AI service available, generating prompt...');
+      console.log('Spark AI service verified, generating prompt...');
 
       const prompt = spark.llmPrompt`You are a Customer Success AI expert specializing in business value signal analysis. 
 
