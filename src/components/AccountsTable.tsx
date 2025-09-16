@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Brain, TrendUp, CurrencyDollar } from '@phosphor-icons/react';
 import { Account } from '@/types';
+import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
 
 interface AccountsTableProps {
   accounts: Account[];
@@ -88,19 +89,18 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
                 <TableCell>
                   <div className="flex gap-2">
                     <Button 
-                      size="sm" 
-                      variant="outline"
+                      className="text-xs px-2 py-1 border hover:bg-primary/10"
                       onClick={(e) => {
                         e.stopPropagation();
                         onSelectAccount(account);
                       }}
-                      className="hover:bg-primary/10"
                     >
                       <Brain className="w-4 h-4 mr-1" />
                       Select
                     </Button>
+                    <AccountDetailsDialog account={account} />
                     {account.expansionOpportunity && account.expansionOpportunity > 0 && (
-                      <Badge variant="outline" className="text-xs bg-green-50 text-green-700">
+                      <Badge className="text-xs bg-green-50 text-green-700 border-green-200">
                         <CurrencyDollar className="w-3 h-3 mr-1" />
                         ${(account.expansionOpportunity / 1000).toFixed(0)}K
                       </Badge>

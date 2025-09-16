@@ -9,6 +9,7 @@ import { Signal } from '@/types';
 import { useSignals, useAccounts } from '@/hooks/useData';
 import { useSignalProcessor } from '@/hooks/useSignalProcessor';
 import { generateBusinessValueSignal } from '@/services/signalCatalog';
+import { SignalDetailsDialog } from '@/components/SignalDetailsDialog';
 
 export function LiveSignals() {
   const [isStreaming, setIsStreaming] = useState(true);
@@ -223,7 +224,10 @@ export function LiveSignals() {
                   
                   <div className="flex justify-between items-center text-xs text-muted-foreground">
                     <span>Account ID: {signal.accountId}</span>
-                    <span>{formatTime(signal.timestamp)}</span>
+                    <div className="flex items-center gap-2">
+                      <span>{formatTime(signal.timestamp)}</span>
+                      <SignalDetailsDialog signal={signal} />
+                    </div>
                   </div>
                 </div>
               ))

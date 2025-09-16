@@ -15,6 +15,8 @@ import { AIRecommendationEngine } from '@/components/AIRecommendationEngine';
 import { RealTimeSignalProcessor } from '@/components/RealTimeSignalProcessor';
 import { BusinessValueDashboard } from '@/components/BusinessValueDashboard';
 import { SparkTestButton } from '@/components/SparkTestButton';
+import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
+import { SystemHealthDialog } from '@/components/SystemHealthDialog';
 import { useAccounts, useNBAs, useAgentMemory, sampleAccounts } from '@/hooks/useData';
 import { useSignalProcessor } from '@/hooks/useSignalProcessor';
 import { useRealtimeNotifications } from '@/hooks/useRealtimeNotifications';
@@ -107,36 +109,6 @@ function App() {
     toast.success('Demo data reset successfully');
   };
 
-  const handleHealthCheck = () => {
-    const systemStatus = {
-      aiProcessing: !realTimeAI.isProcessing ? 'Healthy' : 'Processing',
-      queueSize: realTimeAI.queueSize,
-      approvalRate: Math.round(aiMetrics.getApprovalRate()),
-      avgProcessingTime: Math.round(aiMetrics.getAverageProcessingTime())
-    };
-    
-    toast.success('All systems operational ✓', {
-      description: `AI: ${systemStatus.aiProcessing} | Queue: ${systemStatus.queueSize} | Approval: ${systemStatus.approvalRate}%`
-    });
-    
-    addMemoryEntry({
-      id: `memory-${Date.now()}`,
-      timestamp: new Date().toISOString(),
-      type: 'workflow_executed',
-      description: 'System health check completed - all services operational',
-      metadata: { 
-        status: 'healthy',
-        accountsCount: accounts.length,
-        timestamp: new Date().toISOString(),
-        aiProcessing: systemStatus.aiProcessing,
-        queueSize: systemStatus.queueSize,
-        approvalRate: systemStatus.approvalRate,
-        avgProcessingTime: systemStatus.avgProcessingTime
-      },
-      outcome: 'success'
-    });
-  };
-
   const getAccountSummary = () => {
     const good = accounts.filter(a => a.status === 'Good').length;
     const watch = accounts.filter(a => a.status === 'Watch').length;
@@ -193,17 +165,9 @@ function App() {
               
               <SparkTestButton />
               <CSVUpload />
+              <SystemHealthDialog />
               <Button 
-                variant="outline" 
-                size="sm"
-                onClick={handleHealthCheck}
-              >
-                <Shield className="w-4 h-4 mr-2" />
-                Health Check
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
+                className="border text-xs px-3 py-1"
                 onClick={handleResetDemo}
               >
                 <ArrowClockwise className="w-4 h-4 mr-2" />
