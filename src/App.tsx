@@ -31,7 +31,7 @@ import { Toaster } from '@/components/ui/sonner';
 function App() {
   const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
   const [selectedNBA, setSelectedNBA] = useState<NextBestAction | null>(null);
-  const { accounts, setAccounts } = useAccounts();
+  const { accounts, resetAccounts } = useAccounts();
   const { setNBAs } = useNBAs();
   const { clearMemory, addMemoryEntry } = useAgentMemory();
   const { isProcessing } = useSignalProcessor();
@@ -98,8 +98,8 @@ function App() {
   };
 
   const handleResetDemo = () => {
-    // Reset to sample data with CSAM and AE information
-    setAccounts(sampleAccounts);
+    // Reset to sample data with enhanced signals
+    resetAccounts();
     setNBAs([]);
     clearMemory();
     setSelectedAccount(null);
@@ -107,7 +107,8 @@ function App() {
     realTimeAI.clearQueue();
     realTimeAI.clearResults();
     aiMetrics.resetMetrics();
-    toast.success('Demo data reset successfully');
+    
+    toast.success('Demo data reset successfully - enhanced signals will regenerate');
   };
 
   const getAccountSummary = () => {

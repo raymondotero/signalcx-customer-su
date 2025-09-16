@@ -1,6 +1,6 @@
 import { useKV } from '@github/spark/hooks';
 import { Account, NextBestAction, Signal, MemoryEntry } from '@/types';
-import { generateBusinessValueSignal } from '@/services/signalCatalog';
+import { generateBusinessValueSignal, generateIndustrySpecificSignal } from '@/services/signalCatalog';
 import React, { useEffect } from 'react';
 
 // Sample seed data - exported for reset functionality
@@ -150,21 +150,43 @@ export function useAccounts() {
   
   // Initialize with seed business value signals
   useEffect(() => {
-    if (!initialized && accounts && accounts.length > 0) {
-      // Generate some initial business value signals for demo
+    // Check if localStorage was cleared (for reset)
+    const signalsData = localStorage.getItem('signalcx-signals');
+    const localInitialized = localStorage.getItem('signalcx-initialized');
+    
+    if ((!initialized || !localInitialized) && accounts && accounts.length > 0) {
+      // Generate comprehensive business value signals for demo
       const initialSignals: Signal[] = [];
       
       accounts.forEach(account => {
-        // Generate 2-3 business value signals per account
-        for (let i = 0; i < 3; i++) {
-          initialSignals.push(generateBusinessValueSignal(account.id, account.name));
+        // Generate 8-12 business value signals per account for richer demo
+        const signalCount = Math.floor(Math.random() * 5) + 8; // 8-12 signals per account
+        
+        // Define severity distribution based on account status
+        const severityDistribution = account.status === 'At Risk' 
+          ? ['critical', 'critical', 'high', 'high', 'medium', 'low'] 
+          : account.status === 'Watch' 
+          ? ['high', 'medium', 'medium', 'low', 'low', 'low']
+          : ['low', 'low', 'low', 'medium', 'medium', 'low'];
+        
+        for (let i = 0; i < signalCount; i++) {
+          // Use severity distribution for more realistic demo
+          const severityIndex = Math.floor(Math.random() * severityDistribution.length);
+          const targetSeverity = severityDistribution[severityIndex] as Signal['severity'];
+          
+          // Mix of regular and industry-specific signals (70% regular, 30% industry-specific)
+          const signal = Math.random() < 0.7 
+            ? generateBusinessValueSignal(account.id, account.name, targetSeverity)
+            : generateIndustrySpecificSignal(account.id, account.name, account.industry, targetSeverity);
+            
+          initialSignals.push(signal);
         }
       });
       
       // Add signals to storage
-      const signalsData = JSON.parse(localStorage.getItem('signalcx-signals') || '[]');
-      if (signalsData.length === 0) {
+      if (!signalsData || signalsData === '[]') {
         localStorage.setItem('signalcx-signals', JSON.stringify(initialSignals));
+        localStorage.setItem('signalcx-initialized', 'true');
       }
       
       setInitialized(true);
@@ -175,10 +197,18 @@ export function useAccounts() {
     setAccounts(currentAccounts => [...(currentAccounts || []), account]);
   };
   
+  const resetAccounts = () => {
+    setAccounts(sampleAccounts);
+    setInitialized(false);
+    localStorage.removeItem('signalcx-signals');
+    localStorage.removeItem('signalcx-initialized');
+  };
+  
   return { 
     accounts: accounts || [], 
     setAccounts,
-    addAccount
+    addAccount,
+    resetAccounts
   };
 }
 
