@@ -296,6 +296,53 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
                     </ul>
                   </div>
                   
+                  {selectedNBA.microsoftSolutions && selectedNBA.microsoftSolutions.length > 0 && (
+                    <div className="mb-4 p-3 rounded-lg bg-blue-50 border border-blue-200">
+                      <h4 className="font-medium mb-2 text-blue-800 flex items-center gap-2">
+                        <div className="w-4 h-4 bg-blue-600 rounded-sm flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">M</span>
+                        </div>
+                        Microsoft Solutions
+                      </h4>
+                      <div className="space-y-2">
+                        <div>
+                          <span className="text-sm font-medium text-blue-700">Recommended Solutions:</span>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {selectedNBA.microsoftSolutions.map((solution, index) => (
+                              <Badge key={index} variant="outline" className="bg-blue-100 text-blue-700 border-blue-300 text-xs">
+                                {solution}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        {selectedNBA.deliveryMotions && selectedNBA.deliveryMotions.length > 0 && (
+                          <div>
+                            <span className="text-sm font-medium text-blue-700">Delivery Motions:</span>
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {selectedNBA.deliveryMotions.map((motion, index) => (
+                                <Badge key={index} variant="outline" className="bg-green-100 text-green-700 border-green-300 text-xs">
+                                  {motion}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {selectedNBA.partnerMotions && selectedNBA.partnerMotions.length > 0 && (
+                          <div>
+                            <span className="text-sm font-medium text-blue-700">Partner Enablement:</span>
+                            <ul className="list-disc list-inside text-xs text-blue-600 mt-1 ml-2">
+                              {selectedNBA.partnerMotions.map((motion, index) => (
+                                <li key={index}>{motion}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  
                   <Separator className="my-4" />
                   
                   <div className="flex items-center justify-between">
@@ -368,6 +415,24 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
                         </div>
                       </div>
                       <p className="text-sm text-muted-foreground mb-2">{rec.nba.description}</p>
+                      
+                      {rec.nba.microsoftSolutions && rec.nba.microsoftSolutions.length > 0 && (
+                        <div className="mb-2">
+                          <div className="flex flex-wrap gap-1">
+                            {rec.nba.microsoftSolutions.slice(0, 2).map((solution, idx) => (
+                              <Badge key={idx} variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs">
+                                {solution}
+                              </Badge>
+                            ))}
+                            {rec.nba.microsoftSolutions.length > 2 && (
+                              <Badge variant="outline" className="text-xs">
+                                +{rec.nba.microsoftSolutions.length - 2} more
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                      
                       <div className="text-xs text-muted-foreground">
                         <strong>Success probability:</strong> {(rec.successProbability * 100).toFixed(1)}%
                       </div>

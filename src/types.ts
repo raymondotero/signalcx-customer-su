@@ -87,6 +87,9 @@ export interface NextBestAction {
   createdAt?: string;
   timeToComplete?: string;
   assignedTo?: string;
+  microsoftSolutions?: string[];
+  deliveryMotions?: string[];
+  partnerMotions?: string[];
 }
 
 export interface MemoryEntry {

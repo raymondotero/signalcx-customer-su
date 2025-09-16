@@ -198,7 +198,7 @@ export class AzureOpenAIService {
   }
 
   private buildRecommendationPrompt(context: RecommendationContext): string {
-    return (window as any).spark.llmPrompt`You are an AI Customer Success expert. Analyze this account and generate 2-3 smart NBA recommendations.
+    return (window as any).spark.llmPrompt`You are an AI Customer Success expert with deep knowledge of Microsoft's solution portfolio. Analyze this account and generate 2-3 smart NBA recommendations.
 
 Account Information:
 ${JSON.stringify(context.account, null, 2)}
@@ -211,6 +211,23 @@ ${JSON.stringify(context.historicalNBAs, null, 2)}
 
 Agent Memory:
 ${JSON.stringify(context.agentMemory, null, 2)}
+
+For expansion opportunities, recommend specific Microsoft solutions and delivery motions based on:
+- Account industry: ${context.account.industry}
+- Account size (ARR): $${context.account.arr.toLocaleString()}
+- Current health score: ${context.account.healthScore}/100
+
+Microsoft Solution Portfolio:
+- AI & Analytics: Azure OpenAI Service, Microsoft Copilot for Microsoft 365, Azure AI Services, Microsoft Fabric
+- Security & Compliance: Microsoft Purview, Microsoft Sentinel, Microsoft Defender suite, Azure AD Premium
+- Cloud Infrastructure: Azure Hybrid Cloud, Azure Arc, Azure VMware Solution
+- Productivity: Microsoft Teams Premium, Microsoft Viva Suite, Power Platform
+- Data & Analytics: Microsoft Fabric, Azure Synapse Analytics, Power BI Premium
+
+Delivery Motions to Consider:
+- AI Acceleration Workshop, Copilot Readiness Assessment, Security Risk Assessment
+- Cloud Adoption Framework Workshop, Modern Work Assessment, Data Estate Modernization Workshop
+- Well-Architected Review, Zero Trust Workshop, Power Platform Center of Excellence
 
 Generate recommendations as a JSON object with this structure:
 {
@@ -226,7 +243,10 @@ Generate recommendations as a JSON object with this structure:
         "suggestedActions": ["Specific step 1", "Specific step 2"],
         "reasoning": "Why this action is recommended",
         "timeToComplete": "1-2 weeks",
-        "assignedTo": "${context.account.csam}"
+        "assignedTo": "${context.account.csam}",
+        "microsoftSolutions": ["Solution 1", "Solution 2"] (only for expansion category),
+        "deliveryMotions": ["Motion 1", "Motion 2"] (only for expansion category),
+        "partnerMotions": ["Partner motion 1"] (only for expansion category)
       },
       "confidence": 0.85,
       "rationale": "Why this recommendation is valuable",
@@ -445,31 +465,78 @@ Provide analysis as JSON:
 
     // Expansion opportunity recommendations
     if (account.expansionOpportunity && account.expansionOpportunity > 0 && account.status === 'Good') {
+      // Determine Microsoft solutions based on account characteristics
+      const getMicrosoftSolutions = () => {
+        const solutions: string[] = [];
+        const deliveryMotions: string[] = [];
+        
+        // AI/Analytics expansion opportunities
+        if (account.industry === 'Technology' || account.industry === 'Healthcare' || account.industry === 'Financial Services') {
+          solutions.push('Azure OpenAI Service', 'Microsoft Copilot for Microsoft 365', 'Azure AI Services');
+          deliveryMotions.push('AI Acceleration Workshop', 'Copilot Readiness Assessment', 'Data & AI Strategy Session');
+        }
+        
+        // Security & Compliance expansion
+        if (account.industry === 'Financial Services' || account.industry === 'Healthcare' || account.industry === 'Government') {
+          solutions.push('Microsoft Purview', 'Microsoft Sentinel', 'Microsoft Defender suite');
+          deliveryMotions.push('Security Risk Assessment', 'Zero Trust Workshop', 'Compliance Readiness Review');
+        }
+        
+        // Cloud Infrastructure expansion
+        if (account.arr >= 500000) { // Large accounts
+          solutions.push('Azure Hybrid Cloud', 'Azure Arc', 'Microsoft Fabric');
+          deliveryMotions.push('Cloud Adoption Framework Workshop', 'Azure Migration Assessment', 'Well-Architected Review');
+        }
+        
+        // Productivity & Collaboration
+        solutions.push('Microsoft Teams Premium', 'Microsoft Viva Suite', 'Power Platform');
+        deliveryMotions.push('Modern Work Assessment', 'Digital Employee Experience Workshop', 'Power Platform Center of Excellence');
+        
+        // Data & Analytics
+        if (account.industry === 'Retail' || account.industry === 'Manufacturing' || account.industry === 'Financial Services') {
+          solutions.push('Microsoft Fabric', 'Azure Synapse Analytics', 'Power BI Premium');
+          deliveryMotions.push('Data Estate Modernization Workshop', 'Analytics Solution Design Session', 'Self-Service BI Enablement');
+        }
+        
+        return { solutions: solutions.slice(0, 3), deliveryMotions: deliveryMotions.slice(0, 3) };
+      };
+
+      const { solutions, deliveryMotions } = getMicrosoftSolutions();
+      
       recommendations.push({
         nba: {
           id: `fallback_${Date.now()}_expansion`,
           accountId: account.id,
-          title: 'Expansion Opportunity Pursuit',
-          description: `Potential $${account.expansionOpportunity.toLocaleString()} expansion identified.`,
+          title: 'Microsoft Solution Expansion Opportunity',
+          description: `Potential $${account.expansionOpportunity.toLocaleString()} expansion identified with Microsoft solutions. Recommended solutions: ${solutions.join(', ')}.`,
           priority: 'medium',
           category: 'expansion',
-          estimatedImpact: `$${account.expansionOpportunity.toLocaleString()} ARR increase`,
+          estimatedImpact: `$${account.expansionOpportunity.toLocaleString()} ARR increase through ${solutions[0]} and complementary solutions`,
           effort: 'medium',
           suggestedActions: [
-            'Assess expansion readiness',
-            'Identify key stakeholders',
-            'Prepare expansion proposal'
+            `Conduct ${deliveryMotions[0]} to assess readiness`,
+            `Present ${solutions[0]} business case with ROI projections`,
+            `Schedule executive briefing on ${solutions.slice(0, 2).join(' and ')}`,
+            `Engage Microsoft Partner or Solutions Architect for technical deep-dive`,
+            `Develop phased deployment plan with success metrics`
           ],
-          reasoning: 'Strong account health supports expansion discussions',
+          reasoning: `Strong account health (${account.healthScore}/100) and ${account.industry} industry fit supports expansion with Microsoft cloud solutions`,
           generatedAt: new Date().toISOString(),
-          timeToComplete: '3-6 weeks',
-          assignedTo: account.csam
+          timeToComplete: '6-12 weeks',
+          assignedTo: account.csam,
+          microsoftSolutions: solutions,
+          deliveryMotions: deliveryMotions,
+          partnerMotions: [
+            'Engage Microsoft Account Team for co-selling support',
+            'Leverage Microsoft funding opportunities (Azure credits, proof-of-concept funding)',
+            'Coordinate with Microsoft Technical Specialists for solution validation'
+          ]
         },
-        confidence: 0.65,
-        rationale: 'Healthy account with identified expansion potential',
+        confidence: 0.75,
+        rationale: `Healthy ${account.industry} account with strong expansion potential for Microsoft cloud and AI solutions`,
         supportingSignals: [],
-        riskFactors: ['Market conditions', 'Budget availability'],
-        successProbability: 0.70
+        riskFactors: ['Competitive landscape', 'Budget approval cycles', 'Technical readiness'],
+        successProbability: 0.75
       });
     }
 
