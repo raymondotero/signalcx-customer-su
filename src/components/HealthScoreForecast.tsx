@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Progress } from '@/components/ui/progress';
 import { 
   TrendUp, TrendDown, Target, Calendar, Brain, 
-  Warning, CheckCircle, Clock, Activity 
+  Warning, CheckCircle, Clock, Activity, ArrowClockwise 
 } from '@phosphor-icons/react';
 import { useKV } from '@github/spark/hooks';
 import { Account } from '@/types';
@@ -56,117 +56,202 @@ export function HealthScoreForecast({ accounts, selectedAccount }: ForecastingPr
   const [forecasts, setForecasts] = useKV<HealthForecast[]>('health-forecasts', []);
   const [isGenerating, setIsGenerating] = useState(false);
   const [timeframe, setTimeframe] = useState<'30' | '60' | '90' | '180'>('90');
+  const [lastUpdateTime, setLastUpdateTime] = useState<string>('');
   const [filterRisk, setFilterRisk] = useState<'all' | 'high' | 'medium' | 'low'>('all');
+  const [progressStep, setProgressStep] = useState<string>('');
+  const [progressPercent, setProgressPercent] = useState<number>(0);
 
   useEffect(() => {
     // Generate initial forecasts if none exist
     if (accounts.length > 0 && (!forecasts || forecasts.length === 0)) {
       generateForecasts();
     }
+    
+    // Auto-refresh forecasts when accounts change significantly
+    if (accounts.length > 0 && forecasts && forecasts.length > 0) {
+      const accountsChanged = accounts.some(account => {
+        const existingForecast = forecasts.find(f => f.accountId === account.id);
+        return !existingForecast || 
+               Math.abs(existingForecast.currentScore - account.healthScore) >= 10;
+      });
+      
+      if (accountsChanged) {
+        console.log('Significant account changes detected, refreshing forecasts');
+        generateForecasts();
+      }
+    }
   }, [accounts]);
 
   const generateForecasts = async () => {
-    if (!window.spark?.llm) {
-      toast.error('AI services not available');
-      return;
-    }
-
     setIsGenerating(true);
+    setProgressStep('Initializing forecast generation...');
+    toast.info('Generating updated health forecasts...');
     
     try {
       const newForecasts: HealthForecast[] = [];
+      const totalAccounts = accounts.length;
       
-      for (const account of accounts) {
+      for (let i = 0; i < accounts.length; i++) {
+        const account = accounts[i];
+        const progress = Math.round(((i + 1) / totalAccounts) * 100);
+        setProgressPercent(progress);
+        setProgressStep(`Processing ${account.name} (${i + 1}/${totalAccounts})`);
+        
+        // Add a small delay for demo effect
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
         // Calculate trend based on current signals and health score
         const trend = calculateTrend(account);
         const riskFactors = identifyRiskFactors(account);
         const opportunities = identifyOpportunities(account);
         
-        // Generate AI-powered forecast
-        const prompt = window.spark.llmPrompt`
-          Analyze this customer account and predict health score trajectory:
-          
-          Account: ${account.name}
-          Current Health Score: ${account.healthScore}
-          Current Status: ${account.status}
-          Industry: ${account.industry}
-          ARR: $${account.arr.toLocaleString()}
-          Contract End: ${account.contractEnd}
-          
-          Risk Factors: ${riskFactors.join(', ')}
-          Opportunities: ${opportunities.join(', ')}
-          
-          Predict health scores for 30, 60, 90, and 180 days with confidence level.
-          Consider industry patterns, contract timeline, and current trajectory.
-          
-          Return JSON format:
-          {
-            "forecastedScores": {
-              "days30": number,
-              "days60": number, 
-              "days90": number,
-              "days180": number
-            },
-            "confidence": number (0-100),
-            "predictedStatus": "Good" | "Watch" | "At Risk",
-            "interventionRecommendations": [
+        // Check if AI is available, otherwise use rule-based forecasting
+        let forecast: HealthForecast;
+        
+        if (window.spark?.llm) {
+          try {
+            setProgressStep(`Generating AI forecast for ${account.name}...`);
+            // Generate AI-powered forecast
+            const prompt = window.spark.llmPrompt`
+              Analyze this customer account and predict health score trajectory:
+              
+              Account: ${account.name}
+              Current Health Score: ${account.healthScore}
+              Current Status: ${account.status}
+              Industry: ${account.industry}
+              ARR: $${account.arr.toLocaleString()}
+              Contract End: ${account.contractEnd}
+              
+              Risk Factors: ${riskFactors.join(', ')}
+              Opportunities: ${opportunities.join(', ')}
+              
+              Predict health scores for 30, 60, 90, and 180 days with confidence level.
+              Consider industry patterns, contract timeline, and current trajectory.
+              
+              Return JSON format:
               {
-                "priority": "high" | "medium" | "low",
-                "action": "specific action description",
-                "expectedImpact": number (0-100),
-                "timeframe": "immediate" | "30 days" | "60 days" | "90 days"
+                "forecastedScores": {
+                  "days30": number,
+                  "days60": number, 
+                  "days90": number,
+                  "days180": number
+                },
+                "confidence": number (0-100),
+                "predictedStatus": "Good" | "Watch" | "At Risk",
+                "interventionRecommendations": [
+                  {
+                    "priority": "high" | "medium" | "low",
+                    "action": "specific action description",
+                    "expectedImpact": number (0-100),
+                    "timeframe": "immediate" | "30 days" | "60 days" | "90 days"
+                  }
+                ]
               }
-            ]
-          }
-        `;
+            `;
 
-        try {
-          const response = await window.spark.llm(prompt, 'gpt-4o-mini', true);
-          const aiResult = JSON.parse(response);
-          
-          const forecast: HealthForecast = {
-            accountId: account.id,
-            accountName: account.name,
-            currentScore: account.healthScore,
-            forecastedScores: aiResult.forecastedScores,
-            confidence: aiResult.confidence,
-            trend,
-            riskFactors,
-            opportunities,
-            predictedStatus: aiResult.predictedStatus,
-            lastUpdated: new Date().toISOString(),
-            interventionRecommendations: aiResult.interventionRecommendations || []
-          };
-          
-          newForecasts.push(forecast);
-        } catch (error) {
-          // Fallback to rule-based forecast if AI fails
-          const forecast: HealthForecast = {
-            accountId: account.id,
-            accountName: account.name,
-            currentScore: account.healthScore,
-            forecastedScores: generateRuleBasedForecast(account),
-            confidence: 75,
-            trend,
-            riskFactors,
-            opportunities,
-            predictedStatus: predictFutureStatus(account),
-            lastUpdated: new Date().toISOString(),
-            interventionRecommendations: generateInterventions(account)
-          };
-          
-          newForecasts.push(forecast);
+            const response = await window.spark.llm(prompt, 'gpt-4o-mini', true);
+            const aiResult = JSON.parse(response);
+            
+            forecast = {
+              accountId: account.id,
+              accountName: account.name,
+              currentScore: account.healthScore,
+              forecastedScores: aiResult.forecastedScores,
+              confidence: aiResult.confidence,
+              trend,
+              riskFactors,
+              opportunities,
+              predictedStatus: aiResult.predictedStatus,
+              lastUpdated: new Date().toISOString(),
+              interventionRecommendations: aiResult.interventionRecommendations || []
+            };
+          } catch (aiError) {
+            console.warn('AI forecast failed, using rule-based forecast:', aiError);
+            setProgressStep(`Generating rule-based forecast for ${account.name}...`);
+            // Fallback to enhanced rule-based forecast
+            forecast = generateEnhancedRuleBasedForecast(account, trend, riskFactors, opportunities);
+          }
+        } else {
+          setProgressStep(`Generating rule-based forecast for ${account.name}...`);
+          // Use enhanced rule-based forecast when AI is not available
+          forecast = generateEnhancedRuleBasedForecast(account, trend, riskFactors, opportunities);
         }
+        
+        newForecasts.push(forecast);
       }
       
+      setProgressStep('Finalizing forecasts...');
       setForecasts(newForecasts);
-      toast.success(`Generated health forecasts for ${newForecasts.length} accounts`);
+      setLastUpdateTime(new Date().toLocaleTimeString());
+      toast.success(`Updated health forecasts for ${newForecasts.length} accounts`);
     } catch (error) {
       console.error('Error generating forecasts:', error);
       toast.error('Failed to generate health forecasts');
     } finally {
       setIsGenerating(false);
+      setProgressStep('');
+      setProgressPercent(0);
     }
+  };
+
+  const generateEnhancedRuleBasedForecast = (
+    account: Account, 
+    trend: 'improving' | 'declining' | 'stable',
+    riskFactors: string[],
+    opportunities: string[]
+  ): HealthForecast => {
+    // Add some randomness for demo variety while keeping it realistic
+    const randomVariation = () => (Math.random() - 0.5) * 8; // Reduced variation for more realistic forecasts
+    const baseScores = generateRuleBasedForecast(account);
+    
+    // Apply variations based on risk factors and opportunities
+    const riskImpact = riskFactors.length * -3;
+    const opportunityImpact = opportunities.length * 4;
+    const netImpact = riskImpact + opportunityImpact;
+    
+    // Industry-specific modifiers for demo purposes
+    let industryModifier = 0;
+    if (account.industry === 'Technology') industryModifier = 2;
+    if (account.industry === 'Financial Services') industryModifier = -1;
+    if (account.industry === 'Healthcare') industryModifier = 1;
+    
+    const enhancedScores = {
+      days30: Math.max(10, Math.min(100, Math.round(baseScores.days30 + netImpact + industryModifier + randomVariation()))),
+      days60: Math.max(10, Math.min(100, Math.round(baseScores.days60 + netImpact + industryModifier + randomVariation()))),
+      days90: Math.max(10, Math.min(100, Math.round(baseScores.days90 + netImpact + industryModifier + randomVariation()))),
+      days180: Math.max(10, Math.min(100, Math.round(baseScores.days180 + netImpact + industryModifier + randomVariation())))
+    };
+
+    // Calculate confidence based on data quality and account characteristics
+    let baseConfidence = 75;
+    if (account.arr > 1000000) baseConfidence += 10; // Higher confidence for large accounts
+    if (account.healthScore > 80) baseConfidence += 5; // Higher confidence for healthy accounts
+    if (riskFactors.length > 3) baseConfidence -= 15; // Lower confidence with many risks
+    if (opportunities.length > 2) baseConfidence += 5; // Higher confidence with opportunities
+    
+    const confidence = Math.max(45, Math.min(95, 
+      Math.round(baseConfidence + Math.random() * 10 - 5)
+    ));
+
+    // Determine predicted status based on 90-day forecast
+    let predictedStatus: 'Good' | 'Watch' | 'At Risk';
+    if (enhancedScores.days90 >= 75) predictedStatus = 'Good';
+    else if (enhancedScores.days90 >= 60) predictedStatus = 'Watch';
+    else predictedStatus = 'At Risk';
+
+    return {
+      accountId: account.id,
+      accountName: account.name,
+      currentScore: account.healthScore,
+      forecastedScores: enhancedScores,
+      confidence,
+      trend,
+      riskFactors,
+      opportunities,
+      predictedStatus,
+      lastUpdated: new Date().toISOString(),
+      interventionRecommendations: generateEnhancedInterventions(account, riskFactors, opportunities)
+    };
   };
 
   const calculateTrend = (account: Account): 'improving' | 'declining' | 'stable' => {
@@ -224,7 +309,11 @@ export function HealthScoreForecast({ accounts, selectedAccount }: ForecastingPr
     return 'At Risk';
   };
 
-  const generateInterventions = (account: Account): {
+  const generateEnhancedInterventions = (
+    account: Account, 
+    riskFactors: string[], 
+    opportunities: string[]
+  ): {
     priority: 'high' | 'medium' | 'low';
     action: string;
     expectedImpact: number;
@@ -237,25 +326,106 @@ export function HealthScoreForecast({ accounts, selectedAccount }: ForecastingPr
       timeframe: string;
     }[] = [];
     
+    // High priority interventions for critical issues
+    if (account.healthScore < 60) {
+      interventions.push({
+        priority: 'high' as const,
+        action: 'Immediate executive escalation and recovery plan',
+        expectedImpact: 25,
+        timeframe: 'immediate'
+      });
+    }
+    
     if (account.healthScore < 70) {
       interventions.push({
         priority: 'high' as const,
-        action: 'Schedule immediate health check meeting',
+        action: 'Schedule immediate health check meeting with stakeholders',
         expectedImpact: 15,
         timeframe: 'immediate'
       });
     }
     
+    // Contract renewal approaching
+    if (new Date(account.contractEnd) < new Date(Date.now() + 180 * 24 * 60 * 60 * 1000)) {
+      interventions.push({
+        priority: 'high' as const,
+        action: 'Initiate renewal discussions and value demonstration',
+        expectedImpact: 20,
+        timeframe: '30 days'
+      });
+    }
+    
+    // Medium priority interventions
     if (account.status === 'Watch') {
       interventions.push({
         priority: 'medium' as const,
-        action: 'Increase engagement frequency',
+        action: 'Increase touchpoint frequency and engagement tracking',
+        expectedImpact: 12,
+        timeframe: '30 days'
+      });
+    }
+    
+    if (riskFactors.length > 2) {
+      interventions.push({
+        priority: 'medium' as const,
+        action: 'Develop comprehensive risk mitigation strategy',
+        expectedImpact: 18,
+        timeframe: '60 days'
+      });
+    }
+    
+    // Opportunity-based interventions
+    if (opportunities.length > 0) {
+      if (account.arr > 500000) {
+        interventions.push({
+          priority: 'medium' as const,
+          action: 'Explore strategic partnership and expansion opportunities',
+          expectedImpact: 15,
+          timeframe: '90 days'
+        });
+      }
+      
+      if (account.healthScore > 80) {
+        interventions.push({
+          priority: 'low' as const,
+          action: 'Leverage success for case study and upsell discussions',
+          expectedImpact: 8,
+          timeframe: '60 days'
+        });
+      }
+    }
+    
+    // Industry-specific interventions
+    if (account.industry === 'Technology') {
+      interventions.push({
+        priority: 'low' as const,
+        action: 'Share latest product roadmap and innovation updates',
         expectedImpact: 10,
         timeframe: '30 days'
       });
     }
     
+    if (account.industry === 'Financial Services') {
+      interventions.push({
+        priority: 'medium' as const,
+        action: 'Conduct compliance and security deep-dive session',
+        expectedImpact: 14,
+        timeframe: '60 days'
+      });
+    }
+    
     return interventions;
+  };
+
+  const generateInterventions = (account: Account): {
+    priority: 'high' | 'medium' | 'low';
+    action: string;
+    expectedImpact: number;
+    timeframe: string;
+  }[] => {
+    const riskFactors = identifyRiskFactors(account);
+    const opportunities = identifyOpportunities(account);
+    return generateEnhancedInterventions(account, riskFactors, opportunities);
   };
 
   const getStatusColor = (status: string) => {
@@ -284,6 +454,26 @@ export function HealthScoreForecast({ accounts, selectedAccount }: ForecastingPr
     return riskLevel === filterRisk;
   }) || [];
 
+  const getForecastSummary = () => {
+    if (!forecasts || forecasts.length === 0) return null;
+    
+    const improving = forecasts.filter(f => f.trend === 'improving').length;
+    const declining = forecasts.filter(f => f.trend === 'declining').length;
+    const stable = forecasts.filter(f => f.trend === 'stable').length;
+    
+    const highRisk = forecasts.filter(f => f.predictedStatus === 'At Risk').length;
+    const watch = forecasts.filter(f => f.predictedStatus === 'Watch').length;
+    const good = forecasts.filter(f => f.predictedStatus === 'Good').length;
+    
+    const avgConfidence = Math.round(
+      forecasts.reduce((sum, f) => sum + f.confidence, 0) / forecasts.length
+    );
+    
+    return { improving, declining, stable, highRisk, watch, good, avgConfidence };
+  };
+
+  const summary = getForecastSummary();
+
   const selectedForecast = selectedAccount ? 
     forecasts?.find(f => f.accountId === selectedAccount.id) : null;
 
@@ -291,14 +481,22 @@ export function HealthScoreForecast({ accounts, selectedAccount }: ForecastingPr
     <Card className="border-visible h-fit">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Brain className="w-5 h-5" />
-            Health Score Forecasting
-          </CardTitle>
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              <Brain className="w-5 h-5" />
+              Health Score Forecasting
+            </CardTitle>
+            {lastUpdateTime && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Last updated: {lastUpdateTime}
+              </p>
+            )}
+          </div>
           <Button 
             onClick={generateForecasts}
             disabled={isGenerating}
             size="sm"
+            className="relative"
           >
             {isGenerating ? (
               <>
@@ -313,6 +511,19 @@ export function HealthScoreForecast({ accounts, selectedAccount }: ForecastingPr
             )}
           </Button>
         </div>
+        {isGenerating && progressStep && (
+          <div className="mt-2 p-3 bg-muted rounded-md space-y-2">
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-muted-foreground animate-pulse">
+                {progressStep}
+              </p>
+              <p className="text-xs font-medium">
+                {progressPercent}%
+              </p>
+            </div>
+            <Progress value={progressPercent} className="h-2" />
+          </div>
+        )}
       </CardHeader>
       
       <CardContent className="space-y-4">
@@ -446,7 +657,47 @@ export function HealthScoreForecast({ accounts, selectedAccount }: ForecastingPr
         ) : (
           // Multi-account overview
           <div className="space-y-4">
-            <div className="flex gap-2">
+            {summary && (
+              <div className="grid grid-cols-3 gap-4 p-4 bg-muted rounded-md">
+                <div className="text-center">
+                  <p className="text-sm text-muted-foreground">Forecast Trends</p>
+                  <div className="flex justify-center gap-2 mt-1">
+                    <Badge variant="outline" className="text-green-600">
+                      <TrendUp className="w-3 h-3 mr-1" />
+                      {summary.improving}
+                    </Badge>
+                    <Badge variant="outline" className="text-red-600">
+                      <TrendDown className="w-3 h-3 mr-1" />
+                      {summary.declining}
+                    </Badge>
+                    <Badge variant="outline" className="text-gray-600">
+                      <Activity className="w-3 h-3 mr-1" />
+                      {summary.stable}
+                    </Badge>
+                  </div>
+                </div>
+                
+                <div className="text-center">
+                  <p className="text-sm text-muted-foreground">Predicted Status (90d)</p>
+                  <div className="flex justify-center gap-1 mt-1">
+                    <Badge className="status-good text-xs">{summary.good}</Badge>
+                    <Badge className="status-watch text-xs">{summary.watch}</Badge>
+                    <Badge className="status-risk text-xs">{summary.highRisk}</Badge>
+                  </div>
+                </div>
+                
+                <div className="text-center">
+                  <p className="text-sm text-muted-foreground">Avg Confidence</p>
+                  <div className="flex justify-center items-center gap-1 mt-1">
+                    <Progress value={summary.avgConfidence} className="w-16 h-2" />
+                    <span className="text-sm font-medium">{summary.avgConfidence}%</span>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            <div className="flex justify-between items-center">
+              <div className="flex gap-2">
               <Select value={filterRisk} onValueChange={(value: any) => setFilterRisk(value)}>
                 <SelectTrigger className="w-40">
                   <SelectValue />
@@ -470,6 +721,18 @@ export function HealthScoreForecast({ accounts, selectedAccount }: ForecastingPr
                   <SelectItem value="180">180 days</SelectItem>
                 </SelectContent>
               </Select>
+              
+              <Button 
+                size="sm" 
+                variant="outline" 
+                onClick={generateForecasts}
+                disabled={isGenerating}
+                className="text-xs"
+              >
+                <ArrowClockwise className="w-3 h-3 mr-1" />
+                Refresh All
+              </Button>
+            </div>
             </div>
 
             <div className="space-y-2 max-h-96 overflow-y-auto">
