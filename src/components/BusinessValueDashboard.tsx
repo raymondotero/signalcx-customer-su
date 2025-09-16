@@ -10,6 +10,7 @@ import { useSignals, useNBAs, useAccounts } from '@/hooks/useData';
 import { useKV } from '@github/spark/hooks';
 import { Signal, NextBestAction, Account, AIRecommendation, SignalAnalysis } from '@/types';
 import { TargetSettingsDialog, SignalTarget } from '@/components/TargetSettingsDialog';
+import { AIRecommendationsDialog } from '@/components/AIRecommendationsDialog';
 import { toast } from 'sonner';
 
 interface SignalCategoryStats {
@@ -41,6 +42,10 @@ export function BusinessValueDashboard() {
   const [targets] = useKV<SignalTarget[]>('signal-targets', []);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [selectedSignal, setSelectedSignal] = useState<Signal | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [aiRecommendations, setAiRecommendations] = useState<AIRecommendation[]>([]);
+  const [aiAnalysis, setAiAnalysis] = useState<SignalAnalysis | null>(null);
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
   const safeTargets = targets || [];
 
   const toggleCategory = (category: string) => {
@@ -91,6 +96,10 @@ export function BusinessValueDashboard() {
 
   const generateRecommendationsForSignal = async (signal: Signal) => {
     setSelectedSignal(signal);
+    setDialogOpen(true);
+    setIsLoadingAI(true);
+    setAiRecommendations([]);
+    setAiAnalysis(null);
     
     toast.info(`Generating AI recommendations for ${signal.signalName || signal.type}...`, {
       description: 'AI analyzing signal impact and generating tailored recommendations'
@@ -112,6 +121,7 @@ export function BusinessValueDashboard() {
         toast.warning('No affected accounts found for this signal', {
           description: 'Signal may not impact current account portfolio'
         });
+        setIsLoadingAI(false);
         return;
       }
 
@@ -186,11 +196,8 @@ Return JSON with this structure:
       console.log('Parsed AI Response:', aiResponse);
 
       // Store the AI-generated recommendations for display
-      setSelectedSignal({
-        ...signal,
-        aiRecommendations: aiResponse.recommendations || [],
-        aiAnalysis: aiResponse.signalAnalysis || {}
-      });
+      setAiRecommendations(aiResponse.recommendations || []);
+      setAiAnalysis(aiResponse.signalAnalysis || {});
 
       toast.success(`Generated ${aiResponse.recommendations?.length || 0} AI recommendations`, {
         description: `For signal: ${signal.signalName || signal.type}`
@@ -217,45 +224,35 @@ Return JSON with this structure:
         return signal.severity === 'medium' && account.status === 'Watch';
       });
       
-      // Fall back to existing logic 
-      const signalMap = getSignalRecommendations(signal);
+      // Set error state
+      setAiAnalysis({ 
+        impact: 'AI generation failed',
+        urgency: signal.severity as any,
+        affectedAccountsCount: errorFallbackAccounts.length,
+        businessValueAtRisk: 'Unable to calculate due to AI error',
+        error: errorMessage
+      });
       
-      if (signalMap.recommendations.length === 0) {
-        toast.error(`AI generation failed: ${errorMessage}`, {
-          description: 'No related recommendations found. Try the real-time AI engine.'
-        });
-        
-        // Set a placeholder to show the error state
-        setSelectedSignal({
-          ...signal,
-          aiRecommendations: [],
-          aiAnalysis: { 
-            impact: 'AI generation failed',
-            urgency: signal.severity as any,
-            affectedAccountsCount: errorFallbackAccounts.length,
-            businessValueAtRisk: 'Unable to calculate due to AI error',
-            error: errorMessage
-          }
-        });
-      } else {
-        toast.warning(`AI generation failed, showing ${signalMap.recommendations.length} related recommendations`, {
-          description: `Error: ${errorMessage}`
-        });
-        
-        // Show existing recommendations with error note
-        setSelectedSignal({
-          ...signal,
-          aiRecommendations: [],
-          aiAnalysis: { 
-            impact: 'Using fallback recommendations due to AI error',
-            urgency: signal.severity as any,
-            affectedAccountsCount: errorFallbackAccounts.length,
-            businessValueAtRisk: 'Calculation unavailable',
-            error: errorMessage
-          }
-        });
-      }
+      toast.error(`AI generation failed: ${errorMessage}`, {
+        description: 'Dialog opened with error details'
+      });
+    } finally {
+      setIsLoadingAI(false);
     }
+  };
+
+  const handleRetryAI = () => {
+    if (selectedSignal) {
+      generateRecommendationsForSignal(selectedSignal);
+    }
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+    setSelectedSignal(null);
+    setAiRecommendations([]);
+    setAiAnalysis(null);
+    setIsLoadingAI(false);
   };
 
   const checkTargetCompliance = (signal: Signal, target: SignalTarget): 'on_track' | 'missed' | 'unknown' => {
@@ -602,273 +599,6 @@ Return JSON with this structure:
             </Card>
           ))}
           
-          {/* Selected Signal Recommendations Detail */}
-          {selectedSignal && (
-            <Card className="border-visible border-2 border-primary/50 bg-primary/5">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-primary">
-                  <Brain className="w-5 h-5" />
-                  AI Recommendations for {selectedSignal.signalName || selectedSignal.type}
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => setSelectedSignal(null)}
-                    className="ml-auto"
-                  >
-                    ×
-                  </Button>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {(() => {
-                  // Show AI-generated recommendations if available
-                  if (selectedSignal.aiRecommendations && selectedSignal.aiRecommendations.length > 0) {
-                    return (
-                      <div className="space-y-6">
-                        {/* AI Analysis Summary */}
-                        {selectedSignal.aiAnalysis && (
-                          <div className={`p-4 border rounded-lg ${
-                            selectedSignal.aiAnalysis.error 
-                              ? 'bg-gradient-to-r from-red-50 to-orange-50 border-red-200' 
-                              : 'bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200'
-                          }`}>
-                            <h6 className={`font-semibold mb-2 flex items-center gap-2 ${
-                              selectedSignal.aiAnalysis.error ? 'text-red-900' : 'text-blue-900'
-                            }`}>
-                              <Brain className="w-4 h-4" />
-                              {selectedSignal.aiAnalysis.error ? 'AI Analysis Error' : 'AI Signal Analysis'}
-                            </h6>
-                            
-                            {selectedSignal.aiAnalysis.error && (
-                              <div className="mb-3 p-2 bg-red-100 border border-red-200 rounded text-red-800 text-sm">
-                                <strong>Error:</strong> {selectedSignal.aiAnalysis.error}
-                              </div>
-                            )}
-                            
-                            <div className="grid grid-cols-2 gap-4 text-sm">
-                              <div>
-                                <p className={`font-medium ${selectedSignal.aiAnalysis.error ? 'text-red-700' : 'text-blue-700'}`}>
-                                  Business Impact
-                                </p>
-                                <p className={selectedSignal.aiAnalysis.error ? 'text-red-600' : 'text-blue-600'}>
-                                  {selectedSignal.aiAnalysis.impact}
-                                </p>
-                              </div>
-                              <div>
-                                <p className={`font-medium ${selectedSignal.aiAnalysis.error ? 'text-red-700' : 'text-blue-700'}`}>
-                                  Urgency Level
-                                </p>
-                                <Badge variant={
-                                  selectedSignal.aiAnalysis.urgency === 'critical' ? 'destructive' :
-                                  selectedSignal.aiAnalysis.urgency === 'high' ? 'default' : 'secondary'
-                                }>
-                                  {selectedSignal.aiAnalysis.urgency}
-                                </Badge>
-                              </div>
-                              <div>
-                                <p className={`font-medium ${selectedSignal.aiAnalysis.error ? 'text-red-700' : 'text-blue-700'}`}>
-                                  Affected Accounts
-                                </p>
-                                <p className={selectedSignal.aiAnalysis.error ? 'text-red-600' : 'text-blue-600'}>
-                                  {selectedSignal.aiAnalysis.affectedAccountsCount}
-                                </p>
-                              </div>
-                              <div>
-                                <p className={`font-medium ${selectedSignal.aiAnalysis.error ? 'text-red-700' : 'text-blue-700'}`}>
-                                  Value at Risk
-                                </p>
-                                <p className={selectedSignal.aiAnalysis.error ? 'text-red-600' : 'text-blue-600'}>
-                                  {selectedSignal.aiAnalysis.businessValueAtRisk}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Signal Context */}
-                        <div className="flex items-center gap-4 text-sm">
-                          <Badge variant="outline">
-                            {selectedSignal.aiRecommendations.length} AI Recommendations
-                          </Badge>
-                          <Badge variant={selectedSignal.severity === 'critical' ? 'destructive' : 'default'}>
-                            {selectedSignal.severity} Priority Signal
-                          </Badge>
-                          {selectedSignal.value !== undefined && (
-                            <Badge variant="outline">
-                              Value: {selectedSignal.value}{selectedSignal.unit || ''}
-                            </Badge>
-                          )}
-                        </div>
-
-                        {/* AI Recommendations */}
-                        <div className="space-y-4">
-                          <h6 className="font-semibold flex items-center gap-2">
-                            <Lightbulb className="w-4 h-4 text-yellow-500" />
-                            AI-Generated Recommendations
-                          </h6>
-                          
-                          <div className="grid gap-4">
-                            {selectedSignal.aiRecommendations.map((recommendation, index) => (
-                              <div key={index} className="p-4 border rounded-lg bg-background shadow-sm">
-                                <div className="flex items-center justify-between mb-3">
-                                  <h6 className="font-medium text-foreground">{recommendation.title}</h6>
-                                  <div className="flex items-center gap-2">
-                                    <Badge variant={
-                                      recommendation.priority === 'critical' ? 'destructive' :
-                                      recommendation.priority === 'high' ? 'default' : 'secondary'
-                                    } className="text-xs">
-                                      {recommendation.priority}
-                                    </Badge>
-                                    <Badge variant="outline" className="text-xs">
-                                      {recommendation.effort} effort
-                                    </Badge>
-                                  </div>
-                                </div>
-                                
-                                <p className="text-sm text-muted-foreground mb-3">
-                                  {recommendation.description}
-                                </p>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                                  <div>
-                                    <p className="font-medium text-foreground">Target Accounts</p>
-                                    <p className="text-muted-foreground">
-                                      {Array.isArray(recommendation.targetAccounts) 
-                                        ? recommendation.targetAccounts.join(', ')
-                                        : recommendation.targetAccounts}
-                                    </p>
-                                  </div>
-                                  
-                                  <div>
-                                    <p className="font-medium text-foreground">Timeline</p>
-                                    <p className="text-muted-foreground">{recommendation.timeline}</p>
-                                  </div>
-                                  
-                                  <div>
-                                    <p className="font-medium text-foreground">Expected Impact</p>
-                                    <p className="text-green-600">{recommendation.estimatedImpact}</p>
-                                  </div>
-                                  
-                                  <div>
-                                    <p className="font-medium text-foreground">Category</p>
-                                    <Badge variant="outline" className="text-xs">
-                                      {recommendation.category}
-                                    </Badge>
-                                  </div>
-                                </div>
-
-                                {recommendation.successMetrics && recommendation.successMetrics.length > 0 && (
-                                  <div className="mt-3">
-                                    <p className="font-medium text-foreground text-xs mb-1">Success Metrics</p>
-                                    <ul className="text-xs text-muted-foreground list-disc list-inside">
-                                      {recommendation.successMetrics.map((metric, metricIndex) => (
-                                        <li key={metricIndex}>{metric}</li>
-                                      ))}
-                                    </ul>
-                                  </div>
-                                )}
-
-                                <div className="mt-3 pt-3 border-t">
-                                  <p className="text-xs text-blue-600 font-medium">AI Reasoning</p>
-                                  <p className="text-xs text-muted-foreground italic">
-                                    {recommendation.reasoning}
-                                  </p>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  }
-
-                  // Fall back to existing recommendations if no AI recommendations
-                  const signalMap = getSignalRecommendations(selectedSignal);
-                  
-                  if (signalMap.recommendations.length === 0) {
-                    return (
-                      <div className="text-center py-8 text-muted-foreground">
-                        <Lightbulb className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
-                        <p className="font-medium mb-2">No AI recommendations generated yet</p>
-                        <p className="text-sm mb-4">
-                          Click "View AI Recommendations" on any signal to generate contextual recommendations
-                        </p>
-                        <Button
-                          size="sm"
-                          onClick={() => generateRecommendationsForSignal(selectedSignal)}
-                          className="mx-auto"
-                        >
-                          <Brain className="w-4 h-4 mr-2" />
-                          Generate AI Recommendations
-                        </Button>
-                      </div>
-                    );
-                  }
-                  
-                  return (
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-4 text-sm">
-                        <Badge variant="outline">
-                          {signalMap.recommendations.length} Existing Recommendations
-                        </Badge>
-                        <Badge variant="outline">
-                          {signalMap.accounts.length} Affected Accounts
-                        </Badge>
-                        <Badge variant={selectedSignal.severity === 'critical' ? 'destructive' : 'default'}>
-                          {selectedSignal.severity} Priority
-                        </Badge>
-                      </div>
-                      
-                      <div className="grid gap-3">
-                        {signalMap.recommendations.map((nba, index) => {
-                          const account = accounts.find(a => a.id === nba.accountId);
-                          return (
-                            <div key={index} className="p-3 border rounded-lg bg-background">
-                              <div className="flex items-center justify-between mb-2">
-                                <h6 className="font-medium">{nba.title}</h6>
-                                <Badge variant="outline" className="text-xs">
-                                  {nba.priority} Priority
-                                </Badge>
-                              </div>
-                              
-                              {account && (
-                                <div className="text-sm text-muted-foreground mb-2">
-                                  Account: {account.name} ({account.status})
-                                </div>
-                              )}
-                              
-                              <p className="text-sm text-muted-foreground mb-2">
-                                {nba.description}
-                              </p>
-                              
-                              {nba.estimatedImpact && (
-                                <div className="text-xs text-green-600">
-                                  Estimated Impact: {nba.estimatedImpact}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                      
-                      <div className="pt-4 border-t">
-                        <Button
-                          size="sm"
-                          onClick={() => generateRecommendationsForSignal(selectedSignal)}
-                          className="w-full"
-                          variant="outline"
-                        >
-                          <Brain className="w-4 h-4 mr-2" />
-                          Generate AI Recommendations for This Signal
-                        </Button>
-                      </div>
-                    </div>
-                  );
-                })()}
-              </CardContent>
-            </Card>
-          )}
-          
           {categoryStats.every(s => s.count === 0 && s.targetsConfigured === 0) && (
             <div className="text-center py-8 text-muted-foreground">
               <Database className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
@@ -878,6 +608,17 @@ Return JSON with this structure:
           )}
         </div>
       </CardContent>
+
+      {/* AI Recommendations Dialog */}
+      <AIRecommendationsDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        signal={selectedSignal}
+        recommendations={aiRecommendations}
+        analysis={aiAnalysis}
+        isLoading={isLoadingAI}
+        onRetry={handleRetryAI}
+      />
     </Card>
   );
 }
