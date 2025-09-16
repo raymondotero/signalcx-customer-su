@@ -15,9 +15,11 @@ import {
   ArrowRight,
   Lightning,
   Briefcase,
-  Shield
+  Shield,
+  Calendar
 } from '@phosphor-icons/react';
 import { Account, ExpansionOpportunity } from '@/types';
+import { MeetingScheduler } from './MeetingScheduler';
 
 interface ExpansionOpportunitiesDialogProps {
   account: Account;
@@ -117,6 +119,14 @@ export function ExpansionOpportunitiesDialog({ account, children }: ExpansionOpp
                     <Badge variant="outline" className="text-xs">
                       {opportunity.category.replace('-', ' ')}
                     </Badge>
+                  </div>
+                  <div className="mt-3 flex gap-2">
+                    <MeetingScheduler opportunity={opportunity} account={account}>
+                      <Button variant="outline" size="sm" className="flex-1">
+                        <Calendar className="w-3 h-3 mr-1" />
+                        Schedule Meeting
+                      </Button>
+                    </MeetingScheduler>
                   </div>
                 </CardContent>
               </Card>
@@ -221,6 +231,21 @@ export function ExpansionOpportunitiesDialog({ account, children }: ExpansionOpp
                               <span className="text-sm">{criteria}</span>
                             </div>
                           ))}
+                        </div>
+                        
+                        <Separator className="my-4" />
+                        
+                        <div className="space-y-3">
+                          <h4 className="font-medium">Next Steps</h4>
+                          <MeetingScheduler 
+                            opportunity={selectedOpportunity} 
+                            account={account}
+                          >
+                            <Button className="w-full">
+                              <Calendar className="w-4 h-4 mr-2" />
+                              Schedule Stakeholder Meeting
+                            </Button>
+                          </MeetingScheduler>
                         </div>
                       </TabsContent>
                     </Tabs>

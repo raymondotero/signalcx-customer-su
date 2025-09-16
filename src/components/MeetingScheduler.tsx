@@ -1,0 +1,492 @@
+import React, { useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Calendar, Clock, Users, Envelope, MapPin, VideoCamera, Plus } from '@phosphor-icons/react';
+import { ExpansionOpportunity, Account } from '@/types';
+import { toast } from 'sonner';
+
+interface MeetingSchedulerProps {
+  opportunity: ExpansionOpportunity;
+  account: Account;
+  children: React.ReactNode;
+}
+
+interface MeetingDetails {
+  title: string;
+  date: string;
+  time: string;
+  duration: string;
+  attendees: string[];
+  description: string;
+  meetingType: 'teams' | 'onsite' | 'phone';
+  location?: string;
+  agenda: string[];
+}
+
+export function MeetingScheduler({ opportunity, account, children }: MeetingSchedulerProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [meetingDetails, setMeetingDetails] = useState<MeetingDetails>({
+    title: `Expansion Discussion: ${opportunity.description}`,
+    date: '',
+    time: '',
+    duration: '60',
+    attendees: [],
+    description: `Strategic meeting to discuss ${opportunity.description} expansion opportunity with ${account.name}.`,
+    meetingType: 'teams',
+    location: '',
+    agenda: [
+      'Opportunity overview and business case',
+      'Technical requirements discussion',
+      'Timeline and implementation planning',
+      'Next steps and follow-up actions'
+    ]
+  });
+  const [newAttendee, setNewAttendee] = useState('');
+  const [newAgendaItem, setNewAgendaItem] = useState('');
+
+  // Suggest relevant attendees based on stakeholders and account team
+  const suggestedAttendees = [
+    account.csam,
+    account.ae,
+    ...opportunity.stakeholdersRequired.map(role => `${role} (${account.name})`),
+    'Solution Architect',
+    'Technical Specialist',
+    'Customer Success Manager'
+  ];
+
+  const addAttendee = (email: string) => {
+    if (email && !meetingDetails.attendees.includes(email)) {
+      setMeetingDetails(prev => ({
+        ...prev,
+        attendees: [...prev.attendees, email]
+      }));
+      setNewAttendee('');
+    }
+  };
+
+  const removeAttendee = (email: string) => {
+    setMeetingDetails(prev => ({
+      ...prev,
+      attendees: prev.attendees.filter(a => a !== email)
+    }));
+  };
+
+  const addAgendaItem = () => {
+    if (newAgendaItem.trim()) {
+      setMeetingDetails(prev => ({
+        ...prev,
+        agenda: [...prev.agenda, newAgendaItem.trim()]
+      }));
+      setNewAgendaItem('');
+    }
+  };
+
+  const removeAgendaItem = (index: number) => {
+    setMeetingDetails(prev => ({
+      ...prev,
+      agenda: prev.agenda.filter((_, i) => i !== index)
+    }));
+  };
+
+  const formatCurrency = (amount: number) => {
+    if (amount >= 1000000) {
+      return `$${(amount / 1000000).toFixed(1)}M`;
+    }
+    return `$${(amount / 1000).toFixed(0)}K`;
+  };
+
+  const generateCalendarLink = () => {
+    const startDate = new Date(`${meetingDetails.date}T${meetingDetails.time}`);
+    const endDate = new Date(startDate.getTime() + parseInt(meetingDetails.duration) * 60000);
+    
+    const formatDateTime = (date: Date) => {
+      return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    };
+
+    const details = encodeURIComponent(
+      `${meetingDetails.description}\n\n` +
+      `Opportunity: ${opportunity.description}\n` +
+      `Value: ${formatCurrency(opportunity.value)}\n` +
+      `Timeline: ${opportunity.timeline}\n\n` +
+      `Agenda:\n${meetingDetails.agenda.map(item => `• ${item}`).join('\n')}\n\n` +
+      `Meeting Details:\n` +
+      `Type: ${meetingDetails.meetingType.toUpperCase()}\n` +
+      (meetingDetails.location ? `Location: ${meetingDetails.location}\n` : '') +
+      `Duration: ${meetingDetails.duration} minutes`
+    );
+
+    const attendeeEmails = meetingDetails.attendees.join(',');
+    
+    // Generate Outlook calendar link
+    const outlookUrl = `https://outlook.live.com/calendar/0/deeplink/compose?` +
+      `subject=${encodeURIComponent(meetingDetails.title)}&` +
+      `startdt=${formatDateTime(startDate)}&` +
+      `enddt=${formatDateTime(endDate)}&` +
+      `body=${details}&` +
+      `to=${encodeURIComponent(attendeeEmails)}`;
+
+    // Generate Google Calendar link
+    const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&` +
+      `text=${encodeURIComponent(meetingDetails.title)}&` +
+      `dates=${formatDateTime(startDate)}/${formatDateTime(endDate)}&` +
+      `details=${details}&` +
+      `add=${encodeURIComponent(attendeeEmails)}`;
+
+    return { outlook: outlookUrl, google: googleUrl };
+  };
+
+  const handleScheduleMeeting = (platform: 'outlook' | 'google') => {
+    if (!meetingDetails.date || !meetingDetails.time) {
+      toast.error('Please select a date and time for the meeting');
+      return;
+    }
+
+    if (meetingDetails.attendees.length === 0) {
+      toast.error('Please add at least one attendee');
+      return;
+    }
+
+    const links = generateCalendarLink();
+    const url = platform === 'outlook' ? links.outlook : links.google;
+    
+    // Open calendar invitation in new window
+    window.open(url, '_blank');
+    
+    toast.success(`${platform === 'outlook' ? 'Outlook' : 'Google'} calendar invitation created successfully`);
+    setIsOpen(false);
+  };
+
+  const getMeetingTypeIcon = () => {
+    switch (meetingDetails.meetingType) {
+      case 'teams': return <VideoCamera className="w-4 h-4" />;
+      case 'onsite': return <MapPin className="w-4 h-4" />;
+      case 'phone': return <Clock className="w-4 h-4" />;
+      default: return <Calendar className="w-4 h-4" />;
+    }
+  };
+
+  // Get minimum date (today)
+  const today = new Date().toISOString().split('T')[0];
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        {children}
+      </DialogTrigger>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-blue-600" />
+            Schedule Stakeholder Meeting
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Meeting Setup */}
+          <div className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Meeting Details</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="title">Meeting Title</Label>
+                  <Input
+                    id="title"
+                    value={meetingDetails.title}
+                    onChange={(e) => setMeetingDetails(prev => ({ ...prev, title: e.target.value }))}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="date">Date</Label>
+                    <Input
+                      id="date"
+                      type="date"
+                      min={today}
+                      value={meetingDetails.date}
+                      onChange={(e) => setMeetingDetails(prev => ({ ...prev, date: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="time">Time</Label>
+                    <Input
+                      id="time"
+                      type="time"
+                      value={meetingDetails.time}
+                      onChange={(e) => setMeetingDetails(prev => ({ ...prev, time: e.target.value }))}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="duration">Duration (minutes)</Label>
+                    <Select
+                      value={meetingDetails.duration}
+                      onValueChange={(value) => setMeetingDetails(prev => ({ ...prev, duration: value }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="30">30 minutes</SelectItem>
+                        <SelectItem value="60">1 hour</SelectItem>
+                        <SelectItem value="90">1.5 hours</SelectItem>
+                        <SelectItem value="120">2 hours</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="type">Meeting Type</Label>
+                    <Select
+                      value={meetingDetails.meetingType}
+                      onValueChange={(value: 'teams' | 'onsite' | 'phone') => 
+                        setMeetingDetails(prev => ({ ...prev, meetingType: value }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="teams">Microsoft Teams</SelectItem>
+                        <SelectItem value="onsite">On-site Meeting</SelectItem>
+                        <SelectItem value="phone">Phone Call</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {meetingDetails.meetingType === 'onsite' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="location">Location</Label>
+                    <Input
+                      id="location"
+                      placeholder="Enter meeting location"
+                      value={meetingDetails.location || ''}
+                      onChange={(e) => setMeetingDetails(prev => ({ ...prev, location: e.target.value }))}
+                    />
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    rows={3}
+                    value={meetingDetails.description}
+                    onChange={(e) => setMeetingDetails(prev => ({ ...prev, description: e.target.value }))}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Attendees</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Add Attendee</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Enter email address"
+                      value={newAttendee}
+                      onChange={(e) => setNewAttendee(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          addAttendee(newAttendee);
+                        }
+                      }}
+                    />
+                    <Button 
+                      type="button" 
+                      size="sm"
+                      onClick={() => addAttendee(newAttendee)}
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Suggested Attendees</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {suggestedAttendees.map((attendee, index) => (
+                      <Button
+                        key={index}
+                        variant="outline"
+                        size="sm"
+                        className="text-xs"
+                        onClick={() => addAttendee(attendee)}
+                        disabled={meetingDetails.attendees.includes(attendee)}
+                      >
+                        <Plus className="w-3 h-3 mr-1" />
+                        {attendee}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                {meetingDetails.attendees.length > 0 && (
+                  <div className="space-y-2">
+                    <Label>Selected Attendees</Label>
+                    <div className="space-y-1">
+                      {meetingDetails.attendees.map((attendee, index) => (
+                        <Badge
+                          key={index}
+                          variant="secondary"
+                          className="mr-2 mb-1 flex items-center gap-1 w-fit"
+                        >
+                          <Envelope className="w-3 h-3" />
+                          {attendee}
+                          <button
+                            onClick={() => removeAttendee(attendee)}
+                            className="ml-1 text-red-500 hover:text-red-700"
+                          >
+                            ×
+                          </button>
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Agenda and Actions */}
+          <div className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Opportunity Context</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="font-medium text-muted-foreground">Value</p>
+                    <p className="text-lg font-semibold text-green-600">
+                      {formatCurrency(opportunity.value)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-medium text-muted-foreground">Timeline</p>
+                    <p className="font-medium">{opportunity.timeline}</p>
+                  </div>
+                </div>
+                <div>
+                  <p className="font-medium text-muted-foreground">Category</p>
+                  <Badge variant="outline" className="text-xs">
+                    {opportunity.category.replace('-', ' ')}
+                  </Badge>
+                </div>
+                <div>
+                  <p className="font-medium text-muted-foreground">Account Team</p>
+                  <div className="text-sm">
+                    <p>CSAM: {account.csam}</p>
+                    <p>AE: {account.ae}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Meeting Agenda</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Add agenda item"
+                      value={newAgendaItem}
+                      onChange={(e) => setNewAgendaItem(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          addAgendaItem();
+                        }
+                      }}
+                    />
+                    <Button 
+                      type="button" 
+                      size="sm"
+                      onClick={addAgendaItem}
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  {meetingDetails.agenda.map((item, index) => (
+                    <div key={index} className="flex items-start gap-2 text-sm">
+                      <span className="font-medium text-muted-foreground">{index + 1}.</span>
+                      <span className="flex-1">{item}</span>
+                      <button
+                        onClick={() => removeAgendaItem(index)}
+                        className="text-red-500 hover:text-red-700 text-xs"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  {getMeetingTypeIcon()}
+                  Schedule Meeting
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <Button
+                    onClick={() => handleScheduleMeeting('outlook')}
+                    className="w-full"
+                    disabled={!meetingDetails.date || !meetingDetails.time || meetingDetails.attendees.length === 0}
+                  >
+                    <Envelope className="w-4 h-4 mr-2" />
+                    Outlook Calendar
+                  </Button>
+                  <Button
+                    onClick={() => handleScheduleMeeting('google')}
+                    variant="outline"
+                    className="w-full"
+                    disabled={!meetingDetails.date || !meetingDetails.time || meetingDetails.attendees.length === 0}
+                  >
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Google Calendar
+                  </Button>
+                </div>
+                
+                {meetingDetails.date && meetingDetails.time && (
+                  <div className="text-center p-3 bg-blue-50 rounded-lg">
+                    <p className="text-sm text-blue-700">
+                      <Clock className="w-4 h-4 inline mr-1" />
+                      {new Date(`${meetingDetails.date}T${meetingDetails.time}`).toLocaleDateString()} at{' '}
+                      {new Date(`${meetingDetails.date}T${meetingDetails.time}`).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })} ({meetingDetails.duration} min)
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}

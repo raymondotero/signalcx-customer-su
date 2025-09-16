@@ -13,11 +13,13 @@ import {
   SortAscending, 
   SortDescending,
   MagnifyingGlass,
-  X
+  X,
+  Calendar
 } from '@phosphor-icons/react';
 import { Account } from '@/types';
 import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
 import { ExpansionOpportunitiesDialog } from '@/components/ExpansionOpportunitiesDialog';
+import { QuickMeetingScheduler } from '@/components/QuickMeetingScheduler';
 
 interface AccountsTableProps {
   accounts: Account[];
@@ -394,7 +396,7 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
                   <TableCell>{account.ae || 'N/A'}</TableCell>
                   <TableCell>{new Date(account.contractEnd).toLocaleDateString()}</TableCell>
                   <TableCell>
-                    <div className="flex gap-2">
+                    <div className="flex gap-1 flex-wrap">
                       <Button 
                         className="text-xs px-2 py-1 border hover:bg-primary/10"
                         onClick={(e) => {
@@ -405,6 +407,16 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
                         <Brain className="w-4 h-4 mr-1" />
                         Select
                       </Button>
+                      <QuickMeetingScheduler account={account}>
+                        <Button 
+                          variant="outline" 
+                          className="text-xs px-2 py-1 hover:bg-blue-50"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Calendar className="w-3 h-3 mr-1" />
+                          Meet
+                        </Button>
+                      </QuickMeetingScheduler>
                       <AccountDetailsDialog account={account} />
                       {account.expansionOpportunity && account.expansionOpportunity > 0 && (
                         <ExpansionOpportunitiesDialog account={account}>
