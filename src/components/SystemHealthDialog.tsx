@@ -19,6 +19,7 @@ import { useAccounts, useNBAs, useSignals, useAgentMemory } from '@/hooks/useDat
 import { useRealTimeAI, useAIMetrics } from '@/hooks/useRealTimeAI';
 import { useKV } from '@github/spark/hooks';
 import { SignalTarget } from '@/components/TargetSettingsDialog';
+import { SparkDiagnostics } from '@/components/SparkDiagnostics';
 
 interface SystemHealthDialogProps {
   trigger?: React.ReactNode;
@@ -135,6 +136,9 @@ export function SystemHealthDialog({ trigger }: SystemHealthDialogProps) {
         </DialogHeader>
 
         <div className="space-y-6">
+          {/* Spark AI Diagnostics */}
+          <SparkDiagnostics />
+
           {/* System Overview */}
           <Card>
             <CardHeader>

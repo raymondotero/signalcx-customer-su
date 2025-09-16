@@ -17,6 +17,7 @@ import { BusinessValueDashboard } from '@/components/BusinessValueDashboard';
 import { SparkTestButton } from '@/components/SparkTestButton';
 import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
 import { SystemHealthDialog } from '@/components/SystemHealthDialog';
+import { AIErrorBoundary } from '@/components/AIErrorBoundary';
 import { useAccounts, useNBAs, useAgentMemory, sampleAccounts } from '@/hooks/useData';
 import { useSignalProcessor } from '@/hooks/useSignalProcessor';
 import { useRealtimeNotifications } from '@/hooks/useRealtimeNotifications';
@@ -311,15 +312,19 @@ function App() {
               </TabsList>
               
               <TabsContent value="business-value" className="mt-4 h-fit">
-                <div className="h-fit">
-                  <BusinessValueDashboard />
-                </div>
+                <AIErrorBoundary>
+                  <div className="h-fit">
+                    <BusinessValueDashboard />
+                  </div>
+                </AIErrorBoundary>
               </TabsContent>
               
               <TabsContent value="ai-processor" className="mt-4 h-fit">
-                <div className="h-fit">
-                  <RealTimeSignalProcessor />
-                </div>
+                <AIErrorBoundary>
+                  <div className="h-fit">
+                    <RealTimeSignalProcessor />
+                  </div>
+                </AIErrorBoundary>
               </TabsContent>
               
               <TabsContent value="signals" className="mt-4 h-fit">
@@ -329,9 +334,11 @@ function App() {
               </TabsContent>
               
               <TabsContent value="ai-engine" className="mt-4 h-fit">
-                <div className="h-fit">
-                  <AIRecommendationEngine />
-                </div>
+                <AIErrorBoundary>
+                  <div className="h-fit">
+                    <AIRecommendationEngine />
+                  </div>
+                </AIErrorBoundary>
               </TabsContent>
               
               <TabsContent value="memory" className="mt-4 h-fit">

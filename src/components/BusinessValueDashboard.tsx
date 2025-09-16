@@ -11,34 +11,10 @@ import { useKV } from '@github/spark/hooks';
 import { Signal, NextBestAction, Account, AIRecommendation, SignalAnalysis } from '@/types';
 import { TargetSettingsDialog, SignalTarget } from '@/components/TargetSettingsDialog';
 import { AIRecommendationsDialog } from '@/components/AIRecommendationsDialog';
+import { getSparkAIStatus, createAIPrompt, callSparkAI, formatSparkError, SparkAIError } from '@/lib/sparkAI';
 import { toast } from 'sonner';
 
-// Utility function to safely access Spark AI with better error handling
-const getSparkAI = () => {
-  try {
-    if (typeof window === 'undefined') {
-      throw new Error('Browser environment required - this feature only works in web browsers');
-    }
-    
-    const spark = (window as any).spark;
-    if (!spark) {
-      throw new Error('Spark runtime not initialized - please refresh the page to reload the AI services');
-    }
-    
-    if (!spark.llmPrompt || typeof spark.llmPrompt !== 'function') {
-      throw new Error('AI prompt service not available - the Spark AI system may be loading');
-    }
-    
-    if (!spark.llm || typeof spark.llm !== 'function') {
-      throw new Error('AI language model service not available - check your network connection');
-    }
-    
-    return spark;
-  } catch (error) {
-    console.error('Spark AI access error:', error);
-    throw error;
-  }
-};
+
 
 interface SignalCategoryStats {
   category: string;
@@ -231,6 +207,17 @@ export function BusinessValueDashboard() {
     });
 
     try {
+      // Check Spark AI status first
+      const sparkStatus = getSparkAIStatus();
+      if (!sparkStatus.available || !sparkStatus.initialized || !sparkStatus.llmReady || !sparkStatus.promptReady) {
+        throw {
+          message: 'Spark AI not ready',
+          details: sparkStatus.error || 'Please refresh the page and try again',
+          code: 'NOT_INITIALIZED',
+          canRetry: true
+        } as SparkAIError;
+      }
+
       // Find affected accounts for this signal
       const affectedAccounts = accounts.filter(account => {
         if (signal.accountId && signal.accountId === account.id) return true;
@@ -241,7 +228,6 @@ export function BusinessValueDashboard() {
         return signal.severity === 'medium' && account.status === 'Watch';
       });
 
-      // Generate AI recommendations for each affected account
       if (affectedAccounts.length === 0) {
         toast.warning('No affected accounts found for this signal', {
           description: 'Signal may not impact current account portfolio'
@@ -252,15 +238,12 @@ export function BusinessValueDashboard() {
 
       console.log('Attempting AI generation with:', {
         signal: signal.signalName || signal.type,
-        affectedAccountsCount: affectedAccounts.length
+        affectedAccountsCount: affectedAccounts.length,
+        sparkStatus
       });
 
-      // Use improved Spark AI access
-      const spark = getSparkAI();
-      
-      console.log('Spark AI service verified, generating prompt...');
-
-      const prompt = spark.llmPrompt`You are a Customer Success AI expert specializing in business value signal analysis. 
+      // Create AI prompt using the utility
+      const prompt = createAIPrompt`You are a Customer Success AI expert specializing in business value signal analysis. 
 
 Signal Analysis Request:
 ${JSON.stringify(signal, null, 2)}
@@ -305,8 +288,8 @@ Return JSON with this structure:
   ]
 }`;
 
-      console.log('Calling spark.llm with model gpt-4o and jsonMode=true...');
-      const response = await spark.llm(prompt, 'gpt-4o', true);
+      console.log('Calling Spark AI with improved error handling...');
+      const response = await callSparkAI(prompt, 'gpt-4o', true, 30000);
       console.log('AI Response received:', response);
       
       const aiResponse = JSON.parse(response);
@@ -323,32 +306,11 @@ Return JSON with this structure:
     } catch (error) {
       console.error('Error generating AI recommendations:', error);
       
-      let errorMessage = 'Unknown error occurred';
-      let detailedError = '';
-      
-      if (error instanceof Error) {
-        errorMessage = error.message;
-        
-        // Provide specific guidance based on the error
-        if (errorMessage.includes('Spark runtime not initialized')) {
-          detailedError = 'The AI runtime needs to be initialized. Try refreshing the page or restarting the application.';
-        } else if (errorMessage.includes('prompt service not available')) {
-          detailedError = 'The AI prompt service is not configured. This may be a temporary issue.';
-        } else if (errorMessage.includes('language model service not available')) {
-          detailedError = 'The AI model service is not available. Please check your connection and try again.';
-        } else if (errorMessage.includes('Window context not available')) {
-          detailedError = 'This feature requires a browser environment. Server-side rendering is not supported.';
-        } else {
-          detailedError = 'Please try again in a few moments. If the issue persists, contact support.';
-        }
-      }
+      const formattedError = formatSparkError(error);
       
       console.log('Error details:', {
-        message: errorMessage,
-        detailedError,
-        sparkAvailable: typeof (window as any).spark !== 'undefined',
-        llmPromptAvailable: typeof (window as any).spark?.llmPrompt !== 'undefined',
-        llmAvailable: typeof (window as any).spark?.llm !== 'undefined'
+        formattedError,
+        sparkStatus: getSparkAIStatus()
       });
       
       // Find affected accounts again for error fallback
@@ -367,15 +329,15 @@ Return JSON with this structure:
         urgency: signal.severity as any,
         affectedAccountsCount: errorFallbackAccounts.length,
         businessValueAtRisk: 'Unable to calculate due to AI error',
-        error: `${errorMessage}${detailedError ? ` - ${detailedError}` : ''}`
+        error: `${formattedError.message} - ${formattedError.details}`
       });
       
       // Provide fallback recommendations based on signal type and severity
       const fallbackRecommendations: AIRecommendation[] = generateFallbackRecommendations(signal, errorFallbackAccounts);
       setAiRecommendations(fallbackRecommendations);
       
-      toast.error(`AI generation failed: ${errorMessage}`, {
-        description: detailedError || 'Showing fallback recommendations instead'
+      toast.error(`AI generation failed: ${formattedError.message}`, {
+        description: formattedError.details
       });
     } finally {
       setIsLoadingAI(false);

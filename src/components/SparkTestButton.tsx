@@ -1,42 +1,50 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, XCircle, Clock, TestTube } from '@phosphor-icons/react';
+import { CheckCircle, XCircle, Clock, TestTube, Warning } from '@phosphor-icons/react';
+import { getSparkAIStatus, testSparkAI } from '@/lib/sparkAI';
 import { toast } from 'sonner';
 
 export function SparkTestButton() {
   const [isTestingAI, setIsTestingAI] = useState(false);
   const [testResult, setTestResult] = useState<'idle' | 'success' | 'error'>('idle');
 
-  const testSparkAI = async () => {
+  const performSparkTest = async () => {
     setIsTestingAI(true);
     setTestResult('idle');
 
     try {
-      // Check if Spark is available
-      if (!(window as any).spark) {
-        throw new Error('Spark runtime not available');
+      // First check status
+      const status = getSparkAIStatus();
+      console.log('Spark AI Status:', status);
+
+      if (!status.available || !status.initialized) {
+        throw new Error(status.error || 'Spark not available');
       }
 
-      if (!(window as any).spark.llm) {
-        throw new Error('Spark LLM not available');
+      if (!status.llmReady || !status.promptReady) {
+        throw new Error('Spark AI services not ready');
       }
 
-      // Test Spark AI with a simple prompt
-      const prompt = (window as any).spark.llmPrompt`Test message for SignalCX platform verification. Please respond with a JSON object containing a "message" field that includes the word "SignalCX".`;
-      const response = await (window as any).spark.llm(prompt, 'gpt-4o-mini', true);
+      // Perform actual AI test
+      const testPassed = await testSparkAI();
       
-      const parsed = JSON.parse(response);
-      if (parsed.message && parsed.message.includes('SignalCX')) {
+      if (testPassed) {
         setTestResult('success');
-        toast.success('Spark AI connection verified! ✅');
+        toast.success('Spark AI connection verified! ✅', {
+          description: 'All AI services are working correctly'
+        });
       } else {
-        throw new Error('Unexpected AI response format');
+        throw new Error('AI test call failed - check console for details');
       }
     } catch (error) {
       console.error('Spark AI test failed:', error);
       setTestResult('error');
-      toast.error('Spark AI test failed - check console for details');
+      
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      toast.error(`Spark AI test failed: ${errorMessage}`, {
+        description: 'Try refreshing the page or check console for details'
+      });
     } finally {
       setIsTestingAI(false);
     }
@@ -58,12 +66,16 @@ export function SparkTestButton() {
     }
   };
 
+  // Quick status check without full test
+  const quickStatus = getSparkAIStatus();
+  const hasIssues = !quickStatus.available || !quickStatus.initialized || !quickStatus.llmReady || !quickStatus.promptReady;
+
   return (
     <div className="flex items-center gap-2">
       <Button 
         variant="outline" 
         size="sm"
-        onClick={testSparkAI}
+        onClick={performSparkTest}
         disabled={isTestingAI}
       >
         <TestTube className="w-4 h-4 mr-2" />
@@ -76,6 +88,13 @@ export function SparkTestButton() {
           <span className="ml-1">
             {testResult === 'success' ? 'AI Ready' : 'AI Error'}
           </span>
+        </Badge>
+      )}
+      
+      {hasIssues && testResult === 'idle' && (
+        <Badge className="bg-yellow-100 text-yellow-800">
+          <Warning className="w-3 h-3 mr-1" />
+          AI Issues
         </Badge>
       )}
     </div>
