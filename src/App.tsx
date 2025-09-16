@@ -14,6 +14,7 @@ import { CSVUpload } from '@/components/CSVUpload';
 import { AIRecommendationEngine } from '@/components/AIRecommendationEngine';
 import { RealTimeSignalProcessor } from '@/components/RealTimeSignalProcessor';
 import { BusinessValueDashboard } from '@/components/BusinessValueDashboard';
+import { HealthScoreForecast } from '@/components/HealthScoreForecast';
 
 import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
 import { SystemHealthDialog } from '@/components/SystemHealthDialog';
@@ -303,8 +304,9 @@ function App() {
           {/* Right Column - AI Systems */}
           <div className="space-y-6 min-h-0 h-fit">
             <Tabs defaultValue="business-value" className="w-full h-fit">
-              <TabsList className="grid w-full grid-cols-5 h-fit">
+              <TabsList className="grid w-full grid-cols-6 h-fit">
                 <TabsTrigger value="business-value" className="text-xs px-2">Business</TabsTrigger>
+                <TabsTrigger value="forecast" className="text-xs px-2">Forecast</TabsTrigger>
                 <TabsTrigger value="ai-processor" className="text-xs px-2">AI Proc</TabsTrigger>
                 <TabsTrigger value="signals" className="text-xs px-2">Signals</TabsTrigger>
                 <TabsTrigger value="ai-engine" className="text-xs px-2">AI Engine</TabsTrigger>
@@ -315,6 +317,17 @@ function App() {
                 <AIErrorBoundary>
                   <div className="h-fit">
                     <BusinessValueDashboard />
+                  </div>
+                </AIErrorBoundary>
+              </TabsContent>
+              
+              <TabsContent value="forecast" className="mt-4 h-fit">
+                <AIErrorBoundary>
+                  <div className="h-fit">
+                    <HealthScoreForecast 
+                      accounts={accounts}
+                      selectedAccount={selectedAccount || undefined}
+                    />
                   </div>
                 </AIErrorBoundary>
               </TabsContent>
