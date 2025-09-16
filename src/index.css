@@ -102,6 +102,34 @@
 .status-watch { @apply bg-yellow-100 text-yellow-800 border-yellow-200; }
 .status-risk { @apply bg-red-100 text-red-800 border-red-200; }
 
+/* Table sorting hover effects */
+.sortable-header {
+  @apply transition-colors duration-200 hover:bg-muted/30;
+}
+
+.sortable-header:hover {
+  background-color: rgba(var(--muted), 0.3);
+}
+
+/* Filter animation */
+@keyframes filter-highlight {
+  0% { background-color: rgba(var(--primary), 0.1); }
+  100% { background-color: transparent; }
+}
+
+.filter-applied {
+  animation: filter-highlight 0.3s ease-out;
+}
+
+/* Enhanced search input */
+.search-input-wrapper {
+  position: relative;
+}
+
+.search-input-wrapper input:focus + .search-icon {
+  color: var(--primary);
+}
+
 /* Ensure borders are visible on all cards and components */
 .border-visible {
   border: 1px solid var(--border) !important;
