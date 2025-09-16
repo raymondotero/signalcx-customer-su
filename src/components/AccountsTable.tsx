@@ -338,12 +338,18 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
                   <TableCell className="text-center">
                     <div className="flex items-center justify-center gap-1">
                       {(() => {
-                        // Generate demo growth based on account status
+                        // Generate stable growth based on account ID and status
+                        const hash = account.id.split('').reduce((a, b) => {
+                          a = ((a << 5) - a) + b.charCodeAt(0);
+                          return a & a;
+                        }, 0);
+                        const seedRandom = Math.abs(hash) / 2147483647;
+                        
                         const growth = account.status === 'Good' ? 
-                          8 + Math.random() * 7 : // 8-15%
+                          8 + seedRandom * 7 : // 8-15%
                           account.status === 'Watch' ? 
-                          2 + Math.random() * 6 : // 2-8%
-                          -2 + Math.random() * 4; // -2 to 2%
+                          2 + seedRandom * 6 : // 2-8%
+                          -2 + seedRandom * 4; // -2 to 2%
                         
                         const isPositive = growth > 0;
                         return (

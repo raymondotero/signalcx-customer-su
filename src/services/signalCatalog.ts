@@ -139,15 +139,15 @@ export const generateRandomValue = (signalName: string): { value: number; unit?:
   // Cost signals - typically percentages or dollar amounts
   if (signalName.includes('Coverage') || signalName.includes('Utilization') || signalName.includes('Compliance')) {
     return {
-      value: Math.random() * 100,
+      value: Math.round((Math.random() * 100) * 10) / 10, // Round to 1 decimal place
       unit: '%',
-      target: 80 + Math.random() * 20 // Target between 80-100%
+      target: Math.round((80 + Math.random() * 20) * 10) / 10 // Target between 80-100%
     };
   }
   
   if (signalName.includes('Cost') || signalName.includes('Spend')) {
     return {
-      value: 10000 + Math.random() * 90000,
+      value: Math.round(10000 + Math.random() * 90000),
       unit: '$',
       target: 50000
     };
@@ -156,7 +156,7 @@ export const generateRandomValue = (signalName: string): { value: number; unit?:
   // Agility signals - time-based or frequency
   if (signalName.includes('Time') || signalName.includes('MTTR')) {
     return {
-      value: Math.random() * 120, // Minutes
+      value: Math.round((Math.random() * 120) * 10) / 10, // Minutes, 1 decimal
       unit: 'min',
       target: 15
     };
@@ -164,7 +164,7 @@ export const generateRandomValue = (signalName: string): { value: number; unit?:
   
   if (signalName.includes('Frequency')) {
     return {
-      value: Math.random() * 50,
+      value: Math.round((Math.random() * 50) * 10) / 10,
       unit: 'per month',
       target: 20
     };
@@ -173,15 +173,15 @@ export const generateRandomValue = (signalName: string): { value: number; unit?:
   // Data signals - mostly percentages and rates
   if (signalName.includes('Rate') || signalName.includes('Ratio')) {
     return {
-      value: Math.random() * 100,
+      value: Math.round((Math.random() * 100) * 10) / 10, // Round to 1 decimal place
       unit: '%',
-      target: 75 + Math.random() * 20
+      target: Math.round((75 + Math.random() * 20) * 10) / 10
     };
   }
   
   if (signalName.includes('Score')) {
     return {
-      value: Math.random() * 100,
+      value: Math.round((Math.random() * 100) * 10) / 10, // Round to 1 decimal place
       unit: 'score',
       target: 80
     };
@@ -207,7 +207,7 @@ export const generateRandomValue = (signalName: string): { value: number; unit?:
   
   // Default
   return {
-    value: Math.random() * 100,
+    value: Math.round((Math.random() * 100) * 10) / 10, // Round to 1 decimal place
     unit: '%',
     target: 85
   };

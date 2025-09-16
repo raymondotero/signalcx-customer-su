@@ -626,20 +626,20 @@ Return JSON with this structure:
                   )}
                   
                   <div className="grid grid-cols-4 gap-2 text-xs mb-3">
-                    <div className="text-center p-2 rounded bg-red-50">
-                      <div className="font-bold text-red-700">{stats.critical}</div>
+                    <div className="text-center p-3 rounded bg-red-50 flex flex-col items-center justify-center min-h-[60px]">
+                      <div className="font-bold text-lg text-red-700">{stats.critical}</div>
                       <div className="text-red-600">Critical</div>
                     </div>
-                    <div className="text-center p-2 rounded bg-orange-50">
-                      <div className="font-bold text-orange-700">{stats.high}</div>
+                    <div className="text-center p-3 rounded bg-orange-50 flex flex-col items-center justify-center min-h-[60px]">
+                      <div className="font-bold text-lg text-orange-700">{stats.high}</div>
                       <div className="text-orange-600">High</div>
                     </div>
-                    <div className="text-center p-2 rounded bg-yellow-50">
-                      <div className="font-bold text-yellow-700">{stats.medium}</div>
+                    <div className="text-center p-3 rounded bg-yellow-50 flex flex-col items-center justify-center min-h-[60px]">
+                      <div className="font-bold text-lg text-yellow-700">{stats.medium}</div>
                       <div className="text-yellow-600">Medium</div>
                     </div>
-                    <div className="text-center p-2 rounded bg-blue-50">
-                      <div className="font-bold text-blue-700">{stats.low}</div>
+                    <div className="text-center p-3 rounded bg-blue-50 flex flex-col items-center justify-center min-h-[60px]">
+                      <div className="font-bold text-lg text-blue-700">{stats.low}</div>
                       <div className="text-blue-600">Low</div>
                     </div>
                   </div>
