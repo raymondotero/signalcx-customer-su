@@ -21,6 +21,8 @@ import {
 import { Account, ExpansionOpportunity } from '@/types';
 import { MeetingScheduler } from './MeetingScheduler';
 import { ROICalculator } from './ROICalculator';
+import { PowerPointExporter } from './PowerPointExporter';
+import { OpportunityPowerPointExporter } from './OpportunityPowerPointExporter';
 
 interface ExpansionOpportunitiesDialogProps {
   account: Account;
@@ -221,9 +223,16 @@ export function ExpansionOpportunitiesDialog({ account, children }: ExpansionOpp
                         <div className="space-y-4">
                           <div className="flex items-center justify-between">
                             <h4 className="font-medium">Business Case Analysis</h4>
-                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                              Estimated Value: {formatCurrency(selectedOpportunity.value)}
-                            </Badge>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                                Estimated Value: {formatCurrency(selectedOpportunity.value)}
+                              </Badge>
+                              <PowerPointExporter />
+                              <OpportunityPowerPointExporter 
+                                opportunity={selectedOpportunity} 
+                                account={account}
+                              />
+                            </div>
                           </div>
                           
                           <div className="p-4 bg-muted/30 rounded-lg">

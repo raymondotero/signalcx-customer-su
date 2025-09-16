@@ -18,6 +18,8 @@ import {
   Lightning
 } from '@phosphor-icons/react';
 import { ROICalculator } from './ROICalculator';
+import { PowerPointExporter } from './PowerPointExporter';
+import { AdvancedPowerPointGenerator } from './AdvancedPowerPointGenerator';
 import { useKV } from '@github/spark/hooks';
 import { toast } from 'sonner';
 
@@ -103,9 +105,15 @@ export function ROIDashboard() {
           {safeROIResults.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendUp className="w-5 h-5" />
-                  Portfolio Summary
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <TrendUp className="w-5 h-5" />
+                    Portfolio Summary
+                  </div>
+                  <div className="flex gap-2">
+                    <PowerPointExporter />
+                    <AdvancedPowerPointGenerator />
+                  </div>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -173,7 +181,12 @@ export function ROIDashboard() {
             {/* Recent Calculations */}
             <Card>
               <CardHeader>
-                <CardTitle>Recent ROI Calculations</CardTitle>
+                <CardTitle className="flex items-center justify-between">
+                  <span>Recent ROI Calculations</span>
+                  {safeROIResults.length > 0 && (
+                    <PowerPointExporter />
+                  )}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 {safeROIResults.length > 0 ? (
