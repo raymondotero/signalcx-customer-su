@@ -20,6 +20,7 @@ import {
 } from '@phosphor-icons/react';
 import { Account, ExpansionOpportunity } from '@/types';
 import { MeetingScheduler } from './MeetingScheduler';
+import { ROICalculator } from './ROICalculator';
 
 interface ExpansionOpportunitiesDialogProps {
   account: Account;
@@ -127,6 +128,11 @@ export function ExpansionOpportunitiesDialog({ account, children }: ExpansionOpp
                         Schedule Meeting
                       </Button>
                     </MeetingScheduler>
+                    <ROICalculator 
+                      onCalculationComplete={(solution, metrics) => {
+                        console.log('ROI calculated for opportunity:', opportunity.description, solution, metrics);
+                      }}
+                    />
                   </div>
                 </CardContent>
               </Card>
@@ -166,9 +172,10 @@ export function ExpansionOpportunitiesDialog({ account, children }: ExpansionOpp
                     <Separator />
 
                     <Tabs defaultValue="activities" className="w-full">
-                      <TabsList className="grid w-full grid-cols-4">
+                      <TabsList className="grid w-full grid-cols-5">
                         <TabsTrigger value="activities">Activities</TabsTrigger>
                         <TabsTrigger value="solutions">Solutions</TabsTrigger>
+                        <TabsTrigger value="roi">ROI Analysis</TabsTrigger>
                         <TabsTrigger value="stakeholders">Stakeholders</TabsTrigger>
                         <TabsTrigger value="success">Success</TabsTrigger>
                       </TabsList>
@@ -206,6 +213,55 @@ export function ExpansionOpportunitiesDialog({ account, children }: ExpansionOpp
                                 </Badge>
                               ))}
                             </div>
+                          </div>
+                        </div>
+                      </TabsContent>
+
+                      <TabsContent value="roi" className="space-y-3">
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-medium">Business Case Analysis</h4>
+                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                              Estimated Value: {formatCurrency(selectedOpportunity.value)}
+                            </Badge>
+                          </div>
+                          
+                          <div className="p-4 bg-muted/30 rounded-lg">
+                            <p className="text-sm text-muted-foreground mb-3">
+                              Use our automated ROI calculator to build a compelling business case for this expansion opportunity.
+                            </p>
+                            <ROICalculator 
+                              onCalculationComplete={(solution, metrics) => {
+                                console.log('ROI calculated for:', solution, metrics);
+                                // Could integrate with opportunity tracking here
+                              }}
+                            />
+                          </div>
+
+                          <div className="space-y-3">
+                            <h5 className="font-medium text-sm">Quick Business Impact Estimate</h5>
+                            <div className="grid grid-cols-2 gap-3">
+                              <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                <p className="text-xs text-blue-600 font-medium">Potential Annual Savings</p>
+                                <p className="text-lg font-semibold text-blue-800">
+                                  {formatCurrency(selectedOpportunity.value * 0.3)}
+                                </p>
+                              </div>
+                              <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                                <p className="text-xs text-green-600 font-medium">Productivity Gain</p>
+                                <p className="text-lg font-semibold text-green-800">15-25%</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="p-3 bg-orange-50 rounded-lg border border-orange-200">
+                            <h5 className="font-medium text-sm text-orange-800 mb-2">💡 Business Case Tips</h5>
+                            <ul className="text-xs text-orange-700 space-y-1">
+                              <li>• Focus on measurable productivity gains and cost reductions</li>
+                              <li>• Include competitive advantages and risk mitigation benefits</li>
+                              <li>• Align technology capabilities with business strategy</li>
+                              <li>• Consider implementation timeline and change management</li>
+                            </ul>
                           </div>
                         </div>
                       </TabsContent>

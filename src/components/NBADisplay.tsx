@@ -11,6 +11,7 @@ import { useNBAs, useAgentMemory, useSignals } from '@/hooks/useData';
 import { useTargetAwareRecommendations } from '@/hooks/useTargetAwareRecommendations';
 import { azureOpenAI, RecommendationContext, SmartRecommendation } from '@/services/azureOpenAI';
 import { WorkflowAutomation } from '@/components/WorkflowAutomation';
+import { ROICalculator } from '@/components/ROICalculator';
 import { toast } from 'sonner';
 
 interface NBADisplayProps {
@@ -363,6 +364,12 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
                         <Clock className="w-4 h-4 mr-1" />
                         {isGeneratingPlan ? 'Planning...' : 'Plan'}
                       </Button>
+                      <ROICalculator 
+                        onCalculationComplete={(solution, metrics) => {
+                          console.log('ROI calculated for NBA:', selectedNBA.title, solution, metrics);
+                          toast.success(`ROI calculated: ${metrics.roi.toFixed(1)}% return`);
+                        }}
+                      />
                       <Button 
                         onClick={handlePlanAndRun}
                         size="sm"
