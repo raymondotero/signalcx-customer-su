@@ -474,15 +474,15 @@ function App() {
           {/* Right Column - AI Systems */}
           <div className="space-y-6 min-h-0 h-fit">
             <Tabs defaultValue="arr-growth" className="w-full h-fit">
-              <TabsList className="grid w-full grid-cols-8 h-fit">
-                <TabsTrigger value="business-value" className="text-xs px-2">Business</TabsTrigger>
-                <TabsTrigger value="arr-growth" className="text-xs px-2">ARR Growth</TabsTrigger>
-                <TabsTrigger value="forecast" className="text-xs px-2">Forecast</TabsTrigger>
-                <TabsTrigger value="workflows" className="text-xs px-2">Workflows</TabsTrigger>
-                <TabsTrigger value="ai-processor" className="text-xs px-2">AI Proc</TabsTrigger>
-                <TabsTrigger value="signals" className="text-xs px-2">Signals</TabsTrigger>
-                <TabsTrigger value="ai-engine" className="text-xs px-2">AI Engine</TabsTrigger>
-                <TabsTrigger value="memory" className="text-xs px-2">Memory</TabsTrigger>
+              <TabsList className="flex flex-wrap gap-1 w-full h-auto p-2">
+                <TabsTrigger value="business-value" className="text-sm px-3 py-2 min-w-fit">Business Value</TabsTrigger>
+                <TabsTrigger value="arr-growth" className="text-sm px-3 py-2 min-w-fit">ARR Growth</TabsTrigger>
+                <TabsTrigger value="forecast" className="text-sm px-3 py-2 min-w-fit">Forecast</TabsTrigger>
+                <TabsTrigger value="workflows" className="text-sm px-3 py-2 min-w-fit">Workflows</TabsTrigger>
+                <TabsTrigger value="ai-processor" className="text-sm px-3 py-2 min-w-fit">AI Processor</TabsTrigger>
+                <TabsTrigger value="signals" className="text-sm px-3 py-2 min-w-fit">Live Signals</TabsTrigger>
+                <TabsTrigger value="ai-engine" className="text-sm px-3 py-2 min-w-fit">AI Engine</TabsTrigger>
+                <TabsTrigger value="memory" className="text-sm px-3 py-2 min-w-fit">Agent Memory</TabsTrigger>
               </TabsList>
               
               <TabsContent value="business-value" className="mt-4 h-fit">
