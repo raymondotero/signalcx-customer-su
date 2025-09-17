@@ -289,9 +289,9 @@ export function ROIDashboard() {
                   <TabsTrigger value="migration" className="text-xs">Migration/Modernization</TabsTrigger>
                 </TabsList>
                 
-                <TabsContent value="common" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
-                    <div className="p-5 border rounded-lg min-w-0">
+                <TabsContent value="common" className="space-y-6 mt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-8">
+                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
                       <h4 className="font-medium mb-3">Productivity Enhancement</h4>
                       <p className="text-sm text-muted-foreground mb-4">
                         Microsoft 365 Copilot for knowledge workers
@@ -302,7 +302,7 @@ export function ROIDashboard() {
                       </div>
                     </div>
                     
-                    <div className="p-5 border rounded-lg min-w-0">
+                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
                       <h4 className="font-medium mb-3">Cloud Cost Optimization</h4>
                       <p className="text-sm text-muted-foreground mb-4">
                         Azure infrastructure rightsizing and automation
@@ -313,7 +313,7 @@ export function ROIDashboard() {
                       </div>
                     </div>
                     
-                    <div className="p-5 border rounded-lg min-w-0">
+                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
                       <h4 className="font-medium mb-3">Security Modernization</h4>
                       <p className="text-sm text-muted-foreground mb-4">
                         Zero Trust security implementation
@@ -324,7 +324,7 @@ export function ROIDashboard() {
                       </div>
                     </div>
                     
-                    <div className="p-5 border rounded-lg min-w-0">
+                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
                       <h4 className="font-medium mb-3">Process Automation</h4>
                       <p className="text-sm text-muted-foreground mb-4">
                         Power Platform low-code development
@@ -337,9 +337,9 @@ export function ROIDashboard() {
                   </div>
                 </TabsContent>
                 
-                <TabsContent value="industry" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
-                    <div className="p-5 border rounded-lg min-w-0">
+                <TabsContent value="industry" className="space-y-6 mt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-8">
+                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
                       <h4 className="font-medium mb-3">Financial Services</h4>
                       <p className="text-sm text-muted-foreground mb-4">
                         Compliance automation and risk management
@@ -347,7 +347,7 @@ export function ROIDashboard() {
                       <ROICalculator onCalculationComplete={handleROICalculation} />
                     </div>
                     
-                    <div className="p-5 border rounded-lg min-w-0">
+                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
                       <h4 className="font-medium mb-3">Healthcare</h4>
                       <p className="text-sm text-muted-foreground mb-4">
                         Patient data analytics and care coordination
@@ -355,7 +355,7 @@ export function ROIDashboard() {
                       <ROICalculator onCalculationComplete={handleROICalculation} />
                     </div>
                     
-                    <div className="p-5 border rounded-lg min-w-0">
+                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
                       <h4 className="font-medium mb-3">Manufacturing</h4>
                       <p className="text-sm text-muted-foreground mb-4">
                         IoT and predictive maintenance solutions
@@ -363,7 +363,7 @@ export function ROIDashboard() {
                       <ROICalculator onCalculationComplete={handleROICalculation} />
                     </div>
                     
-                    <div className="p-5 border rounded-lg min-w-0">
+                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
                       <h4 className="font-medium mb-3">Retail</h4>
                       <p className="text-sm text-muted-foreground mb-4">
                         Customer analytics and personalization
@@ -373,10 +373,10 @@ export function ROIDashboard() {
                   </div>
                 </TabsContent>
                 
-                <TabsContent value="competitive" className="space-y-4">
-                  <div className="p-6 bg-orange-50 rounded-lg border border-orange-200">
-                    <h4 className="font-medium mb-3 text-orange-800">Competitive Displacement</h4>
-                    <p className="text-sm text-orange-700 mb-4">
+                <TabsContent value="competitive" className="space-y-6 mt-6">
+                  <div className="p-8 bg-orange-50 rounded-lg border border-orange-200">
+                    <h4 className="font-medium mb-4 text-orange-800">Competitive Displacement</h4>
+                    <p className="text-sm text-orange-700 mb-6">
                       ROI calculations for replacing competitor solutions with Microsoft technologies.
                       Focus on migration costs, feature parity, and total cost of ownership improvements.
                     </p>
@@ -384,9 +384,9 @@ export function ROIDashboard() {
                   </div>
                 </TabsContent>
                 
-                <TabsContent value="migration" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
-                    <div className="p-5 border rounded-lg min-w-0">
+                <TabsContent value="migration" className="space-y-6 mt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-8">
+                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
                       <h4 className="font-medium mb-3">Legacy System Migration</h4>
                       <p className="text-sm text-muted-foreground mb-4">
                         Modernizing on-premises applications to Azure
@@ -394,7 +394,7 @@ export function ROIDashboard() {
                       <ROICalculator onCalculationComplete={handleROICalculation} />
                     </div>
                     
-                    <div className="p-5 border rounded-lg min-w-0">
+                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
                       <h4 className="font-medium mb-3">Data Platform Modernization</h4>
                       <p className="text-sm text-muted-foreground mb-4">
                         Moving to Azure Synapse and modern analytics
@@ -413,9 +413,9 @@ export function ROIDashboard() {
               <CardTitle>ROI Calculation Best Practices</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 <div>
-                  <h4 className="font-medium mb-3">📊 Measurement Guidelines</h4>
+                  <h4 className="font-medium mb-4">📊 Measurement Guidelines</h4>
                   <ul className="text-sm space-y-2 text-muted-foreground">
                     <li>• Use conservative estimates for savings calculations</li>
                     <li>• Include implementation and training costs</li>
@@ -425,7 +425,7 @@ export function ROIDashboard() {
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-medium mb-3">💡 Presentation Tips</h4>
+                  <h4 className="font-medium mb-4">💡 Presentation Tips</h4>
                   <ul className="text-sm space-y-2 text-muted-foreground">
                     <li>• Lead with business outcomes, not technology features</li>
                     <li>• Use industry benchmarks and peer comparisons</li>
@@ -435,7 +435,7 @@ export function ROIDashboard() {
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-medium mb-3">🎯 Success Factors</h4>
+                  <h4 className="font-medium mb-4">🎯 Success Factors</h4>
                   <ul className="text-sm space-y-2 text-muted-foreground">
                     <li>• Align ROI metrics with business KPIs</li>
                     <li>• Engage stakeholders early in the process</li>
@@ -445,7 +445,7 @@ export function ROIDashboard() {
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-medium mb-3">⚠️ Common Pitfalls</h4>
+                  <h4 className="font-medium mb-4">⚠️ Common Pitfalls</h4>
                   <ul className="text-sm space-y-2 text-muted-foreground">
                     <li>• Overestimating productivity gains</li>
                     <li>• Underestimating change management costs</li>
