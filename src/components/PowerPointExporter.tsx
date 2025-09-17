@@ -222,6 +222,23 @@ Format as a comprehensive executive presentation that demonstrates the business 
 
       const presentationOutline = await (window as any).spark.llm(prompt);
 
+      // Generate PowerPoint-specific content
+      const powerPointGuide = (window as any).spark.llmPrompt`
+Create a comprehensive PowerPoint implementation guide for the ROI presentation including:
+
+1. Slide-by-slide design recommendations
+2. Microsoft branding guidelines
+3. Chart and visualization specifications
+4. Animation and transition suggestions
+5. Speaker notes for each slide
+6. Executive Q&A preparation
+7. Handout materials recommendations
+
+Focus on creating a presentation that executives can use directly in PowerPoint with specific formatting instructions.
+`;
+
+      const implementationGuide = await (window as any).spark.llm(powerPointGuide);
+
       // Create the downloadable presentation content
       const presentationData = {
         title: config.title,
@@ -231,23 +248,98 @@ Format as a comprehensive executive presentation that demonstrates the business 
         portfolio,
         roiResults: safeROIResults,
         outline: presentationOutline,
-        config
+        implementationGuide,
+        config,
+        powerPointInstructions: {
+          masterSlide: {
+            background: "White with subtle Microsoft blue accent",
+            titleFont: "Segoe UI, 36pt, Bold, #0078D4",
+            bodyFont: "Segoe UI, 24pt, Regular, #333333",
+            logoPlacement: "Top right corner"
+          },
+          slideTemplates: template?.slides.map((slideTitle, index) => ({
+            slideNumber: index + 1,
+            title: slideTitle,
+            layout: index === 0 ? "Title Slide" : index < 3 ? "Title and Content" : "Content with Chart",
+            animations: "Subtle fade-in for bullet points",
+            transitions: "Smooth fade, 0.5 seconds"
+          })),
+          chartSpecifications: {
+            colors: ["#0078D4", "#106EBE", "#005A9E", "#40E0D0", "#32CD32"],
+            style: "Corporate clean with data labels",
+            roiChart: "Horizontal bar chart showing ROI by solution",
+            timelineChart: "Gantt chart for implementation phases",
+            portfolioChart: "Pie chart for investment allocation"
+          }
+        }
       };
 
-      // Create a downloadable file
-      const blob = new Blob([JSON.stringify(presentationData, null, 2)], {
-        type: 'application/json'
-      });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${config.title.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.json`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      // Create professional PowerPoint XML template
+      const pptxTemplate = `<?xml version="1.0" encoding="UTF-8"?>
+<Presentation xmlns="http://schemas.openxmlformats.org/presentationml/2006/main">
+  <Properties>
+    <Title>${config.title}</Title>
+    <Author>${selectedAudience?.name} Presentation</Author>
+    <Company>Microsoft Corporation</Company>
+    <Created>${new Date().toISOString()}</Created>
+  </Properties>
+  <MasterSlides>
+    <MasterSlide>
+      <Background color="#FFFFFF"/>
+      <TitleStyle font="Segoe UI" size="36" color="#0078D4" bold="true"/>
+      <BodyStyle font="Segoe UI" size="24" color="#333333"/>
+      <AccentColor>#0078D4</AccentColor>
+    </MasterSlide>
+  </MasterSlides>
+  <Slides>
+    ${template?.slides.map((slideTitle, index) => `
+    <Slide number="${index + 1}">
+      <Title>${slideTitle}</Title>
+      <Layout>${index === 0 ? 'Title' : index < 3 ? 'TitleAndContent' : 'ContentWithChart'}</Layout>
+      <Transition>Fade</Transition>
+      <Animation>FadeInOnClick</Animation>
+    </Slide>`).join('')}
+  </Slides>
+</Presentation>`;
 
-      toast.success('PowerPoint presentation outline generated and downloaded!');
+      // Create multiple file formats
+      const files = [
+        {
+          name: `${config.title.replace(/\s+/g, '_')}_PowerPoint_Template.xml`,
+          content: pptxTemplate,
+          type: 'application/xml'
+        },
+        {
+          name: `${config.title.replace(/\s+/g, '_')}_Presentation_Guide.md`,
+          content: `# ${config.title}\n## PowerPoint Implementation Guide\n\n${implementationGuide}\n\n## Presentation Outline\n\n${presentationOutline}`,
+          type: 'text/markdown'
+        },
+        {
+          name: `${config.title.replace(/\s+/g, '_')}_Complete_Package.json`,
+          content: JSON.stringify(presentationData, null, 2),
+          type: 'application/json'
+        },
+        {
+          name: `${config.title.replace(/\s+/g, '_')}_Executive_Summary.txt`,
+          content: `${config.title}\n\nGenerated: ${new Date().toLocaleDateString()}\nAudience: ${selectedAudience?.name}\nDuration: ${config.duration} minutes\n\nPortfolio Summary:\n- Total Investment: $${portfolio.totalInvestment.toLocaleString()}\n- Total NPV: $${portfolio.totalNPV.toLocaleString()}\n- Average ROI: ${portfolio.avgROI.toFixed(1)}%\n- Solutions: ${safeROIResults.length}\n\nReady for PowerPoint import and customization.`,
+          type: 'text/plain'
+        }
+      ];
+
+      // Download all files
+      files.forEach(file => {
+        const blob = new Blob([file.content], { type: file.type });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = file.name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      });
+
+      toast.success(`PowerPoint presentation package with ${files.length} files generated and downloaded!`);
       
     } catch (error) {
       console.error('Error generating presentation:', error);
