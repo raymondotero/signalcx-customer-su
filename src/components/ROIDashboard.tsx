@@ -37,12 +37,7 @@ export function ROIDashboard() {
   const safeROIResults = roiResults || [];
 
   const categories = [
-    { id: 'all', name: 'All Solutions', icon: ChartBar, color: 'bg-gray-100 text-gray-800' },
-    { id: 'ai', name: 'AI/ML', icon: Brain, color: 'bg-purple-100 text-purple-800' },
-    { id: 'productivity', name: 'Productivity', icon: Lightning, color: 'bg-yellow-100 text-yellow-800' },
-    { id: 'security', name: 'Security', icon: Shield, color: 'bg-red-100 text-red-800' },
-    { id: 'infrastructure', name: 'Infrastructure', icon: Database, color: 'bg-blue-100 text-blue-800' },
-    { id: 'crm', name: 'CRM', icon: Users, color: 'bg-green-100 text-green-800' }
+    { id: 'all', name: 'All Solutions', icon: ChartBar, color: 'bg-gray-100 text-gray-800' }
   ];
 
   const formatCurrency = (value: number) => {
@@ -188,23 +183,23 @@ export function ROIDashboard() {
             </Card>
           )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Solution Categories */}
-            <Card className="lg:col-span-2 xl:col-span-3">
+            <Card>
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg">Solution Categories</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+                <div className="flex justify-center">
                   {categories.map((category) => {
                     const Icon = category.icon;
                     return (
-                      <div key={category.id} className="p-5 border rounded-lg hover:shadow-md transition-shadow min-w-0">
+                      <div key={category.id} className="p-6 border rounded-lg hover:shadow-md transition-shadow min-w-0 max-w-xs">
                         <div className="flex flex-col items-center gap-4 text-center">
-                          <div className={`p-3 rounded-lg ${category.color}`}>
-                            <Icon className="w-6 h-6" />
+                          <div className={`p-4 rounded-lg ${category.color}`}>
+                            <Icon className="w-8 h-8" />
                           </div>
-                          <span className="text-sm font-medium leading-tight">{category.name}</span>
+                          <span className="text-base font-medium leading-tight">{category.name}</span>
                           <ROICalculator onCalculationComplete={handleROICalculation} />
                         </div>
                       </div>
@@ -215,7 +210,7 @@ export function ROIDashboard() {
             </Card>
 
             {/* Recent Calculations */}
-            <Card className="lg:col-span-1 xl:col-span-1">
+            <Card>
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg mb-2">Recent ROI Calculations</CardTitle>
                 {safeROIResults.length > 0 && (
@@ -265,7 +260,7 @@ export function ROIDashboard() {
                   <div className="text-center py-6">
                     <Calculator className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
                     <p className="text-muted-foreground text-sm">
-                      No ROI calculations yet. Use the calculators above to get started.
+                      No ROI calculations yet. Use the calculator to get started.
                     </p>
                   </div>
                 )}
