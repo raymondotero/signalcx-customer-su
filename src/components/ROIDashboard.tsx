@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { 
   Calculator, 
@@ -268,173 +266,57 @@ export function ROIDashboard() {
             </Card>
           </div>
 
-          {/* Quick ROI Templates */}
+          {/* Quick ROI Templates - Most Common Use Cases */}
           <Card>
             <CardHeader className="pb-4">
-              <CardTitle className="text-lg">Quick ROI Templates</CardTitle>
+              <CardTitle className="text-lg">Quick ROI Templates - Most Common Use Cases</CardTitle>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="common" className="w-full">
-                <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 h-auto">
-                  <TabsTrigger value="common" className="text-sm py-3">Common Use Cases</TabsTrigger>
-                  <TabsTrigger value="industry" className="text-sm py-3">Industry Specific</TabsTrigger>
-                  <TabsTrigger value="competitive" className="text-sm py-3">Competitive Response</TabsTrigger>
-                  <TabsTrigger value="migration" className="text-sm py-3">Migration/Modernization</TabsTrigger>
-                </TabsList>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="p-6 border rounded-lg min-w-0 space-y-4">
+                  <h4 className="font-medium text-base mb-3">Microsoft 365 Copilot</h4>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    AI-powered productivity enhancement for knowledge workers
+                  </p>
+                  <div className="flex flex-col gap-3">
+                    <span className="text-sm text-green-600 font-medium">Typical ROI: 150-300%</span>
+                    <ROICalculator onCalculationComplete={handleROICalculation} />
+                  </div>
+                </div>
                 
-                <TabsContent value="common" className="space-y-6 mt-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
-                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
-                      <h4 className="font-medium text-base mb-3">Productivity Enhancement</h4>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        Microsoft 365 Copilot for knowledge workers
-                      </p>
-                      <div className="flex flex-col gap-3">
-                        <span className="text-sm text-green-600 font-medium">Typical ROI: 150-300%</span>
-                        <ROICalculator onCalculationComplete={handleROICalculation} />
-                      </div>
-                    </div>
-                    
-                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
-                      <h4 className="font-medium text-base mb-3">Cloud Cost Optimization</h4>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        Azure infrastructure rightsizing and automation
-                      </p>
-                      <div className="flex flex-col gap-3">
-                        <span className="text-sm text-green-600 font-medium">Typical ROI: 200-400%</span>
-                        <ROICalculator onCalculationComplete={handleROICalculation} />
-                      </div>
-                    </div>
+                <div className="p-6 border rounded-lg min-w-0 space-y-4">
+                  <h4 className="font-medium text-base mb-3">Azure Cloud Migration</h4>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Infrastructure modernization and cost optimization
+                  </p>
+                  <div className="flex flex-col gap-3">
+                    <span className="text-sm text-green-600 font-medium">Typical ROI: 200-400%</span>
+                    <ROICalculator onCalculationComplete={handleROICalculation} />
                   </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
-                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
-                      <h4 className="font-medium text-base mb-3">Security Modernization</h4>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        Zero Trust security implementation
-                      </p>
-                      <div className="flex flex-col gap-3">
-                        <span className="text-sm text-green-600 font-medium">Typical ROI: 100-250%</span>
-                        <ROICalculator onCalculationComplete={handleROICalculation} />
-                      </div>
-                    </div>
-                    
-                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
-                      <h4 className="font-medium text-base mb-3">Application Development</h4>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        Accelerate development with AI-powered coding assistants
-                      </p>
-                      <div className="flex flex-col gap-3">
-                        <span className="text-sm text-green-600 font-medium">Typical ROI: 180-350%</span>
-                        <ROICalculator onCalculationComplete={handleROICalculation} />
-                      </div>
-                    </div>
-                  </div>
-                </TabsContent>
+                </div>
                 
-                <TabsContent value="industry" className="space-y-6 mt-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
-                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
-                      <h4 className="font-medium text-base mb-3">Financial Services</h4>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        Compliance automation and risk management
-                      </p>
-                      <div className="flex flex-col gap-3">
-                        <span className="text-sm text-green-600 font-medium">Typical ROI: 120-280%</span>
-                        <ROICalculator onCalculationComplete={handleROICalculation} />
-                      </div>
-                    </div>
-                    
-                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
-                      <h4 className="font-medium text-base mb-3">Healthcare</h4>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        Patient data analytics and care coordination
-                      </p>
-                      <div className="flex flex-col gap-3">
-                        <span className="text-sm text-green-600 font-medium">Typical ROI: 150-300%</span>
-                        <ROICalculator onCalculationComplete={handleROICalculation} />
-                      </div>
-                    </div>
+                <div className="p-6 border rounded-lg min-w-0 space-y-4">
+                  <h4 className="font-medium text-base mb-3">Zero Trust Security</h4>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Modern security architecture and compliance
+                  </p>
+                  <div className="flex flex-col gap-3">
+                    <span className="text-sm text-green-600 font-medium">Typical ROI: 100-250%</span>
+                    <ROICalculator onCalculationComplete={handleROICalculation} />
                   </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
-                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
-                      <h4 className="font-medium text-base mb-3">Manufacturing</h4>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        IoT and predictive maintenance solutions
-                      </p>
-                      <div className="flex flex-col gap-3">
-                        <span className="text-sm text-green-600 font-medium">Typical ROI: 200-400%</span>
-                        <ROICalculator onCalculationComplete={handleROICalculation} />
-                      </div>
-                    </div>
-                    
-                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
-                      <h4 className="font-medium text-base mb-3">Retail</h4>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        Customer analytics and personalization
-                      </p>
-                      <div className="flex flex-col gap-3">
-                        <span className="text-sm text-green-600 font-medium">Typical ROI: 160-320%</span>
-                        <ROICalculator onCalculationComplete={handleROICalculation} />
-                      </div>
-                    </div>
-                  </div>
-                </TabsContent>
+                </div>
                 
-                <TabsContent value="competitive" className="space-y-6 mt-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
-                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
-                      <h4 className="font-medium text-base mb-3">Competitive Displacement</h4>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        ROI calculations for replacing competitor solutions with Microsoft technologies.
-                        Focus on migration costs, feature parity, and total cost of ownership improvements.
-                      </p>
-                      <div className="flex flex-col gap-3">
-                        <span className="text-sm text-orange-600 font-medium">Requires Detailed Analysis</span>
-                        <ROICalculator onCalculationComplete={handleROICalculation} />
-                      </div>
-                    </div>
-                    
-                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
-                      <h4 className="font-medium text-base mb-3">Market Response</h4>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        Quick response to competitor pricing and feature announcements
-                      </p>
-                      <div className="flex flex-col gap-3">
-                        <span className="text-sm text-blue-600 font-medium">Strategic Advantage</span>
-                        <ROICalculator onCalculationComplete={handleROICalculation} />
-                      </div>
-                    </div>
+                <div className="p-6 border rounded-lg min-w-0 space-y-4">
+                  <h4 className="font-medium text-base mb-3">GitHub Copilot</h4>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    AI-powered development acceleration and code quality
+                  </p>
+                  <div className="flex flex-col gap-3">
+                    <span className="text-sm text-green-600 font-medium">Typical ROI: 180-350%</span>
+                    <ROICalculator onCalculationComplete={handleROICalculation} />
                   </div>
-                </TabsContent>
-                
-                <TabsContent value="migration" className="space-y-6 mt-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
-                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
-                      <h4 className="font-medium text-base mb-3">Legacy System Migration</h4>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        Modernizing on-premises applications to Azure
-                      </p>
-                      <div className="flex flex-col gap-3">
-                        <span className="text-sm text-green-600 font-medium">Typical ROI: 140-280%</span>
-                        <ROICalculator onCalculationComplete={handleROICalculation} />
-                      </div>
-                    </div>
-                    
-                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
-                      <h4 className="font-medium text-base mb-3">Data Platform Modernization</h4>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        Moving to Azure Synapse and modern analytics
-                      </p>
-                      <div className="flex flex-col gap-3">
-                        <span className="text-sm text-green-600 font-medium">Typical ROI: 180-360%</span>
-                        <ROICalculator onCalculationComplete={handleROICalculation} />
-                      </div>
-                    </div>
-                  </div>
-                </TabsContent>
-              </Tabs>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
