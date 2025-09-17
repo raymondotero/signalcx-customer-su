@@ -325,12 +325,12 @@ export function ROIDashboard() {
                     </div>
                     
                     <div className="p-6 border rounded-lg min-w-0 space-y-4">
-                      <h4 className="font-medium text-base mb-3">Process Automation</h4>
+                      <h4 className="font-medium text-base mb-3">Application Development</h4>
                       <p className="text-sm text-muted-foreground mb-4">
                         Power Platform low-code development
                       </p>
                       <div className="flex flex-col gap-3">
-                        <span className="text-sm text-green-600 font-medium">Typical ROI: 250-500%</span>
+                        <span className="text-sm text-green-600 font-medium">Typical ROI: 180-350%</span>
                         <ROICalculator onCalculationComplete={handleROICalculation} />
                       </div>
                     </div>
@@ -344,7 +344,10 @@ export function ROIDashboard() {
                       <p className="text-sm text-muted-foreground mb-4">
                         Compliance automation and risk management
                       </p>
-                      <ROICalculator onCalculationComplete={handleROICalculation} />
+                      <div className="flex flex-col gap-3">
+                        <span className="text-sm text-green-600 font-medium">Typical ROI: 120-280%</span>
+                        <ROICalculator onCalculationComplete={handleROICalculation} />
+                      </div>
                     </div>
                     
                     <div className="p-6 border rounded-lg min-w-0 space-y-4">
@@ -352,7 +355,10 @@ export function ROIDashboard() {
                       <p className="text-sm text-muted-foreground mb-4">
                         Patient data analytics and care coordination
                       </p>
-                      <ROICalculator onCalculationComplete={handleROICalculation} />
+                      <div className="flex flex-col gap-3">
+                        <span className="text-sm text-green-600 font-medium">Typical ROI: 150-300%</span>
+                        <ROICalculator onCalculationComplete={handleROICalculation} />
+                      </div>
                     </div>
                   </div>
                   
@@ -362,7 +368,10 @@ export function ROIDashboard() {
                       <p className="text-sm text-muted-foreground mb-4">
                         IoT and predictive maintenance solutions
                       </p>
-                      <ROICalculator onCalculationComplete={handleROICalculation} />
+                      <div className="flex flex-col gap-3">
+                        <span className="text-sm text-green-600 font-medium">Typical ROI: 200-400%</span>
+                        <ROICalculator onCalculationComplete={handleROICalculation} />
+                      </div>
                     </div>
                     
                     <div className="p-6 border rounded-lg min-w-0 space-y-4">
@@ -370,19 +379,38 @@ export function ROIDashboard() {
                       <p className="text-sm text-muted-foreground mb-4">
                         Customer analytics and personalization
                       </p>
-                      <ROICalculator onCalculationComplete={handleROICalculation} />
+                      <div className="flex flex-col gap-3">
+                        <span className="text-sm text-green-600 font-medium">Typical ROI: 160-320%</span>
+                        <ROICalculator onCalculationComplete={handleROICalculation} />
+                      </div>
                     </div>
                   </div>
                 </TabsContent>
                 
                 <TabsContent value="competitive" className="space-y-6 mt-6">
-                  <div className="p-8 bg-orange-50 rounded-lg border border-orange-200">
-                    <h4 className="font-medium text-base mb-4 text-orange-800">Competitive Displacement</h4>
-                    <p className="text-sm text-orange-700 mb-6">
-                      ROI calculations for replacing competitor solutions with Microsoft technologies.
-                      Focus on migration costs, feature parity, and total cost of ownership improvements.
-                    </p>
-                    <ROICalculator onCalculationComplete={handleROICalculation} />
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
+                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
+                      <h4 className="font-medium text-base mb-3">Competitive Displacement</h4>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        ROI calculations for replacing competitor solutions with Microsoft technologies.
+                        Focus on migration costs, feature parity, and total cost of ownership improvements.
+                      </p>
+                      <div className="flex flex-col gap-3">
+                        <span className="text-sm text-orange-600 font-medium">Requires Detailed Analysis</span>
+                        <ROICalculator onCalculationComplete={handleROICalculation} />
+                      </div>
+                    </div>
+                    
+                    <div className="p-6 border rounded-lg min-w-0 space-y-4">
+                      <h4 className="font-medium text-base mb-3">Market Response</h4>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Quick response to competitor pricing and feature announcements
+                      </p>
+                      <div className="flex flex-col gap-3">
+                        <span className="text-sm text-blue-600 font-medium">Strategic Advantage</span>
+                        <ROICalculator onCalculationComplete={handleROICalculation} />
+                      </div>
+                    </div>
                   </div>
                 </TabsContent>
                 
@@ -393,7 +421,10 @@ export function ROIDashboard() {
                       <p className="text-sm text-muted-foreground mb-4">
                         Modernizing on-premises applications to Azure
                       </p>
-                      <ROICalculator onCalculationComplete={handleROICalculation} />
+                      <div className="flex flex-col gap-3">
+                        <span className="text-sm text-green-600 font-medium">Typical ROI: 140-280%</span>
+                        <ROICalculator onCalculationComplete={handleROICalculation} />
+                      </div>
                     </div>
                     
                     <div className="p-6 border rounded-lg min-w-0 space-y-4">
@@ -401,7 +432,10 @@ export function ROIDashboard() {
                       <p className="text-sm text-muted-foreground mb-4">
                         Moving to Azure Synapse and modern analytics
                       </p>
-                      <ROICalculator onCalculationComplete={handleROICalculation} />
+                      <div className="flex flex-col gap-3">
+                        <span className="text-sm text-green-600 font-medium">Typical ROI: 180-360%</span>
+                        <ROICalculator onCalculationComplete={handleROICalculation} />
+                      </div>
                     </div>
                   </div>
                 </TabsContent>
@@ -409,7 +443,7 @@ export function ROIDashboard() {
             </CardContent>
           </Card>
 
-          {/* Tips and Best Practices */}
+          {/* Best Practices */}
           <Card>
             <CardHeader className="pb-4">
               <CardTitle className="text-lg">ROI Calculation Best Practices</CardTitle>
@@ -420,25 +454,14 @@ export function ROIDashboard() {
                   <div>
                     <h4 className="font-medium text-base mb-4">📊 Measurement Guidelines</h4>
                     <ul className="text-sm space-y-2 text-muted-foreground">
-                      <li>• Use conservative estimates for savings calculations</li>
                       <li>• Include implementation and training costs</li>
                       <li>• Factor in productivity ramp-up time</li>
-                      <li>• Consider opportunity costs of not modernizing</li>
-                      <li>• Include risk mitigation value</li>
+                      <li>• Account for ongoing support and maintenance</li>
+                      <li>• Consider compliance and security benefits</li>
+                      <li>• Track actual vs. projected outcomes</li>
                     </ul>
                   </div>
-                  <div>
-                    <h4 className="font-medium text-base mb-4">💡 Presentation Tips</h4>
-                    <ul className="text-sm space-y-2 text-muted-foreground">
-                      <li>• Lead with business outcomes, not technology features</li>
-                      <li>• Use industry benchmarks and peer comparisons</li>
-                      <li>• Show multiple scenarios (conservative, likely, optimistic)</li>
-                      <li>• Include qualitative benefits alongside quantitative ROI</li>
-                      <li>• Provide clear implementation timeline and milestones</li>
-                    </ul>
-                  </div>
-                </div>
-                <div className="space-y-6">
+                  
                   <div>
                     <h4 className="font-medium text-base mb-4">🎯 Success Factors</h4>
                     <ul className="text-sm space-y-2 text-muted-foreground">
@@ -449,6 +472,9 @@ export function ROIDashboard() {
                       <li>• Consider both hard and soft benefits</li>
                     </ul>
                   </div>
+                </div>
+                
+                <div className="space-y-6">
                   <div>
                     <h4 className="font-medium text-base mb-4">⚠️ Common Pitfalls</h4>
                     <ul className="text-sm space-y-2 text-muted-foreground">
@@ -457,6 +483,17 @@ export function ROIDashboard() {
                       <li>• Ignoring licensing complexity</li>
                       <li>• Not accounting for user adoption curves</li>
                       <li>• Failing to track post-implementation metrics</li>
+                    </ul>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium text-base mb-4">💡 Presentation Tips</h4>
+                    <ul className="text-sm space-y-2 text-muted-foreground">
+                      <li>• Lead with business outcomes, not technology features</li>
+                      <li>• Use industry benchmarks and peer comparisons</li>
+                      <li>• Show multiple scenarios (conservative, likely, optimistic)</li>
+                      <li>• Include qualitative benefits alongside quantitative ROI</li>
+                      <li>• Provide clear implementation timeline and milestones</li>
                     </ul>
                   </div>
                 </div>
