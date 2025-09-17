@@ -323,7 +323,7 @@ Create a comprehensive PowerPoint implementation guide for the ROI presentation 
 Focus on creating a presentation that executives can use directly in PowerPoint with specific formatting instructions.
 `;
 
-      const implementationGuide = await (window as any).spark.llm(powerPointGuide);
+      const implementationGuideResult = await (window as any).spark.llm(powerPointGuide);
 
       // Create the downloadable presentation content
       const presentationData = {
@@ -334,7 +334,7 @@ Focus on creating a presentation that executives can use directly in PowerPoint 
         portfolio,
         roiResults: safeROIResults,
         outline: presentationOutline,
-        implementationGuide,
+        implementationGuide: implementationGuideResult,
         config,
         powerPointInstructions: {
           masterSlide: {

@@ -16,8 +16,6 @@ import {
   Lightning
 } from '@phosphor-icons/react';
 import { ROICalculator } from './ROICalculator';
-import { PowerPointExporter } from './PowerPointExporter';
-import { AdvancedPowerPointGenerator } from './AdvancedPowerPointGenerator';
 import { PowerPointGenerator } from './PowerPointGenerator';
 import { useKV } from '@github/spark/hooks';
 import { toast } from 'sonner';
@@ -86,7 +84,7 @@ export function ROIDashboard() {
           ROI Dashboard
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[98vw] w-[98vw] max-h-[96vh] overflow-y-auto p-8">
+      <DialogContent className="max-w-[95vw] w-[95vw] max-h-[90vh] overflow-y-auto p-6">
         <DialogHeader className="pb-6">
           <DialogTitle className="flex items-center gap-3 text-xl">
             <Calculator className="w-6 h-6" />
@@ -94,7 +92,7 @@ export function ROIDashboard() {
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-8">
+        <div className="space-y-6">
           {/* Portfolio Summary */}
           {safeROIResults.length > 0 && (
             <Card>
@@ -104,78 +102,38 @@ export function ROIDashboard() {
                     <TrendUp className="w-5 h-5" />
                     Portfolio Summary
                   </div>
-                  <div className="flex gap-3">
-                    <PowerPointGenerator />
-                    <PowerPointExporter />
-                    <AdvancedPowerPointGenerator />
-                  </div>
+                  <PowerPointGenerator />
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200 min-w-0">
-                    <div className="flex items-center gap-2 mb-3">
-                      <CurrencyDollar className="w-5 h-5 text-blue-600 flex-shrink-0" />
-                      <span className="text-sm font-medium text-blue-800">Total Investment</span>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="p-3 bg-blue-50 rounded-lg border border-blue-200 min-w-0">
+                    <div className="flex items-center gap-2 mb-2">
+                      <CurrencyDollar className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                      <span className="text-xs font-medium text-blue-800">Total Investment</span>
                     </div>
-                    <p className="text-xl font-bold text-blue-800">
+                    <p className="text-lg font-bold text-blue-800">
                       {formatCurrency(portfolio.investment)}
                     </p>
                   </div>
                   
-                  <div className="p-4 bg-green-50 rounded-lg border border-green-200 min-w-0">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Target className="w-5 h-5 text-green-600 flex-shrink-0" />
-                      <span className="text-sm font-medium text-green-800">Portfolio NPV</span>
+                  <div className="p-3 bg-green-50 rounded-lg border border-green-200 min-w-0">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Target className="w-4 h-4 text-green-600 flex-shrink-0" />
+                      <span className="text-xs font-medium text-green-800">Portfolio NPV</span>
                     </div>
-                    <p className="text-xl font-bold text-green-800">
+                    <p className="text-lg font-bold text-green-800">
                       {formatCurrency(portfolio.npv)}
                     </p>
                   </div>
                   
-                  <div className="p-4 bg-purple-50 rounded-lg border border-purple-200 min-w-0">
-                    <div className="flex items-center gap-2 mb-3">
-                      <ChartBar className="w-5 h-5 text-purple-600 flex-shrink-0" />
-                      <span className="text-sm font-medium text-purple-800">Portfolio ROI</span>
+                  <div className="p-3 bg-purple-50 rounded-lg border border-purple-200 min-w-0">
+                    <div className="flex items-center gap-2 mb-2">
+                      <ChartBar className="w-4 h-4 text-purple-600 flex-shrink-0" />
+                      <span className="text-xs font-medium text-purple-800">Portfolio ROI</span>
                     </div>
-                    <p className="text-xl font-bold text-purple-800">
+                    <p className="text-lg font-bold text-purple-800">
                       {formatPercentage(portfolio.roi)}
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="p-4 bg-amber-50 rounded-lg border border-amber-200 min-w-0">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Lightning className="w-5 h-5 text-amber-600 flex-shrink-0" />
-                      <span className="text-sm font-medium text-amber-800">Calculations</span>
-                    </div>
-                    <p className="text-xl font-bold text-amber-800">
-                      {safeROIResults.length}
-                    </p>
-                  </div>
-                  
-                  <div className="p-4 bg-indigo-50 rounded-lg border border-indigo-200 min-w-0">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Target className="w-5 h-5 text-indigo-600 flex-shrink-0" />
-                      <span className="text-sm font-medium text-indigo-800">Avg Payback</span>
-                    </div>
-                    <p className="text-xl font-bold text-indigo-800">
-                      {safeROIResults.length > 0 ? 
-                        (safeROIResults.reduce((sum, r) => sum + (r.metrics.payback || 0), 0) / safeROIResults.length).toFixed(1) : '0'
-                      }mo
-                    </p>
-                  </div>
-                  
-                  <div className="p-4 bg-teal-50 rounded-lg border border-teal-200 min-w-0">
-                    <div className="flex items-center gap-2 mb-3">
-                      <TrendUp className="w-5 h-5 text-teal-600 flex-shrink-0" />
-                      <span className="text-sm font-medium text-teal-800">Best ROI</span>
-                    </div>
-                    <p className="text-xl font-bold text-teal-800">
-                      {safeROIResults.length > 0 ? 
-                        formatPercentage(Math.max(...safeROIResults.map(r => r.metrics.roi || 0))) : '0%'
-                      }
                     </p>
                   </div>
                 </div>
@@ -183,7 +141,7 @@ export function ROIDashboard() {
             </Card>
           )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Solution Categories */}
             <Card>
               <CardHeader className="pb-4">
@@ -194,12 +152,12 @@ export function ROIDashboard() {
                   {categories.map((category) => {
                     const Icon = category.icon;
                     return (
-                      <div key={category.id} className="p-6 border rounded-lg hover:shadow-md transition-shadow min-w-0 max-w-xs">
-                        <div className="flex flex-col items-center gap-4 text-center">
-                          <div className={`p-4 rounded-lg ${category.color}`}>
-                            <Icon className="w-8 h-8" />
+                      <div key={category.id} className="p-4 border rounded-lg hover:shadow-md transition-shadow min-w-0 max-w-xs">
+                        <div className="flex flex-col items-center gap-3 text-center">
+                          <div className={`p-3 rounded-lg ${category.color}`}>
+                            <Icon className="w-6 h-6" />
                           </div>
-                          <span className="text-base font-medium leading-tight">{category.name}</span>
+                          <span className="text-sm font-medium leading-tight">{category.name}</span>
                           <ROICalculator onCalculationComplete={handleROICalculation} />
                         </div>
                       </div>
@@ -213,12 +171,6 @@ export function ROIDashboard() {
             <Card>
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg mb-2">Recent ROI Calculations</CardTitle>
-                {safeROIResults.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    <PowerPointGenerator />
-                    <PowerPointExporter />
-                  </div>
-                )}
               </CardHeader>
               <CardContent>
                 {safeROIResults.length > 0 ? (
@@ -274,47 +226,25 @@ export function ROIDashboard() {
               <CardTitle className="text-lg">Quick ROI Templates - Most Common Use Cases</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="p-6 border rounded-lg min-w-0 space-y-4">
-                  <h4 className="font-medium text-base mb-3">Microsoft 365 Copilot</h4>
-                  <p className="text-sm text-muted-foreground mb-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 border rounded-lg min-w-0 space-y-3">
+                  <h4 className="font-medium text-sm">Microsoft 365 Copilot</h4>
+                  <p className="text-xs text-muted-foreground">
                     AI-powered productivity enhancement for knowledge workers
                   </p>
-                  <div className="flex flex-col gap-3">
-                    <span className="text-sm text-green-600 font-medium">Typical ROI: 150-300%</span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-green-600 font-medium">Typical ROI: 150-300%</span>
                     <ROICalculator onCalculationComplete={handleROICalculation} />
                   </div>
                 </div>
                 
-                <div className="p-6 border rounded-lg min-w-0 space-y-4">
-                  <h4 className="font-medium text-base mb-3">Azure Cloud Migration</h4>
-                  <p className="text-sm text-muted-foreground mb-4">
+                <div className="p-4 border rounded-lg min-w-0 space-y-3">
+                  <h4 className="font-medium text-sm">Azure Cloud Migration</h4>
+                  <p className="text-xs text-muted-foreground">
                     Infrastructure modernization and cost optimization
                   </p>
-                  <div className="flex flex-col gap-3">
-                    <span className="text-sm text-green-600 font-medium">Typical ROI: 200-400%</span>
-                    <ROICalculator onCalculationComplete={handleROICalculation} />
-                  </div>
-                </div>
-                
-                <div className="p-6 border rounded-lg min-w-0 space-y-4">
-                  <h4 className="font-medium text-base mb-3">Zero Trust Security</h4>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Modern security architecture and compliance
-                  </p>
-                  <div className="flex flex-col gap-3">
-                    <span className="text-sm text-green-600 font-medium">Typical ROI: 100-250%</span>
-                    <ROICalculator onCalculationComplete={handleROICalculation} />
-                  </div>
-                </div>
-                
-                <div className="p-6 border rounded-lg min-w-0 space-y-4">
-                  <h4 className="font-medium text-base mb-3">GitHub Copilot</h4>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    AI-powered development acceleration and code quality
-                  </p>
-                  <div className="flex flex-col gap-3">
-                    <span className="text-sm text-green-600 font-medium">Typical ROI: 180-350%</span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-green-600 font-medium">Typical ROI: 200-400%</span>
                     <ROICalculator onCalculationComplete={handleROICalculation} />
                   </div>
                 </div>
@@ -328,51 +258,47 @@ export function ROIDashboard() {
               <CardTitle className="text-lg">ROI Calculation Best Practices</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-8">
-                <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
                   <div>
-                    <h4 className="font-medium text-base mb-4">📊 Measurement Guidelines</h4>
-                    <ul className="text-sm space-y-2 text-muted-foreground">
+                    <h4 className="font-medium text-sm mb-2">📊 Measurement Guidelines</h4>
+                    <ul className="text-xs space-y-1 text-muted-foreground">
                       <li>• Include implementation and training costs</li>
                       <li>• Factor in productivity ramp-up time</li>
                       <li>• Account for ongoing support and maintenance</li>
                       <li>• Consider compliance and security benefits</li>
-                      <li>• Track actual vs. projected outcomes</li>
                     </ul>
                   </div>
                   
                   <div>
-                    <h4 className="font-medium text-base mb-4">🎯 Success Factors</h4>
-                    <ul className="text-sm space-y-2 text-muted-foreground">
+                    <h4 className="font-medium text-sm mb-2">🎯 Success Factors</h4>
+                    <ul className="text-xs space-y-1 text-muted-foreground">
                       <li>• Align ROI metrics with business KPIs</li>
                       <li>• Engage stakeholders early in the process</li>
                       <li>• Document assumptions and methodology</li>
                       <li>• Plan for regular ROI validation and updates</li>
-                      <li>• Consider both hard and soft benefits</li>
                     </ul>
                   </div>
                 </div>
                 
-                <div className="space-y-6">
+                <div className="space-y-4">
                   <div>
-                    <h4 className="font-medium text-base mb-4">⚠️ Common Pitfalls</h4>
-                    <ul className="text-sm space-y-2 text-muted-foreground">
+                    <h4 className="font-medium text-sm mb-2">⚠️ Common Pitfalls</h4>
+                    <ul className="text-xs space-y-1 text-muted-foreground">
                       <li>• Overestimating productivity gains</li>
                       <li>• Underestimating change management costs</li>
                       <li>• Ignoring licensing complexity</li>
                       <li>• Not accounting for user adoption curves</li>
-                      <li>• Failing to track post-implementation metrics</li>
                     </ul>
                   </div>
                   
                   <div>
-                    <h4 className="font-medium text-base mb-4">💡 Presentation Tips</h4>
-                    <ul className="text-sm space-y-2 text-muted-foreground">
+                    <h4 className="font-medium text-sm mb-2">💡 Presentation Tips</h4>
+                    <ul className="text-xs space-y-1 text-muted-foreground">
                       <li>• Lead with business outcomes, not technology features</li>
                       <li>• Use industry benchmarks and peer comparisons</li>
                       <li>• Show multiple scenarios (conservative, likely, optimistic)</li>
                       <li>• Include qualitative benefits alongside quantitative ROI</li>
-                      <li>• Provide clear implementation timeline and milestones</li>
                     </ul>
                   </div>
                 </div>
