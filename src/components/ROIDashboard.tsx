@@ -142,40 +142,6 @@ export function ROIDashboard() {
                       {formatPercentage(portfolio.roi)}
                     </p>
                   </div>
-                  
-                  <div className="p-4 bg-amber-50 rounded-lg border border-amber-200 min-w-0">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Lightning className="w-5 h-5 text-amber-600 flex-shrink-0" />
-                      <span className="text-sm font-medium text-amber-800">Calculations</span>
-                    </div>
-                    <p className="text-2xl font-bold text-amber-800">
-                      {safeROIResults.length}
-                    </p>
-                  </div>
-                  
-                  <div className="p-4 bg-indigo-50 rounded-lg border border-indigo-200 min-w-0">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Target className="w-5 h-5 text-indigo-600 flex-shrink-0" />
-                      <span className="text-sm font-medium text-indigo-800">Avg Payback</span>
-                    </div>
-                    <p className="text-2xl font-bold text-indigo-800">
-                      {safeROIResults.length > 0 ? 
-                        (safeROIResults.reduce((sum, r) => sum + (r.metrics.payback || 0), 0) / safeROIResults.length).toFixed(1) : '0'
-                      }mo
-                    </p>
-                  </div>
-                  
-                  <div className="p-4 bg-teal-50 rounded-lg border border-teal-200 min-w-0">
-                    <div className="flex items-center gap-2 mb-3">
-                      <TrendUp className="w-5 h-5 text-teal-600 flex-shrink-0" />
-                      <span className="text-sm font-medium text-teal-800">Best ROI</span>
-                    </div>
-                    <p className="text-2xl font-bold text-teal-800">
-                      {safeROIResults.length > 0 ? 
-                        formatPercentage(Math.max(...safeROIResults.map(r => r.metrics.roi || 0))) : '0%'
-                      }
-                    </p>
-                  </div>
                 </div>
                 
                 <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -308,7 +274,7 @@ export function ROIDashboard() {
               <CardTitle className="text-lg">Quick ROI Templates - Most Common Use Cases</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="p-6 border rounded-lg min-w-0 space-y-4">
                   <h4 className="font-medium text-base mb-3">Microsoft 365 Copilot</h4>
                   <p className="text-sm text-muted-foreground mb-4">
@@ -327,6 +293,28 @@ export function ROIDashboard() {
                   </p>
                   <div className="flex flex-col gap-3">
                     <span className="text-sm text-green-600 font-medium">Typical ROI: 200-400%</span>
+                    <ROICalculator onCalculationComplete={handleROICalculation} />
+                  </div>
+                </div>
+                
+                <div className="p-6 border rounded-lg min-w-0 space-y-4">
+                  <h4 className="font-medium text-base mb-3">Zero Trust Security</h4>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Modern security architecture and compliance
+                  </p>
+                  <div className="flex flex-col gap-3">
+                    <span className="text-sm text-green-600 font-medium">Typical ROI: 100-250%</span>
+                    <ROICalculator onCalculationComplete={handleROICalculation} />
+                  </div>
+                </div>
+                
+                <div className="p-6 border rounded-lg min-w-0 space-y-4">
+                  <h4 className="font-medium text-base mb-3">GitHub Copilot</h4>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    AI-powered development acceleration and code quality
+                  </p>
+                  <div className="flex flex-col gap-3">
+                    <span className="text-sm text-green-600 font-medium">Typical ROI: 180-350%</span>
                     <ROICalculator onCalculationComplete={handleROICalculation} />
                   </div>
                 </div>
