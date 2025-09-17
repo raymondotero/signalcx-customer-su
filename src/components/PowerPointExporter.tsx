@@ -178,7 +178,12 @@ export function PowerPointExporter() {
       const template = presentationTemplates.find(t => t.id === selectedTemplate);
 
       // Generate presentation content using AI
-      const prompt = (window as any).spark.llmPrompt`
+      let presentationOutline = '';
+      let implementationGuide = '';
+      
+      try {
+        if ((window as any).spark && (window as any).spark.llm) {
+          const prompt = (window as any).spark.llmPrompt`
 Create a professional PowerPoint presentation outline for Microsoft Solutions ROI analysis with the following specifications:
 
 PRESENTATION DETAILS:
@@ -220,10 +225,10 @@ Please provide a detailed slide-by-slide outline with:
 Format as a comprehensive executive presentation that demonstrates the business value and ROI of Microsoft solutions.
 `;
 
-      const presentationOutline = await (window as any).spark.llm(prompt);
+          presentationOutline = await (window as any).spark.llm(prompt);
 
-      // Generate PowerPoint-specific content
-      const powerPointGuide = (window as any).spark.llmPrompt`
+          // Generate PowerPoint-specific content
+          const powerPointGuide = (window as any).spark.llmPrompt`
 Create a comprehensive PowerPoint implementation guide for the ROI presentation including:
 
 1. Slide-by-slide design recommendations
@@ -237,7 +242,71 @@ Create a comprehensive PowerPoint implementation guide for the ROI presentation 
 Focus on creating a presentation that executives can use directly in PowerPoint with specific formatting instructions.
 `;
 
-      const implementationGuide = await (window as any).spark.llm(powerPointGuide);
+          implementationGuide = await (window as any).spark.llm(powerPointGuide);
+        } else {
+          throw new Error('AI service not available');
+        }
+      } catch (error) {
+        console.warn('Using fallback content for presentation generation:', error);
+        presentationOutline = `EXECUTIVE PRESENTATION OUTLINE
+
+Slide 1: Title Slide
+- ${config.title}
+- Microsoft Solutions ROI Analysis
+- ${selectedAudience?.name} Presentation
+- ${new Date().toLocaleDateString()}
+
+Slide 2: Executive Summary
+- Portfolio investment of $${portfolio.totalInvestment.toLocaleString()} delivers $${portfolio.totalNPV.toLocaleString()} NPV
+- Average ROI of ${portfolio.avgROI.toFixed(1)}% with ${portfolio.avgPayback.toFixed(1)}-month payback
+- Strategic transformation across ${safeROIResults.length} Microsoft solution areas
+- Competitive advantage through digital modernization
+
+Slide 3: Portfolio Overview
+- Investment allocation and solution breakdown
+- Financial metrics dashboard
+- Risk-adjusted projections
+- Implementation timeline overview
+
+${safeROIResults.map((r, i) => `
+Slide ${4 + i}: ${r.solution} Business Case
+- ROI: ${r.metrics.roi.toFixed(1)}% with $${r.metrics.npv.toLocaleString()} NPV
+- Business challenges addressed
+- Key capabilities and benefits
+- Implementation approach and timeline
+`).join('')}
+
+Final Slide: Recommendations & Next Steps
+- Approval request for portfolio investment
+- Phased implementation approach
+- Success metrics and checkpoints
+- Executive support requirements`;
+
+        implementationGuide = `POWERPOINT IMPLEMENTATION GUIDE
+
+Design Specifications:
+- Use Microsoft corporate template with blue/white theme
+- Segoe UI font family for consistency
+- Professional charts and data visualizations
+- Executive-friendly layout with clear hierarchy
+
+Slide Design:
+- Title slides: Large header, minimal text
+- Content slides: 3-5 bullet points maximum
+- Chart slides: Focus on key metrics with callouts
+- Use Microsoft brand colors throughout
+
+Speaker Notes:
+- 2-3 minutes per slide timing
+- Focus on business outcomes over technical details
+- Prepare for ROI methodology questions
+- Emphasize competitive advantage and strategic value
+
+Presentation Flow:
+- Open with confident business case
+- Support with detailed financial analysis
+- Close with clear action items and timeline`;
+      }
 
       // Create the downloadable presentation content
       const presentationData = {
