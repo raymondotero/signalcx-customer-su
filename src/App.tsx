@@ -22,13 +22,13 @@ import { ROIDashboard } from '@/components/ROIDashboard';
 import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
 import { SystemHealthDialog } from '@/components/SystemHealthDialog';
 import { AIErrorBoundary } from '@/components/AIErrorBoundary';
-import { useAccounts, useNBAs, useAgentMemory, sampleAccounts } from '@/hooks/useData';
+import { useAccounts, useNBAs, useAgentMemory, useSignals, sampleAccounts } from '@/hooks/useData';
 import { useSignalProcessor } from '@/hooks/useSignalProcessor';
 import { useRealtimeNotifications } from '@/hooks/useRealtimeNotifications';
 import { useRealTimeAI, useAIMetrics } from '@/hooks/useRealTimeAI';
 import { useKV } from '@github/spark/hooks';
 import { SignalTarget } from '@/components/TargetSettingsDialog';
-import { Account, NextBestAction } from '@/types';
+import { Account, NextBestAction, MemoryEntry } from '@/types';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
 
@@ -37,7 +37,8 @@ function App() {
   const [selectedNBA, setSelectedNBA] = useState<NextBestAction | null>(null);
   const { accounts, resetAccounts } = useAccounts();
   const { setNBAs } = useNBAs();
-  const { clearMemory, addMemoryEntry } = useAgentMemory();
+  const { clearMemory, addMemoryEntry, setMemory } = useAgentMemory();
+  const { setSignals } = useSignals();
   const { isProcessing } = useSignalProcessor();
   const realTimeAI = useRealTimeAI();
   const aiMetrics = useAIMetrics();
@@ -115,6 +116,151 @@ function App() {
     toast.success('Demo data reset successfully - enhanced signals will regenerate');
   };
 
+  const handleRestoreFullData = async () => {
+    try {
+      // Import the enhanced signal generation functions
+      const { generateBusinessValueSignal, generateIndustrySpecificSignal } = await import('@/services/signalCatalog');
+      
+      // Reset accounts first
+      resetAccounts();
+      
+      // Generate enhanced signals for all accounts
+      const enhancedSignals: any[] = [];
+      sampleAccounts.forEach(account => {
+        // Generate 8-12 business value signals per account
+        const signalCount = Math.floor(Math.random() * 5) + 8;
+        
+        for (let i = 0; i < signalCount; i++) {
+          const signal = generateBusinessValueSignal(account.id, account.name);
+          enhancedSignals.push(signal);
+        }
+        
+        // Add 2-3 industry-specific signals
+        for (let i = 0; i < 3; i++) {
+          const industrySignal = generateIndustrySpecificSignal(account.id, account.name, account.industry);
+          enhancedSignals.push(industrySignal);
+        }
+      });
+      
+      // Set the signals using the hook
+      setSignals(enhancedSignals);
+      
+      // Generate sample NBA recommendations with correct type
+      const enhancedNBAs: NextBestAction[] = [
+        {
+          id: 'nba-1',
+          accountId: 'acc-1',
+          title: 'Azure AI Services Scale-Up Opportunity',
+          description: 'TechCorp has shown 300% increase in AI API usage. Recommend upgrading to Enterprise tier for cost optimization and advanced features.',
+          reasoning: 'Based on signal analysis showing 300% increase in AI API usage, current tier limitations, and development team growth of 40%. Strong technical champion support and budget alignment opportunity.',
+          priority: 'high',
+          estimatedImpact: '$2.8M ARR expansion',
+          effort: 'medium',
+          category: 'expansion',
+          generatedAt: new Date().toISOString(),
+          suggestedActions: [
+            'Schedule technical deep-dive with CTO and development leads',
+            'Present Enterprise tier ROI analysis and cost comparison',
+            'Propose pilot program for advanced AI features in Q1',
+            'Align with current Azure credits and commitment discussions'
+          ]
+        },
+        {
+          id: 'nba-2',
+          accountId: 'acc-2',
+          title: 'Manufacturing IoT Analytics Expansion',
+          description: 'Global Manufacturing shows strong IoT signal patterns indicating readiness for predictive maintenance platform expansion.',
+          reasoning: 'IoT sensor data quality scores improved 45%, maintenance costs increased 15% YoY, and COO champion actively supports digital transformation initiatives.',
+          priority: 'high',
+          estimatedImpact: '$4.2M ARR expansion',
+          effort: 'high',
+          category: 'expansion',
+          generatedAt: new Date().toISOString(),
+          suggestedActions: [
+            'Present predictive maintenance ROI study from similar manufacturers',
+            'Schedule plant visits with operations teams',
+            'Demonstrate Azure Digital Twins for manufacturing optimization',
+            'Align with their sustainability and efficiency initiatives'
+          ]
+        },
+        {
+          id: 'nba-3',
+          accountId: 'acc-3',
+          title: 'Critical: FinanceFirst Relationship Recovery',
+          description: 'FinanceFirst Bank requires immediate attention due to declining health score and upcoming renewal risk.',
+          reasoning: 'Health score declined 25 points to 45, support tickets increased 180%, limited stakeholder engagement, and contract renewal in 5 months. Executive intervention required.',
+          priority: 'critical',
+          estimatedImpact: '$89M ARR at risk',
+          effort: 'high',
+          category: 'retention',
+          generatedAt: new Date().toISOString(),
+          suggestedActions: [
+            'Executive escalation - Microsoft CVP engagement within 48 hours',
+            'Comprehensive service review and improvement plan presentation',
+            'Dedicated technical account manager assignment',
+            'Quarterly business review reset with new success metrics'
+          ]
+        }
+      ];
+      
+      setNBAs(enhancedNBAs);
+      
+      // Generate sample memory entries and add them
+      const enhancedMemory: MemoryEntry[] = [
+        {
+          id: 'memory-1',
+          timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+          type: 'workflow_executed',
+          accountId: 'acc-1',
+          accountName: 'TechCorp Solutions',
+          description: 'Successfully executed developer onboarding automation workflow',
+          metadata: { workflowType: 'onboarding', usersAffected: 450 },
+          outcome: 'success'
+        },
+        {
+          id: 'memory-2',
+          timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+          type: 'nba_generated',
+          accountId: 'acc-2',
+          accountName: 'Global Manufacturing Inc',
+          description: 'AI detected significant increase in IoT sensor data quality scores',
+          metadata: { signalType: 'data_quality', confidence: 92 },
+          outcome: 'success'
+        },
+        {
+          id: 'memory-3',
+          timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+          type: 'approval_requested',
+          accountId: 'acc-3',
+          accountName: 'FinanceFirst Bank',
+          description: 'Executive escalation approved for critical account intervention',
+          metadata: { escalationLevel: 'CVP', priority: 'critical' },
+          outcome: 'success'
+        }
+      ];
+      
+      // Set memory using the hook
+      setMemory(enhancedMemory);
+      
+      // Clear AI processing states and regenerate
+      realTimeAI.clearQueue();
+      realTimeAI.clearResults();
+      aiMetrics.resetMetrics();
+      
+      // Update AI metrics to reflect restored state
+      aiMetrics.updateMetrics({ 
+        approved: true, 
+        recommendation: true
+      });
+      
+      toast.success('Full data restored successfully - all enhanced signals, NBAs, and memory entries are back!');
+      
+    } catch (error) {
+      console.error('Error restoring data:', error);
+      toast.error('Failed to restore data. Please try again.');
+    }
+  };
+
   const getAccountSummary = () => {
     const good = accounts.filter(a => a.status === 'Good').length;
     const watch = accounts.filter(a => a.status === 'Watch').length;
@@ -180,6 +326,13 @@ function App() {
               <ROIDashboard />
               <CSVUpload />
               <SystemHealthDialog />
+              <Button 
+                className="border text-xs px-3 py-1 bg-accent text-accent-foreground hover:bg-accent/90"
+                onClick={handleRestoreFullData}
+              >
+                <Database className="w-4 h-4 mr-2" />
+                Restore Data
+              </Button>
               <Button 
                 className="border text-xs px-3 py-1"
                 onClick={handleResetDemo}
