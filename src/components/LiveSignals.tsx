@@ -143,10 +143,10 @@ export function LiveSignals() {
   };
 
   return (
-    <Card className="h-[600px] flex flex-col border-visible">
+    <Card className="h-[600px] flex flex-col border-visible w-full min-w-0">
       <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <CardTitle className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
             <Pulse className={`w-5 h-5 ${isStreaming ? 'text-green-500 animate-pulse' : 'text-gray-400'}`} />
             Live Signals
             {isProcessing && (
@@ -157,6 +157,7 @@ export function LiveSignals() {
             onClick={() => setIsStreaming(!isStreaming)}
             variant={isStreaming ? "default" : "outline"}
             size="sm"
+            className="flex-shrink-0"
           >
             {isStreaming ? (
               <>
@@ -172,9 +173,9 @@ export function LiveSignals() {
           </Button>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 overflow-hidden">
-        <ScrollArea className="h-full">
-          <div className="space-y-3">
+      <CardContent className="flex-1 overflow-hidden px-4">
+        <ScrollArea className="h-full w-full">
+          <div className="space-y-3 pr-2">
             {signals.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <Pulse className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
@@ -184,34 +185,34 @@ export function LiveSignals() {
               signals.map((signal, index) => (
                 <div 
                   key={signal.id}
-                  className={`border rounded-lg p-3 ${index === 0 && isStreaming ? 'animate-pulse-ai border-accent' : ''}`}
+                  className={`border rounded-lg p-4 w-full min-w-0 ${index === 0 && isStreaming ? 'animate-pulse-ai border-accent' : ''}`}
                 >
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-start justify-between mb-3 gap-3">
+                    <div className="flex items-center gap-2 flex-wrap min-w-0 flex-1">
                       {getSeverityIcon(signal.severity)}
-                      <span className="font-medium text-sm">{signal.accountName}</span>
+                      <span className="font-medium text-sm truncate">{signal.accountName}</span>
                       {signal.signalName && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs flex-shrink-0">
                           {signal.signalName}
                         </Badge>
                       )}
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
                       {getTrendIcon(signal.trend)}
-                      <Badge className={getSeverityColor(signal.severity)}>
+                      <Badge className={`${getSeverityColor(signal.severity)} text-xs`}>
                         {signal.severity}
                       </Badge>
-                      <Badge className={getTypeColor(signal.type)}>
+                      <Badge className={`${getTypeColor(signal.type)} text-xs`}>
                         {signal.category || signal.type}
                       </Badge>
                     </div>
                   </div>
                   
-                  <p className="text-sm text-muted-foreground mb-2">{signal.description}</p>
+                  <p className="text-sm text-muted-foreground mb-3 break-words">{signal.description}</p>
                   
                   {signal.value !== undefined && (
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground mb-2">
-                      <span>
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3 flex-wrap">
+                      <span className="flex-shrink-0">
                         Current: <span className="font-medium">
                           {typeof signal.value === 'number' && signal.unit === '%' ? 
                             `${signal.value.toFixed(1)}${signal.unit}` : 
@@ -220,7 +221,7 @@ export function LiveSignals() {
                         </span>
                       </span>
                       {signal.target !== undefined && (
-                        <span>
+                        <span className="flex-shrink-0">
                           Target: <span className="font-medium">
                             {typeof signal.target === 'number' && signal.unit === '%' ? 
                               `${signal.target.toFixed(1)}${signal.unit}` : 
@@ -232,9 +233,9 @@ export function LiveSignals() {
                     </div>
                   )}
                   
-                  <div className="flex justify-between items-center text-xs text-muted-foreground">
-                    <span>Account ID: {signal.accountId}</span>
-                    <div className="flex items-center gap-2">
+                  <div className="flex justify-between items-center text-xs text-muted-foreground flex-wrap gap-2">
+                    <span className="truncate">Account ID: {signal.accountId}</span>
+                    <div className="flex items-center gap-2 flex-shrink-0">
                       <span>{formatTime(signal.timestamp)}</span>
                       <SignalDetailsDialog signal={signal} />
                     </div>
