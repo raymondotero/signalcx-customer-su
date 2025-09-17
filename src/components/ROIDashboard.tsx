@@ -93,7 +93,7 @@ export function ROIDashboard() {
           ROI Dashboard
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-[95vw] w-full max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Calculator className="w-5 h-5" />
@@ -119,7 +119,7 @@ export function ROIDashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
                   <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                     <div className="flex items-center gap-2 mb-2">
                       <CurrencyDollar className="w-4 h-4 text-blue-600" />
@@ -149,19 +149,53 @@ export function ROIDashboard() {
                       {formatPercentage(portfolio.roi)}
                     </p>
                   </div>
+                  
+                  <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Lightning className="w-4 h-4 text-amber-600" />
+                      <span className="text-sm font-medium text-amber-800">Calculations</span>
+                    </div>
+                    <p className="text-2xl font-bold text-amber-800">
+                      {safeROIResults.length}
+                    </p>
+                  </div>
+                  
+                  <div className="p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Target className="w-4 h-4 text-indigo-600" />
+                      <span className="text-sm font-medium text-indigo-800">Avg Payback</span>
+                    </div>
+                    <p className="text-2xl font-bold text-indigo-800">
+                      {safeROIResults.length > 0 ? 
+                        (safeROIResults.reduce((sum, r) => sum + (r.metrics.payback || 0), 0) / safeROIResults.length).toFixed(1) : '0'
+                      }mo
+                    </p>
+                  </div>
+                  
+                  <div className="p-4 bg-teal-50 rounded-lg border border-teal-200">
+                    <div className="flex items-center gap-2 mb-2">
+                      <TrendUp className="w-4 h-4 text-teal-600" />
+                      <span className="text-sm font-medium text-teal-800">Best ROI</span>
+                    </div>
+                    <p className="text-2xl font-bold text-teal-800">
+                      {safeROIResults.length > 0 ? 
+                        formatPercentage(Math.max(...safeROIResults.map(r => r.metrics.roi || 0))) : '0%'
+                      }
+                    </p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           )}
 
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 gap-6">
             {/* Solution Categories */}
-            <Card>
+            <Card className="lg:col-span-2">
               <CardHeader>
                 <CardTitle>Solution Categories</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4">
                   {categories.map((category) => {
                     const Icon = category.icon;
                     return (
@@ -181,7 +215,7 @@ export function ROIDashboard() {
             </Card>
 
             {/* Recent Calculations */}
-            <Card>
+            <Card className="lg:col-span-1">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span>Recent ROI Calculations</span>
@@ -248,15 +282,15 @@ export function ROIDashboard() {
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="common" className="w-full">
-                <TabsList className="grid w-full grid-cols-4">
-                  <TabsTrigger value="common">Common Use Cases</TabsTrigger>
-                  <TabsTrigger value="industry">Industry Specific</TabsTrigger>
-                  <TabsTrigger value="competitive">Competitive Response</TabsTrigger>
-                  <TabsTrigger value="migration">Migration/Modernization</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-1">
+                  <TabsTrigger value="common" className="text-xs">Common Use Cases</TabsTrigger>
+                  <TabsTrigger value="industry" className="text-xs">Industry Specific</TabsTrigger>
+                  <TabsTrigger value="competitive" className="text-xs">Competitive Response</TabsTrigger>
+                  <TabsTrigger value="migration" className="text-xs">Migration/Modernization</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="common" className="space-y-3">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     <div className="p-4 border rounded-lg">
                       <h4 className="font-medium mb-2">Productivity Enhancement</h4>
                       <p className="text-sm text-muted-foreground mb-3">
@@ -304,7 +338,7 @@ export function ROIDashboard() {
                 </TabsContent>
                 
                 <TabsContent value="industry" className="space-y-3">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     <div className="p-4 border rounded-lg">
                       <h4 className="font-medium mb-2">Financial Services</h4>
                       <p className="text-sm text-muted-foreground mb-3">
@@ -351,7 +385,7 @@ export function ROIDashboard() {
                 </TabsContent>
                 
                 <TabsContent value="migration" className="space-y-3">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     <div className="p-4 border rounded-lg">
                       <h4 className="font-medium mb-2">Legacy System Migration</h4>
                       <p className="text-sm text-muted-foreground mb-3">
@@ -379,7 +413,7 @@ export function ROIDashboard() {
               <CardTitle>ROI Calculation Best Practices</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 <div>
                   <h4 className="font-medium mb-3">📊 Measurement Guidelines</h4>
                   <ul className="text-sm space-y-2 text-muted-foreground">
@@ -398,6 +432,26 @@ export function ROIDashboard() {
                     <li>• Show multiple scenarios (conservative, likely, optimistic)</li>
                     <li>• Include qualitative benefits alongside quantitative ROI</li>
                     <li>• Provide clear implementation timeline and milestones</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-medium mb-3">🎯 Success Factors</h4>
+                  <ul className="text-sm space-y-2 text-muted-foreground">
+                    <li>• Align ROI metrics with business KPIs</li>
+                    <li>• Engage stakeholders early in the process</li>
+                    <li>• Document assumptions and methodology</li>
+                    <li>• Plan for regular ROI validation and updates</li>
+                    <li>• Consider both hard and soft benefits</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-medium mb-3">⚠️ Common Pitfalls</h4>
+                  <ul className="text-sm space-y-2 text-muted-foreground">
+                    <li>• Overestimating productivity gains</li>
+                    <li>• Underestimating change management costs</li>
+                    <li>• Ignoring licensing complexity</li>
+                    <li>• Not accounting for user adoption curves</li>
+                    <li>• Failing to track post-implementation metrics</li>
                   </ul>
                 </div>
               </div>
