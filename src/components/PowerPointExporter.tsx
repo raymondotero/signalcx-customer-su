@@ -308,6 +308,23 @@ Presentation Flow:
 - Close with clear action items and timeline`;
       }
 
+      // Generate PowerPoint-specific content
+      const powerPointGuide = (window as any).spark.llmPrompt`
+Create a comprehensive PowerPoint implementation guide for the ROI presentation including:
+
+1. Slide-by-slide design recommendations
+2. Microsoft branding guidelines
+3. Chart and visualization specifications
+4. Animation and transition suggestions
+5. Speaker notes for each slide
+6. Executive Q&A preparation
+7. Handout materials recommendations
+
+Focus on creating a presentation that executives can use directly in PowerPoint with specific formatting instructions.
+`;
+
+      const implementationGuide = await (window as any).spark.llm(powerPointGuide);
+
       // Create the downloadable presentation content
       const presentationData = {
         title: config.title,

@@ -142,6 +142,40 @@ export function ROIDashboard() {
                       {formatPercentage(portfolio.roi)}
                     </p>
                   </div>
+                  
+                  <div className="p-4 bg-amber-50 rounded-lg border border-amber-200 min-w-0">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Lightning className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                      <span className="text-sm font-medium text-amber-800">Calculations</span>
+                    </div>
+                    <p className="text-2xl font-bold text-amber-800">
+                      {safeROIResults.length}
+                    </p>
+                  </div>
+                  
+                  <div className="p-4 bg-indigo-50 rounded-lg border border-indigo-200 min-w-0">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Target className="w-5 h-5 text-indigo-600 flex-shrink-0" />
+                      <span className="text-sm font-medium text-indigo-800">Avg Payback</span>
+                    </div>
+                    <p className="text-2xl font-bold text-indigo-800">
+                      {safeROIResults.length > 0 ? 
+                        (safeROIResults.reduce((sum, r) => sum + (r.metrics.payback || 0), 0) / safeROIResults.length).toFixed(1) : '0'
+                      }mo
+                    </p>
+                  </div>
+                  
+                  <div className="p-4 bg-teal-50 rounded-lg border border-teal-200 min-w-0">
+                    <div className="flex items-center gap-2 mb-3">
+                      <TrendUp className="w-5 h-5 text-teal-600 flex-shrink-0" />
+                      <span className="text-sm font-medium text-teal-800">Best ROI</span>
+                    </div>
+                    <p className="text-2xl font-bold text-teal-800">
+                      {safeROIResults.length > 0 ? 
+                        formatPercentage(Math.max(...safeROIResults.map(r => r.metrics.roi || 0))) : '0%'
+                      }
+                    </p>
+                  </div>
                 </div>
                 
                 <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
