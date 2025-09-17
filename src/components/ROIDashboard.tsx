@@ -327,7 +327,7 @@ export function ROIDashboard() {
                     <div className="p-6 border rounded-lg min-w-0 space-y-4">
                       <h4 className="font-medium text-base mb-3">Application Development</h4>
                       <p className="text-sm text-muted-foreground mb-4">
-                        Power Platform low-code development
+                        Accelerate development with AI-powered coding assistants
                       </p>
                       <div className="flex flex-col gap-3">
                         <span className="text-sm text-green-600 font-medium">Typical ROI: 180-350%</span>
