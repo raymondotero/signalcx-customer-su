@@ -175,7 +175,7 @@ export function LiveSignals() {
       </CardHeader>
       <CardContent className="flex-1 overflow-hidden px-4">
         <ScrollArea className="h-full w-full">
-          <div className="space-y-3 pr-2">
+          <div className="space-y-2 pr-2">
             {signals.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <Pulse className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
@@ -185,20 +185,14 @@ export function LiveSignals() {
               signals.map((signal, index) => (
                 <div 
                   key={signal.id}
-                  className={`border rounded-lg p-4 w-full min-w-0 ${index === 0 && isStreaming ? 'animate-pulse-ai border-accent' : ''}`}
+                  className={`border rounded-lg p-3 w-full min-w-0 ${index === 0 && isStreaming ? 'animate-pulse-ai border-accent' : ''}`}
                 >
-                  <div className="flex items-start justify-between mb-3 gap-3">
-                    <div className="flex items-center gap-2 flex-wrap min-w-0 flex-1">
+                  <div className="flex items-center justify-between mb-2 gap-3">
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
                       {getSeverityIcon(signal.severity)}
                       <span className="font-medium text-sm truncate">{signal.accountName}</span>
-                      {signal.signalName && (
-                        <Badge variant="outline" className="text-xs flex-shrink-0">
-                          {signal.signalName}
-                        </Badge>
-                      )}
                     </div>
-                    <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
-                      {getTrendIcon(signal.trend)}
+                    <div className="flex items-center gap-2 flex-shrink-0">
                       <Badge className={`${getSeverityColor(signal.severity)} text-xs`}>
                         {signal.severity}
                       </Badge>
@@ -208,37 +202,11 @@ export function LiveSignals() {
                     </div>
                   </div>
                   
-                  <p className="text-sm text-muted-foreground mb-3 break-words">{signal.description}</p>
+                  <p className="text-sm text-muted-foreground mb-2 break-words">{signal.description}</p>
                   
-                  {signal.value !== undefined && (
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3 flex-wrap">
-                      <span className="flex-shrink-0">
-                        Current: <span className="font-medium">
-                          {typeof signal.value === 'number' && signal.unit === '%' ? 
-                            `${signal.value.toFixed(1)}${signal.unit}` : 
-                            `${signal.value}${signal.unit}`
-                          }
-                        </span>
-                      </span>
-                      {signal.target !== undefined && (
-                        <span className="flex-shrink-0">
-                          Target: <span className="font-medium">
-                            {typeof signal.target === 'number' && signal.unit === '%' ? 
-                              `${signal.target.toFixed(1)}${signal.unit}` : 
-                              `${signal.target}${signal.unit}`
-                            }
-                          </span>
-                        </span>
-                      )}
-                    </div>
-                  )}
-                  
-                  <div className="flex justify-between items-center text-xs text-muted-foreground flex-wrap gap-2">
-                    <span className="truncate">Account ID: {signal.accountId}</span>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      <span>{formatTime(signal.timestamp)}</span>
-                      <SignalDetailsDialog signal={signal} />
-                    </div>
+                  <div className="flex justify-between items-center text-xs text-muted-foreground">
+                    <span>{formatTime(signal.timestamp)}</span>
+                    <SignalDetailsDialog signal={signal} />
                   </div>
                 </div>
               ))
