@@ -20,6 +20,8 @@ import { Account } from '@/types';
 import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
 import { ExpansionOpportunitiesDialog } from '@/components/ExpansionOpportunitiesDialog';
 import { QuickMeetingScheduler } from '@/components/QuickMeetingScheduler';
+import { scrollToNBASection } from '@/utils/scrollToSection';
+import { toast } from 'sonner';
 
 interface AccountsTableProps {
   accounts: Account[];
@@ -328,10 +330,17 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
               filteredAndSortedAccounts.map((account) => (
                 <TableRow 
                   key={account.id}
-                  className={`cursor-pointer hover:bg-muted/50 ${
-                    selectedAccount?.id === account.id ? 'bg-primary/5 border-primary/20' : ''
+                  className={`cursor-pointer hover:bg-muted/50 transition-all duration-200 ${
+                    selectedAccount?.id === account.id ? 'selected-account-row' : ''
                   }`}
-                  onClick={() => onSelectAccount(account)}
+                  onClick={() => {
+                    onSelectAccount(account);
+                    toast.success(`Selected ${account.name} - viewing Next Best Actions`, {
+                      duration: 2000,
+                      position: 'bottom-right'
+                    });
+                    scrollToNBASection();
+                  }}
                 >
                   <TableCell className="font-medium">{account.name}</TableCell>
                   <TableCell>{account.industry}</TableCell>
@@ -402,6 +411,11 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
                         onClick={(e) => {
                           e.stopPropagation();
                           onSelectAccount(account);
+                          toast.success(`Selected ${account.name} - viewing Next Best Actions`, {
+                            duration: 2000,
+                            position: 'bottom-right'
+                          });
+                          scrollToNBASection();
                         }}
                       >
                         <Brain className="w-4 h-4 mr-1" />

@@ -87,6 +87,72 @@
   --radius-full: 9999px;
 }
 
+/* Enhanced scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Smooth scroll target highlighting */
+[data-section] {
+  scroll-margin-top: 2rem;
+  transition: all 0.3s ease;
+}
+
+[data-section="nba-display"] {
+  scroll-margin-top: 1rem;
+}
+
+/* Highlight effect when scrolled to */
+@keyframes scroll-highlight {
+  0% { 
+    box-shadow: 0 0 0 2px transparent;
+    background-color: transparent;
+  }
+  20% { 
+    box-shadow: 0 0 0 2px var(--primary);
+    background-color: rgba(var(--primary), 0.08);
+  }
+  80% { 
+    box-shadow: 0 0 0 2px var(--primary);
+    background-color: rgba(var(--primary), 0.05);
+  }
+  100% { 
+    box-shadow: 0 0 0 2px transparent;
+    background-color: transparent;
+  }
+}
+
+.scroll-highlight {
+  animation: scroll-highlight 2s ease-out;
+  border-radius: var(--radius);
+}
+
+/* Enhanced selection feedback for table rows */
+.selected-account-row {
+  background: linear-gradient(90deg, rgba(var(--primary), 0.08) 0%, rgba(var(--primary), 0.05) 100%) !important;
+  border-left: 3px solid var(--primary) !important;
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(var(--primary), 0.15);
+}
+
+/* Selection confirmation animation */
+@keyframes selection-pulse {
+  0% { 
+    transform: scale(1); 
+  }
+  50% { 
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(var(--primary), 0.25);
+  }
+  100% { 
+    transform: scale(1);
+  }
+}
+
+.selection-feedback {
+  animation: selection-pulse 0.6s ease-out;
+}
+
 /* Custom animations for AI states */
 @keyframes pulse-ai {
   0%, 100% { opacity: 0.8; }

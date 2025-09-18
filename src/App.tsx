@@ -435,7 +435,7 @@ function App() {
             </div>
             
             {selectedAccount && (
-              <div className="space-y-4">
+              <div className="space-y-4" data-section="selected-account">
                 <Card className="border-visible h-fit">
                   <CardHeader>
                     <CardTitle>Selected Account</CardTitle>
@@ -457,7 +457,7 @@ function App() {
                   </CardContent>
                 </Card>
                 
-                <div className="h-fit">
+                <div className="h-fit" data-section="nba-display">
                   <NBADisplay 
                     account={selectedAccount}
                     onPlanAndRun={handlePlanAndRun}
