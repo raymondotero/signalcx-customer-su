@@ -160,20 +160,82 @@ const HelpGuide: React.FC = () => {
           icon: <VideoCamera className="w-4 h-4 text-blue-600" />,
           summary: 'Watch a 10-minute overview of SignalCX features',
           content: (
-            <div className="space-y-3">
-              <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                <h5 className="font-medium text-sm text-blue-800 mb-2">What you'll learn:</h5>
-                <ul className="text-xs text-blue-700 space-y-1">
-                  <li>• Platform navigation and key features</li>
-                  <li>• AI recommendation engine capabilities</li>
-                  <li>• Integration with Microsoft ecosystem</li>
-                  <li>• Customer success workflow optimization</li>
-                </ul>
+            <div className="space-y-4">
+              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <h5 className="font-medium text-sm text-blue-800 mb-3">🎬 Video Library</h5>
+                
+                <div className="space-y-3 text-xs">
+                  <div className="bg-white p-3 rounded border border-blue-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <h6 className="font-medium text-blue-800">SignalCX in 10 Minutes</h6>
+                      <Badge variant="outline" className="text-xs">New User</Badge>
+                    </div>
+                    <div className="space-y-1 text-blue-700">
+                      <p>🎯 Platform navigation and key features overview</p>
+                      <p>🤖 AI recommendation engine introduction</p>
+                      <p>📊 Dashboard tour and metrics explanation</p>
+                      <p>🔄 Basic workflow demonstration</p>
+                    </div>
+                    <div className="mt-2 pt-2 border-t border-blue-100">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-blue-600">⏱️ 10:32 • 👀 4.2k views</span>
+                        <Button variant="outline" size="sm" className="text-xs h-6">
+                          <Play className="w-3 h-3 mr-1" />
+                          Watch
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white p-3 rounded border border-blue-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <h6 className="font-medium text-blue-800">Customer Success Workflows</h6>
+                      <Badge variant="outline" className="text-xs">Deep Dive</Badge>
+                    </div>
+                    <div className="space-y-1 text-blue-700">
+                      <p>📈 Advanced health score analysis techniques</p>
+                      <p>🎯 NBA recommendation optimization</p>
+                      <p>🔄 Multi-step workflow creation</p>
+                      <p>📊 ROI measurement and reporting</p>
+                    </div>
+                    <div className="mt-2 pt-2 border-t border-blue-100">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-blue-600">⏱️ 18:45 • 👀 2.8k views</span>
+                        <Button variant="outline" size="sm" className="text-xs h-6">
+                          <Play className="w-3 h-3 mr-1" />
+                          Watch
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white p-3 rounded border border-blue-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <h6 className="font-medium text-blue-800">Microsoft Ecosystem Integration</h6>
+                      <Badge variant="outline" className="text-xs">Technical</Badge>
+                    </div>
+                    <div className="space-y-1 text-blue-700">
+                      <p>🔗 Dynamics 365 and Power Platform setup</p>
+                      <p>📊 Power BI dashboard configuration</p>
+                      <p>💬 Teams notifications and approvals</p>
+                      <p>☁️ Azure services integration patterns</p>
+                    </div>
+                    <div className="mt-2 pt-2 border-t border-blue-100">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-blue-600">⏱️ 15:20 • 👀 1.9k views</span>
+                        <Button variant="outline" size="sm" className="text-xs h-6">
+                          <Play className="w-3 h-3 mr-1" />
+                          Watch
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <Button variant="outline" size="sm" className="w-full">
-                <Play className="w-4 h-4 mr-2" />
-                Watch Demo Video
-              </Button>
+              
+              <div className="text-xs text-muted-foreground bg-gray-50 p-3 rounded">
+                📝 <strong>Note:</strong> All videos include closed captions, downloadable transcripts, and follow-along worksheets. Progress is tracked and you can bookmark specific sections for later reference.
+              </div>
             </div>
           )
         },
@@ -309,21 +371,113 @@ const HelpGuide: React.FC = () => {
           icon: <TrendUp className="w-4 h-4 text-green-600" />,
           summary: 'Understand how health scores are calculated',
           content: (
-            <div className="space-y-3">
-              <div className="space-y-2 text-xs">
-                <h5 className="font-medium">Health Score Factors:</h5>
-                <div className="pl-2 space-y-1">
-                  <p>• Product usage and adoption (30%)</p>
-                  <p>• Support ticket volume and sentiment (20%)</p>
-                  <p>• Stakeholder engagement levels (20%)</p>
-                  <p>• Payment and billing health (15%)</p>
-                  <p>• Contract renewal indicators (15%)</p>
+            <div className="space-y-4">
+              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                <h5 className="font-medium text-sm text-green-800 mb-3">🧮 Health Score Algorithm</h5>
+                
+                <div className="space-y-3 text-xs">
+                  <div className="bg-white p-3 rounded border border-green-100">
+                    <h6 className="font-medium text-green-800 mb-2">📊 Weighted Factors (100 Point Scale)</h6>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-green-700">Product Usage & Adoption</span>
+                        <Badge variant="outline" className="text-xs bg-green-100">30%</Badge>
+                      </div>
+                      <div className="text-xs text-green-600 pl-2">
+                        <p>• Daily/weekly active users vs. licensed seats</p>
+                        <p>• Feature adoption depth and breadth</p>
+                        <p>• API usage patterns and growth</p>
+                        <p>• Time-to-value achievement milestones</p>
+                      </div>
+                      
+                      <div className="flex justify-between items-center pt-2">
+                        <span className="text-green-700">Support & Sentiment</span>
+                        <Badge variant="outline" className="text-xs bg-yellow-100">20%</Badge>
+                      </div>
+                      <div className="text-xs text-green-600 pl-2">
+                        <p>• Support ticket volume and severity trends</p>
+                        <p>• Resolution time satisfaction scores</p>
+                        <p>• CSAT and sentiment analysis from interactions</p>
+                        <p>• Self-service resource utilization</p>
+                      </div>
+                      
+                      <div className="flex justify-between items-center pt-2">
+                        <span className="text-green-700">Stakeholder Engagement</span>
+                        <Badge variant="outline" className="text-xs bg-blue-100">20%</Badge>
+                      </div>
+                      <div className="text-xs text-green-600 pl-2">
+                        <p>• Executive sponsor participation level</p>
+                        <p>• QBR attendance and preparation quality</p>
+                        <p>• Champion network strength and advocacy</p>
+                        <p>• Training completion and certification rates</p>
+                      </div>
+                      
+                      <div className="flex justify-between items-center pt-2">
+                        <span className="text-green-700">Financial Health</span>
+                        <Badge variant="outline" className="text-xs bg-purple-100">15%</Badge>
+                      </div>
+                      <div className="text-xs text-green-600 pl-2">
+                        <p>• Payment history and billing disputes</p>
+                        <p>• Budget allocation vs. actual usage</p>
+                        <p>• Expansion opportunity indicators</p>
+                        <p>• ROI realization and business case validation</p>
+                      </div>
+                      
+                      <div className="flex justify-between items-center pt-2">
+                        <span className="text-green-700">Renewal Indicators</span>
+                        <Badge variant="outline" className="text-xs bg-red-100">15%</Badge>
+                      </div>
+                      <div className="text-xs text-green-600 pl-2">
+                        <p>• Contract timeline and renewal discussions</p>
+                        <p>• Competitive activity and market factors</p>
+                        <p>• Organizational changes affecting decision makers</p>
+                        <p>• Strategic alignment with customer initiatives</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white p-3 rounded border border-green-100">
+                    <h6 className="font-medium text-green-800 mb-2">🎯 Score Interpretation</h6>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Badge className="status-good">85-100</Badge>
+                        <span className="text-xs text-green-700">Excellent - High advocacy, expansion ready</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge className="status-good">70-84</Badge>
+                        <span className="text-xs text-green-700">Good - Stable relationship, monitor trends</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge className="status-watch">55-69</Badge>
+                        <span className="text-xs text-yellow-700">Watch - Attention needed, address gaps</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge className="status-watch">40-54</Badge>
+                        <span className="text-xs text-yellow-700">Caution - Active intervention required</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge className="status-risk">0-39</Badge>
+                        <span className="text-xs text-red-700">Critical - Immediate executive escalation</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <Button variant="outline" size="sm" className="w-full">
-                <FileText className="w-4 h-4 mr-2" />
-                View Detailed Methodology
-              </Button>
+              
+              <div className="grid grid-cols-2 gap-2">
+                <Button variant="outline" size="sm">
+                  <FileText className="w-4 h-4 mr-1" />
+                  Full Methodology
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Target className="w-4 h-4 mr-1" />
+                  Score Calculator
+                </Button>
+              </div>
+              
+              <div className="text-xs text-muted-foreground bg-gray-50 p-3 rounded">
+                🔄 <strong>Dynamic Scoring:</strong> Health scores are recalculated every 6 hours using real-time data. Historical trends are weighted to prevent artificial volatility while ensuring rapid response to significant changes.
+              </div>
             </div>
           )
         },
@@ -417,20 +571,80 @@ const HelpGuide: React.FC = () => {
           icon: <Target className="w-4 h-4 text-purple-600" />,
           summary: 'Optimize AI recommendations for your business',
           content: (
-            <div className="space-y-3">
-              <div className="space-y-2 text-xs">
-                <h5 className="font-medium">Tuning Parameters:</h5>
-                <div className="pl-2 space-y-1">
-                  <p>• Industry-specific signal weights</p>
-                  <p>• Customer segment preferences</p>
-                  <p>• Risk tolerance thresholds</p>
-                  <p>• Action priority scoring</p>
+            <div className="space-y-4">
+              <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                <h5 className="font-medium text-sm text-purple-800 mb-3">🎯 AI Optimization Settings</h5>
+                
+                <div className="space-y-3 text-xs">
+                  <div className="bg-white p-3 rounded border border-purple-100">
+                    <h6 className="font-medium text-purple-800 mb-2">🏭 Industry-Specific Tuning</h6>
+                    <div className="space-y-1 text-purple-700">
+                      <p>⚡ <strong>Technology:</strong> Fast-growth focused, innovation signals prioritized</p>
+                      <p>🏗️ <strong>Manufacturing:</strong> Operational efficiency and safety compliance emphasis</p>
+                      <p>🏦 <strong>Financial Services:</strong> Regulatory compliance and risk management priority</p>
+                      <p>🏥 <strong>Healthcare:</strong> Patient outcome correlation and privacy protection</p>
+                      <p>🛒 <strong>Retail:</strong> Seasonal patterns and customer experience optimization</p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white p-3 rounded border border-purple-100">
+                    <h6 className="font-medium text-purple-800 mb-2">⚖️ Risk Tolerance Thresholds</h6>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-purple-700">Conservative (Enterprise)</span>
+                        <Badge variant="outline" className="text-xs bg-blue-100">95% confidence</Badge>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-purple-700">Balanced (Mid-market)</span>
+                        <Badge variant="outline" className="text-xs bg-green-100">85% confidence</Badge>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-purple-700">Aggressive (SMB/Startup)</span>
+                        <Badge variant="outline" className="text-xs bg-yellow-100">75% confidence</Badge>
+                      </div>
+                    </div>
+                    <div className="text-xs text-purple-600 mt-2 pl-2">
+                      <p>• Higher confidence = fewer but more certain recommendations</p>
+                      <p>• Lower confidence = more opportunities, higher false positives</p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white p-3 rounded border border-purple-100">
+                    <h6 className="font-medium text-purple-800 mb-2">📊 Signal Weight Customization</h6>
+                    <div className="space-y-1 text-purple-700">
+                      <p>🎯 <strong>Expansion Focus:</strong> Usage growth + stakeholder engagement</p>
+                      <p>🛡️ <strong>Retention Focus:</strong> Health decline + support sentiment</p>
+                      <p>⚡ <strong>Efficiency Focus:</strong> Automation potential + ROI indicators</p>
+                      <p>📈 <strong>Growth Focus:</strong> Product adoption + competitive positioning</p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white p-3 rounded border border-purple-100">
+                    <h6 className="font-medium text-purple-800 mb-2">🚀 Action Priority Scoring</h6>
+                    <div className="space-y-1 text-purple-700">
+                      <p>🔴 <strong>Critical (24hr):</strong> Revenue at risk {'>'}$100k</p>
+                      <p>🟡 <strong>High (3 days):</strong> Expansion opportunity {'>'}$50k</p>
+                      <p>🔵 <strong>Medium (1 week):</strong> Process optimization potential</p>
+                      <p>⚪ <strong>Low (2 weeks):</strong> Relationship strengthening</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <Button variant="outline" size="sm" className="w-full">
-                <Gear className="w-4 h-4 mr-2" />
-                Open AI Settings
-              </Button>
+              
+              <div className="grid grid-cols-2 gap-2">
+                <Button variant="outline" size="sm">
+                  <Gear className="w-4 h-4 mr-1" />
+                  Tune Settings
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Brain className="w-4 h-4 mr-1" />
+                  A/B Test
+                </Button>
+              </div>
+              
+              <div className="text-xs text-muted-foreground bg-yellow-50 p-3 rounded border border-yellow-200">
+                📊 <strong>Performance Impact:</strong> Tuning changes take 24-48 hours to show impact. We recommend A/B testing different configurations with similar account segments to measure effectiveness before rolling out broadly.
+              </div>
             </div>
           )
         },
@@ -542,25 +756,89 @@ const HelpGuide: React.FC = () => {
           icon: <Code className="w-4 h-4 text-gray-600" />,
           summary: 'Complete API reference and examples',
           content: (
-            <div className="space-y-3">
-              <div className="space-y-2 text-xs">
-                <h5 className="font-medium">API Features:</h5>
-                <div className="pl-2 space-y-1">
-                  <p>• RESTful endpoints with OpenAPI spec</p>
-                  <p>• Real-time webhooks for events</p>
-                  <p>• Bulk data import/export</p>
-                  <p>• Authentication via OAuth 2.0</p>
+            <div className="space-y-4">
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <h5 className="font-medium text-sm text-gray-800 mb-3">🔧 Developer Resources</h5>
+                
+                <div className="space-y-3 text-xs">
+                  <div className="bg-white p-3 rounded border border-gray-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <h6 className="font-medium text-gray-800">REST API Reference</h6>
+                      <Badge variant="outline" className="text-xs bg-green-100">v2.1 Stable</Badge>
+                    </div>
+                    <div className="space-y-1 text-gray-700">
+                      <p>📚 <strong>200+ endpoints</strong> with OpenAPI 3.0 specification</p>
+                      <p>🔐 OAuth 2.0 and API key authentication</p>
+                      <p>📊 Real-time webhooks for all major events</p>
+                      <p>💾 Bulk operations for accounts, signals, and workflows</p>
+                      <p>📈 Rate limiting: 1000 requests/minute standard</p>
+                    </div>
+                    <div className="mt-2 pt-2 border-t border-gray-100 grid grid-cols-2 gap-1">
+                      <Button variant="outline" size="sm" className="text-xs h-6">
+                        <Code className="w-3 h-3 mr-1" />
+                        View Docs
+                      </Button>
+                      <Button variant="outline" size="sm" className="text-xs h-6">
+                        <Download className="w-3 h-3 mr-1" />
+                        OpenAPI
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white p-3 rounded border border-gray-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <h6 className="font-medium text-gray-800">SDKs & Libraries</h6>
+                      <Badge variant="outline" className="text-xs bg-blue-100">Multi-Language</Badge>
+                    </div>
+                    <div className="space-y-1 text-gray-700">
+                      <p>🐍 <strong>Python SDK:</strong> pip install signalcx-client</p>
+                      <p>📱 <strong>Node.js SDK:</strong> npm install @signalcx/api</p>
+                      <p>☕ <strong>Java SDK:</strong> Maven & Gradle support</p>
+                      <p>⚡ <strong>C# SDK:</strong> NuGet package available</p>
+                      <p>🌐 <strong>PowerShell Module:</strong> For Microsoft environments</p>
+                    </div>
+                    <div className="mt-2 pt-2 border-t border-gray-100 grid grid-cols-2 gap-1">
+                      <Button variant="outline" size="sm" className="text-xs h-6">
+                        <Download className="w-3 h-3 mr-1" />
+                        Python
+                      </Button>
+                      <Button variant="outline" size="sm" className="text-xs h-6">
+                        <Download className="w-3 h-3 mr-1" />
+                        Node.js
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white p-3 rounded border border-gray-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <h6 className="font-medium text-gray-800">Code Examples</h6>
+                      <Badge variant="outline" className="text-xs bg-purple-100">Interactive</Badge>
+                    </div>
+                    <div className="space-y-1 text-gray-700">
+                      <p>🚀 <strong>Quick Start:</strong> Authentication & first API call</p>
+                      <p>📊 <strong>Data Sync:</strong> Account & signal bulk import</p>
+                      <p>🤖 <strong>AI Integration:</strong> Triggering NBA generation</p>
+                      <p>🔔 <strong>Webhooks:</strong> Real-time event handling</p>
+                      <p>📈 <strong>Analytics:</strong> Custom reporting queries</p>
+                    </div>
+                    <div className="mt-2 pt-2 border-t border-gray-100">
+                      <Button variant="outline" size="sm" className="w-full text-xs h-6">
+                        <Play className="w-3 h-3 mr-1" />
+                        Try in Sandbox
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                <Button variant="outline" size="sm">
-                  <Code className="w-4 h-4 mr-1" />
-                  View Docs
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Download className="w-4 h-4 mr-1" />
-                  SDK
-                </Button>
+              
+              <div className="bg-yellow-50 p-3 rounded border border-yellow-200">
+                <h6 className="font-medium text-sm text-yellow-800 mb-2">🔒 Enterprise Features</h6>
+                <div className="text-xs text-yellow-700 space-y-1">
+                  <p>• Dedicated API instances with 99.9% SLA</p>
+                  <p>• Custom rate limits up to 10,000 requests/minute</p>
+                  <p>• Priority support with guaranteed response times</p>
+                  <p>• Advanced webhook filtering and transformation</p>
+                </div>
               </div>
             </div>
           )
@@ -739,20 +1017,75 @@ const HelpGuide: React.FC = () => {
           icon: <BookOpen className="w-4 h-4 text-blue-600" />,
           summary: 'Comprehensive training courses and certifications',
           content: (
-            <div className="space-y-3">
-              <div className="space-y-2 text-xs">
-                <h5 className="font-medium">Available Courses:</h5>
-                <div className="pl-2 space-y-1">
-                  <p>• SignalCX Fundamentals (2 hours)</p>
-                  <p>• AI-Powered Customer Success (4 hours)</p>
-                  <p>• Advanced Analytics & Reporting (3 hours)</p>
-                  <p>• Platform Administration (5 hours)</p>
+            <div className="space-y-4">
+              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <h5 className="font-medium text-sm text-blue-800 mb-3">🎓 Learning Paths</h5>
+                
+                <div className="space-y-3 text-xs">
+                  <div className="bg-white p-3 rounded border border-blue-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <h6 className="font-medium text-blue-800">Beginner Track</h6>
+                      <Badge variant="outline" className="text-xs">4 courses</Badge>
+                    </div>
+                    <div className="space-y-1 text-blue-700">
+                      <p>📚 SignalCX Fundamentals (2 hrs) - Platform overview & navigation</p>
+                      <p>🎯 Customer Success Basics (1.5 hrs) - Key concepts & metrics</p>
+                      <p>📊 Health Score Deep Dive (1 hr) - Understanding account health</p>
+                      <p>🔄 Basic Workflows (1.5 hrs) - Creating your first automations</p>
+                    </div>
+                    <div className="mt-2 pt-2 border-t border-blue-100">
+                      <p className="text-xs text-blue-600">🏆 Completion Certificate: SignalCX Associate</p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white p-3 rounded border border-blue-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <h6 className="font-medium text-blue-800">Advanced Track</h6>
+                      <Badge variant="outline" className="text-xs">5 courses</Badge>
+                    </div>
+                    <div className="space-y-1 text-blue-700">
+                      <p>🤖 AI-Powered Customer Success (4 hrs) - NBA engine & tuning</p>
+                      <p>📈 Advanced Analytics & Reporting (3 hrs) - Custom dashboards</p>
+                      <p>🔗 Integration Mastery (2.5 hrs) - API configuration & troubleshooting</p>
+                      <p>🎨 Signal Configuration (2 hrs) - Custom business value signals</p>
+                      <p>⚙️ Platform Administration (3 hrs) - User management & security</p>
+                    </div>
+                    <div className="mt-2 pt-2 border-t border-blue-100">
+                      <p className="text-xs text-blue-600">🏆 Completion Certificate: SignalCX Expert</p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white p-3 rounded border border-blue-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <h6 className="font-medium text-blue-800">Specialist Certifications</h6>
+                      <Badge variant="outline" className="text-xs">3 tracks</Badge>
+                    </div>
+                    <div className="space-y-1 text-blue-700">
+                      <p>🎯 Customer Success Strategist (6 hrs) - Advanced CS methodologies</p>
+                      <p>🔬 Data Analyst Specialist (5 hrs) - Advanced signal analysis</p>
+                      <p>🛠️ Technical Administrator (7 hrs) - Advanced platform configuration</p>
+                    </div>
+                    <div className="mt-2 pt-2 border-t border-blue-100">
+                      <p className="text-xs text-blue-600">🏆 Microsoft Partner Recognition Eligible</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <Button variant="outline" size="sm" className="w-full">
-                <BookOpen className="w-4 h-4 mr-2" />
-                Start Learning
-              </Button>
+              
+              <div className="grid grid-cols-2 gap-2">
+                <Button variant="outline" size="sm">
+                  <BookOpen className="w-4 h-4 mr-1" />
+                  Browse Catalog
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Target className="w-4 h-4 mr-1" />
+                  Skill Assessment
+                </Button>
+              </div>
+              
+              <div className="text-xs text-muted-foreground bg-gray-50 p-3 rounded">
+                💡 <strong>Learning Tips:</strong> Each course includes hands-on labs, real customer scenarios, and downloadable resources. Progress is saved automatically, and you can learn at your own pace.
+              </div>
             </div>
           )
         },
@@ -762,20 +1095,66 @@ const HelpGuide: React.FC = () => {
           icon: <ChatCircle className="w-4 h-4 text-green-600" />,
           summary: 'Connect with other SignalCX users',
           content: (
-            <div className="space-y-3">
-              <div className="space-y-2 text-xs">
-                <h5 className="font-medium">Forum Categories:</h5>
-                <div className="pl-2 space-y-1">
-                  <p>• General Discussion</p>
-                  <p>• Feature Requests</p>
-                  <p>• Best Practices</p>
-                  <p>• Technical Support</p>
+            <div className="space-y-4">
+              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                <h5 className="font-medium text-sm text-green-800 mb-3">💬 Active Community Discussions</h5>
+                
+                <div className="space-y-3 text-xs">
+                  <div className="bg-white p-3 rounded border border-green-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <h6 className="font-medium text-green-800">General Discussion</h6>
+                      <Badge variant="outline" className="text-xs bg-green-100">2.3k posts</Badge>
+                    </div>
+                    <div className="space-y-1 text-green-700">
+                      <p>🔥 <strong>Trending:</strong> "Best practices for health score thresholds"</p>
+                      <p>💡 "How to handle At-Risk accounts in manufacturing"</p>
+                      <p>📊 "Quarterly business review templates that work"</p>
+                      <p>🎯 "Setting realistic expansion targets for SMB accounts"</p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white p-3 rounded border border-green-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <h6 className="font-medium text-green-800">Feature Requests</h6>
+                      <Badge variant="outline" className="text-xs bg-blue-100">847 ideas</Badge>
+                    </div>
+                    <div className="space-y-1 text-green-700">
+                      <p>⭐ <strong>Top Requested:</strong> Mobile app for iOS/Android</p>
+                      <p>🔄 Custom workflow triggers for Slack/Teams</p>
+                      <p>📱 WhatsApp integration for customer outreach</p>
+                      <p>🎨 Dark mode theme option</p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white p-3 rounded border border-green-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <h6 className="font-medium text-green-800">Success Stories</h6>
+                      <Badge variant="outline" className="text-xs bg-yellow-100">156 stories</Badge>
+                    </div>
+                    <div className="space-y-1 text-green-700">
+                      <p>🎉 "Reduced churn by 40% using predictive signals"</p>
+                      <p>💰 "Generated $2M in expansion revenue with NBA recommendations"</p>
+                      <p>⚡ "Automated 80% of routine customer touchpoints"</p>
+                      <p>📈 "Improved health scores across entire portfolio"</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <Button variant="outline" size="sm" className="w-full">
-                <ChatCircle className="w-4 h-4 mr-2" />
-                Join Community
-              </Button>
+              
+              <div className="grid grid-cols-2 gap-2">
+                <Button variant="outline" size="sm">
+                  <ChatCircle className="w-4 h-4 mr-1" />
+                  Join Discussion
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Lightbulb className="w-4 h-4 mr-1" />
+                  Share Idea
+                </Button>
+              </div>
+              
+              <div className="text-xs text-muted-foreground bg-gray-50 p-3 rounded">
+                🌟 <strong>Community Perks:</strong> Top contributors get early access to new features, exclusive webinars, and recognition badges. Active members often become beta testers for upcoming releases.
+              </div>
             </div>
           )
         },
@@ -785,19 +1164,81 @@ const HelpGuide: React.FC = () => {
           icon: <Clock className="w-4 h-4 text-purple-600" />,
           summary: 'Live Q&A sessions with product experts',
           content: (
-            <div className="space-y-3">
-              <div className="space-y-2 text-xs">
-                <h5 className="font-medium">Schedule:</h5>
-                <div className="pl-2 space-y-1">
-                  <p>• Tuesdays 2:00 PM PST - General Q&A</p>
-                  <p>• Thursdays 10:00 AM EST - Technical Deep Dive</p>
-                  <p>• Fridays 1:00 PM GMT - EMEA Session</p>
+            <div className="space-y-4">
+              <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                <h5 className="font-medium text-sm text-purple-800 mb-3">📅 Upcoming Sessions</h5>
+                
+                <div className="space-y-3 text-xs">
+                  <div className="bg-white p-3 rounded border border-purple-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <h6 className="font-medium text-purple-800">Tuesday AI Deep Dive</h6>
+                      <Badge variant="outline" className="text-xs bg-purple-100">Tomorrow 2PM PST</Badge>
+                    </div>
+                    <div className="space-y-1 text-purple-700">
+                      <p>🤖 <strong>Topic:</strong> "Optimizing NBA recommendations for your industry"</p>
+                      <p>👨‍💻 <strong>Host:</strong> Dr. Sarah Chen, AI Product Lead</p>
+                      <p>⏱️ <strong>Duration:</strong> 60 minutes + Q&A</p>
+                      <p>📋 <strong>Agenda:</strong> Signal tuning, confidence thresholds, industry benchmarks</p>
+                    </div>
+                    <div className="mt-2 pt-2 border-t border-purple-100 flex gap-2">
+                      <Button variant="outline" size="sm" className="text-xs h-6">Register</Button>
+                      <Button variant="outline" size="sm" className="text-xs h-6">Add to Calendar</Button>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white p-3 rounded border border-purple-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <h6 className="font-medium text-purple-800">Thursday Technical Workshop</h6>
+                      <Badge variant="outline" className="text-xs bg-blue-100">This Week 10AM EST</Badge>
+                    </div>
+                    <div className="space-y-1 text-purple-700">
+                      <p>🔧 <strong>Topic:</strong> "Advanced integration patterns & troubleshooting"</p>
+                      <p>👨‍💻 <strong>Host:</strong> Marcus Rodriguez, Solutions Architect</p>
+                      <p>⏱️ <strong>Duration:</strong> 90 minutes + hands-on lab</p>
+                      <p>📋 <strong>Focus:</strong> API best practices, webhook setup, error handling</p>
+                    </div>
+                    <div className="mt-2 pt-2 border-t border-purple-100 flex gap-2">
+                      <Button variant="outline" size="sm" className="text-xs h-6">Register</Button>
+                      <Button variant="outline" size="sm" className="text-xs h-6">Prerequisites</Button>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white p-3 rounded border border-purple-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <h6 className="font-medium text-purple-800">Friday Customer Success Roundtable</h6>
+                      <Badge variant="outline" className="text-xs bg-green-100">Weekly 1PM GMT</Badge>
+                    </div>
+                    <div className="space-y-1 text-purple-700">
+                      <p>🎯 <strong>Topic:</strong> "Q4 planning strategies & goal setting"</p>
+                      <p>👩‍💼 <strong>Host:</strong> Jennifer Walsh, Customer Success Director</p>
+                      <p>⏱️ <strong>Duration:</strong> 45 minutes + peer discussion</p>
+                      <p>📋 <strong>Format:</strong> Case study review, group problem-solving</p>
+                    </div>
+                    <div className="mt-2 pt-2 border-t border-purple-100 flex gap-2">
+                      <Button variant="outline" size="sm" className="text-xs h-6">Join EMEA</Button>
+                      <Button variant="outline" size="sm" className="text-xs h-6">Submit Topic</Button>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <Button variant="outline" size="sm" className="w-full">
-                <Clock className="w-4 h-4 mr-2" />
-                Reserve Spot
-              </Button>
+              
+              <div className="bg-gray-50 p-3 rounded border">
+                <h6 className="font-medium text-sm mb-2">📚 Session Library</h6>
+                <div className="text-xs text-muted-foreground space-y-1">
+                  <p>• 47 recorded sessions available on-demand</p>
+                  <p>• Searchable by topic, speaker, and date</p>
+                  <p>• Automatic transcripts and downloadable slides</p>
+                  <p>• Follow-up resources and action items included</p>
+                </div>
+                <Button variant="outline" size="sm" className="w-full mt-2">
+                  <VideoCamera className="w-4 h-4 mr-1" />
+                  Browse Library
+                </Button>
+              </div>
+              
+              <div className="text-xs text-muted-foreground bg-yellow-50 p-3 rounded border border-yellow-200">
+                💡 <strong>Pro Tip:</strong> Submit questions in advance for priority answering. Sessions are recorded and available within 24 hours. Attendees receive exclusive follow-up materials and early access to related features.
+              </div>
             </div>
           )
         }
