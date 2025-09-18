@@ -226,25 +226,15 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
   return (
     <Card className="border-visible">
       <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Brain className={`w-5 h-5 text-accent ${isGenerating ? 'animate-pulse-ai' : ''}`} />
-            Next Best Actions
-            {availableTargets.length > 0 && (
-              <Badge variant="outline" className="text-xs">
-                <Target className="w-3 h-3 mr-1" />
-                {availableTargets.length} targets
-              </Badge>
-            )}
-          </div>
-          <Button 
-            onClick={generateSmartNBAs}
-            disabled={isGenerating || isGeneratingTargetNBA}
-            size="sm"
-          >
-            <Sparkle className="w-4 h-4 mr-2" />
-            {isGenerating ? 'Generating...' : 'Generate NBA'}
-          </Button>
+        <CardTitle className="flex items-center gap-2">
+          <Brain className={`w-5 h-5 text-accent ${isGenerating ? 'animate-pulse-ai' : ''}`} />
+          Next Best Actions
+          {availableTargets.length > 0 && (
+            <Badge variant="outline" className="text-xs">
+              <Target className="w-3 h-3 mr-1" />
+              {availableTargets.length} targets
+            </Badge>
+          )}
         </CardTitle>
       </CardHeader>
       
