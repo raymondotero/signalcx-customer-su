@@ -364,14 +364,20 @@ export function IntegrationWizard() {
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold">Available Integrations</h3>
-                  <div className="flex gap-2">
-                    <Button size="sm" variant="outline">
-                      Quick Setup Wizard
-                    </Button>
-                    <Button size="sm">
-                      Add Custom Integration
-                    </Button>
-                  </div>
+                  <Button 
+                    size="sm"
+                    onClick={() => {
+                      // Set up a custom API integration
+                      const customIntegration = integrationTemplates.find(t => t.id === 'custom-api');
+                      if (customIntegration) {
+                        setSelectedIntegration(customIntegration);
+                        setActiveTab('configure');
+                        setFormData({});
+                      }
+                    }}
+                  >
+                    Add Custom Integration
+                  </Button>
                 </div>
 
 
