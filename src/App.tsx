@@ -20,6 +20,7 @@ import { WorkflowDemo } from '@/components/WorkflowDemo';
 import { ROIDashboard } from '@/components/ROIDashboard';
 import { DataSyncScheduler } from '@/components/DataSyncScheduler';
 import { IntegrationWizard } from '@/components/IntegrationWizard';
+import HelpGuide from '@/components/HelpGuide';
 
 import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
 import { SystemHealthDialog } from '@/components/SystemHealthDialog';
@@ -328,6 +329,7 @@ function App() {
               <ROIDashboard />
               <DataSyncScheduler />
               <IntegrationWizard />
+              <HelpGuide />
               <CSVUpload />
               <SystemHealthDialog />
               <Button 
