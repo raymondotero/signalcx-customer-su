@@ -1,47 +1,25 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
 import { 
-  Question, 
   BookOpen, 
-  VideoCamera, 
-  Lightbulb, 
-  ChartLine, 
+  Lightbu
   Brain, 
-  Target, 
   Database,
-  Gear,
   Users,
-  TrendUp,
   Shield,
-  Play,
   FileText,
-  Phone,
-  ChatCircle,
-  Monitor
-} from '@phosphor-icons/react';
-
-interface GuideSection {
-  id: string;
-  title: string;
-  icon: React.ReactNode;
+  ChatCir
+} from '@p
+interface G
+  title
     {
- 
 
-          <div>
-            <p className="text-sm text-mut
-            </p>
+         
 
-            <Card className="border-visib
      
-                  AI-
-              </CardHeader>
-                <p>• Real-time Next Best Act
-                
-              </CardContent>
-            
-              <CardHeader>
+        
+             
+         
                   <ChartLine className="w-4 h-4" />
                 </CardTitle>
               <C
@@ -74,29 +52,29 @@ interface GuideSection {
           
             <CardHeader>
             </CardHeader>
-              <p><strong>ARR:</strong> Annual Recurring 
-              <p><strong>QoQ
-              <p><s
-          </Card
-          
-            <ul className="text-xs space-y-1 text-b
-              <li>• Sort by health score to prioritize attention</li>
-              <li>• Monitor QoQ growth trends for expansion opportun
+              <li>5. Execute workflow
           </div>
       )
     {
-      title: 'Next Best Actions',
+      title: 'Account Management',
       content: (
           <div>
-            <p c
-            </
-       
-      
-     
-              <div cl
-                  <Badge variant="
-                </div>
-                
+            <p className="text-sm text-muted-foreground 
+            </p>
+          
+            
+            </CardHeader>
+              <div classNa
+                <span className="text-xs">Health score 70-100, low risk
+              <div className="flex items-center gap
+                <span className="text-xs
+              <div className
+                <span class
+            </CardContent>
+          
+            <CardHeader>
+            </CardHeader>
+              <p><strong>ARR:</strong> Annual Recurring 
                 </div>
                
                 </div>
