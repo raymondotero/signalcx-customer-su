@@ -18,6 +18,7 @@ import { HealthScoreForecast } from '@/components/HealthScoreForecast';
 import { ARRGrowthTracker } from '@/components/ARRGrowthTracker';
 import { WorkflowDemo } from '@/components/WorkflowDemo';
 import { ROIDashboard } from '@/components/ROIDashboard';
+import { IntegrationWizard } from '@/components/IntegrationWizard';
 
 import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
 import { SystemHealthDialog } from '@/components/SystemHealthDialog';
@@ -324,6 +325,7 @@ function App() {
               </div>
               
               <ROIDashboard />
+              <IntegrationWizard />
               <CSVUpload />
               <SystemHealthDialog />
               <Button 
