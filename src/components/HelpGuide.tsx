@@ -857,30 +857,32 @@ const HelpGuide: React.FC = () => {
               </div>
             </div>
             
-            <ScrollArea className="flex-1 p-6">
-              <div className="max-w-3xl space-y-6">
-                {/* Main Content */}
-                <div>
-                  {guideSections.find(s => s.id === activeSection)?.content}
-                </div>
-                
-                {/* Expandable Resources */}
-                {guideSections.find(s => s.id === activeSection)?.resources && (
-                  <div className="space-y-4">
-                    <Separator />
-                    <div>
-                      <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                        <Lightbulb className="w-5 h-5 text-yellow-600" />
-                        Quick Resources
-                      </h3>
-                      <div className="space-y-3">
-                        {guideSections.find(s => s.id === activeSection)?.resources?.map((resource) => (
-                          <ExpandableResourceComponent key={resource.id} resource={resource} />
-                        ))}
+            <ScrollArea className="flex-1 max-h-full overflow-y-auto">
+              <div className="p-6">
+                <div className="max-w-3xl space-y-6">
+                  {/* Main Content */}
+                  <div>
+                    {guideSections.find(s => s.id === activeSection)?.content}
+                  </div>
+                  
+                  {/* Expandable Resources */}
+                  {guideSections.find(s => s.id === activeSection)?.resources && (
+                    <div className="space-y-4">
+                      <Separator />
+                      <div>
+                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                          <Lightbulb className="w-5 h-5 text-yellow-600" />
+                          Quick Resources
+                        </h3>
+                        <div className="space-y-3">
+                          {guideSections.find(s => s.id === activeSection)?.resources?.map((resource) => (
+                            <ExpandableResourceComponent key={resource.id} resource={resource} />
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </ScrollArea>
             
