@@ -374,60 +374,7 @@ export function IntegrationWizard() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Card className="border-visible bg-blue-50 border-blue-200">
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                          <Buildings className="w-5 h-5 text-blue-600" />
-                        </div>
-                        <div>
-                          <h4 className="font-semibold text-blue-900">Microsoft Ecosystem</h4>
-                          <p className="text-sm text-blue-700">Native integrations</p>
-                        </div>
-                      </div>
-                      <Button size="sm" className="w-full">
-                        Setup Microsoft
-                      </Button>
-                    </CardContent>
-                  </Card>
 
-                  <Card className="border-visible bg-green-50 border-green-200">
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                          <Database className="w-5 h-5 text-green-600" />
-                        </div>
-                        <div>
-                          <h4 className="font-semibold text-green-900">Data Platforms</h4>
-                          <p className="text-sm text-green-700">Analytics & warehousing</p>
-                        </div>
-                      </div>
-                      <Button size="sm" className="w-full">
-                        Setup Data Platform
-                      </Button>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border-visible bg-orange-50 border-orange-200 md:col-span-2">
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                          <Globe className="w-5 h-5 text-orange-600" />
-                        </div>
-                        <div>
-                          <h4 className="font-semibold text-orange-900">Third Party & Custom</h4>
-                          <p className="text-sm text-orange-800 mb-3">
-                            Connect external systems and APIs
-                          </p>
-                        </div>
-                      </div>
-                      <Button size="sm" className="w-full">
-                        Setup Third Party
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </div>
 
                 {Object.entries(
                   integrationTemplates.reduce((acc, integration) => {
