@@ -6,7 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { CurrencyDollar, Rocket, Database, Shield, Users, TrendUp, TrendDown, Minus, Target, CheckCircle, Warning, Brain, CaretDown, CaretUp, Lightbulb, ArrowRight } from '@phosphor-icons/react';
-import { useSignals, useNBAs, useAccounts } from '@/hooks/useData';
+import { useSignals, useNBAs, useAccounts, useAgentMemory } from '@/hooks/useData';
 import { useKV } from '@github/spark/hooks';
 import { Signal, NextBestAction, Account, AIRecommendation, SignalAnalysis } from '@/types';
 import { TargetSettingsDialog, SignalTarget } from '@/components/TargetSettingsDialog';
@@ -39,9 +39,10 @@ interface SignalRecommendationMap {
 }
 
 export function BusinessValueDashboard() {
-  const { signals } = useSignals();
-  const { nbas } = useNBAs();
+  const { signals, removeSignal } = useSignals();
+  const { nbas, addNBA } = useNBAs();
   const { accounts } = useAccounts();
+  const { addMemoryEntry } = useAgentMemory();
   const [targets] = useKV<SignalTarget[]>('signal-targets', []);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [selectedSignal, setSelectedSignal] = useState<Signal | null>(null);
@@ -413,6 +414,76 @@ Return JSON with this structure:
     } finally {
       setIsLoadingAI(false);
     }
+  };
+
+  const handleAcceptSignal = (signal: Signal, recommendations: AIRecommendation[]) => {
+    // Convert AI recommendations to NBA format and add them
+    recommendations.forEach((rec, index) => {
+      const nba: NextBestAction = {
+        id: `nba-${signal.id}-${index}`,
+        accountId: signal.accountId,
+        title: rec.title,
+        description: rec.description,
+        reasoning: rec.reasoning,
+        priority: rec.priority as 'low' | 'medium' | 'high' | 'critical',
+        estimatedImpact: rec.estimatedImpact,
+        effort: rec.effort as 'low' | 'medium' | 'high',
+        category: rec.category === 'optimization' ? 'support' : rec.category as 'engagement' | 'retention' | 'expansion' | 'support' | 'onboarding',
+        generatedAt: new Date().toISOString(),
+        suggestedActions: rec.successMetrics || []
+      };
+      addNBA(nba);
+    });
+
+    // Add memory entry for accepted signal
+    addMemoryEntry({
+      id: `memory-accept-${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      type: 'signal_processed',
+      accountId: signal.accountId,
+      accountName: accounts.find(a => a.id === signal.accountId)?.name || 'Unknown Account',
+      description: `Accepted AI recommendations for signal: ${signal.signalName || signal.type}`,
+      metadata: { 
+        signalId: signal.id,
+        signalType: signal.type,
+        recommendationsCount: recommendations.length,
+        severity: signal.severity
+      },
+      outcome: 'success'
+    });
+
+    // Remove the signal from the dashboard
+    removeSignal(signal.id);
+    
+    toast.success(`Accepted ${recommendations.length} AI recommendation${recommendations.length !== 1 ? 's' : ''}`, {
+      description: `Signal "${signal.signalName || signal.type}" processed and removed from dashboard`
+    });
+  };
+
+  const handleRejectSignal = (signal: Signal, reason?: string) => {
+    // Add memory entry for rejected signal
+    addMemoryEntry({
+      id: `memory-reject-${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      type: 'signal_processed',
+      accountId: signal.accountId,
+      accountName: accounts.find(a => a.id === signal.accountId)?.name || 'Unknown Account',
+      description: `Rejected signal: ${signal.signalName || signal.type}`,
+      metadata: { 
+        signalId: signal.id,
+        signalType: signal.type,
+        severity: signal.severity,
+        rejectionReason: reason || 'Manual rejection by user'
+      },
+      outcome: 'rejected'
+    });
+
+    // Remove the signal from the dashboard
+    removeSignal(signal.id);
+    
+    toast.info(`Signal "${signal.signalName || signal.type}" rejected and removed`, {
+      description: 'Signal logged in agent memory and removed from dashboard'
+    });
   };
 
   const handleRetryAI = () => {
@@ -795,6 +866,8 @@ Return JSON with this structure:
         analysis={aiAnalysis}
         isLoading={isLoadingAI}
         onRetry={handleRetryAI}
+        onAccept={handleAcceptSignal}
+        onReject={handleRejectSignal}
       />
     </Card>
   );

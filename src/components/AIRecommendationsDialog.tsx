@@ -1,11 +1,11 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Brain, Lightbulb, Target, Clock, Users, TrendUp, X, Warning } from '@phosphor-icons/react';
+import { Brain, Lightbulb, Target, Clock, Users, TrendUp, X, Warning, Check, XCircle } from '@phosphor-icons/react';
 import { Signal, AIRecommendation, SignalAnalysis } from '@/types';
 
 interface AIRecommendationsDialogProps {
@@ -16,6 +16,8 @@ interface AIRecommendationsDialogProps {
   analysis: SignalAnalysis | null;
   isLoading?: boolean;
   onRetry?: () => void;
+  onAccept?: (signal: Signal, recommendations: AIRecommendation[]) => void;
+  onReject?: (signal: Signal, reason?: string) => void;
 }
 
 export function AIRecommendationsDialog({
@@ -25,12 +27,28 @@ export function AIRecommendationsDialog({
   recommendations,
   analysis,
   isLoading,
-  onRetry
+  onRetry,
+  onAccept,
+  onReject
 }: AIRecommendationsDialogProps) {
   if (!signal) return null;
 
   const hasError = analysis?.error;
   const hasRecommendations = recommendations && recommendations.length > 0;
+
+  const handleAccept = () => {
+    if (signal && onAccept) {
+      onAccept(signal, recommendations);
+      onOpenChange(false);
+    }
+  };
+
+  const handleReject = () => {
+    if (signal && onReject) {
+      onReject(signal, 'User manually rejected signal recommendations');
+      onOpenChange(false);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -359,6 +377,27 @@ export function AIRecommendationsDialog({
             )}
           </div>
         </ScrollArea>
+
+        {/* Action Buttons Footer */}
+        {hasRecommendations && !isLoading && (
+          <DialogFooter className="border-t pt-4 flex flex-row gap-2 justify-end">
+            <Button
+              variant="outline"
+              onClick={handleReject}
+              className="flex items-center gap-2"
+            >
+              <XCircle className="w-4 h-4" />
+              Reject Signal
+            </Button>
+            <Button
+              onClick={handleAccept}
+              className="flex items-center gap-2"
+            >
+              <Check className="w-4 h-4" />
+              Accept Recommendations
+            </Button>
+          </DialogFooter>
+        )}
       </DialogContent>
     </Dialog>
   );
