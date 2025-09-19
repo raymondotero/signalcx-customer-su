@@ -28,15 +28,28 @@ export function NBADisplay({ account, onPlanAndRun, defaultTab = "ai-recommendat
   const [orchestrationPlan, setOrchestrationPlan] = useState<any>(null);
   const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
   const [activeTab, setActiveTab] = useState(defaultTab);
+  const [isLoadingNewAccount, setIsLoadingNewAccount] = useState(false);
   
   const { addNBA, nbas } = useNBAs();
   const { addMemoryEntry, memory } = useAgentMemory();
   const { signals } = useSignals();
   const { generateTargetAwareNBA, isGenerating: isGeneratingTargetNBA, availableTargets } = useTargetAwareRecommendations();
 
-  // Reset to AI recommendations tab when account changes
+  // Reset recommendations and tab when account changes
   React.useEffect(() => {
+    setIsLoadingNewAccount(true);
     setActiveTab("ai-recommendations");
+    setCurrentRecommendations([]);
+    setTargetRecommendation(null);
+    setSelectedNBA(null);
+    setOrchestrationPlan(null);
+    
+    // Brief loading state to show account switching
+    const loadingTimer = setTimeout(() => {
+      setIsLoadingNewAccount(false);
+    }, 300);
+    
+    return () => clearTimeout(loadingTimer);
   }, [account.id]);
 
   const generateSmartNBAs = async () => {
@@ -248,11 +261,16 @@ export function NBADisplay({ account, onPlanAndRun, defaultTab = "ai-recommendat
       </CardHeader>
       
       <CardContent>
-        {selectedNBA ? (
+        {currentRecommendations.length > 0 || targetRecommendation ? (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="selected">Selected NBA</TabsTrigger>
-              <TabsTrigger value="ai-recommendations">AI Recommendations ({currentRecommendations.length})</TabsTrigger>
+              <TabsTrigger value="selected" disabled={!selectedNBA}>
+                Selected NBA
+                {selectedNBA && <Badge className="ml-1 h-4 text-xs">Ready</Badge>}
+              </TabsTrigger>
+              <TabsTrigger value="ai-recommendations">
+                AI Recommendations ({currentRecommendations.length})
+              </TabsTrigger>
               <TabsTrigger value="target-recommendation">
                 Target-Based
                 {targetRecommendation && <Badge className="ml-1 h-4 text-xs">NEW</Badge>}
@@ -260,158 +278,182 @@ export function NBADisplay({ account, onPlanAndRun, defaultTab = "ai-recommendat
             </TabsList>
             
             <TabsContent value="selected">
-              <div className="space-y-4">
-                <div className="p-4 rounded-lg border bg-gradient-to-r from-blue-50 to-purple-50">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-lg">{selectedNBA.title}</h3>
-                      <p className="text-sm text-muted-foreground mt-1">{selectedNBA.description}</p>
+              {selectedNBA ? (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-lg border bg-gradient-to-r from-blue-50 to-purple-50">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-lg">{selectedNBA.title}</h3>
+                        <p className="text-sm text-muted-foreground mt-1">{selectedNBA.description}</p>
+                      </div>
+                      <div className="flex gap-2 ml-4">
+                        <Badge className={getPriorityColor(selectedNBA.priority)}>
+                          {selectedNBA.priority}
+                        </Badge>
+                        <Badge className={getCategoryColor(selectedNBA.category)}>
+                          {selectedNBA.category}
+                        </Badge>
+                      </div>
                     </div>
-                    <div className="flex gap-2 ml-4">
-                      <Badge className={getPriorityColor(selectedNBA.priority)}>
-                        {selectedNBA.priority}
-                      </Badge>
-                      <Badge className={getCategoryColor(selectedNBA.category)}>
-                        {selectedNBA.category}
-                      </Badge>
+                    
+                    <div className="grid grid-cols-2 gap-4 text-sm mb-4">
+                      <div>
+                        <span className="font-medium">Estimated Impact:</span>
+                        <p className="text-muted-foreground">{selectedNBA.estimatedImpact}</p>
+                      </div>
+                      <div>
+                        <span className="font-medium">Effort Required:</span>
+                        <p className="text-muted-foreground capitalize">{selectedNBA.effort}</p>
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4 text-sm mb-4">
-                    <div>
-                      <span className="font-medium">Estimated Impact:</span>
-                      <p className="text-muted-foreground">{selectedNBA.estimatedImpact}</p>
+                    
+                    <div className="mb-4">
+                      <h4 className="font-medium mb-2">Suggested Actions:</h4>
+                      <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                        {selectedNBA.suggestedActions.map((action, index) => (
+                          <li key={index}>{action}</li>
+                        ))}
+                      </ul>
                     </div>
-                    <div>
-                      <span className="font-medium">Effort Required:</span>
-                      <p className="text-muted-foreground capitalize">{selectedNBA.effort}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="mb-4">
-                    <h4 className="font-medium mb-2">Suggested Actions:</h4>
-                    <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-                      {selectedNBA.suggestedActions.map((action, index) => (
-                        <li key={index}>{action}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  
-                  {selectedNBA.microsoftSolutions && selectedNBA.microsoftSolutions.length > 0 && (
-                    <div className="mb-4 p-3 rounded-lg bg-blue-50 border border-blue-200">
-                      <h4 className="font-medium mb-2 text-blue-800 flex items-center gap-2">
-                        <div className="w-4 h-4 bg-blue-600 rounded-sm flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">M</span>
-                        </div>
-                        Microsoft Solutions
-                      </h4>
-                      <div className="space-y-2">
-                        <div>
-                          <span className="text-sm font-medium text-blue-700">Recommended Solutions:</span>
-                          <div className="flex flex-wrap gap-1 mt-1">
-                            {selectedNBA.microsoftSolutions.map((solution, index) => (
-                              <Badge key={index} variant="outline" className="bg-blue-100 text-blue-700 border-blue-300 text-xs">
-                                {solution}
-                              </Badge>
-                            ))}
+                    
+                    {selectedNBA.microsoftSolutions && selectedNBA.microsoftSolutions.length > 0 && (
+                      <div className="mb-4 p-3 rounded-lg bg-blue-50 border border-blue-200">
+                        <h4 className="font-medium mb-2 text-blue-800 flex items-center gap-2">
+                          <div className="w-4 h-4 bg-blue-600 rounded-sm flex items-center justify-center">
+                            <span className="text-white text-xs font-bold">M</span>
                           </div>
-                        </div>
-                        
-                        {selectedNBA.deliveryMotions && selectedNBA.deliveryMotions.length > 0 && (
+                          Microsoft Solutions
+                        </h4>
+                        <div className="space-y-2">
                           <div>
-                            <span className="text-sm font-medium text-blue-700">Delivery Motions:</span>
+                            <span className="text-sm font-medium text-blue-700">Recommended Solutions:</span>
                             <div className="flex flex-wrap gap-1 mt-1">
-                              {selectedNBA.deliveryMotions.map((motion, index) => (
-                                <Badge key={index} variant="outline" className="bg-green-100 text-green-700 border-green-300 text-xs">
-                                  {motion}
+                              {selectedNBA.microsoftSolutions.map((solution, index) => (
+                                <Badge key={index} variant="outline" className="bg-blue-100 text-blue-700 border-blue-300 text-xs">
+                                  {solution}
                                 </Badge>
                               ))}
                             </div>
                           </div>
-                        )}
-                        
-                        {selectedNBA.partnerMotions && selectedNBA.partnerMotions.length > 0 && (
-                          <div>
-                            <span className="text-sm font-medium text-blue-700">Partner Enablement:</span>
-                            <ul className="list-disc list-inside text-xs text-blue-600 mt-1 ml-2">
-                              {selectedNBA.partnerMotions.map((motion, index) => (
-                                <li key={index}>{motion}</li>
-                              ))}
-                            </ul>
+                          
+                          {selectedNBA.deliveryMotions && selectedNBA.deliveryMotions.length > 0 && (
+                            <div>
+                              <span className="text-sm font-medium text-blue-700">Delivery Motions:</span>
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {selectedNBA.deliveryMotions.map((motion, index) => (
+                                  <Badge key={index} variant="outline" className="bg-green-100 text-green-700 border-green-300 text-xs">
+                                    {motion}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          
+                          {selectedNBA.partnerMotions && selectedNBA.partnerMotions.length > 0 && (
+                            <div>
+                              <span className="text-sm font-medium text-blue-700">Partner Enablement:</span>
+                              <ul className="list-disc list-inside text-xs text-blue-600 mt-1 ml-2">
+                                {selectedNBA.partnerMotions.map((motion, index) => (
+                                  <li key={index}>{motion}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    
+                    <Separator className="my-4" />
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm text-muted-foreground">
+                        <p><strong>Reasoning:</strong> {selectedNBA.reasoning}</p>
+                        <p><strong>Assigned to:</strong> {selectedNBA.assignedTo}</p>
+                        <p><strong>Time to complete:</strong> {selectedNBA.timeToComplete}</p>
+                      </div>
+                      
+                      <div className="flex gap-2 flex-wrap">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => generateOrchestrationPlan(selectedNBA)}
+                          disabled={isGeneratingPlan}
+                        >
+                          <Clock className="w-4 h-4 mr-1" />
+                          {isGeneratingPlan ? 'Planning...' : 'Plan'}
+                        </Button>
+                        <ROICalculator 
+                          onCalculationComplete={(solution, metrics) => {
+                            console.log('ROI calculated for NBA:', selectedNBA.title, solution, metrics);
+                            toast.success(`ROI calculated: ${metrics.roi.toFixed(1)}% return`);
+                          }}
+                        />
+                        <Button 
+                          onClick={handlePlanAndRun}
+                          size="sm"
+                        >
+                          <Play className="w-4 h-4 mr-1" />
+                          Plan & Run
+                        </Button>
+                        <WorkflowAutomation 
+                          nba={selectedNBA}
+                          account={account}
+                          onComplete={() => toast.success('Workflow automation completed!')}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {orchestrationPlan && (
+                    <div className="p-4 rounded-lg border bg-slate-50">
+                      <h4 className="font-medium mb-2 flex items-center gap-2">
+                        <Clock className="w-4 h-4" />
+                        Orchestration Plan
+                      </h4>
+                      <div className="space-y-2 text-sm">
+                        {orchestrationPlan.steps?.map((step: any, index: number) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs">
+                              {index + 1}
+                            </div>
+                            <span>{step.description}</span>
+                            <Badge variant="outline" className="text-xs">
+                              {step.estimatedTime}
+                            </Badge>
                           </div>
-                        )}
+                        ))}
                       </div>
                     </div>
                   )}
-                  
-                  <Separator className="my-4" />
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm text-muted-foreground">
-                      <p><strong>Reasoning:</strong> {selectedNBA.reasoning}</p>
-                      <p><strong>Assigned to:</strong> {selectedNBA.assignedTo}</p>
-                      <p><strong>Time to complete:</strong> {selectedNBA.timeToComplete}</p>
-                    </div>
-                    
-                    <div className="flex gap-2 flex-wrap">
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => generateOrchestrationPlan(selectedNBA)}
-                        disabled={isGeneratingPlan}
-                      >
-                        <Clock className="w-4 h-4 mr-1" />
-                        {isGeneratingPlan ? 'Planning...' : 'Plan'}
-                      </Button>
-                      <ROICalculator 
-                        onCalculationComplete={(solution, metrics) => {
-                          console.log('ROI calculated for NBA:', selectedNBA.title, solution, metrics);
-                          toast.success(`ROI calculated: ${metrics.roi.toFixed(1)}% return`);
-                        }}
-                      />
-                      <Button 
-                        onClick={handlePlanAndRun}
-                        size="sm"
-                      >
-                        <Play className="w-4 h-4 mr-1" />
-                        Plan & Run
-                      </Button>
-                      <WorkflowAutomation 
-                        nba={selectedNBA}
-                        account={account}
-                        onComplete={() => toast.success('Workflow automation completed!')}
-                      />
-                    </div>
-                  </div>
                 </div>
-                
-                {orchestrationPlan && (
-                  <div className="p-4 rounded-lg border bg-slate-50">
-                    <h4 className="font-medium mb-2 flex items-center gap-2">
-                      <Clock className="w-4 h-4" />
-                      Orchestration Plan
-                    </h4>
-                    <div className="space-y-2 text-sm">
-                      {orchestrationPlan.steps?.map((step: any, index: number) => (
-                        <div key={index} className="flex items-center gap-2">
-                          <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs">
-                            {index + 1}
-                          </div>
-                          <span>{step.description}</span>
-                          <Badge variant="outline" className="text-xs">
-                            {step.estimatedTime}
-                          </Badge>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Target className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
+                  <p>No NBA selected yet.</p>
+                  <p className="text-sm">Generate and select a recommendation to view details.</p>
+                </div>
+              )}
             </TabsContent>
             
             <TabsContent value="ai-recommendations">
               <div className="space-y-3">
-                {currentRecommendations.length > 0 ? (
+                {isLoadingNewAccount ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Brain className="w-12 h-12 mx-auto mb-4 text-primary animate-pulse" />
+                    <h3 className="text-lg font-medium mb-2">Loading Account Data</h3>
+                    <p className="text-sm">Preparing AI recommendations for {account.name}...</p>
+                  </div>
+                ) : isGenerating ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Brain className="w-12 h-12 mx-auto mb-4 text-accent animate-pulse-ai" />
+                    <h3 className="text-lg font-medium mb-2">Generating AI Recommendations</h3>
+                    <p className="text-sm mb-4">Analyzing account data, signals, and historical patterns...</p>
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full"></div>
+                      <span className="text-sm">Processing...</span>
+                    </div>
+                  </div>
+                ) : currentRecommendations.length > 0 ? (
                   currentRecommendations.map((rec, index) => (
                     <div key={index} className="p-3 rounded-lg border" >
                       <div className="flex items-start justify-between mb-2">
@@ -471,8 +513,17 @@ export function NBADisplay({ account, onPlanAndRun, defaultTab = "ai-recommendat
                 ) : (
                   <div className="text-center py-8 text-muted-foreground">
                     <Brain className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
-                    <p>No AI recommendations generated yet.</p>
-                    <p className="text-sm">Click "Generate NBA" to get AI-powered suggestions.</p>
+                    <p className="mb-2">No AI recommendations for {account.name} yet.</p>
+                    <p className="text-sm mb-4">Generate fresh AI-powered suggestions for this account.</p>
+                    <Button 
+                      onClick={generateSmartNBAs} 
+                      disabled={isGenerating || isLoadingNewAccount}
+                      size="sm"
+                      className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
+                    >
+                      <Sparkle className="w-4 h-4 mr-2" />
+                      Generate NBA Recommendations
+                    </Button>
                   </div>
                 )}
               </div>
