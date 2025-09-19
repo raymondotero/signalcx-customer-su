@@ -69,13 +69,13 @@ export function HealthTrendVisualizer({
       <CardContent className="space-y-4">
         {/* Timeline visualization */}
         <div className="relative">
-          <div className="flex justify-between items-end h-32 border-b border-border pb-2">
+          <div className="flex justify-between items-end h-32 border-b border-border pb-2 relative">
             {timepoints.map((point, index) => {
               const height = (point.value / 100) * 100; // Convert to percentage for height
               const isCurrentScore = index === 0;
               
               return (
-                <div key={point.label} className="flex flex-col items-center space-y-1">
+                <div key={point.label} className="flex flex-col items-center space-y-1 relative">
                   {/* Bar */}
                   <div 
                     className={`w-6 rounded-t transition-all duration-300 ${
@@ -106,27 +106,50 @@ export function HealthTrendVisualizer({
                 </div>
               );
             })}
-          </div>
-          
-          {/* Trend line overlay */}
-          <svg 
-            className="absolute inset-0 pointer-events-none" 
-            viewBox="0 0 100 100" 
-            preserveAspectRatio="none"
-          >
-            <polyline
-              fill="none"
-              stroke={trend === 'improving' ? '#22c55e' : trend === 'declining' ? '#ef4444' : '#6b7280'}
-              strokeWidth="1"
-              strokeDasharray="2,2"
-              opacity="0.6"
-              points={timepoints.map((point, index) => {
+            
+            {/* Trend line overlay - positioned correctly within the chart area */}
+            <svg 
+              className="absolute top-0 left-0 w-full h-full pointer-events-none" 
+              viewBox="0 0 100 100" 
+              preserveAspectRatio="none"
+              style={{ height: '128px' }} // Match h-32
+            >
+              <polyline
+                fill="none"
+                stroke={trend === 'improving' ? '#22c55e' : trend === 'declining' ? '#ef4444' : '#6b7280'}
+                strokeWidth="0.8"
+                strokeDasharray="3,2"
+                opacity="0.7"
+                points={timepoints.map((point, index) => {
+                  // Calculate x position based on bar center positions
+                  const x = (index / (timepoints.length - 1)) * 100;
+                  // Calculate y position to match bar tops (invert because SVG y=0 is top)
+                  const y = 100 - point.value;
+                  return `${x},${y}`;
+                }).join(' ')}
+              />
+              
+              {/* Add data points for better visibility */}
+              {timepoints.map((point, index) => {
                 const x = (index / (timepoints.length - 1)) * 100;
                 const y = 100 - point.value;
-                return `${x},${y}`;
-              }).join(' ')}
-            />
-          </svg>
+                const isCurrentScore = index === 0;
+                
+                return (
+                  <circle
+                    key={index}
+                    cx={x}
+                    cy={y}
+                    r="1.5"
+                    fill={isCurrentScore ? '#8b5cf6' : trend === 'improving' ? '#22c55e' : trend === 'declining' ? '#ef4444' : '#6b7280'}
+                    opacity={isCurrentScore ? "1" : "0.8"}
+                    stroke="white"
+                    strokeWidth="0.5"
+                  />
+                );
+              })}
+            </svg>
+          </div>
         </div>
 
         {/* Summary stats */}
