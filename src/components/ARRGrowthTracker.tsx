@@ -11,9 +11,11 @@ import {
   ChartBar, 
   Calendar,
   Target,
-  CurrencyDollar
+  CurrencyDollar,
+  ArrowRight
 } from '@phosphor-icons/react';
 import { Account, QuarterlyARR, ARRTrend } from '@/types';
+import { ExpansionOpportunitiesDialog } from './ExpansionOpportunitiesDialog';
 
 interface ARRGrowthTrackerProps {
   accounts: Account[];
@@ -466,15 +468,32 @@ export function ARRGrowthTracker({ accounts, selectedAccount }: ARRGrowthTracker
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <Target className="w-4 h-4 text-blue-600" />
-                          <span className="font-medium">Expansion Opportunity</span>
+                      {selectedAccountWithHistory.expansionOpportunity > 0 ? (
+                        <ExpansionOpportunitiesDialog account={selectedAccountWithHistory}>
+                          <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors border border-blue-200 hover:border-blue-300">
+                            <div className="flex items-center gap-3">
+                              <Target className="w-4 h-4 text-blue-600" />
+                              <span className="font-medium">Expansion Opportunity</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-lg font-semibold text-blue-600">
+                                {formatCurrency(selectedAccountWithHistory.expansionOpportunity)}
+                              </span>
+                              <ArrowRight className="w-4 h-4 text-blue-600" />
+                            </div>
+                          </div>
+                        </ExpansionOpportunitiesDialog>
+                      ) : (
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <Target className="w-4 h-4 text-gray-400" />
+                            <span className="font-medium text-gray-600">No Current Expansion Opportunities</span>
+                          </div>
+                          <span className="text-lg font-semibold text-gray-400">
+                            {formatCurrency(0)}
+                          </span>
                         </div>
-                        <span className="text-lg font-semibold text-blue-600">
-                          {formatCurrency(selectedAccountWithHistory.expansionOpportunity)}
-                        </span>
-                      </div>
+                      )}
                       
                       <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
                         <div className="flex items-center gap-3">
