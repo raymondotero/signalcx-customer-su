@@ -270,10 +270,10 @@ function App() {
     const risk = accounts.filter(a => a.status === 'At Risk').length;
     const totalARR = accounts.reduce((sum, a) => sum + a.arr, 0);
     
-    // Calculate stable portfolio QoQ growth based on account composition
-    const avgGrowthGood = 12.3; // Good accounts average ~12% growth
-    const avgGrowthWatch = 5.7; // Watch accounts average ~6% growth  
-    const avgGrowthRisk = -1.2; // At Risk accounts average ~-1% growth
+    // Calculate stable portfolio QoQ growth based on account composition (quarterly rates)
+    const avgGrowthGood = 3.1; // Good accounts average ~3.1% quarterly growth (12.3% annual)
+    const avgGrowthWatch = 1.4; // Watch accounts average ~1.4% quarterly growth (5.7% annual)
+    const avgGrowthRisk = -0.3; // At Risk accounts average ~-0.3% quarterly growth (-1.2% annual)
     
     const weightedGrowth = accounts.length > 0 ? 
       (good * avgGrowthGood + watch * avgGrowthWatch + risk * avgGrowthRisk) / accounts.length : 0;
