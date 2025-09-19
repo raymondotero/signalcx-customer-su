@@ -524,4 +524,17 @@ export function ARRGrowthTracker({ accounts, selectedAccount }: ARRGrowthTracker
       </CardContent>
     </Card>
   );
+}                  <ChartBar className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">Select an Account</h3>
+                  <p className="text-muted-foreground">
+                    Choose an account from the main table to view its ARR growth trends and history.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
+  );
 }
