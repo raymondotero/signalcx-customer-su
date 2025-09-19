@@ -54,6 +54,24 @@ function App() {
   const handleSelectAccount = (account: Account) => {
     setSelectedAccount(account);
     setSelectedNBA(null);
+    
+    // Scroll to NBA section and highlight it
+    setTimeout(() => {
+      const nbaSection = document.querySelector('[data-section="nba-display"]');
+      if (nbaSection) {
+        nbaSection.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start',
+          inline: 'nearest'
+        });
+        
+        // Add highlight effect
+        nbaSection.classList.add('scroll-highlight');
+        setTimeout(() => {
+          nbaSection.classList.remove('scroll-highlight');
+        }, 2000);
+      }
+    }, 100);
   };
 
   const handlePlanAndRun = (nba: NextBestAction) => {

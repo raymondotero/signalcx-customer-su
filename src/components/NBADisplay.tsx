@@ -240,7 +240,7 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
       
       <CardContent>
         {selectedNBA ? (
-          <Tabs defaultValue="selected" className="w-full">
+          <Tabs defaultValue="ai-recommendations" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="selected">Selected NBA</TabsTrigger>
               <TabsTrigger value="ai-recommendations">AI Recommendations ({currentRecommendations.length})</TabsTrigger>
