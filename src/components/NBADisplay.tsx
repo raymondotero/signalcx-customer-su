@@ -17,20 +17,27 @@ import { toast } from 'sonner';
 interface NBADisplayProps {
   account: Account;
   onPlanAndRun: (nba: NextBestAction) => void;
+  defaultTab?: string;
 }
 
-export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
+export function NBADisplay({ account, onPlanAndRun, defaultTab = "ai-recommendations" }: NBADisplayProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentRecommendations, setCurrentRecommendations] = useState<SmartRecommendation[]>([]);
   const [targetRecommendation, setTargetRecommendation] = useState<any>(null);
   const [selectedNBA, setSelectedNBA] = useState<NextBestAction | null>(null);
   const [orchestrationPlan, setOrchestrationPlan] = useState<any>(null);
   const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
+  const [activeTab, setActiveTab] = useState(defaultTab);
   
   const { addNBA, nbas } = useNBAs();
   const { addMemoryEntry, memory } = useAgentMemory();
   const { signals } = useSignals();
   const { generateTargetAwareNBA, isGenerating: isGeneratingTargetNBA, availableTargets } = useTargetAwareRecommendations();
+
+  // Reset to AI recommendations tab when account changes
+  React.useEffect(() => {
+    setActiveTab("ai-recommendations");
+  }, [account.id]);
 
   const generateSmartNBAs = async () => {
     console.log('NBA Generation Started', { account: account.name, accountId: account.id });
@@ -88,6 +95,7 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
       if (topRecommendation) {
         setSelectedNBA(topRecommendation);
         addNBA(topRecommendation);
+        setActiveTab("selected"); // Switch to selected tab when NBA is selected
         console.log('NBA Added to Storage', { nbaId: topRecommendation.id, title: topRecommendation.title });
       } else {
         console.warn('No recommendations generated');
@@ -118,6 +126,7 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
       // Fallback to basic recommendation
       const fallbackNBA = generateFallbackNBA();
       setSelectedNBA(fallbackNBA);
+      setActiveTab("selected"); // Switch to selected tab for fallback NBA
       addNBA(fallbackNBA);
       
       addMemoryEntry({
@@ -240,7 +249,7 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
       
       <CardContent>
         {selectedNBA ? (
-          <Tabs defaultValue="ai-recommendations" className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="selected">Selected NBA</TabsTrigger>
               <TabsTrigger value="ai-recommendations">AI Recommendations ({currentRecommendations.length})</TabsTrigger>
@@ -443,7 +452,10 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
                           <Button 
                             size="sm" 
                             variant="outline"
-                            onClick={() => setSelectedNBA(rec.nba)}
+                            onClick={() => {
+                              setSelectedNBA(rec.nba);
+                              setActiveTab("selected");
+                            }}
                           >
                             Select
                           </Button>
@@ -526,7 +538,10 @@ export function NBADisplay({ account, onPlanAndRun }: NBADisplayProps) {
                       
                       <div className="flex gap-2">
                         <Button 
-                          onClick={() => setSelectedNBA(targetRecommendation.nba)}
+                          onClick={() => {
+                            setSelectedNBA(targetRecommendation.nba);
+                            setActiveTab("selected");
+                          }}
                           className="flex-1"
                         >
                           <Target className="w-4 h-4 mr-2" />

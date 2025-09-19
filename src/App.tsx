@@ -479,6 +479,7 @@ function App() {
                   <NBADisplay 
                     account={selectedAccount}
                     onPlanAndRun={handlePlanAndRun}
+                    defaultTab="ai-recommendations"
                   />
                 </div>
                 
