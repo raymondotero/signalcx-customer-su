@@ -30,38 +30,48 @@ export function ARRGrowthTracker({ accounts, selectedAccount }: ARRGrowthTracker
   // Generate sample ARR history for accounts that don't have it
   const generateARRHistory = (account: Account): QuarterlyARR[] => {
     const quarters: QuarterlyARR[] = [];
-    // Convert annual growth rates to quarterly rates (divide by 4)
-    const annualGrowth = account.status === 'Good' ? 0.08 : account.status === 'Watch' ? 0.03 : -0.02;
-    const baseQuarterlyGrowth = annualGrowth / 4; // Convert to quarterly rate
+    // Use realistic quarterly growth rates directly
+    const baseQuarterlyGrowth = account.status === 'Good' ? 0.02 : account.status === 'Watch' ? 0.0075 : -0.005;
     const currentDate = new Date();
-    let currentARR = account.arr;
+    
+    // Start from 8 quarters ago and work forward
+    const quarterHistory: { arr: number; date: Date; quarter: string }[] = [];
     
     for (let i = 7; i >= 0; i--) {
       const quarterDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - (i * 3), 1);
       const quarterStr = `Q${Math.floor(quarterDate.getMonth() / 3) + 1} ${quarterDate.getFullYear()}`;
-      
-      // Add some variance to make it realistic (±1% quarterly variance)
-      const variance = (Math.random() - 0.5) * 0.02;
-      const quarterlyGrowthRate = baseQuarterlyGrowth + variance;
-      
-      // For the oldest quarter, start with a base ARR
-      if (i === 7) {
-        currentARR = account.arr * Math.pow(1 + baseQuarterlyGrowth, -7); // Work backwards
-      } else {
-        currentARR = currentARR * (1 + quarterlyGrowthRate);
+      quarterHistory.push({ arr: 0, date: quarterDate, quarter: quarterStr });
+    }
+    
+    // Set the most recent quarter to the current ARR and work backwards
+    quarterHistory[quarterHistory.length - 1].arr = account.arr;
+    
+    // Calculate backwards to establish baseline
+    for (let i = quarterHistory.length - 2; i >= 0; i--) {
+      // Add some realistic variance (±0.5% quarterly variance)
+      const variance = (Math.random() - 0.5) * 0.01;
+      const quarterlyRate = baseQuarterlyGrowth + variance;
+      quarterHistory[i].arr = quarterHistory[i + 1].arr / (1 + quarterlyRate);
+    }
+    
+    // Now calculate forward with proper growth rates
+    for (let i = 0; i < quarterHistory.length; i++) {
+      let growth = 0;
+      if (i > 0) {
+        const previousARR = quarterHistory[i - 1].arr;
+        const currentARR = quarterHistory[i].arr;
+        growth = ((currentARR - previousARR) / previousARR) * 100;
       }
       
-      const growth = i === 7 ? 0 : (quarterlyGrowthRate * 100);
-
       quarters.push({
-        quarter: quarterStr,
-        arr: Math.round(currentARR),
+        quarter: quarterHistory[i].quarter,
+        arr: Math.round(quarterHistory[i].arr),
         growth: Math.round(growth * 10) / 10, // Round to nearest tenth
-        date: quarterDate.toISOString()
+        date: quarterHistory[i].date.toISOString()
       });
     }
     
-    return quarters.reverse();
+    return quarters;
   };
 
   const getAccountWithHistory = (account: Account): Account => {
@@ -70,19 +80,23 @@ export function ARRGrowthTracker({ accounts, selectedAccount }: ARRGrowthTracker
       const totalGrowth = history.length > 1 
         ? ((history[history.length - 1].arr - history[0].arr) / history[0].arr) * 100 
         : 0;
-      const averageGrowth = history.length > 0 
-        ? history.reduce((sum, q) => sum + q.growth, 0) / history.length 
+      
+      // Calculate average quarterly growth excluding the first quarter (which has 0% growth)
+      const growthQuarters = history.slice(1);
+      const averageGrowth = growthQuarters.length > 0 
+        ? growthQuarters.reduce((sum, q) => sum + q.growth, 0) / growthQuarters.length 
         : 0;
-      // Adjust trend thresholds for quarterly growth (was annual)
-      const trend: ARRTrend['trend'] = averageGrowth > 2.5 ? 'accelerating' : averageGrowth > 0.5 ? 'steady' : 'declining';
+      
+      // Realistic quarterly growth thresholds
+      const trend: ARRTrend['trend'] = averageGrowth > 2.0 ? 'accelerating' : averageGrowth > 0.5 ? 'steady' : 'declining';
       
       return {
         ...account,
         arrHistory: history,
         arrTrend: {
           quarters: history,
-          totalGrowth,
-          averageQuarterlyGrowth: averageGrowth,
+          totalGrowth: Math.round(totalGrowth * 10) / 10,
+          averageQuarterlyGrowth: Math.round(averageGrowth * 10) / 10,
           trend
         }
       };
@@ -109,16 +123,28 @@ export function ARRGrowthTracker({ accounts, selectedAccount }: ARRGrowthTracker
       }
     });
 
+    // Sort quarters chronologically
     const quarters = Array.from(quarterMap.entries())
       .map(([quarter, arr]) => ({ quarter, arr }))
-      .sort((a, b) => new Date(a.quarter).getTime() - new Date(b.quarter).getTime());
+      .sort((a, b) => {
+        // Parse quarter string (e.g., "Q1 2024") for proper sorting
+        const [quarterA, yearA] = a.quarter.split(' ');
+        const [quarterB, yearB] = b.quarter.split(' ');
+        const qNumA = parseInt(quarterA.replace('Q', ''));
+        const qNumB = parseInt(quarterB.replace('Q', ''));
+        
+        if (yearA !== yearB) {
+          return parseInt(yearA) - parseInt(yearB);
+        }
+        return qNumA - qNumB;
+      });
 
     const quarterlyData: QuarterlyARR[] = quarters.map((q, index) => {
       const growth = index > 0 ? ((q.arr - quarters[index - 1].arr) / quarters[index - 1].arr) * 100 : 0;
       return {
         quarter: q.quarter,
         arr: q.arr,
-        growth,
+        growth: Math.round(growth * 10) / 10, // Round to nearest tenth
         date: new Date().toISOString()
       };
     });
@@ -127,17 +153,19 @@ export function ARRGrowthTracker({ accounts, selectedAccount }: ARRGrowthTracker
       ? ((quarters[quarters.length - 1].arr - quarters[0].arr) / quarters[0].arr) * 100 
       : 0;
 
-    const averageGrowth = quarterlyData.length > 0 
-      ? quarterlyData.reduce((sum, q) => sum + q.growth, 0) / quarterlyData.length 
+    // Calculate average quarterly growth excluding the first quarter (which has 0% growth)
+    const growthQuarters = quarterlyData.slice(1);
+    const averageGrowth = growthQuarters.length > 0 
+      ? growthQuarters.reduce((sum, q) => sum + q.growth, 0) / growthQuarters.length 
       : 0;
 
-    // Adjust trend thresholds for quarterly growth 
-    const trend: ARRTrend['trend'] = averageGrowth > 3.5 ? 'accelerating' : averageGrowth > 1.2 ? 'steady' : 'declining';
+    // Realistic quarterly growth thresholds
+    const trend: ARRTrend['trend'] = averageGrowth > 2.0 ? 'accelerating' : averageGrowth > 0.5 ? 'steady' : 'declining';
 
     return {
       quarters: quarterlyData,
-      totalGrowth,
-      averageQuarterlyGrowth: averageGrowth,
+      totalGrowth: Math.round(totalGrowth * 10) / 10,
+      averageQuarterlyGrowth: Math.round(averageGrowth * 10) / 10,
       trend
     };
   }, [accounts, timeRange]);
@@ -189,15 +217,17 @@ export function ARRGrowthTracker({ accounts, selectedAccount }: ARRGrowthTracker
       ? ((recentHistory[recentHistory.length - 1].arr - recentHistory[0].arr) / recentHistory[0].arr) * 100 
       : 0;
     
-    const timeRangeAvgGrowth = recentHistory.length > 0 
-      ? recentHistory.reduce((sum, q) => sum + q.growth, 0) / recentHistory.length 
+    // Calculate average quarterly growth excluding the first quarter (which would have 0% growth)
+    const growthQuarters = recentHistory.slice(1);
+    const timeRangeAvgGrowth = growthQuarters.length > 0 
+      ? growthQuarters.reduce((sum, q) => sum + q.growth, 0) / growthQuarters.length 
       : 0;
     
     return {
       ...accountWithHistory,
       timeRangeHistory: recentHistory,
-      timeRangeTotalGrowth,
-      timeRangeAvgGrowth
+      timeRangeTotalGrowth: Math.round(timeRangeTotalGrowth * 10) / 10,
+      timeRangeAvgGrowth: Math.round(timeRangeAvgGrowth * 10) / 10,
     };
   }, [selectedAccount, timeRange]);
 
