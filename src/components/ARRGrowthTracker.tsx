@@ -511,11 +511,13 @@ export function ARRGrowthTracker({ accounts, selectedAccount }: ARRGrowthTracker
             ) : (
               <Card className="border-visible">
                 <CardContent className="p-8 text-center">
-                  <ChartBar className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Select an Account</h3>
-                  <p className="text-muted-foreground">
-                    Choose an account from the main table to view its ARR growth trends and history.
-                  </p>
+                  <>
+                    <ChartBar className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">Select an Account</h3>
+                    <p className="text-muted-foreground">
+                      Choose an account from the main table to view its ARR growth trends and history.
+                    </p>
+                  </>
                 </CardContent>
               </Card>
             )}
