@@ -47,7 +47,10 @@ function App() {
   const realTimeAI = useRealTimeAI();
   const aiMetrics = useAIMetrics();
   const [targets] = useKV<SignalTarget[]>('signal-targets', []);
-  const safeTargets = targets || [];
+  const safeTargets = Array.isArray(targets) ? targets : [];
+  
+  // Debug targets to prevent object rendering issues
+  console.log('Targets:', targets, 'Safe targets length:', safeTargets.length);
   
   // Enable real-time notifications
   useRealtimeNotifications();
@@ -322,7 +325,7 @@ function App() {
                   )}
                   {realTimeAI.queueSize > 0 && (
                     <Badge variant="outline" className="animate-pulse">
-                      AI Queue: {realTimeAI.queueSize}
+                      AI Queue: {String(realTimeAI.queueSize)}
                     </Badge>
                   )}
                 </h1>
@@ -333,14 +336,14 @@ function App() {
             <div className="flex items-center gap-2 flex-wrap">
               <div className="flex items-center gap-2">
                 <div className="text-right text-xs text-muted-foreground">
-                  <div>AI Approval: {aiMetrics.getApprovalRate().toFixed(1)}%</div>
-                  <div>Avg Processing: {Math.round(aiMetrics.getAverageProcessingTime())}ms</div>
+                  <div>AI Approval: {String(aiMetrics.getApprovalRate().toFixed(1))}%</div>
+                  <div>Avg Processing: {String(Math.round(aiMetrics.getAverageProcessingTime()))}ms</div>
                 </div>
                 
-                {safeTargets.length > 0 && (
+                {Array.isArray(safeTargets) && safeTargets.length > 0 && (
                   <Badge variant="outline" className="bg-gradient-to-r from-green-50 to-blue-50 border-green-200 text-green-700">
                     <Target className="w-3 h-3 mr-1" />
-                    {safeTargets.length} Targets Active
+                    {String(safeTargets.length)} Targets Active
                   </Badge>
                 )}
               </div>
@@ -379,7 +382,7 @@ function App() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Total Accounts</p>
-                  <p className="text-2xl font-bold">{summary.total}</p>
+                  <p className="text-2xl font-bold">{String(summary.total)}</p>
                 </div>
                 <Database className="w-8 h-8 text-primary" />
               </div>
@@ -392,12 +395,12 @@ function App() {
                 <div>
                   <p className="text-sm text-muted-foreground">Total ARR</p>
                   <p className="text-2xl font-bold">
-                    ${(summary.totalARR / 1000000).toFixed(1)}M
+                    ${String((summary.totalARR / 1000000).toFixed(1))}M
                   </p>
                   <p className={`text-xs mt-1 ${
                     summary.portfolioGrowth >= 0 ? 'text-green-600' : 'text-red-600'
                   }`}>
-                    {summary.portfolioGrowth >= 0 ? '+' : ''}{summary.portfolioGrowth.toFixed(1)}% QoQ Growth
+                    {summary.portfolioGrowth >= 0 ? '+' : ''}{String(summary.portfolioGrowth.toFixed(1))}% QoQ Growth
                   </p>
                 </div>
                 <Badge className="status-good">Growing</Badge>
@@ -410,7 +413,7 @@ function App() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Healthy</p>
-                  <p className="text-2xl font-bold text-green-600">{summary.good}</p>
+                  <p className="text-2xl font-bold text-green-600">{String(summary.good)}</p>
                 </div>
                 <Badge className="status-good">Good</Badge>
               </div>
@@ -422,7 +425,7 @@ function App() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Watch</p>
-                  <p className="text-2xl font-bold text-yellow-600">{summary.watch}</p>
+                  <p className="text-2xl font-bold text-yellow-600">{String(summary.watch)}</p>
                 </div>
                 <Badge className="status-watch">Watch</Badge>
               </div>
@@ -434,7 +437,7 @@ function App() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">At Risk</p>
-                  <p className="text-2xl font-bold text-red-600">{summary.risk}</p>
+                  <p className="text-2xl font-bold text-red-600">{String(summary.risk)}</p>
                 </div>
                 <Badge className="status-risk">At Risk</Badge>
               </div>
