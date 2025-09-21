@@ -1368,12 +1368,6 @@ export function IntegrationWizard() {
                           <Badge className="bg-green-100 text-green-800">RBAC</Badge>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-sm">Multi-Factor Auth</span>
-                          <Badge className="bg-green-100 text-green-800">Required</Badge>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm">Session Management</span>
-                          <Badge className="bg-green-100 text-green-800">
                             JWT + Refresh
                           </Badge>
                         </div>
@@ -1383,17 +1377,17 @@ export function IntegrationWizard() {
                 </div>
 
                 <Card className="border-visible">
-                  <CardHeader>
-                    <CardTitle>Compliance Certifications & Standards</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {[
-                        { name: 'SOC 2 Type II', icon: <Shield className="w-8 h-8 text-green-600" /> },
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <Card className="border-visible">
+                  <CardHeader> className="w-8 h-8 text-green-600" /> },
                         { name: 'GDPR', icon: <Shield className="w-8 h-8 text-blue-600" /> },
-                        { name: 'HIPAA', icon: <Shield className="w-8 h-8 text-purple-600" /> },
-                        { name: 'ISO 27001', icon: <CheckCircle className="w-8 h-8 text-green-600" /> },
-                        { name: 'PCI DSS', icon: <Shield className="w-8 h-8 text-orange-600" /> },
+                  </CardHeader>eld className="w-8 h-8 text-purple-600" /> },
+                  <CardContent>icon: <CheckCircle className="w-8 h-8 text-green-600" /> },
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">" /> },
                         { name: 'FedRAMP', icon: <Shield className="w-8 h-8 text-red-600" /> },
                         { name: 'CSA STAR', icon: <Shield className="w-8 h-8 text-yellow-600" /> },
                         { name: 'ISO 27018', icon: <CheckCircle className="w-8 h-8 text-indigo-600" /> }
@@ -1408,12 +1402,12 @@ export function IntegrationWizard() {
                   </CardContent>
                 </Card>
 
-                <Card className="border-visible">
-                  <CardHeader>
-                    <CardTitle>Data Protection & Privacy</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        </div>e="border-visible">
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
                       <div className="space-y-2">
                         <h5 className="font-medium">Data Residency</h5>
                         <p className="text-sm text-muted-foreground">
@@ -1441,5 +1435,12 @@ export function IntegrationWizard() {
         </div>
       </DialogContent>
     </Dialog>
+              </div>
+            )}
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
+}  );
 }
