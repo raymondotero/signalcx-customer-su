@@ -46,6 +46,70 @@ export interface CriticalSignalEvent {
 export class CriticalSignalNotificationService {
   private events: CriticalSignalEvent[] = [];
   private cooldownMap: Map<string, number> = new Map();
+  private initialized: boolean = false;
+
+  constructor() {
+    try {
+      // Initialize with some sample data for demo purposes
+      this.initializeSampleData();
+      this.initialized = true;
+    } catch (error) {
+      console.error('Error initializing CriticalSignalNotificationService:', error);
+      this.initialized = false;
+    }
+  }
+
+  private checkInitialized(): boolean {
+    if (!this.initialized) {
+      console.warn('CriticalSignalNotificationService not properly initialized, using fallbacks');
+      return false;
+    }
+    return true;
+  }
+
+  private initializeSampleData() {
+    // Add some sample events for demonstration
+    const sampleEvents: CriticalSignalEvent[] = [
+      {
+        id: 'event-sample-1',
+        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+        signal: {
+          id: 'signal-sample-1',
+          accountId: 'acc-1',
+          accountName: 'TechCorp Solutions',
+          type: 'churn_risk',
+          description: 'Critical churn risk detected - health score dropped below 30',
+          severity: 'critical',
+          value: 28,
+          timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+          category: 'risk'
+        },
+        account: {
+          id: 'acc-1',
+          name: 'TechCorp Solutions',
+          industry: 'Technology',
+          arr: 2800000,
+          healthScore: 28,
+          status: 'At Risk',
+          csam: 'Sarah Johnson',
+          ae: 'Mike Chen',
+          contractEnd: '2024-12-31',
+          lastActivity: new Date().toISOString(),
+          expansionOpportunity: 150000
+        },
+        triggeredRules: [],
+        notificationsSent: {
+          email: true,
+          teams: true,
+          toast: true
+        },
+        escalated: true,
+        acknowledged: false
+      }
+    ];
+
+    this.events = sampleEvents;
+  }
 
   private defaultRules: NotificationRule[] = [
     {
@@ -100,7 +164,8 @@ export class CriticalSignalNotificationService {
     }
   ];
 
-  async processSignal(signal: Signal, account: Account): Promise<CriticalSignalEvent | null> {
+  processSignal = async (signal: Signal, account: Account): Promise<CriticalSignalEvent | null> => {
+    if (!this.checkInitialized()) return null;
     const triggeredRules = this.evaluateRules(signal, account);
 
     if (triggeredRules.length === 0) {
@@ -264,11 +329,13 @@ export class CriticalSignalNotificationService {
     // });
   }
 
-  getRecentEvents(limit: number = 50): CriticalSignalEvent[] {
+  getRecentEvents = (limit: number = 50): CriticalSignalEvent[] => {
+    if (!this.checkInitialized()) return [];
     return this.events.slice(0, limit);
   }
 
-  acknowledgeEvent(eventId: string): boolean {
+  acknowledgeEvent = (eventId: string): boolean => {
+    if (!this.checkInitialized()) return false;
     const event = this.events.find(e => e.id === eventId);
     if (event) {
       event.acknowledged = true;
@@ -277,11 +344,13 @@ export class CriticalSignalNotificationService {
     return false;
   }
 
-  getRules(): NotificationRule[] {
+  getRules = (): NotificationRule[] => {
+    if (!this.checkInitialized()) return [];
     return [...this.defaultRules];
   }
 
-  updateRule(ruleId: string, updates: Partial<NotificationRule>): boolean {
+  updateRule = (ruleId: string, updates: Partial<NotificationRule>): boolean => {
+    if (!this.checkInitialized()) return false;
     const ruleIndex = this.defaultRules.findIndex(r => r.id === ruleId);
     if (ruleIndex !== -1) {
       this.defaultRules[ruleIndex] = { ...this.defaultRules[ruleIndex], ...updates };
@@ -290,29 +359,84 @@ export class CriticalSignalNotificationService {
     return false;
   }
 
-  clearEvents(): void {
+  clearEvents = (): void => {
+    if (!this.checkInitialized()) return;
     this.events = [];
     this.cooldownMap.clear();
   }
 
-  getUnacknowledgedCount(): number {
+  getUnacknowledgedCount = (): number => {
+    if (!this.checkInitialized()) return 0;
     return this.events.filter(e => !e.acknowledged).length;
   }
 
-  getCriticalAlertsCount(): number {
+  getCriticalAlertsCount = (): number => {
+    if (!this.checkInitialized()) return 0;
     return this.events.filter(e => 
       e.signal.severity === 'critical' && !e.acknowledged
     ).length;
   }
 
-  getNotificationRules(): NotificationRule[] {
+  getNotificationRules = (): NotificationRule[] => {
+    if (!this.checkInitialized()) return [];
     return this.getRules();
   }
 
-  getStats() {
+  getStats = () => {
+    if (!this.checkInitialized()) {
+      return {
+        totalEvents: 0,
+        unacknowledged: 0,
+        criticalSignals: 0,
+        acknowledged: 0,
+        last24Hours: 0,
+        topSignalTypes: [],
+        topAccounts: [],
+        avgResponseTime: 0
+      };
+    }
     const totalEvents = this.events.length;
     const unacknowledged = this.getUnacknowledgedCount();
-    const critical = this.getCriticalAlertsCount();
+    const criticalSignals = this.getCriticalAlertsCount();
+    const acknowledged = this.events.filter(e => e.acknowledged).length;
+    
+    // Calculate events in last 24 hours
+    const last24Hours = this.events.filter(e => {
+      const eventTime = new Date(e.timestamp).getTime();
+      const now = Date.now();
+      return (now - eventTime) <= (24 * 60 * 60 * 1000);
+    }).length;
+    
+    // Get top signal types in last 24 hours
+    const last24HourEvents = this.events.filter(e => {
+      const eventTime = new Date(e.timestamp).getTime();
+      const now = Date.now();
+      return (now - eventTime) <= (24 * 60 * 60 * 1000);
+    });
+    
+    const signalTypeCounts = last24HourEvents.reduce((acc, event) => {
+      const type = event.signal.type;
+      acc[type] = (acc[type] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    const topSignalTypes = Object.entries(signalTypeCounts)
+      .map(([type, count]) => ({ type, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+    
+    // Get most active accounts in last 24 hours
+    const accountCounts = last24HourEvents.reduce((acc, event) => {
+      const name = event.account.name;
+      acc[name] = (acc[name] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    const topAccounts = Object.entries(accountCounts)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+    
     const avgResponseTime = totalEvents > 0 ? 
       this.events
         .filter(e => e.acknowledged)
@@ -327,14 +451,35 @@ export class CriticalSignalNotificationService {
     return {
       totalEvents,
       unacknowledged,
-      critical,
+      criticalSignals,
+      acknowledged,
+      last24Hours,
+      topSignalTypes,
+      topAccounts,
       avgResponseTime: Math.round(avgResponseTime)
     };
   }
 
-  updateNotificationRule(ruleId: string, updates: Partial<NotificationRule>): boolean {
+  updateNotificationRule = (ruleId: string, updates: Partial<NotificationRule>): boolean => {
+    if (!this.checkInitialized()) return false;
     return this.updateRule(ruleId, updates);
+  }
+
+  // Test method to verify service is working
+  isServiceWorking = (): boolean => {
+    return this.initialized && 
+           Array.isArray(this.events) && 
+           Array.isArray(this.defaultRules) && 
+           this.cooldownMap instanceof Map;
   }
 }
 
+// Create and export the singleton instance
 export const criticalSignalNotificationService = new CriticalSignalNotificationService();
+
+// Verify service is properly initialized
+if (!criticalSignalNotificationService.isServiceWorking()) {
+  console.error('Critical signal notification service failed to initialize properly');
+} else {
+  console.log('Critical signal notification service initialized successfully');
+}

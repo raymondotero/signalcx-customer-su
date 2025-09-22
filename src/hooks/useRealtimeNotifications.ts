@@ -17,42 +17,57 @@ export function useRealtimeNotifications() {
       
       if (account) {
         // Process the signal through the critical notification service
-        criticalSignalNotificationService.processSignal(latestSignal, account)
-          .then(event => {
-            if (event) {
-              console.log('Critical signal event created:', event);
-              
-              // The notification service handles Teams/Email notifications
-              // Only show toast if not already handled by the service
-              if (!event.notificationsSent.toast) {
-                const message = `🚨 ${latestSignal.severity.toUpperCase()} Signal: ${latestSignal.description}`;
-                toast.error(message, {
-                  duration: 8000,
-                  action: {
-                    label: "View Details",
-                    onClick: () => {
-                      toast.info(`Account: ${latestSignal.accountName} (${latestSignal.accountId})`);
+        if (criticalSignalNotificationService && typeof criticalSignalNotificationService.processSignal === 'function') {
+          criticalSignalNotificationService.processSignal(latestSignal, account)
+            .then(event => {
+              if (event) {
+                console.log('Critical signal event created:', event);
+                
+                // The notification service handles Teams/Email notifications
+                // Only show toast if not already handled by the service
+                if (!event.notificationsSent.toast) {
+                  const message = `🚨 ${latestSignal.severity.toUpperCase()} Signal: ${latestSignal.description}`;
+                  toast.error(message, {
+                    duration: 8000,
+                    action: {
+                      label: "View Details",
+                      onClick: () => {
+                        toast.info(`Account: ${latestSignal.accountName} (${latestSignal.accountId})`);
+                      }
                     }
-                  }
-                });
-              }
-            }
-          })
-          .catch(error => {
-            console.error('Error processing critical signal:', error);
-            
-            // Fallback to basic toast notification
-            const message = `🚨 ${latestSignal.severity.toUpperCase()} Signal: ${latestSignal.description}`;
-            toast.error(message, {
-              duration: 8000,
-              action: {
-                label: "View Details",
-                onClick: () => {
-                  toast.info(`Account: ${latestSignal.accountName} (${latestSignal.accountId})`);
+                  });
                 }
               }
+            })
+            .catch(error => {
+              console.error('Error processing critical signal:', error);
+              
+              // Fallback to basic toast notification
+              const message = `🚨 ${latestSignal.severity.toUpperCase()} Signal: ${latestSignal.description}`;
+              toast.error(message, {
+                duration: 8000,
+                action: {
+                  label: "View Details",
+                  onClick: () => {
+                    toast.info(`Account: ${latestSignal.accountName} (${latestSignal.accountId})`);
+                  }
+                }
+              });
             });
+        } else {
+          console.warn('Critical signal notification service not properly initialized');
+          // Fallback to basic toast notification
+          const message = `🚨 ${latestSignal.severity.toUpperCase()} Signal: ${latestSignal.description}`;
+          toast.error(message, {
+            duration: 8000,
+            action: {
+              label: "View Details",
+              onClick: () => {
+                toast.info(`Account: ${latestSignal.accountName} (${latestSignal.accountId})`);
+              }
+            }
           });
+        }
       } else {
         // Account not found, show basic notification
         const message = `🚨 ${latestSignal.severity.toUpperCase()} Signal: ${latestSignal.description}`;

@@ -76,7 +76,11 @@ export function useSignalProcessor() {
       // Process through critical signal notification service if critical/high
       if ((latestSignal.severity === 'critical' || latestSignal.severity === 'high') && account) {
         try {
-          await criticalSignalNotificationService.processSignal(latestSignal, account);
+          if (criticalSignalNotificationService && typeof criticalSignalNotificationService.processSignal === 'function') {
+            await criticalSignalNotificationService.processSignal(latestSignal, account);
+          } else {
+            console.warn('Critical signal notification service not properly initialized');
+          }
         } catch (error) {
           console.error('Error processing signal through notification service:', error);
         }
