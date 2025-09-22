@@ -1,5 +1,4 @@
 import { Signal, Account } from '@/types';
-import { notificationService } from './notificationService';
 import { toast } from 'sonner';
 
 export interface NotificationRule {
@@ -11,11 +10,11 @@ export interface NotificationRule {
     signalTypes: Signal['type'][];
     severityLevels: Signal['severity'][];
     categories?: Signal['category'][];
-    valueThresholds?: {
+    valueThresholds?: Array<{
       field: string;
       operator: 'gt' | 'lt' | 'eq' | 'gte' | 'lte';
       value: number;
-    }[];
+    }>;
   };
   actions: {
     sendTeamsNotification: boolean;
@@ -26,11 +25,11 @@ export interface NotificationRule {
     createWorkflowAction: boolean;
   };
   escalationRules?: {
+    escalateAfterCount: number;
     timeToEscalate: number; // minutes
-    escalateAfterCount: number; // number of signals
     escalationRecipients: string[];
   };
-  cooldownPeriod?: number; // minutes between notifications for same account
+  cooldownPeriod?: number; // minutes
 }
 
 export interface CriticalSignalEvent {
@@ -53,7 +52,9 @@ export interface CriticalSignalEvent {
 class CriticalSignalNotificationService {
   private static instance: CriticalSignalNotificationService;
   private events: CriticalSignalEvent[] = [];
-  private accountCooldowns: Map<string, Date> = new Map();
+  private accountCooldowns = new Map<string, Date>();
+
+  private constructor() {}
 
   static getInstance(): CriticalSignalNotificationService {
     if (!CriticalSignalNotificationService.instance) {
@@ -66,12 +67,36 @@ class CriticalSignalNotificationService {
   private defaultRules: NotificationRule[] = [
     {
       id: 'critical-churn-risk',
-      name: 'Critical Churn Risk Alert',
-      description: 'Immediate notification for critical churn risk signals',
+      name: 'Critical Churn Risk',
+      description: 'Alert for critical churn risk signals that require immediate attention',
       enabled: true,
       conditions: {
-        signalTypes: ['churn_risk'],
-        severityLevels: ['critical'],
+        signalTypes: ['churn_risk', 'usage', 'support'],
+        severityLevels: ['critical', 'high'],
+      },
+      actions: {
+        sendTeamsNotification: true,
+        sendEmailNotification: true,
+        createToastAlert: true,
+        escalateToManagement: true,
+        scheduleFollowup: true,
+        createWorkflowAction: true
+      },
+      escalationRules: {
+        escalateAfterCount: 1,
+        timeToEscalate: 15, // 15 minutes
+        escalationRecipients: ['support-management@company.com', 'cs-management@company.com']
+      },
+      cooldownPeriod: 15 // 15 minutes cooldown
+    },
+    {
+      id: 'high-value-account-risk',
+      name: 'High-Value Account Risk',
+      description: 'Special alert for high-value accounts (>$10M ARR) showing any risk signals',
+      enabled: true,
+      conditions: {
+        signalTypes: ['churn_risk', 'usage', 'financial', 'support'],
+        severityLevels: ['medium', 'high', 'critical'],
       },
       actions: {
         sendTeamsNotification: true,
@@ -82,38 +107,19 @@ class CriticalSignalNotificationService {
         createWorkflowAction: false
       },
       escalationRules: {
-        timeToEscalate: 30, // 30 minutes
         escalateAfterCount: 1,
-        escalationRecipients: ['cs-management@company.com', 'executive-team@company.com']
+        timeToEscalate: 10, // 10 minutes for high-value accounts
+        escalationRecipients: ['support-management@company.com', 'cs-management@company.com']
       },
-      cooldownPeriod: 60 // 1 hour cooldown
-    },
-    {
-      id: 'high-value-account-risk',
-      name: 'High-Value Account Risk',
-      description: 'Alert for any high/critical signals on accounts >$10M ARR',
-      enabled: true,
-      conditions: {
-        signalTypes: ['churn_risk', 'support', 'engagement', 'usage', 'financial'],
-        severityLevels: ['high', 'critical'],
-      },
-      actions: {
-        sendTeamsNotification: true,
-        sendEmailNotification: true,
-        createToastAlert: true,
-        escalateToManagement: false,
-        scheduleFollowup: true,
-        createWorkflowAction: true
-      },
-      cooldownPeriod: 30 // 30 minutes cooldown
+      cooldownPeriod: 15 // 15 minutes cooldown
     },
     {
       id: 'critical-support-escalation',
       name: 'Critical Support Escalation',
-      description: 'Immediate alert for critical support issues requiring escalation',
+      description: 'Escalation for critical support and technical issues',
       enabled: true,
       conditions: {
-        signalTypes: ['support'],
+        signalTypes: ['support', 'risk'],
         severityLevels: ['critical'],
       },
       actions: {
@@ -125,8 +131,8 @@ class CriticalSignalNotificationService {
         createWorkflowAction: true
       },
       escalationRules: {
-        timeToEscalate: 15, // 15 minutes
         escalateAfterCount: 1,
+        timeToEscalate: 5, // 5 minutes for critical technical issues
         escalationRecipients: ['support-management@company.com', 'cs-management@company.com']
       },
       cooldownPeriod: 15 // 15 minutes cooldown
@@ -340,7 +346,7 @@ class CriticalSignalNotificationService {
       title: `${urgencyEmoji[signal.severity]} Critical Signal Alert: ${account.name}`,
       text: `**Signal Type:** ${signal.type.replace('_', ' ').toUpperCase()}\n**Severity:** ${signal.severity.toUpperCase()}\n**Description:** ${signal.description}\n**Account ARR:** $${(account.arr / 1000000).toFixed(1)}M\n**Health Score:** ${account.healthScore}/100`,
       type: signal.severity === 'critical' ? 'error' : 'warning' as const,
-      buttons: [
+      actions: [
         {
           text: 'View Account Details',
           value: `view-account-${account.id}`,
@@ -386,18 +392,16 @@ class CriticalSignalNotificationService {
 
     const urgencyColor = {
       'low': '#FFA500',
-      'medium': '#FF6B35',
+      'medium': '#FF8C00',
       'high': '#DC143C',
-      'critical': '#8B0000'
+      'critical': '#B22222'
     };
 
     try {
-      await notificationService.notifyRiskEscalation(
-        account,
-        signal.severity === 'critical' ? 'critical' : 'high',
-        [signal.description, `Signal Type: ${signal.type}`, `Severity: ${signal.severity}`]
-      );
-      
+      // This would connect to the actual email service
+      console.log('Sending email notification to:', recipients);
+      console.log('Subject:', `Critical Signal Alert - ${account.name}`);
+      console.log('Signal:', signal.description);
       return true;
     } catch (error) {
       console.error('Error sending email notification:', error);
@@ -420,7 +424,7 @@ class CriticalSignalNotificationService {
     const toastOptions = {
       duration: signal.severity === 'critical' ? 10000 : 8000,
       action: {
-        label: "View Details",
+        label: 'View Details',
         onClick: () => {
           toast.info(`Account: ${account.name} | Type: ${signal.type} | Severity: ${signal.severity}`, {
             duration: 5000
@@ -438,7 +442,7 @@ class CriticalSignalNotificationService {
 
   private async handleEscalation(event: CriticalSignalEvent): Promise<void> {
     const { signal, account, triggeredRules } = event;
-    
+
     const escalationRules = triggeredRules.filter(r => r.escalationRules);
     
     for (const rule of escalationRules) {
@@ -469,6 +473,7 @@ class CriticalSignalNotificationService {
         };
         
         console.log('Sending escalation notification:', escalationMessage);
+        
         event.escalated = true;
         
       } catch (error) {
@@ -536,9 +541,9 @@ class CriticalSignalNotificationService {
     events.forEach(e => {
       typeCount[e.signal.type] = (typeCount[e.signal.type] || 0) + 1;
     });
-    
+
     return Object.entries(typeCount)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 5)
       .map(([type, count]) => ({ type, count }));
   }
@@ -558,5 +563,4 @@ class CriticalSignalNotificationService {
   }
 }
 
-// Export singleton instance
 export const criticalSignalNotificationService = CriticalSignalNotificationService.getInstance();
