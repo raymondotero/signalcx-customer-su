@@ -258,7 +258,7 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
           <TableHeader>
             <TableRow>
               <TableHead 
-                className="cursor-pointer hover:bg-muted/50 select-none transition-colors"
+                className="cursor-pointer hover:bg-muted/50 select-none transition-colors w-48 min-w-48"
                 onClick={() => handleSort('name')}
               >
                 <div className="flex items-center justify-between">
@@ -267,7 +267,7 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
                 </div>
               </TableHead>
               <TableHead 
-                className="cursor-pointer hover:bg-muted/50 select-none transition-colors"
+                className="cursor-pointer hover:bg-muted/50 select-none transition-colors w-36 min-w-36"
                 onClick={() => handleSort('industry')}
               >
                 <div className="flex items-center justify-between">
@@ -342,8 +342,8 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
                     scrollToNBASection();
                   }}
                 >
-                  <TableCell className="font-medium">{account.name}</TableCell>
-                  <TableCell>{account.industry}</TableCell>
+                  <TableCell className="font-medium w-48 min-w-48" title={account.name}>{account.name}</TableCell>
+                  <TableCell className="w-36 min-w-36" title={account.industry}>{account.industry}</TableCell>
                   <TableCell className="font-mono">
                     ${(account.arr / 1000000).toFixed(1)}M
                   </TableCell>

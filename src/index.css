@@ -213,8 +213,9 @@ table th,
 table td {
   border-bottom: 1px solid var(--border);
   min-height: 48px; /* Ensure minimum row height */
-  word-wrap: break-word;
-  overflow-wrap: break-word;
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow: hidden; /* Hide overflowing content */
+  text-overflow: ellipsis; /* Show ellipsis for truncated text */
 }
 
 table thead th {
