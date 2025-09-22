@@ -1368,8 +1368,14 @@ export function IntegrationWizard() {
                           <Badge className="bg-green-100 text-green-800">RBAC</Badge>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-sm">Token Type</span>
-                          <Badge className="bg-blue-100 text-blue-800">JWT + Refresh</Badge>
+                          <span className="text-sm">Multi-Factor Auth</span>
+                          <Badge className="bg-green-100 text-green-800">Required</Badge>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm">Session Management</span>
+                          <Badge className="bg-green-100 text-green-800">
+                            JWT + Refresh
+                          </Badge>
                         </div>
                       </div>
                     </CardContent>
@@ -1378,15 +1384,12 @@ export function IntegrationWizard() {
 
                 <Card className="border-visible">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <CheckCircle className="w-5 h-5" />
-                      Compliance Certifications
-                    </CardTitle>
+                    <CardTitle>Compliance Certifications & Standards</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       {[
-                        { name: 'SOC 2', icon: <CheckCircle className="w-8 h-8 text-green-600" /> },
+                        { name: 'SOC 2 Type II', icon: <Shield className="w-8 h-8 text-green-600" /> },
                         { name: 'GDPR', icon: <Shield className="w-8 h-8 text-blue-600" /> },
                         { name: 'HIPAA', icon: <Shield className="w-8 h-8 text-purple-600" /> },
                         { name: 'ISO 27001', icon: <CheckCircle className="w-8 h-8 text-green-600" /> },
@@ -1407,10 +1410,10 @@ export function IntegrationWizard() {
 
                 <Card className="border-visible">
                   <CardHeader>
-                    <CardTitle>Privacy & Data Protection</CardTitle>
+                    <CardTitle>Data Protection & Privacy</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="space-y-2">
                         <h5 className="font-medium">Data Residency</h5>
                         <p className="text-sm text-muted-foreground">

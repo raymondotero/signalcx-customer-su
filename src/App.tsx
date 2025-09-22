@@ -20,7 +20,6 @@ import { WorkflowDemo } from '@/components/WorkflowDemo';
 import { ROIDashboard } from '@/components/ROIDashboard';
 import { DataSyncScheduler } from '@/components/DataSyncScheduler';
 import { IntegrationWizard } from '@/components/IntegrationWizard';
-import { AzureAIFoundryIntegration } from '@/components/AzureAIFoundryIntegration';
 import HelpGuide from '@/components/HelpGuide';
 
 import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
@@ -351,7 +350,6 @@ function App() {
               <ROIDashboard />
               <DataSyncScheduler />
               <IntegrationWizard />
-              <AzureAIFoundryIntegration />
               <HelpGuide />
               <CSVUpload />
               <SystemHealthDialog />
