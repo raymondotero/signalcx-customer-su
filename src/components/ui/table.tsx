@@ -6,11 +6,13 @@ function Table({ className, ...props }: ComponentProps<"table">) {
   return (
     <div
       data-slot="table-container"
-      className="relative w-full overflow-auto max-h-[75vh]"
+      className="relative w-full overflow-auto max-h-[75vh] border border-border rounded-md"
+      style={{ minWidth: '1200px' }}
     >
       <table
         data-slot="table"
-        className={cn("w-full caption-bottom text-sm", className)}
+        className={cn("w-full caption-bottom text-sm min-w-full", className)}
+        style={{ minWidth: '1200px' }}
         {...props}
       />
     </div>
@@ -81,7 +83,7 @@ function TableCell({ className, ...props }: ComponentProps<"td">) {
     <td
       data-slot="table-cell"
       className={cn(
-        "p-3 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] whitespace-nowrap overflow-hidden text-ellipsis min-w-0",
+        "p-3 align-top [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] whitespace-nowrap overflow-hidden text-ellipsis min-w-0",
         className
       )}
       {...props}

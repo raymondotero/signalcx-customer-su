@@ -110,8 +110,8 @@ export function MeetingScheduler({ opportunity, account, children }: MeetingSche
     const meetingData = {
       ...meetingDetails,
       accountId: account.id,
-      opportunityId: opportunity.id,
-      estimatedValue: opportunity.arrImpact,
+      opportunityId: `${opportunity.category}-${Date.now()}`,
+      estimatedValue: opportunity.value,
       createdAt: new Date().toISOString()
     };
     
@@ -389,7 +389,7 @@ export function MeetingScheduler({ opportunity, account, children }: MeetingSche
                   <div className="flex justify-between items-center">
                     <Badge className="bg-green-100 text-green-800 border-green-200">
                       <MapPin className="w-3 h-3 mr-1" />
-                      ${opportunity.arrImpact} Opportunity
+                      ${(opportunity.value / 1000000).toFixed(1)}M Opportunity
                     </Badge>
                     <Button 
                       onClick={scheduleMeeting}

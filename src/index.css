@@ -205,8 +205,9 @@ html {
 table {
   border-collapse: separate;
   border-spacing: 0;
-  table-layout: fixed; /* Fixed layout to prevent overflow */
+  table-layout: auto; /* Changed from fixed to auto for flexible column sizing */
   width: 100%;
+  min-width: 1200px; /* Ensure minimum table width to prevent column squashing */
 }
 
 table th,
@@ -214,13 +215,19 @@ table td {
   border-bottom: 1px solid var(--border);
   min-height: 48px; /* Ensure minimum row height */
   white-space: nowrap; /* Prevent text wrapping */
-  overflow: hidden; /* Hide overflowing content */
+  overflow: visible; /* Changed from hidden to visible to show all content */
   text-overflow: ellipsis; /* Show ellipsis for truncated text */
+  max-width: none; /* Remove max-width constraint */
+  padding: 8px 12px; /* Consistent padding */
 }
 
 table thead th {
   border-bottom: 2px solid var(--border);
   min-height: 52px;
+  position: sticky;
+  top: 0;
+  background: var(--background);
+  z-index: 10;
 }
 
 /* Ensure table rows are fully visible */
@@ -229,11 +236,12 @@ table thead th {
   max-height: 70vh;
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  width: 100%;
 }
 
 /* Row height and spacing improvements */
 [data-slot="table-row"] {
-  min-height: 60px; /* Increased height for layered buttons */
+  min-height: 70px; /* Increased height for layered buttons */
   transition: all 0.2s ease;
 }
 
@@ -244,15 +252,16 @@ table thead th {
 }
 
 [data-slot="table-cell"] {
-  vertical-align: top; /* Changed from middle to top for layered buttons */
-  padding: 8px 12px; /* Adjusted padding */
+  vertical-align: top; /* Top alignment for layered content */
+  padding: 8px 12px; /* Consistent padding */
+  min-width: fit-content; /* Allow cells to size to content */
 }
 
 /* Specific styling for actions column */
 [data-slot="table-cell"]:last-child {
-  width: 160px;
-  min-width: 160px;
-  max-width: 160px;
+  width: 180px; /* Increased width for buttons */
+  min-width: 180px;
+  max-width: 180px;
   padding: 6px 8px;
   vertical-align: top;
 }
@@ -263,22 +272,89 @@ table thead th {
   flex-direction: column;
   gap: 4px;
   width: 100%;
+  min-width: 160px; /* Ensure minimum width for buttons */
 }
 
 .action-button-group {
   display: flex;
   gap: 4px;
   flex-wrap: nowrap;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: flex-start;
 }
 
 .action-button-group button {
   font-size: 11px;
   padding: 4px 8px;
-  height: 24px;
+  height: 26px; /* Slightly increased height */
   min-width: fit-content;
   white-space: nowrap;
   flex-shrink: 0;
+  border-radius: 4px;
+}
+
+/* Specific column width constraints */
+[data-slot="table-head"]:nth-child(1),
+[data-slot="table-cell"]:nth-child(1) {
+  width: 200px;
+  min-width: 200px;
+  max-width: 250px;
+}
+
+[data-slot="table-head"]:nth-child(2),
+[data-slot="table-cell"]:nth-child(2) {
+  width: 150px;
+  min-width: 150px;
+  max-width: 180px;
+}
+
+[data-slot="table-head"]:nth-child(3),
+[data-slot="table-cell"]:nth-child(3) {
+  width: 100px;
+  min-width: 100px;
+}
+
+[data-slot="table-head"]:nth-child(4),
+[data-slot="table-cell"]:nth-child(4) {
+  width: 110px;
+  min-width: 110px;
+}
+
+[data-slot="table-head"]:nth-child(5),
+[data-slot="table-cell"]:nth-child(5) {
+  width: 130px;
+  min-width: 130px;
+}
+
+[data-slot="table-head"]:nth-child(6),
+[data-slot="table-cell"]:nth-child(6) {
+  width: 90px;
+  min-width: 90px;
+}
+
+[data-slot="table-head"]:nth-child(7),
+[data-slot="table-cell"]:nth-child(7) {
+  width: 120px;
+  min-width: 120px;
+}
+
+[data-slot="table-head"]:nth-child(8),
+[data-slot="table-cell"]:nth-child(8) {
+  width: 120px;
+  min-width: 120px;
+}
+
+[data-slot="table-head"]:nth-child(9),
+[data-slot="table-cell"]:nth-child(9) {
+  width: 120px;
+  min-width: 120px;
+}
+
+[data-slot="table-head"]:nth-child(10),
+[data-slot="table-cell"]:nth-child(10) {
+  width: 180px;
+  min-width: 180px;
+  max-width: 180px;
 }
 
 [data-slot="table-head"] {

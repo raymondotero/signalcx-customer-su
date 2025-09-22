@@ -254,206 +254,212 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
         </div>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead 
-                className="cursor-pointer hover:bg-muted/50 select-none transition-colors w-48 min-w-48"
-                onClick={() => handleSort('name')}
-              >
-                <div className="flex items-center justify-between">
-                  Account
-                  {getSortIcon('name')}
-                </div>
-              </TableHead>
-              <TableHead 
-                className="cursor-pointer hover:bg-muted/50 select-none transition-colors w-36 min-w-36"
-                onClick={() => handleSort('industry')}
-              >
-                <div className="flex items-center justify-between">
-                  Industry
-                  {getSortIcon('industry')}
-                </div>
-              </TableHead>
-              <TableHead 
-                className="cursor-pointer hover:bg-muted/50 select-none transition-colors"
-                onClick={() => handleSort('arr')}
-              >
-                <div className="flex items-center justify-between">
-                  ARR
-                  {getSortIcon('arr')}
-                </div>
-              </TableHead>
-              <TableHead className="text-center">
-                QoQ Growth
-              </TableHead>
-              <TableHead 
-                className="cursor-pointer hover:bg-muted/50 select-none transition-colors"
-                onClick={() => handleSort('healthScore')}
-              >
-                <div className="flex items-center justify-between">
-                  Health Score
-                  {getSortIcon('healthScore')}
-                </div>
-              </TableHead>
-              <TableHead 
-                className="cursor-pointer hover:bg-muted/50 select-none transition-colors"
-                onClick={() => handleSort('status')}
-              >
-                <div className="flex items-center justify-between">
-                  Status
-                  {getSortIcon('status')}
-                </div>
-              </TableHead>
-              <TableHead>CSAM</TableHead>
-              <TableHead>AE</TableHead>
-              <TableHead 
-                className="cursor-pointer hover:bg-muted/50 select-none transition-colors"
-                onClick={() => handleSort('contractEnd')}
-              >
-                <div className="flex items-center justify-between">
-                  Contract End
-                  {getSortIcon('contractEnd')}
-                </div>
-              </TableHead>
-              <TableHead className="w-40 min-w-40">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredAndSortedAccounts.length === 0 ? (
+        <div className="overflow-auto">
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
-                  {hasActiveFilters ? 'No accounts match your filters' : 'No accounts found'}
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredAndSortedAccounts.map((account) => (
-                <TableRow 
-                  key={account.id}
-                  className={`cursor-pointer hover:bg-muted/50 transition-all duration-200 ${
-                    selectedAccount?.id === account.id ? 'selected-account-row' : ''
-                  }`}
-                  onClick={() => {
-                    onSelectAccount(account);
-                    toast.success(`Selected ${account.name} - viewing Next Best Actions`, {
-                      duration: 2000,
-                      position: 'bottom-right'
-                    });
-                    scrollToNBASection();
-                  }}
+                <TableHead 
+                  className="cursor-pointer hover:bg-muted/50 select-none transition-colors"
+                  onClick={() => handleSort('name')}
                 >
-                  <TableCell className="font-medium w-48 min-w-48" title={account.name}>{account.name}</TableCell>
-                  <TableCell className="w-36 min-w-36" title={account.industry}>{account.industry}</TableCell>
-                  <TableCell className="font-mono">
-                    ${(account.arr / 1000000).toFixed(1)}M
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <div className="flex items-center justify-center gap-1">
-                      {(() => {
-                        // Generate stable growth based on account ID and status
-                        const hash = account.id.split('').reduce((a, b) => {
-                          a = ((a << 5) - a) + b.charCodeAt(0);
-                          return a & a;
-                        }, 0);
-                        const seedRandom = Math.abs(hash) / 2147483647;
-                        
-                        const growth = account.status === 'Good' ? 
-                          8 + seedRandom * 7 : // 8-15%
-                          account.status === 'Watch' ? 
-                          2 + seedRandom * 6 : // 2-8%
-                          -2 + seedRandom * 4; // -2 to 2%
-                        
-                        const isPositive = growth > 0;
-                        return (
-                          <>
-                            <span className={`text-xs font-medium ${
-                              isPositive ? 'text-green-600' : 'text-red-600'
-                            }`}>
-                              {isPositive ? '+' : ''}{growth.toFixed(1)}%
-                            </span>
-                            {isPositive ? 
-                              <TrendUp className="w-3 h-3 text-green-600" /> :
-                              <div className="w-3 h-3 text-red-600 rotate-180">
-                                <TrendUp className="w-3 h-3" />
-                              </div>
-                            }
-                          </>
-                        );
-                      })()}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <div className="w-16 bg-gray-200 rounded-full h-2">
-                        <div 
-                          className={`h-2 rounded-full ${
-                            account.healthScore >= 80 ? 'bg-green-500' : 
-                            account.healthScore >= 60 ? 'bg-yellow-500' : 'bg-red-500'
-                          }`}
-                          style={{ width: `${account.healthScore}%` }}
-                        />
-                      </div>
-                      <span className="text-sm font-medium">{account.healthScore}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={getStatusColor(account.status)}>
-                      {account.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{account.csam || 'N/A'}</TableCell>
-                  <TableCell>{account.ae || 'N/A'}</TableCell>
-                  <TableCell>{new Date(account.contractEnd).toLocaleDateString()}</TableCell>
-                  <TableCell className="w-40 min-w-40">
-                    <div className="action-button-row">
-                      <div className="action-button-group">
-                        <Button 
-                          className="text-xs px-2 py-1 border hover:bg-primary/10 min-w-fit"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onSelectAccount(account);
-                            toast.success(`Selected ${account.name} - viewing Next Best Actions`, {
-                              duration: 2000,
-                              position: 'bottom-right'
-                            });
-                            scrollToNBASection();
-                          }}
-                        >
-                          <Brain className="w-4 h-4 mr-1" />
-                          Select
-                        </Button>
-                        <QuickMeetingScheduler account={account}>
-                          <Button 
-                            variant="outline" 
-                            className="text-xs px-2 py-1 hover:bg-blue-50 min-w-fit"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <Calendar className="w-3 h-3 mr-1" />
-                            Meet
-                          </Button>
-                        </QuickMeetingScheduler>
-                      </div>
-                      <div className="action-button-group">
-                        <AccountDetailsDialog account={account} />
-                        {account.expansionOpportunity && account.expansionOpportunity > 0 && (
-                          <ExpansionOpportunitiesDialog account={account}>
-                            <Button 
-                              variant="outline" 
-                              className="text-xs px-2 py-1 bg-green-50 text-green-700 border-green-200 hover:bg-green-100 min-w-fit"
-                            >
-                              <CurrencyDollar className="w-3 h-3 mr-1" />
-                              ${(account.expansionOpportunity / 1000000).toFixed(1)}M
-                            </Button>
-                          </ExpansionOpportunitiesDialog>
-                        )}
-                      </div>
-                    </div>
+                  <div className="flex items-center justify-between">
+                    Account
+                    {getSortIcon('name')}
+                  </div>
+                </TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-muted/50 select-none transition-colors"
+                  onClick={() => handleSort('industry')}
+                >
+                  <div className="flex items-center justify-between">
+                    Industry
+                    {getSortIcon('industry')}
+                  </div>
+                </TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-muted/50 select-none transition-colors"
+                  onClick={() => handleSort('arr')}
+                >
+                  <div className="flex items-center justify-between">
+                    ARR
+                    {getSortIcon('arr')}
+                  </div>
+                </TableHead>
+                <TableHead className="text-center">
+                  QoQ Growth
+                </TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-muted/50 select-none transition-colors"
+                  onClick={() => handleSort('healthScore')}
+                >
+                  <div className="flex items-center justify-between">
+                    Health Score
+                    {getSortIcon('healthScore')}
+                  </div>
+                </TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-muted/50 select-none transition-colors"
+                  onClick={() => handleSort('status')}
+                >
+                  <div className="flex items-center justify-between">
+                    Status
+                    {getSortIcon('status')}
+                  </div>
+                </TableHead>
+                <TableHead>CSAM</TableHead>
+                <TableHead>AE</TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-muted/50 select-none transition-colors"
+                  onClick={() => handleSort('contractEnd')}
+                >
+                  <div className="flex items-center justify-between">
+                    Contract End
+                    {getSortIcon('contractEnd')}
+                  </div>
+                </TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredAndSortedAccounts.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
+                    {hasActiveFilters ? 'No accounts match your filters' : 'No accounts found'}
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ) : (
+                filteredAndSortedAccounts.map((account) => (
+                  <TableRow 
+                    key={account.id}
+                    className={`cursor-pointer hover:bg-muted/50 transition-all duration-200 ${
+                      selectedAccount?.id === account.id ? 'selected-account-row' : ''
+                    }`}
+                    onClick={() => {
+                      onSelectAccount(account);
+                      toast.success(`Selected ${account.name} - viewing Next Best Actions`, {
+                        duration: 2000,
+                        position: 'bottom-right'
+                      });
+                      scrollToNBASection();
+                    }}
+                  >
+                    <TableCell className="font-medium" title={account.name}>
+                      <div className="truncate">{account.name}</div>
+                    </TableCell>
+                    <TableCell title={account.industry}>
+                      <div className="truncate">{account.industry}</div>
+                    </TableCell>
+                    <TableCell className="font-mono">
+                      ${(account.arr / 1000000).toFixed(1)}M
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <div className="flex items-center justify-center gap-1">
+                        {(() => {
+                          // Generate stable growth based on account ID and status
+                          const hash = account.id.split('').reduce((a, b) => {
+                            a = ((a << 5) - a) + b.charCodeAt(0);
+                            return a & a;
+                          }, 0);
+                          const seedRandom = Math.abs(hash) / 2147483647;
+                          
+                          const growth = account.status === 'Good' ? 
+                            8 + seedRandom * 7 : // 8-15%
+                            account.status === 'Watch' ? 
+                            2 + seedRandom * 6 : // 2-8%
+                            -2 + seedRandom * 4; // -2 to 2%
+                          
+                          const isPositive = growth > 0;
+                          return (
+                            <>
+                              <span className={`text-xs font-medium ${
+                                isPositive ? 'text-green-600' : 'text-red-600'
+                              }`}>
+                                {isPositive ? '+' : ''}{growth.toFixed(1)}%
+                              </span>
+                              {isPositive ? 
+                                <TrendUp className="w-3 h-3 text-green-600" /> :
+                                <div className="w-3 h-3 text-red-600 rotate-180">
+                                  <TrendUp className="w-3 h-3" />
+                                </div>
+                              }
+                            </>
+                          );
+                        })()}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <div className="w-16 bg-gray-200 rounded-full h-2">
+                          <div 
+                            className={`h-2 rounded-full ${
+                              account.healthScore >= 80 ? 'bg-green-500' : 
+                              account.healthScore >= 60 ? 'bg-yellow-500' : 'bg-red-500'
+                            }`}
+                            style={{ width: `${account.healthScore}%` }}
+                          />
+                        </div>
+                        <span className="text-sm font-medium">{account.healthScore}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={getStatusColor(account.status)}>
+                        {account.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{account.csam || 'N/A'}</TableCell>
+                    <TableCell>{account.ae || 'N/A'}</TableCell>
+                    <TableCell>{new Date(account.contractEnd).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      <div className="action-button-row">
+                        <div className="action-button-group">
+                          <Button 
+                            className="text-xs px-2 py-1 border hover:bg-primary/10 min-w-fit"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onSelectAccount(account);
+                              toast.success(`Selected ${account.name} - viewing Next Best Actions`, {
+                                duration: 2000,
+                                position: 'bottom-right'
+                              });
+                              scrollToNBASection();
+                            }}
+                          >
+                            <Brain className="w-4 h-4 mr-1" />
+                            Select
+                          </Button>
+                          <QuickMeetingScheduler account={account}>
+                            <Button 
+                              variant="outline" 
+                              className="text-xs px-2 py-1 hover:bg-blue-50 min-w-fit"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Calendar className="w-3 h-3 mr-1" />
+                              Meet
+                            </Button>
+                          </QuickMeetingScheduler>
+                        </div>
+                        <div className="action-button-group">
+                          <AccountDetailsDialog account={account} />
+                          {account.expansionOpportunity && account.expansionOpportunity > 0 && (
+                            <ExpansionOpportunitiesDialog account={account}>
+                              <Button 
+                                variant="outline" 
+                                className="text-xs px-2 py-1 bg-green-50 text-green-700 border-green-200 hover:bg-green-100 min-w-fit"
+                              >
+                                <CurrencyDollar className="w-3 h-3 mr-1" />
+                                ${(account.expansionOpportunity / 1000000).toFixed(1)}M
+                              </Button>
+                            </ExpansionOpportunitiesDialog>
+                          )}
+                        </div>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   );
