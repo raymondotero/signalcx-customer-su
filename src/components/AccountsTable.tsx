@@ -316,7 +316,7 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
                   {getSortIcon('contractEnd')}
                 </div>
               </TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead className="w-40 min-w-40">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -404,45 +404,49 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
                   <TableCell>{account.csam || 'N/A'}</TableCell>
                   <TableCell>{account.ae || 'N/A'}</TableCell>
                   <TableCell>{new Date(account.contractEnd).toLocaleDateString()}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-1 flex-wrap">
-                      <Button 
-                        className="text-xs px-2 py-1 border hover:bg-primary/10"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onSelectAccount(account);
-                          toast.success(`Selected ${account.name} - viewing Next Best Actions`, {
-                            duration: 2000,
-                            position: 'bottom-right'
-                          });
-                          scrollToNBASection();
-                        }}
-                      >
-                        <Brain className="w-4 h-4 mr-1" />
-                        Select
-                      </Button>
-                      <QuickMeetingScheduler account={account}>
+                  <TableCell className="w-40 min-w-40">
+                    <div className="action-button-row">
+                      <div className="action-button-group">
                         <Button 
-                          variant="outline" 
-                          className="text-xs px-2 py-1 hover:bg-blue-50"
-                          onClick={(e) => e.stopPropagation()}
+                          className="text-xs px-2 py-1 border hover:bg-primary/10 min-w-fit"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onSelectAccount(account);
+                            toast.success(`Selected ${account.name} - viewing Next Best Actions`, {
+                              duration: 2000,
+                              position: 'bottom-right'
+                            });
+                            scrollToNBASection();
+                          }}
                         >
-                          <Calendar className="w-3 h-3 mr-1" />
-                          Meet
+                          <Brain className="w-4 h-4 mr-1" />
+                          Select
                         </Button>
-                      </QuickMeetingScheduler>
-                      <AccountDetailsDialog account={account} />
-                      {account.expansionOpportunity && account.expansionOpportunity > 0 && (
-                        <ExpansionOpportunitiesDialog account={account}>
+                        <QuickMeetingScheduler account={account}>
                           <Button 
                             variant="outline" 
-                            className="text-xs px-2 py-1 bg-green-50 text-green-700 border-green-200 hover:bg-green-100"
+                            className="text-xs px-2 py-1 hover:bg-blue-50 min-w-fit"
+                            onClick={(e) => e.stopPropagation()}
                           >
-                            <CurrencyDollar className="w-3 h-3 mr-1" />
-                            ${(account.expansionOpportunity / 1000000).toFixed(1)}M
+                            <Calendar className="w-3 h-3 mr-1" />
+                            Meet
                           </Button>
-                        </ExpansionOpportunitiesDialog>
-                      )}
+                        </QuickMeetingScheduler>
+                      </div>
+                      <div className="action-button-group">
+                        <AccountDetailsDialog account={account} />
+                        {account.expansionOpportunity && account.expansionOpportunity > 0 && (
+                          <ExpansionOpportunitiesDialog account={account}>
+                            <Button 
+                              variant="outline" 
+                              className="text-xs px-2 py-1 bg-green-50 text-green-700 border-green-200 hover:bg-green-100 min-w-fit"
+                            >
+                              <CurrencyDollar className="w-3 h-3 mr-1" />
+                              ${(account.expansionOpportunity / 1000000).toFixed(1)}M
+                            </Button>
+                          </ExpansionOpportunitiesDialog>
+                        )}
+                      </div>
                     </div>
                   </TableCell>
                 </TableRow>
