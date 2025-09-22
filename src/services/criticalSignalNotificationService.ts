@@ -7,14 +7,13 @@ export interface NotificationRule {
   description: string;
   enabled: boolean;
   conditions: {
-    signalTypes: Signal['type'][];
-    severityLevels: Signal['severity'][];
-    categories?: Signal['category'][];
-    valueThresholds?: Array<{
-      field: string;
+    signalTypes: string[];
+    severityLevels: string[];
+    categories?: string[];
+    valueThresholds?: {
       operator: 'gt' | 'lt' | 'eq' | 'gte' | 'lte';
       value: number;
-    }>;
+    }[];
   };
   actions: {
     sendEmailNotification: boolean;
@@ -34,10 +33,10 @@ export interface NotificationRule {
 
 export interface CriticalSignalEvent {
   id: string;
+  timestamp: string;
   signal: Signal;
   account: Account;
   triggeredRules: NotificationRule[];
-  timestamp: string;
   notificationsSent: {
     email: boolean;
     teams: boolean;
@@ -93,7 +92,7 @@ class CriticalSignalNotificationService {
       description: 'Special alert for high-value accounts (>$10M ARR) showing any risk signals',
       enabled: true,
       conditions: {
-        signalTypes: ['churn_risk', 'usage', 'support', 'engagement'],
+        signalTypes: ['churn_risk', 'health_decline', 'usage', 'support', 'engagement'],
         severityLevels: ['critical', 'high', 'medium'],
       },
       actions: {
@@ -114,11 +113,10 @@ class CriticalSignalNotificationService {
   ];
 
   async processSignal(signal: Signal, account: Account): Promise<CriticalSignalEvent | null> {
-    // Check if signal matches any notification rules
     const triggeredRules = this.evaluateRules(signal, account);
-    
+
     if (triggeredRules.length === 0) {
-      return null; // No rules triggered
+      return null;
     }
 
     // Check cooldown period for this account
@@ -130,10 +128,10 @@ class CriticalSignalNotificationService {
     // Create critical signal event
     const event: CriticalSignalEvent = {
       id: `event-${Date.now()}-${signal.id}`,
+      timestamp: new Date().toISOString(),
       signal,
       account,
       triggeredRules,
-      timestamp: new Date().toISOString(),
       notificationsSent: {
         email: false,
         teams: false,
@@ -180,7 +178,7 @@ class CriticalSignalNotificationService {
       if (rule.conditions.valueThresholds) {
         for (const threshold of rule.conditions.valueThresholds) {
           const signalValue = typeof signal.value === 'number' ? signal.value : 0;
-          
+
           switch (threshold.operator) {
             case 'gt':
               if (!(signalValue > threshold.value)) return false;
@@ -228,7 +226,7 @@ class CriticalSignalNotificationService {
             action: {
               label: 'View Details',
               onClick: () => {
-                console.log('Opening signal details:', event);
+                // Could trigger a modal or navigation to details
               }
             }
           }
@@ -268,7 +266,7 @@ class CriticalSignalNotificationService {
     // Use the shortest cooldown period from triggered rules
     const shortestCooldown = Math.min(...triggeredRules.map(rule => rule.cooldownPeriod));
     const cooldownMs = shortestCooldown * 60 * 1000; // Convert to milliseconds
-    
+
     return Date.now() - lastNotification.getTime() < cooldownMs;
   }
 
@@ -309,18 +307,16 @@ class CriticalSignalNotificationService {
   }
 
   getStats() {
-    const totalEvents = this.events.length;
-    const criticalEvents = this.events.filter(e => e.signal.severity === 'critical').length;
-    const acknowledgedEvents = this.events.filter(e => e.acknowledged).length;
-    const escalatedEvents = this.events.filter(e => e.escalated).length;
+    const now = new Date();
+    const last24Hours = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    const recentEvents = this.events.filter(event => new Date(event.timestamp) > last24Hours);
     
     return {
-      totalEvents,
-      criticalEvents,
-      acknowledgedEvents,
-      escalatedEvents,
-      acknowledgmentRate: totalEvents > 0 ? (acknowledgedEvents / totalEvents) * 100 : 0,
-      escalationRate: totalEvents > 0 ? (escalatedEvents / totalEvents) * 100 : 0
+      total: this.events.length,
+      recent: recentEvents.length,
+      critical: this.events.filter(event => event.signal.severity === 'critical').length,
+      acknowledged: this.events.filter(event => event.acknowledged).length,
+      escalated: this.events.filter(event => event.escalated).length
     };
   }
 }
