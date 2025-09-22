@@ -51,9 +51,6 @@ function App() {
   const safeTargets = Array.isArray(targets) ? targets : [];
   const safeIntegrations = Array.isArray(integrations) ? integrations : [];
   
-  // Debug targets to prevent object rendering issues
-  console.log('Targets:', targets, 'Safe targets length:', safeTargets.length);
-  
   // Initialize notification service with integrations
   React.useEffect(() => {
     notificationService.setContext({
