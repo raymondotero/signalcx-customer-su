@@ -45,7 +45,6 @@ export interface CriticalSignalEvent {
   };
   escalated: boolean;
   acknowledged: boolean;
-  acknowledgedAt?: string;
 }
 
 class CriticalSignalNotificationService {
@@ -94,8 +93,8 @@ class CriticalSignalNotificationService {
       description: 'Special alert for high-value accounts (>$10M ARR) showing any risk signals',
       enabled: true,
       conditions: {
-        signalTypes: ['churn_risk', 'risk', 'usage', 'financial'],
-        severityLevels: ['medium', 'high', 'critical'],
+        signalTypes: ['churn_risk', 'usage', 'support', 'engagement'],
+        severityLevels: ['critical', 'high', 'medium'],
       },
       actions: {
         sendEmailNotification: true,
@@ -107,89 +106,10 @@ class CriticalSignalNotificationService {
       },
       escalationRules: {
         escalateAfterCount: 1,
-        timeToEscalate: 10, // 10 minutes for high-value accounts
-        escalationRecipients: ['support-management@company.com', 'cs-management@company.com']
+        timeToEscalate: 5, // 5 minutes for high-value accounts
+        escalationRecipients: ['vp-cs@company.com', 'ceo@company.com']
       },
-      cooldownPeriod: 15 // 15 minutes cooldown
-    },
-    {
-      id: 'critical-support-escalation',
-      name: 'Critical Support Escalation',
-      description: 'Escalation for critical support and technical issues',
-      enabled: true,
-      conditions: {
-        signalTypes: ['risk', 'support'],
-        severityLevels: ['critical'],
-      },
-      actions: {
-        sendEmailNotification: true,
-        sendTeamsNotification: true,
-        createToastAlert: true,
-        escalateToManagement: true,
-        scheduleFollowup: false,
-        createWorkflowAction: true
-      },
-      escalationRules: {
-        escalateAfterCount: 1,
-        timeToEscalate: 5, // 5 minutes for critical technical issues
-        escalationRecipients: ['support-management@company.com', 'cs-management@company.com']
-      },
-      cooldownPeriod: 15 // 15 minutes cooldown
-    },
-    {
-      id: 'financial-payment-issues',
-      name: 'Financial & Payment Issues',
-      description: 'Alert for financial and billing-related critical signals',
-      enabled: true,
-      conditions: {
-        signalTypes: ['financial', 'billing'],
-        severityLevels: ['high', 'critical'],
-      },
-      actions: {
-        sendEmailNotification: true,
-        sendTeamsNotification: true,
-        createToastAlert: true,
-        escalateToManagement: false,
-        scheduleFollowup: true,
-        createWorkflowAction: false
-      },
-      escalationRules: {
-        escalateAfterCount: 2,
-        timeToEscalate: 30, // 30 minutes
-        escalationRecipients: ['billing@company.com', 'finance@company.com']
-      },
-      cooldownPeriod: 120 // 2 hours cooldown
-    },
-    {
-      id: 'usage-decline-alert',
-      name: 'Significant Usage Decline',
-      description: 'Alert for significant usage drops that may indicate account risk',
-      enabled: true,
-      conditions: {
-        signalTypes: ['usage', 'engagement'],
-        severityLevels: ['high', 'critical'],
-        valueThresholds: [
-          {
-            field: 'value',
-            operator: 'lt',
-            value: -25 // 25% decline
-          }
-        ]
-      },
-      actions: {
-        sendEmailNotification: false,
-        sendTeamsNotification: true,
-        createToastAlert: true,
-        escalateToManagement: false,
-        scheduleFollowup: true,
-        createWorkflowAction: true
-      },
-      escalationRules: {
-        escalateAfterCount: 3,
-        timeToEscalate: 60, // 1 hour
-        escalationRecipients: ['cs-management@company.com']
-      },
-      cooldownPeriod: 240 // 4 hours cooldown
+      cooldownPeriod: 30 // 30 minutes cooldown
     }
   ];
 
@@ -291,48 +211,49 @@ class CriticalSignalNotificationService {
   }
 
   private async sendNotifications(event: CriticalSignalEvent): Promise<void> {
-    const { signal, account, triggeredRules } = event;
-
-    // Determine which notifications to send based on triggered rules
-    const shouldSendEmail = triggeredRules.some(rule => rule.actions.sendEmailNotification);
-    const shouldSendTeams = triggeredRules.some(rule => rule.actions.sendTeamsNotification);
-    const shouldCreateToast = triggeredRules.some(rule => rule.actions.createToastAlert);
-    const shouldEscalate = triggeredRules.some(rule => rule.actions.escalateToManagement);
-
     try {
-      // Send toast notification (always works)
+      const triggeredRules = event.triggeredRules;
+      const shouldSendEmail = triggeredRules.some(rule => rule.actions.sendEmailNotification);
+      const shouldSendTeams = triggeredRules.some(rule => rule.actions.sendTeamsNotification);
+      const shouldCreateToast = triggeredRules.some(rule => rule.actions.createToastAlert);
+      const shouldEscalate = triggeredRules.some(rule => rule.actions.escalateToManagement);
+
+      // Send toast notification (always available)
       if (shouldCreateToast) {
         toast.error(
-          `🚨 Critical Signal: ${signal.description} for ${account.name}`,
+          `🚨 Critical Signal: ${event.signal.description}`,
           {
+            description: `Account: ${event.account.name} - ${event.triggeredRules.map(r => r.name).join(', ')}`,
             duration: 10000,
             action: {
               label: 'View Details',
-              onClick: () => console.log('Viewing signal details:', signal)
+              onClick: () => {
+                console.log('Opening signal details:', event);
+              }
             }
           }
         );
         event.notificationsSent.toast = true;
       }
 
-      // Send Teams notification (simulated)
-      if (shouldSendTeams) {
-        console.log(`Sending Teams notification for critical signal: ${signal.description}`);
-        // In real implementation, this would integrate with Microsoft Teams API
-        event.notificationsSent.teams = true;
+      // Send email notification
+      if (shouldSendEmail) {
+        // In real implementation, this would integrate with email service
+        console.log(`Sending email notification for critical signal: ${event.signal.description}`);
+        event.notificationsSent.email = true;
       }
 
-      // Send email notification (simulated)
-      if (shouldSendEmail) {
-        console.log(`Sending email notification for critical signal: ${signal.description}`);
-        // In real implementation, this would integrate with email service
-        event.notificationsSent.email = true;
+      // Send Teams notification
+      if (shouldSendTeams) {
+        // In real implementation, this would integrate with Teams webhook
+        console.log(`Sending Teams notification for critical signal: ${event.signal.description}`);
+        event.notificationsSent.teams = true;
       }
 
       // Handle escalation
       if (shouldEscalate) {
-        console.log(`Escalating critical signal to management: ${signal.description}`);
         event.escalated = true;
+        console.log(`Escalating critical signal to management: ${event.signal.description}`);
       }
 
     } catch (error) {
@@ -346,7 +267,7 @@ class CriticalSignalNotificationService {
 
     // Use the shortest cooldown period from triggered rules
     const shortestCooldown = Math.min(...triggeredRules.map(rule => rule.cooldownPeriod));
-    const cooldownMs = shortestCooldown * 60 * 1000; // Convert minutes to milliseconds
+    const cooldownMs = shortestCooldown * 60 * 1000; // Convert to milliseconds
     
     return Date.now() - lastNotification.getTime() < cooldownMs;
   }
@@ -359,19 +280,18 @@ class CriticalSignalNotificationService {
     const event = this.events.find(e => e.id === eventId);
     if (event) {
       event.acknowledged = true;
-      event.acknowledgedAt = new Date().toISOString();
       return true;
     }
     return false;
   }
 
-  getRecentEvents(limit: number = 20): CriticalSignalEvent[] {
+  getRecentEvents(limit: number = 50): CriticalSignalEvent[] {
     return this.events.slice(0, limit);
   }
 
-  getEventsByAccount(accountId: string, limit: number = 10): CriticalSignalEvent[] {
+  getCriticalEvents(limit: number = 20): CriticalSignalEvent[] {
     return this.events
-      .filter(e => e.account.id === accountId)
+      .filter(event => event.signal.severity === 'critical')
       .slice(0, limit);
   }
 
@@ -380,57 +300,28 @@ class CriticalSignalNotificationService {
   }
 
   updateNotificationRule(ruleId: string, updates: Partial<NotificationRule>): boolean {
-    const ruleIndex = this.defaultRules.findIndex(r => r.id === ruleId);
-    if (ruleIndex >= 0) {
+    const ruleIndex = this.defaultRules.findIndex(rule => rule.id === ruleId);
+    if (ruleIndex !== -1) {
       this.defaultRules[ruleIndex] = { ...this.defaultRules[ruleIndex], ...updates };
       return true;
     }
     return false;
   }
 
-  clearCooldowns(): void {
-    this.accountCooldowns.clear();
-  }
-
   getStats() {
-    const last24h = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    const recentEvents = this.events.filter(e => new Date(e.timestamp) > last24h);
+    const totalEvents = this.events.length;
+    const criticalEvents = this.events.filter(e => e.signal.severity === 'critical').length;
+    const acknowledgedEvents = this.events.filter(e => e.acknowledged).length;
+    const escalatedEvents = this.events.filter(e => e.escalated).length;
     
     return {
-      totalEvents: this.events.length,
-      last24Hours: recentEvents.length,
-      acknowledged: this.events.filter(e => e.acknowledged).length,
-      escalated: this.events.filter(e => e.escalated).length,
-      criticalSignals: this.events.filter(e => e.signal.severity === 'critical').length,
-      topSignalTypes: this.getTopSignalTypes(recentEvents),
-      topAccounts: this.getTopAccountsBySignals(recentEvents)
+      totalEvents,
+      criticalEvents,
+      acknowledgedEvents,
+      escalatedEvents,
+      acknowledgmentRate: totalEvents > 0 ? (acknowledgedEvents / totalEvents) * 100 : 0,
+      escalationRate: totalEvents > 0 ? (escalatedEvents / totalEvents) * 100 : 0
     };
-  }
-
-  private getTopSignalTypes(events: CriticalSignalEvent[]) {
-    const typeCount: Record<string, number> = {};
-    events.forEach(e => {
-      typeCount[e.signal.type] = (typeCount[e.signal.type] || 0) + 1;
-    });
-
-    return Object.entries(typeCount)
-      .sort(([, a], [, b]) => b - a)
-      .slice(0, 5)
-      .map(([type, count]) => ({ type, count }));
-  }
-
-  private getTopAccountsBySignals(events: CriticalSignalEvent[]) {
-    const accountCount: Record<string, { name: string; count: number }> = {};
-    events.forEach(e => {
-      if (!accountCount[e.account.id]) {
-        accountCount[e.account.id] = { name: e.account.name, count: 0 };
-      }
-      accountCount[e.account.id].count++;
-    });
-    
-    return Object.values(accountCount)
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 5);
   }
 }
 
