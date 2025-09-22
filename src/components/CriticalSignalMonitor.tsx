@@ -310,7 +310,7 @@ export function CriticalSignalMonitor() {
                           Email
                         </Badge>
                       )}
-                      {rule.actions.escalateToManagement && (
+                      {rule.actions.escalateToManager && (
                         <Badge variant="outline">
                           <Users className="w-3 h-3 mr-1" />
                           Escalate

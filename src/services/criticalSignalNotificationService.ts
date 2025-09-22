@@ -13,12 +13,12 @@ export interface NotificationRule {
     minimumValue?: number;
   };
   actions: {
+    createToastAlert: boolean;
     sendEmailNotification: boolean;
     sendTeamsNotification: boolean;
-    createToastAlert: boolean;
-    escalateToManagement: boolean;
+    escalateToManager: boolean;
+    createWorkflowTask: boolean;
     scheduleFollowup: boolean;
-    createWorkflowAction: boolean;
   };
   escalationRules: {
     escalateAfterCount: number;
@@ -43,60 +43,60 @@ export interface CriticalSignalEvent {
   acknowledged: boolean;
 }
 
-class CriticalSignalNotificationService {
+export class CriticalSignalNotificationService {
   private events: CriticalSignalEvent[] = [];
   private cooldownMap: Map<string, number> = new Map();
 
   private defaultRules: NotificationRule[] = [
     {
-      id: 'critical-severity-alert',
-      name: 'Critical Severity Alert',
-      description: 'Immediate notification for any critical severity signal',
+      id: 'critical-churn-risk',
+      name: 'Critical Churn Risk Alert',
+      description: 'Immediate notification for critical churn risk signals',
       enabled: true,
       conditions: {
-        signalTypes: ['churn_risk', 'health_decline', 'usage', 'support', 'engagement'],
-        severityLevels: ['critical'],
-        minimumValue: 0
+        signalTypes: ['churn_risk', 'health_decline', 'contract_risk'],
+        severityLevels: ['critical', 'high'],
+        accountValueThreshold: 1000000, // $1M+ accounts
       },
       actions: {
+        createToastAlert: true,
         sendEmailNotification: true,
         sendTeamsNotification: true,
-        createToastAlert: true,
-        escalateToManagement: true,
+        escalateToManager: true,
+        createWorkflowTask: true,
         scheduleFollowup: true,
-        createWorkflowAction: true
       },
       escalationRules: {
         escalateAfterCount: 1,
         timeToEscalate: 15, // 15 minutes
-        escalationRecipients: ['support-management@company.com', 'cs-management@company.com']
-      },
-      cooldownPeriod: 15 // 15 minutes cooldown
-    },
-    {
-      id: 'high-value-account-risk',
-      name: 'High-Value Account Risk',
-      description: 'Special alert for high-value accounts (>$10M ARR) showing any risk signals',
-      enabled: true,
-      conditions: {
-        signalTypes: ['churn_risk', 'health_decline', 'usage', 'support', 'engagement'],
-        severityLevels: ['critical', 'high', 'medium'],
-        accountValueThreshold: 10000000 // $10M
-      },
-      actions: {
-        sendEmailNotification: true,
-        sendTeamsNotification: true,
-        createToastAlert: true,
-        escalateToManagement: true,
-        scheduleFollowup: true,
-        createWorkflowAction: true
-      },
-      escalationRules: {
-        escalateAfterCount: 1,
-        timeToEscalate: 5, // 5 minutes for high-value accounts
-        escalationRecipients: ['vp-cs@company.com', 'ceo@company.com']
+        escalationRecipients: ['manager@company.com', 'director@company.com'],
       },
       cooldownPeriod: 30 // 30 minutes cooldown
+    },
+    {
+      id: 'high-value-account-alert',
+      name: 'High Value Account Alert',
+      description: 'Special monitoring for high-value accounts',
+      enabled: true,
+      conditions: {
+        signalTypes: ['usage_decline', 'support_escalation', 'license_violation'],
+        severityLevels: ['high', 'medium'],
+        accountValueThreshold: 5000000, // $5M+ accounts
+      },
+      actions: {
+        createToastAlert: true,
+        sendEmailNotification: true,
+        sendTeamsNotification: false,
+        escalateToManager: false,
+        createWorkflowTask: true,
+        scheduleFollowup: true,
+      },
+      escalationRules: {
+        escalateAfterCount: 2,
+        timeToEscalate: 60, // 1 hour
+        escalationRecipients: ['csm@company.com'],
+      },
+      cooldownPeriod: 60 // 1 hour cooldown
     }
   ];
 
@@ -244,7 +244,7 @@ class CriticalSignalNotificationService {
     // Simulate email sending
     console.log(`📧 Email notification sent for ${event.signal.description}`);
     console.log(`Recipients: ${rule.escalationRules.escalationRecipients.join(', ')}`);
-    
+
     // In a real implementation, you would integrate with your email service
     // await emailService.send({
     //   to: rule.escalationRules.escalationRecipients,
@@ -256,7 +256,7 @@ class CriticalSignalNotificationService {
   private async sendTeamsNotification(event: CriticalSignalEvent, rule: NotificationRule): Promise<void> {
     // Simulate Teams notification
     console.log(`🔔 Teams notification sent for ${event.signal.description}`);
-    
+
     // In a real implementation, you would send to Teams webhook
     // await teamsService.sendAdaptiveCard({
     //   webhook: process.env.TEAMS_WEBHOOK_URL,
@@ -281,21 +281,6 @@ class CriticalSignalNotificationService {
     return [...this.defaultRules];
   }
 
-  getNotificationRules(): NotificationRule[] {
-    return this.getRules();
-  }
-
-  getStats() {
-    return {
-      totalEvents: this.events.length,
-      activeAlerts: this.getActiveAlertsCount(),
-      criticalAlerts: this.getCriticalAlertsCount(),
-      acknowledgedEvents: this.events.filter(e => e.acknowledged).length,
-      rulesEnabled: this.defaultRules.filter(r => r.enabled).length,
-      totalRules: this.defaultRules.length
-    };
-  }
-
   updateRule(ruleId: string, updates: Partial<NotificationRule>): boolean {
     const ruleIndex = this.defaultRules.findIndex(r => r.id === ruleId);
     if (ruleIndex !== -1) {
@@ -305,22 +290,47 @@ class CriticalSignalNotificationService {
     return false;
   }
 
-  updateNotificationRule(ruleId: string, updates: Partial<NotificationRule>): boolean {
-    return this.updateRule(ruleId, updates);
-  }
-
   clearCooldowns(): void {
     this.cooldownMap.clear();
   }
 
-  getActiveAlertsCount(): number {
+  getUnacknowledgedCount(): number {
     return this.events.filter(e => !e.acknowledged).length;
   }
 
   getCriticalAlertsCount(): number {
     return this.events.filter(e => 
-      !e.acknowledged && e.signal.severity === 'critical'
+      e.signal.severity === 'critical' && !e.acknowledged
     ).length;
+  }
+
+  // Additional methods for CriticalSignalMonitor compatibility
+  getNotificationRules(): NotificationRule[] {
+    return this.getRules();
+  }
+
+  getStats() {
+    const totalEvents = this.events.length;
+    const criticalEvents = this.events.filter(e => e.signal.severity === 'critical').length;
+    const unacknowledged = this.getUnacknowledgedCount();
+    const recentEvents = this.events.filter(e => {
+      const eventTime = new Date(e.timestamp);
+      const hourAgo = new Date(Date.now() - 60 * 60 * 1000);
+      return eventTime > hourAgo;
+    }).length;
+
+    return {
+      totalEvents,
+      criticalEvents,
+      unacknowledged,
+      recentEvents,
+      averageResponseTime: 2.3, // Mock metric in minutes
+      escalationRate: ((criticalEvents / Math.max(totalEvents, 1)) * 100).toFixed(1)
+    };
+  }
+
+  updateNotificationRule(ruleId: string, updates: Partial<NotificationRule>): boolean {
+    return this.updateRule(ruleId, updates);
   }
 }
 
