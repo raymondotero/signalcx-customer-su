@@ -138,7 +138,7 @@ export class CriticalSignalNotificationService {
     // Keep only recent 100 events
     this.events = this.events.slice(0, 100);
 
-    // Set cooldown period
+    // Set cooldown for this account
     this.setCooldown(account.id, triggeredRules);
 
     return event;
@@ -154,7 +154,7 @@ export class CriticalSignalNotificationService {
       // Check severity level
       if (!rule.conditions.severityLevels.includes(signal.severity)) return false;
 
-      // Check account value threshold if specified
+      // Check account value threshold
       if (rule.conditions.accountValueThreshold && account.arr < rule.conditions.accountValueThreshold) {
         return false;
       }
@@ -290,7 +290,8 @@ export class CriticalSignalNotificationService {
     return false;
   }
 
-  clearCooldowns(): void {
+  clearEvents(): void {
+    this.events = [];
     this.cooldownMap.clear();
   }
 
@@ -304,28 +305,30 @@ export class CriticalSignalNotificationService {
     ).length;
   }
 
-  // Additional methods for CriticalSignalMonitor compatibility
   getNotificationRules(): NotificationRule[] {
     return this.getRules();
   }
 
   getStats() {
     const totalEvents = this.events.length;
-    const criticalEvents = this.events.filter(e => e.signal.severity === 'critical').length;
     const unacknowledged = this.getUnacknowledgedCount();
-    const recentEvents = this.events.filter(e => {
-      const eventTime = new Date(e.timestamp);
-      const hourAgo = new Date(Date.now() - 60 * 60 * 1000);
-      return eventTime > hourAgo;
-    }).length;
+    const critical = this.getCriticalAlertsCount();
+    const avgResponseTime = totalEvents > 0 ? 
+      this.events
+        .filter(e => e.acknowledged)
+        .reduce((sum, e) => {
+          const created = new Date(e.timestamp).getTime();
+          // Assume acknowledgment happens after 5-30 minutes for demo
+          const responseTime = Math.random() * 25 + 5;
+          return sum + responseTime;
+        }, 0) / Math.max(this.events.filter(e => e.acknowledged).length, 1)
+      : 0;
 
     return {
       totalEvents,
-      criticalEvents,
       unacknowledged,
-      recentEvents,
-      averageResponseTime: 2.3, // Mock metric in minutes
-      escalationRate: ((criticalEvents / Math.max(totalEvents, 1)) * 100).toFixed(1)
+      critical,
+      avgResponseTime: Math.round(avgResponseTime)
     };
   }
 
