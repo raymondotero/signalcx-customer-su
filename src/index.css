@@ -208,7 +208,6 @@ table {
   table-layout: auto; /* Changed from fixed to auto for flexible column sizing */
   width: 100%;
   min-width: 1400px; /* Increased minimum table width to ensure full visibility */
-  margin-right: 24px; /* Add margin to ensure breathing room after last column */
 }
 
 table th,
@@ -271,6 +270,7 @@ table thead th {
 .table-wrapper {
   overflow: auto;
   max-height: calc(70vh - 17px);
+  padding-right: 20px; /* Add padding to ensure actions column is fully visible */
 }
 
 .table-wrapper::-webkit-scrollbar {
@@ -311,10 +311,10 @@ table thead th {
 
 /* Specific styling for actions column */
 [data-slot="table-cell"]:last-child {
-  width: 200px; /* Increased width for buttons */
-  min-width: 200px;
-  max-width: 200px;
-  padding: 6px 16px 6px 8px; /* Added right padding for breathing room */
+  width: 180px; /* Increased width for buttons */
+  min-width: 180px;
+  max-width: 180px;
+  padding: 6px 8px;
   vertical-align: top;
 }
 
@@ -324,8 +324,7 @@ table thead th {
   flex-direction: column;
   gap: 4px;
   width: 100%;
-  min-width: 180px; /* Ensure minimum width for buttons */
-  padding-right: 8px; /* Add right padding for breathing room */
+  min-width: 160px; /* Ensure minimum width for buttons */
 }
 
 .action-button-group {
@@ -405,9 +404,9 @@ table thead th {
 
 [data-slot="table-head"]:nth-child(10),
 [data-slot="table-cell"]:nth-child(10) {
-  width: 200px;
-  min-width: 200px;
-  max-width: 200px;
+  width: 180px;
+  min-width: 180px;
+  max-width: 180px;
 }
 
 [data-slot="table-head"] {
