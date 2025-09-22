@@ -232,11 +232,62 @@ table thead th {
 
 /* Ensure table rows are fully visible */
 .table-container {
-  overflow: auto;
+  position: relative;
   max-height: 70vh;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   width: 100%;
+  overflow: hidden;
+}
+
+/* Top scrollbar styling */
+.top-scrollbar {
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  background: var(--background);
+}
+
+.top-scrollbar::-webkit-scrollbar {
+  height: 8px;
+}
+
+.top-scrollbar::-webkit-scrollbar-track {
+  background: var(--muted);
+  border-radius: 4px;
+}
+
+.top-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+.top-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Table wrapper with synchronized scrolling */
+.table-wrapper {
+  overflow: auto;
+  max-height: calc(70vh - 17px);
+}
+
+.table-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: var(--muted);
+  border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
 }
 
 /* Row height and spacing improvements */

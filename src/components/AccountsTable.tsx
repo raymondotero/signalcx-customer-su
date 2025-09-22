@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -40,6 +40,9 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
   const [arrFilter, setArrFilter] = useState<string>('all');
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+  
+  const tableWrapperRef = useRef<HTMLDivElement>(null);
+  const topScrollRef = useRef<HTMLDivElement>(null);
 
   // Get unique industries for filter dropdown
   const uniqueIndustries = useMemo(() => {
@@ -115,6 +118,61 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
 
     return filtered;
   }, [accounts, searchTerm, statusFilter, industryFilter, healthScoreFilter, arrFilter, sortField, sortDirection]);
+
+  // Synchronize scrollbars
+  useEffect(() => {
+    const tableWrapper = tableWrapperRef.current;
+    const topScroll = topScrollRef.current;
+    
+    if (!tableWrapper || !topScroll) return;
+
+    const handleTableScroll = () => {
+      if (topScroll) {
+        topScroll.scrollLeft = tableWrapper.scrollLeft;
+      }
+    };
+
+    const handleTopScroll = () => {
+      if (tableWrapper) {
+        tableWrapper.scrollLeft = topScroll.scrollLeft;
+      }
+    };
+
+    tableWrapper.addEventListener('scroll', handleTableScroll);
+    topScroll.addEventListener('scroll', handleTopScroll);
+
+    return () => {
+      tableWrapper.removeEventListener('scroll', handleTableScroll);
+      topScroll.removeEventListener('scroll', handleTopScroll);
+    };
+  }, []);
+
+  // Update top scrollbar width to match table width
+  useEffect(() => {
+    const tableWrapper = tableWrapperRef.current;
+    const topScroll = topScrollRef.current;
+    
+    if (tableWrapper && topScroll) {
+      const updateScrollbarWidth = () => {
+        const tableWidth = tableWrapper.scrollWidth;
+        const containerWidth = tableWrapper.clientWidth;
+        
+        if (tableWidth > containerWidth) {
+          topScroll.style.display = 'block';
+          topScroll.innerHTML = `<div style="width: ${tableWidth}px; height: 1px;"></div>`;
+        } else {
+          topScroll.style.display = 'none';
+        }
+      };
+
+      updateScrollbarWidth();
+      
+      const resizeObserver = new ResizeObserver(updateScrollbarWidth);
+      resizeObserver.observe(tableWrapper);
+      
+      return () => resizeObserver.disconnect();
+    }
+  }, [filteredAndSortedAccounts]);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -254,8 +312,16 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
         </div>
       </CardHeader>
       <CardContent>
-        <div className="overflow-auto">
-          <Table>
+        <div className="table-container">
+          <div 
+            ref={topScrollRef}
+            className="top-scrollbar overflow-x-auto overflow-y-hidden h-[17px] bg-background border-b border-border"
+            style={{ display: 'none' }}
+          >
+            <div style={{ width: '100%', height: '1px' }}></div>
+          </div>
+          <div ref={tableWrapperRef} className="table-wrapper">
+            <Table>
             <TableHeader>
               <TableRow>
                 <TableHead 
@@ -459,6 +525,7 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
               )}
             </TableBody>
           </Table>
+          </div>
         </div>
       </CardContent>
     </Card>
