@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useSignals, useAgentMemory } from '@/hooks/useData';
+import { useSignals, useAgentMemory, useAccounts } from '@/hooks/useData';
+import { criticalSignalNotificationService } from '@/services/criticalSignalNotificationService';
 import { Signal } from '@/types';
 
 interface SignalAnalysis {
@@ -12,6 +13,7 @@ interface SignalAnalysis {
 export function useSignalProcessor() {
   const { signals, addSignal } = useSignals();
   const { addMemoryEntry } = useAgentMemory();
+  const { accounts } = useAccounts();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const analyzeSignal = async (signal: Signal): Promise<SignalAnalysis> => {
@@ -68,6 +70,22 @@ export function useSignalProcessor() {
       const latestSignal = signals[0];
       const analysis = await analyzeSignal(latestSignal);
       
+      // Find the corresponding account for enhanced processing
+      const account = accounts.find(acc => acc.id === latestSignal.accountId);
+      
+      // Process through critical signal notification service if critical/high
+      if ((latestSignal.severity === 'critical' || latestSignal.severity === 'high') && account) {
+        try {
+          if (criticalSignalNotificationService && typeof criticalSignalNotificationService.processSignal === 'function') {
+            await criticalSignalNotificationService.processSignal(latestSignal, account);
+          } else {
+            console.warn('Critical signal notification service not properly initialized');
+          }
+        } catch (error) {
+          console.error('Error processing signal through notification service:', error);
+        }
+      }
+      
       // Log analysis to memory
       addMemoryEntry({
         id: `analysis-${Date.now()}`,
@@ -82,7 +100,8 @@ export function useSignalProcessor() {
           severity: latestSignal.severity,
           isActionable: analysis.isActionable,
           recommendedAction: analysis.recommendedAction,
-          urgencyLevel: analysis.urgencyLevel
+          urgencyLevel: analysis.urgencyLevel,
+          criticalNotificationTriggered: (latestSignal.severity === 'critical' || latestSignal.severity === 'high') && !!account
         },
         outcome: analysis.isActionable ? 'success' : 'pending'
       });

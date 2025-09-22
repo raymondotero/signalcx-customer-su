@@ -20,6 +20,7 @@ import { WorkflowDemo } from '@/components/WorkflowDemo';
 import { ROIDashboard } from '@/components/ROIDashboard';
 import { DataSyncScheduler } from '@/components/DataSyncScheduler';
 import { IntegrationWizard } from '@/components/IntegrationWizard';
+import { CriticalSignalMonitor } from '@/components/CriticalSignalMonitor';
 import HelpGuide from '@/components/HelpGuide';
 import { notificationService } from '@/services/notificationService';
 
@@ -42,7 +43,7 @@ function App() {
   const { accounts, resetAccounts } = useAccounts();
   const { setNBAs } = useNBAs();
   const { clearMemory, addMemoryEntry, setMemory } = useAgentMemory();
-  const { setSignals } = useSignals();
+  const { setSignals, addSignal } = useSignals();
   const { isProcessing } = useSignalProcessor();
   const realTimeAI = useRealTimeAI();
   const aiMetrics = useAIMetrics();
@@ -378,6 +379,32 @@ function App() {
                     🔔 Test Integrations
                   </Button>
                 )}
+                
+                <Button 
+                  size="sm"
+                  variant="outline"
+                  onClick={async () => {
+                    // Import signal generation functions
+                    const { generateBusinessValueSignal } = await import('@/services/signalCatalog');
+                    const testAccount = accounts[0];
+                    if (testAccount) {
+                      // Generate a critical signal
+                      const criticalSignal = {
+                        ...generateBusinessValueSignal(testAccount.id, testAccount.name),
+                        severity: 'critical' as const,
+                        type: 'churn_risk' as const,
+                        description: `Critical: ${testAccount.name} showing severe churn risk indicators - immediate intervention required`,
+                      };
+                      
+                      // Add the signal using the hook method
+                      addSignal(criticalSignal);
+                      toast.warning('Critical signal generated - check Critical Monitor tab');
+                    }
+                  }}
+                  className="text-red-700 border-red-200 hover:bg-red-50"
+                >
+                  🚨 Test Critical Signal
+                </Button>
               </div>
               
               <ROIDashboard />
@@ -534,8 +561,9 @@ function App() {
 
           {/* Right Column - AI Systems */}
           <div className="space-y-6 min-h-0 h-fit">
-            <Tabs defaultValue="arr-growth" className="w-full h-fit">
+            <Tabs defaultValue="critical-monitor" className="w-full h-fit">
               <TabsList className="flex flex-wrap gap-1 w-full h-auto p-2">
+                <TabsTrigger value="critical-monitor" className="text-sm px-3 py-2 min-w-fit">Critical Monitor</TabsTrigger>
                 <TabsTrigger value="business-value" className="text-sm px-3 py-2 min-w-fit">Business Value</TabsTrigger>
                 <TabsTrigger value="arr-growth" className="text-sm px-3 py-2 min-w-fit">ARR Growth</TabsTrigger>
                 <TabsTrigger value="forecast" className="text-sm px-3 py-2 min-w-fit">Forecast</TabsTrigger>
@@ -545,6 +573,12 @@ function App() {
                 <TabsTrigger value="ai-engine" className="text-sm px-3 py-2 min-w-fit">AI Engine</TabsTrigger>
                 <TabsTrigger value="memory" className="text-sm px-3 py-2 min-w-fit">Agent Memory</TabsTrigger>
               </TabsList>
+              
+              <TabsContent value="critical-monitor" className="mt-4 h-fit">
+                <div className="h-fit">
+                  <CriticalSignalMonitor />
+                </div>
+              </TabsContent>
               
               <TabsContent value="business-value" className="mt-4 h-fit">
                 <AIErrorBoundary>

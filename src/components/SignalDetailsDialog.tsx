@@ -89,7 +89,7 @@ export function SignalDetailsDialog({ signal, trigger }: SignalDetailsDialogProp
     <Dialog>
       <DialogTrigger asChild>
         {trigger || (
-          <Button className="outline">
+          <Button variant="outline">
             <Eye className="w-4 h-4 mr-2" />
             View Details
           </Button>

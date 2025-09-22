@@ -16,6 +16,19 @@ export interface ARRTrend {
   };
 }
 
+export interface ExpansionOpportunity {
+  value: number;
+  category: 'user-expansion' | 'cross-sell' | 'feature-upgrade' | 'geographic-expansion' | 'upsell';
+  description: string;
+  timeline: string;
+  probability: 'low' | 'medium' | 'high';
+  requiredActivities: string[];
+  microsoftSolutions: string[];
+  deliveryMotions: string[];
+  stakeholdersRequired: string[];
+  successCriteria: string[];
+}
+
 export interface Account {
   id: string;
   name: string;
@@ -28,6 +41,7 @@ export interface Account {
   lastActivity: string;
   contractEnd: string;
   expansionOpportunity: number;
+  expansionOpportunities?: ExpansionOpportunity[];
   arrHistory?: QuarterlyARR[];
   arrTrend?: ARRTrend;
 }
@@ -36,17 +50,34 @@ export interface Signal {
   id: string;
   accountId: string;
   accountName: string;
-  type: 'cost' | 'agility' | 'data' | 'risk' | 'culture' | 'usage' | 'engagement' | 'support' | 'billing' | 'feature';
-  signalName: string;
+  type: 'cost' | 'agility' | 'data' | 'risk' | 'culture' | 'usage' | 'engagement' | 'support' | 'financial' | 'feature_request' | 'churn_risk';
+  signalName?: string;
   description: string;
-  value: number;
+  value?: number;
   unit?: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
   timestamp: string;
-  category: 'cost' | 'agility' | 'data' | 'risk' | 'culture';
+  category?: 'cost' | 'agility' | 'data' | 'risk' | 'culture';
   trend?: 'improving' | 'stable' | 'declining';
   target?: number;
   metadata?: Record<string, any>;
+  aiAnalysis?: {
+    impact: string;
+    urgency: 'low' | 'medium' | 'high' | 'critical';
+    affectedAccountsCount: number;
+    businessValueAtRisk: string;
+  };
+  aiRecommendations?: Array<{
+    title: string;
+    description: string;
+    category: string;
+    priority: 'low' | 'medium' | 'high' | 'critical';
+    effort: string;
+    timeline: string;
+    estimatedImpact: string;
+    reasoning: string;
+    successMetrics?: string[];
+  }>;
 }
 
 export interface NextBestAction {
@@ -58,9 +89,23 @@ export interface NextBestAction {
   priority: 'low' | 'medium' | 'high' | 'critical';
   category: 'retention' | 'expansion' | 'engagement' | 'support';
   estimatedImpact: string;
-  timeToComplete: string;
+  effort?: string;
+  timeToComplete?: string;
   assignedTo?: string;
-  createdAt: string;
+  createdAt?: string;
+  generatedAt?: string;
+  suggestedActions?: string[];
+}
+
+export interface MemoryEntry {
+  id: string;
+  timestamp: string;
+  type: 'nba_generated' | 'workflow_executed' | 'approval_requested' | 'approval_decided';
+  accountId?: string;
+  accountName?: string;
+  description: string;
+  metadata?: Record<string, any>;
+  outcome?: 'success' | 'failure' | 'pending';
 }
 
 export interface AgentMemoryEntry {

@@ -43,6 +43,11 @@
 - **Purpose**: Provides centralized visibility into all customer accounts with intelligent prioritization
 - **Success Criteria**: Users can quickly identify accounts requiring attention and access detailed insights
 
+### Critical Signal Notification System
+- **Functionality**: Automated detection and notification system for critical account signals with multi-channel alerting (Teams, Email, Toast notifications) and escalation workflows
+- **Purpose**: Ensures immediate response to critical account health deterioration and high-value opportunity signals through intelligent notification routing and escalation management
+- **Success Criteria**: Critical signals trigger immediate notifications to appropriate stakeholders, escalation workflows prevent missed alerts, and notification fatigue is minimized through intelligent filtering and cooldown periods
+
 ### AI-Powered Next Best Actions (NBA)
 - **Functionality**: Machine learning-driven recommendations for account-specific actions based on signal analysis
 - **Purpose**: Transforms reactive customer success into proactive, data-driven interventions
@@ -151,9 +156,23 @@
 
 ## Implementation Considerations
 
+### Critical Signal Notification System Architecture
+- **Service Layer**: CriticalSignalNotificationService singleton manages notification rules, event processing, and escalation workflows
+- **Rule Engine**: Configurable notification rules support multiple signal types, severity levels, and value thresholds
+- **Multi-Channel Integration**: Native integration with Microsoft Teams and Outlook for enterprise notification delivery
+- **Escalation Management**: Time-based escalation with customizable recipients and acknowledgment tracking
+- **Cooldown Prevention**: Intelligent cooldown periods prevent notification spam while ensuring critical alerts are never missed
+- **Event Tracking**: Comprehensive event history with acknowledgment status and performance metrics
+
+### Testing and Validation Features
+- **Test Signal Generation**: Built-in critical signal generator for testing notification workflows
+- **Integration Testing**: Live integration testing with connected Microsoft services
+- **Notification Preview**: Real-time preview of notification content and routing
+- **Performance Monitoring**: Notification delivery metrics and response time tracking
+
 **Scalability Needs**: Support for enterprise-scale customer portfolios with thousands of accounts
-**Testing Focus**: AI recommendation accuracy, workflow reliability, data integrity
-**Critical Questions**: How to balance AI automation with human oversight, ensuring data privacy and security compliance
+**Testing Focus**: AI recommendation accuracy, workflow reliability, data integrity, critical notification system responsiveness
+**Critical Questions**: How to balance AI automation with human oversight, ensuring data privacy and security compliance, and optimizing notification frequency to prevent alert fatigue
 
 ## Reflection
 

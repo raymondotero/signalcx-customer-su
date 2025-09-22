@@ -20,9 +20,9 @@ export function LiveSignals() {
   useEffect(() => {
     if (!isStreaming) return;
 
-    const generateSignal = (): Signal => {
+    const generateSignal = (): Signal | null => {
       const account = accounts[Math.floor(Math.random() * accounts.length)];
-      if (!account) return null as any;
+      if (!account) return null;
 
       // 70% chance for business value signals, 30% for legacy signals
       if (Math.random() < 0.7) {
