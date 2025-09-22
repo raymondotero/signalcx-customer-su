@@ -1,26 +1,24 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitl
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import { 
   FileText, 
   Target, 
-  DollarSign,
-import { 
-  Download, 
-  FileText, 
-  TrendingUp, 
-  Target, 
+  CurrencyDollar,
+  Download,
+  TrendUp, 
   Calendar,
-  DollarSign,
   Users,
   Activity,
-  AlertTriangle,
+  Warning,
   CheckCircle,
   Clock,
-}
-  PieChart,
-  overview: 
+  ChartPie,
+  ChartBar,
   Brain
 } from '@phosphor-icons/react';
 import { Account } from '@/types';
@@ -28,7 +26,7 @@ import { toast } from 'sonner';
 
 interface PortfolioAnalysisExportProps {
   accounts: Account[];
- 
+}
 
 interface AnalysisData {
   overview: {
@@ -38,23 +36,23 @@ interface AnalysisData {
       good: number;
       watch: number;
       atRisk: number;
-    q4
+    };
     expansionOpportunities: {
       total: number;
       value: number;
+    };
   };
-  co
   segmentation: {
     byIndustry: Record<string, { count: number; arr: number; avgHealth: number }>;
     bySize: Record<string, { count: number; arr: number; avgHealth: number }>;
     byGrowth: Record<string, { count: number; arr: number; avgHealth: number }>;
   };
   riskAnalysis: {
-      // Calculate portfo
+    churnRisk: Account[];
     expansionRisk: Account[];
     renewalRisk: Account[];
   };
-      };
+  roadmap: {
     q1: { focus: string; initiatives: string[]; expectedOutcome: string };
     q2: { focus: string; initiatives: string[]; expectedOutcome: string };
     q3: { focus: string; initiatives: string[]; expectedOutcome: string };
@@ -62,459 +60,456 @@ interface AnalysisData {
   };
   recommendations: {
     immediate: string[];
+    shortTerm: string[];
+    longTerm: string[];
+  };
+}
 
-      const churnRisk =
+export function PortfolioAnalysisExport({ accounts }: PortfolioAnalysisExportProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null);
+
+  const generateAnalysis = async () => {
+    if (isGenerating) return;
     
- 
+    setIsGenerating(true);
+    
+    try {
+      // Calculate basic metrics
+      const totalARR = accounts.reduce((sum, acc) => sum + acc.arr, 0);
+      const good = accounts.filter(a => a.status === 'Good').length;
+      const watch = accounts.filter(a => a.status === 'Watch').length;
+      const atRisk = accounts.filter(a => a.status === 'At Risk').length;
+      
+      // Calculate portfolio growth (quarterly rates)
+      const avgGrowthGood = 3.1; // 3.1% quarterly growth
+      const avgGrowthWatch = 1.4; // 1.4% quarterly growth
+      const avgGrowthRisk = -0.3; // -0.3% quarterly growth
+      
+      const portfolioGrowth = accounts.length > 0 ? 
+        (good * avgGrowthGood + watch * avgGrowthWatch + atRisk * avgGrowthRisk) / accounts.length : 0;
+
+      // Segment by industry
+      const byIndustry: Record<string, { count: number; arr: number; avgHealth: number }> = {};
+      accounts.forEach(acc => {
+        if (!byIndustry[acc.industry]) {
+          byIndustry[acc.industry] = { count: 0, arr: 0, avgHealth: 0 };
+        }
+        byIndustry[acc.industry].count++;
+        byIndustry[acc.industry].arr += acc.arr;
+        byIndustry[acc.industry].avgHealth += acc.healthScore;
+      });
+      
+      Object.keys(byIndustry).forEach(industry => {
+        byIndustry[industry].avgHealth /= byIndustry[industry].count;
+      });
+
+      // Segment by size
+      const bySize: Record<string, { count: number; arr: number; avgHealth: number }> = {
+        'Enterprise (>$10M)': { count: 0, arr: 0, avgHealth: 0 },
+        'Mid-Market ($1M-$10M)': { count: 0, arr: 0, avgHealth: 0 },
+        'SMB (<$1M)': { count: 0, arr: 0, avgHealth: 0 }
+      };
+
+      accounts.forEach(acc => {
+        let category = 'SMB (<$1M)';
+        if (acc.arr >= 10000000) category = 'Enterprise (>$10M)';
+        else if (acc.arr >= 1000000) category = 'Mid-Market ($1M-$10M)';
+        
+        bySize[category].count++;
+        bySize[category].arr += acc.arr;
+        bySize[category].avgHealth += acc.healthScore;
+      });
+
+      Object.keys(bySize).forEach(size => {
+        if (bySize[size].count > 0) {
+          bySize[size].avgHealth /= bySize[size].count;
+        }
+      });
+
+      // Segment by growth
+      const byGrowth: Record<string, { count: number; arr: number; avgHealth: number }> = {
+        'High Growth (>5%)': { count: 0, arr: 0, avgHealth: 0 },
+        'Stable Growth (0-5%)': { count: 0, arr: 0, avgHealth: 0 },
+        'Declining (<0%)': { count: 0, arr: 0, avgHealth: 0 }
+      };
+
+      accounts.forEach(acc => {
+        let category = 'Stable Growth (0-5%)';
+        if (acc.healthScore >= 80) category = 'High Growth (>5%)';
+        else if (acc.healthScore < 60) category = 'Declining (<0%)';
+        
+        byGrowth[category].count++;
+        byGrowth[category].arr += acc.arr;
+        byGrowth[category].avgHealth += acc.healthScore;
+      });
+
+      Object.keys(byGrowth).forEach(growth => {
+        if (byGrowth[growth].count > 0) {
+          byGrowth[growth].avgHealth /= byGrowth[growth].count;
+        }
+      });
+
+      // Risk analysis
+      const churnRisk = accounts.filter(acc => acc.healthScore < 50);
+      const expansionRisk = accounts.filter(acc => acc.healthScore >= 80 && acc.status === 'Good');
+      const renewalRisk = accounts.filter(acc => {
+        const renewalDate = new Date(acc.contractEnd);
+        const sixMonthsFromNow = new Date();
+        sixMonthsFromNow.setMonth(sixMonthsFromNow.getMonth() + 6);
+        return renewalDate <= sixMonthsFromNow && acc.healthScore < 70;
+      });
+
+      const expansionValue = expansionRisk.reduce((sum, acc) => sum + acc.arr * 0.3, 0);
 
       // Generate comprehensive analysis data
+      const analysis: AnalysisData = {
         overview: {
+          totalARR,
           portfolioGrowth,
+          accountHealth: {
+            good,
+            watch,
+            atRisk
+          },
           expansionOpportunities: {
-
-        },
-          byIndustry,
-    
-         
+            total: expansionRisk.length,
+            value: expansionValue
           }
-        riskAnalysis: {
-          expansionRisk,
         },
+        segmentation: {
+          byIndustry,
+          bySize,
+          byGrowth
+        },
+        riskAnalysis: {
+          churnRisk,
+          expansionRisk,
+          renewalRisk
+        },
+        roadmap: {
           q1: {
+            focus: "Risk Mitigation",
             initiatives: [
-        
-
-            expectedOutcome: `Reduce chu
+              "Implement immediate intervention for at-risk accounts",
+              "Deploy dedicated customer success managers for churn risk accounts",
+              "Establish weekly check-ins with renewal risk accounts"
+            ],
+            expectedOutcome: `Reduce churn risk by 40%, improve average health score by 12 points`
+          },
           q2: {
+            focus: "Expansion & Growth",
             initiatives: [
-              "Implement customer
-              "Optimize product adoption across mid-
-            expectedOutcome: `Improve average health score by 15 points, achieve 95% renewal rate`
-
+              "Launch expansion pilot program with top-performing accounts",
+              "Implement customer advisory board for high-value accounts",
+              "Optimize product adoption across mid-market segment"
+            ],
+            expectedOutcome: `Drive $${(expansionValue / 1000000).toFixed(1)}M in expansion ARR, achieve 95% renewal rate`
+          },
+          q3: {
+            focus: "Operational Excellence",
             initiatives: [
               "Launch predictive analytics for customer success",
-              "Develop industry
-            expectedOutcome: `Drive $${(
+              "Develop industry-specific success playbooks",
+              "Implement automated health score monitoring"
+            ],
+            expectedOutcome: `Improve average health score by 15 points, reduce manual intervention by 60%`
+          },
           q4: {
-         
-              "Implement AI-powered custo
-              "Establish center of excellence fo
-            expectedOutcome: `Achieve ${(portfolioGrowth + 2).
-        }
-
-            `Accelerate expansion discussions with 
+            focus: "Strategic Transformation",
+            initiatives: [
+              "Implement AI-powered customer success orchestration",
+              "Establish center of excellence for customer success",
+              "Launch customer success certification program"
+            ],
+            expectedOutcome: `Achieve ${(portfolioGrowth + 2).toFixed(1)}% portfolio growth, 98% customer satisfaction`
+          }
+        },
+        recommendations: {
+          immediate: [
+            `Deploy emergency interventions for ${churnRisk.length} high-churn-risk accounts`,
+            `Accelerate expansion discussions with ${expansionRisk.length} expansion-ready accounts`,
+            "Implement daily health score monitoring for critical accounts",
             "Deploy emergency customer success interventions within 48 hours"
-         
-
-            "Deploy AI-pow
+          ],
+          shortTerm: [
+            "Implement predictive churn modeling across all accounts",
+            "Deploy AI-powered customer success recommendations",
+            "Establish quarterly business reviews for all enterprise accounts",
+            "Launch customer advisory board program"
+          ],
           longTerm: [
-            "Develop predictive customer lifetime value modeling"
-            "Establish customer success as a competitive differentia
+            "Develop predictive customer lifetime value modeling",
+            "Implement automated expansion opportunity identification",
+            "Establish customer success as a competitive differentiator",
+            "Build industry-leading customer success platform"
+          ]
         }
+      };
 
-
+      setAnalysisData(analysis);
+      toast.success('Portfolio analysis generated successfully');
     } catch (error) {
+      console.error('Analysis generation error:', error);
       toast.error('Failed to generate portfolio analysis');
+    } finally {
       setIsGenerating(false);
+    }
   };
-  const exportToDocument = async (forma
+
+  const exportToDocument = async (format: 'json' | 'csv') => {
+    if (!analysisData) return;
     
-      // 
+    try {
+      let content: string;
+      let filename: string;
+      let mimeType: string;
 
-      const filename = `SignalCX_Portfolio_
-      // Create download blob with co
-        title: "SignalCX Portfolio Analysis & Implementation Roadmap",
-        s
-        r
+      if (format === 'json') {
+        content = JSON.stringify({
+          title: "SignalCX Portfolio Analysis & Implementation Roadmap",
+          generatedAt: new Date().toISOString(),
+          summary: analysisData,
+          accounts: accounts.map(acc => ({
+            name: acc.name,
+            industry: acc.industry,
+            arr: acc.arr,
+            healthScore: acc.healthScore,
+            status: acc.status,
+            csam: acc.csam,
+            ae: acc.ae
+          }))
+        }, null, 2);
+        filename = `SignalCX_Portfolio_Analysis_${new Date().toISOString().split('T')[0]}.json`;
+        mimeType = 'application/json';
+      } else {
+        // CSV format
+        const csvRows = [
+          ['Account Name', 'Industry', 'ARR', 'Health Score', 'Status', 'CSAM', 'AE'],
+          ...accounts.map(acc => [
+            acc.name,
+            acc.industry,
+            acc.arr.toString(),
+            acc.healthScore.toString(),
+            acc.status,
+            acc.csam,
+            acc.ae
+          ])
+        ];
+        content = csvRows.map(row => row.join(',')).join('\n');
+        filename = `SignalCX_Portfolio_Data_${new Date().toISOString().split('T')[0]}.csv`;
+        mimeType = 'text/csv';
+      }
 
-          name: acc.na
-          arr: acc.arr,
-          status: acc.status,
-          ae: acc.ae,
-        }))
-      
-        type: 'application/json' 
-      
-
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
       link.download = filename;
       link.click();
-      URL.revokeObj
-      toast.success
+      URL.revokeObjectURL(url);
+      
+      toast.success(`Portfolio analysis exported as ${format.toUpperCase()}`);
     } catch (error) {
-      toast.error(`Faile
+      console.error('Export error:', error);
+      toast.error(`Failed to export ${format.toUpperCase()} file`);
+    }
   };
+
   return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-          v
-          
-          <BarChart3 cl
+        <Button 
+          variant="outline" 
+          size="sm"
+          className="text-purple-700 border-purple-200 hover:bg-purple-50"
+        >
+          <ChartBar className="w-4 h-4 mr-2" />
+          Portfolio Analysis
         </Button>
+      </DialogTrigger>
       
-        <DialogHeader
-            <BarChart3 className="w-5 h-5" />
+      <DialogContent className="max-w-7xl h-[90vh] overflow-hidden flex flex-col">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <ChartBar className="w-5 h-5" />
+            Portfolio Analysis & Implementation Roadmap
           </DialogTitle>
-
-          {
-          
-              <p classN
+        </DialogHeader>
+        
+        <div className="flex-1 overflow-auto">
+          {!analysisData ? (
+            <div className="flex flex-col items-center justify-center h-full space-y-4">
+              <p className="text-muted-foreground text-center">
+                Generate comprehensive portfolio analysis with insights, risk assessment, and implementation roadmap
               </p>
-                onClick=
-                class
-          
-                  
-               
+              <Button 
+                onClick={generateAnalysis}
+                disabled={isGenerating}
+                className="bg-purple-600 hover:bg-purple-700 text-white"
+              >
+                {isGenerating ? (
                   <>
-                    Genera
+                    <Brain className="w-4 h-4 mr-2 animate-spin" />
+                    Generating Analysis...
+                  </>
+                ) : (
+                  <>
+                    <Brain className="w-4 h-4 mr-2" />
+                    Generate Portfolio Analysis
+                  </>
                 )}
+              </Button>
             </div>
+          ) : (
             <Tabs defaultValue="overview" className="w-full">
+              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-4">
                 <TabsList className="flex-wrap gap-1 h-auto p-2">
-              
+                  <TabsTrigger value="overview">Portfolio Overview</TabsTrigger>
+                  <TabsTrigger value="segmentation">Segmentation Analysis</TabsTrigger>
+                  <TabsTrigger value="risk">Risk Assessment</TabsTrigger>
                   <TabsTrigger value="roadmap">Implementation Roadmap</TabsTrigger>
-            
-               
-                    variant="outline"
-                    classN
-                    <FileText className="w-4 h-4 mr-2" />
-                  </Button>
-                    variant="outline"
-                    className="text-orange-600 border-orange-200 ho
-              
-                  </Button>
-            
-               
-                    <PieChart className="w-4 h-4 mr-2
-                  </Button
-              </div>
-              <TabsContent value="overview" className="space-y-4"
-                  <Card>
-                      <div className="flex items-center jus
-              
-                            ${(analysisData.overview.totalARR / 1000000).toFixed(1)}M
-            
-               
-                        <DollarSign className="w
-                    </Card
-
-                    <CardContent className="p-4">
-                        <div>
-                          <div className="flex gap-2 mt-1">
-              
-                          </div>
-           
-          
-                        <A
-                    </
-
-                    <CardContent className="p-4">
-                        <div>
-                          <p className="text-2xl font-bold text-blue-600">
-            
-                      
-                        </div>
-                      </div>
-                  </Card>
-                  <Card>
-            
-                     
-                            {analysisData.riskAnalysis.churnRisk.length}
-                          <p className="text-xs text-red-600 mt-1"
-                          </p>
-                        <AlertTriangle className="w-8 h-8 text-red-500" 
-           
-         
-        
-
-                  <CardContent>
-                      <div className="text-center">
-      
-                     
-                      </div>
-                        <div className="text-3xl font-bold 
-               
-                        <Prog
-     
-    
-
-                      </div>
-                  </CardConten
-    
-         
-                  <Card>
-                      <CardTitle className="flex items-center 
-      
-                    </CardHeader>
-                      {Object.entries(analysisData.segmentation.byIndustry).map(([industry, data]) => (
-      
-                            <div className="text-xs t
-                            </d
-                          <div className="text-right">
-                            <div className="te
-                        </div>
-                    </CardContent>
-
-                    <CardHeader>
-                        <BarChart3 className="w-5 h-5"
-                      </CardTitle>
-                    <Card
-                        <div key=
-                       
-                              {data.cou
-                          </d
-                         
-                     
-                      ))}
-           
-        
-      
-                        By Growth Rate
-                    </CardHeader>
-         
-      
-                            <div className="
-                            </div>
-                      
-                            <di
-                        </div>
-                   
-                </div>
-
-      
-                    <CardHeader>
-      
-                     
-                    <CardContent className="
-                        <div key={account.id} className="flex jus
-     
-    
-
-          
-                          +{analysisData.riskAnalys
-                      )}
+                  <TabsTrigger value="recommendations">Action Items</TabsTrigger>
+                </TabsList>
                 
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={() => exportToDocument('json')}
+                    variant="outline"
+                    className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                  >
+                    <FileText className="w-4 h-4 mr-2" />
+                    Export JSON
+                  </Button>
+                  <Button 
+                    onClick={() => exportToDocument('csv')}
+                    variant="outline"
+                    className="text-orange-600 border-orange-200 hover:bg-orange-50"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Export CSV
+                  </Button>
+                  <Button 
+                    onClick={generateAnalysis}
+                    variant="outline"
+                    className="text-purple-600 border-purple-200 hover:bg-purple-50"
+                    disabled={isGenerating}
+                  >
+                    <ChartPie className="w-4 h-4 mr-2" />
+                    Refresh Analysis
+                  </Button>
+                </div>
+              </div>
+
+              <TabsContent value="overview" className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   <Card>
-                      <CardTitle className="flex items-center gap-2 
-                        Expansion Ready (
-         
-                      {analysisData.riskAnalysis
-                          <d
-                 
-                      
-      
-                        <div className="text-xs text-muted-foreground te
-                      
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-muted-foreground">Total Portfolio ARR</p>
+                          <p className="text-2xl font-bold">
+                            ${(analysisData.overview.totalARR / 1000000).toFixed(1)}M
+                          </p>
+                          <p className={`text-xs mt-1 ${
+                            analysisData.overview.portfolioGrowth >= 0 ? 'text-green-600' : 'text-red-600'
+                          }`}>
+                            {analysisData.overview.portfolioGrowth >= 0 ? '+' : ''}{analysisData.overview.portfolioGrowth.toFixed(1)}% QoQ Growth
+                          </p>
+                        </div>
+                        <CurrencyDollar className="w-8 h-8 text-green-500" />
+                      </div>
                     </CardContent>
+                  </Card>
 
-                    <CardHeader>
-                        
-                      <
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-muted-foreground">Expansion Opportunity</p>
+                          <p className="text-2xl font-bold text-blue-600">
+                            ${(analysisData.overview.expansionOpportunities.value / 1000000).toFixed(1)}M
+                          </p>
+                          <p className="text-xs text-blue-600 mt-1">
+                            {analysisData.overview.expansionOpportunities.total} accounts ready
+                          </p>
+                        </div>
+                        <TrendUp className="w-8 h-8 text-blue-500" />
+                      </div>
+                    </CardContent>
+                  </Card>
 
-                        <div key={a
-                            
-                              Renews {new Date(
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-muted-foreground">Health Distribution</p>
+                          <div className="flex gap-2 mt-1">
+                            <Badge className="status-good text-xs">{analysisData.overview.accountHealth.good} Good</Badge>
+                            <Badge className="status-watch text-xs">{analysisData.overview.accountHealth.watch} Watch</Badge>
+                            <Badge className="status-risk text-xs">{analysisData.overview.accountHealth.atRisk} Risk</Badge>
                           </div>
                         </div>
-                      {analysisData.riskAnalysis.renewalRisk.length > 5 &
-                          +{analysisData.riskAnalysis.renewalRisk.length - 5} more accounts
-                  
-                  </Ca
-              </TabsContent>
-              <TabsContent value="roadm
-                  {Object.entries(analysisData.roadmap).map(([quarter, data]) => (
-               
-                          <Calend
-                    
-                      <CardContent className="space-y-4">
-                          <h4 className="f
-                     
-                     
-                    
-                          </ul>
-                        <Separator />
-                     
-                  
-                    </C
-                </
-
-                <div className="grid grid-cols-1 lg:grid-cols
-                    <CardHeader>
-                        <AlertTriangle className="w-5 h-5" />
-                      </CardTitle>
-                    <CardContent>
-                        {analysisData.recommendations.immediate.map((re
-                            <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 f
-                          </li>
-                      </ul>
+                        <Activity className="w-8 h-8 text-primary" />
+                      </div>
+                    </CardContent>
+                  </Card>
 
                   <Card>
-                      <Ca
-                        Short-term (3
-                    </CardHeader>
-                      <ul className="space-y-3">
-                   
-                            {rec}
-                        ))}
-                    </CardC
-
-                    <CardHeader>
-                        <Target className="w-5 h-5" />
-                      </CardTitle>
-                   
-                        {analysisData.recommendations.lon
-                            <T
-                          <
-                      </u
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-muted-foreground">Churn Risk</p>
+                          <p className="text-2xl font-bold text-red-600">
+                            {analysisData.riskAnalysis.churnRisk.length}
+                          </p>
+                          <p className="text-xs text-red-600 mt-1">
+                            ${(analysisData.riskAnalysis.churnRisk.reduce((sum, acc) => sum + acc.arr, 0) / 1000000).toFixed(1)}M at risk
+                          </p>
+                        </div>
+                        <Warning className="w-8 h-8 text-red-500" />
+                      </div>
+                    </CardContent>
                   </Card>
+                </div>
               </TabsContent>
-          )}
-      </DialogConte
-  );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+              <TabsContent value="segmentation" className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Users className="w-5 h-5" />
+                        By Industry
+                      </CardTitle>
+                    </CardHeader>
                     <CardContent className="space-y-3">
+                      {Object.entries(analysisData.segmentation.byIndustry).map(([industry, data]) => (
+                        <div key={industry} className="flex justify-between items-center">
+                          <div>
+                            <div className="font-medium text-sm">{industry}</div>
+                            <div className="text-xs text-muted-foreground">
+                              {data.count} accounts • ${(data.arr / 1000000).toFixed(1)}M ARR
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-sm font-medium">{data.avgHealth.toFixed(0)}</div>
+                            <div className="text-xs text-muted-foreground">Avg Health</div>
+                          </div>
+                        </div>
+                      ))}
+                    </CardContent>
+                  </Card>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <CurrencyDollar className="w-5 h-5" />
+                        By Account Size
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
                       {Object.entries(analysisData.segmentation.bySize).filter(([_, data]) => data.count > 0).map(([size, data]) => (
                         <div key={size} className="flex justify-between items-center">
                           <div>
@@ -535,7 +530,7 @@ interface AnalysisData {
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <LineChart className="w-5 h-5" />
+                        <TrendUp className="w-5 h-5" />
                         By Growth Rate
                       </CardTitle>
                     </CardHeader>
@@ -564,7 +559,7 @@ interface AnalysisData {
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2 text-red-600">
-                        <AlertTriangle className="w-5 h-5" />
+                        <Warning className="w-5 h-5" />
                         Churn Risk ({analysisData.riskAnalysis.churnRisk.length})
                       </CardTitle>
                     </CardHeader>
@@ -589,7 +584,7 @@ interface AnalysisData {
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2 text-blue-600">
-                        <TrendingUp className="w-5 h-5" />
+                        <TrendUp className="w-5 h-5" />
                         Expansion Ready ({analysisData.riskAnalysis.expansionRisk.length})
                       </CardTitle>
                     </CardHeader>
@@ -678,7 +673,7 @@ interface AnalysisData {
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2 text-red-600">
-                        <AlertTriangle className="w-5 h-5" />
+                        <Warning className="w-5 h-5" />
                         Immediate Actions (0-30 days)
                       </CardTitle>
                     </CardHeader>
@@ -686,7 +681,7 @@ interface AnalysisData {
                       <ul className="space-y-3">
                         {analysisData.recommendations.immediate.map((rec, idx) => (
                           <li key={idx} className="flex items-start gap-2 text-sm">
-                            <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+                            <Warning className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
                             {rec}
                           </li>
                         ))}
