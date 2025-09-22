@@ -45,7 +45,7 @@ export function CriticalSignalMonitor() {
   };
 
   const handleAcknowledge = (eventId: string) => {
-    const success = criticalSignalNotificationService.acknowledgeEvent(eventId, 'current-user');
+    const success = criticalSignalNotificationService.acknowledgeEvent(eventId);
     if (success) {
       refreshData();
     }

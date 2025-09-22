@@ -17,19 +17,19 @@ export interface NotificationRule {
     }>;
   };
   actions: {
-    sendTeamsNotification: boolean;
     sendEmailNotification: boolean;
+    sendTeamsNotification: boolean;
     createToastAlert: boolean;
     escalateToManagement: boolean;
     scheduleFollowup: boolean;
     createWorkflowAction: boolean;
   };
-  escalationRules?: {
+  escalationRules: {
     escalateAfterCount: number;
     timeToEscalate: number; // minutes
     escalationRecipients: string[];
   };
-  cooldownPeriod?: number; // minutes
+  cooldownPeriod: number; // minutes
 }
 
 export interface CriticalSignalEvent {
@@ -39,13 +39,12 @@ export interface CriticalSignalEvent {
   triggeredRules: NotificationRule[];
   timestamp: string;
   notificationsSent: {
-    teams: boolean;
     email: boolean;
+    teams: boolean;
     toast: boolean;
   };
   escalated: boolean;
   acknowledged: boolean;
-  acknowledgedBy?: string;
   acknowledgedAt?: string;
 }
 
@@ -75,8 +74,8 @@ class CriticalSignalNotificationService {
         severityLevels: ['critical', 'high'],
       },
       actions: {
-        sendTeamsNotification: true,
         sendEmailNotification: true,
+        sendTeamsNotification: true,
         createToastAlert: true,
         escalateToManagement: true,
         scheduleFollowup: true,
@@ -95,16 +94,16 @@ class CriticalSignalNotificationService {
       description: 'Special alert for high-value accounts (>$10M ARR) showing any risk signals',
       enabled: true,
       conditions: {
-        signalTypes: ['churn_risk', 'usage', 'financial', 'support'],
+        signalTypes: ['churn_risk', 'risk', 'usage', 'financial'],
         severityLevels: ['medium', 'high', 'critical'],
       },
       actions: {
-        sendTeamsNotification: true,
         sendEmailNotification: true,
+        sendTeamsNotification: true,
         createToastAlert: true,
         escalateToManagement: true,
         scheduleFollowup: true,
-        createWorkflowAction: false
+        createWorkflowAction: true
       },
       escalationRules: {
         escalateAfterCount: 1,
@@ -119,12 +118,12 @@ class CriticalSignalNotificationService {
       description: 'Escalation for critical support and technical issues',
       enabled: true,
       conditions: {
-        signalTypes: ['support', 'risk'],
+        signalTypes: ['risk', 'support'],
         severityLevels: ['critical'],
       },
       actions: {
-        sendTeamsNotification: true,
         sendEmailNotification: true,
+        sendTeamsNotification: true,
         createToastAlert: true,
         escalateToManagement: true,
         scheduleFollowup: false,
@@ -147,12 +146,17 @@ class CriticalSignalNotificationService {
         severityLevels: ['high', 'critical'],
       },
       actions: {
-        sendTeamsNotification: true,
         sendEmailNotification: true,
+        sendTeamsNotification: true,
         createToastAlert: true,
         escalateToManagement: false,
         scheduleFollowup: true,
         createWorkflowAction: false
+      },
+      escalationRules: {
+        escalateAfterCount: 2,
+        timeToEscalate: 30, // 30 minutes
+        escalationRecipients: ['billing@company.com', 'finance@company.com']
       },
       cooldownPeriod: 120 // 2 hours cooldown
     },
@@ -162,7 +166,7 @@ class CriticalSignalNotificationService {
       description: 'Alert for significant usage drops that may indicate account risk',
       enabled: true,
       conditions: {
-        signalTypes: ['usage'],
+        signalTypes: ['usage', 'engagement'],
         severityLevels: ['high', 'critical'],
         valueThresholds: [
           {
@@ -173,12 +177,17 @@ class CriticalSignalNotificationService {
         ]
       },
       actions: {
-        sendTeamsNotification: true,
         sendEmailNotification: false,
+        sendTeamsNotification: true,
         createToastAlert: true,
         escalateToManagement: false,
         scheduleFollowup: true,
         createWorkflowAction: true
+      },
+      escalationRules: {
+        escalateAfterCount: 3,
+        timeToEscalate: 60, // 1 hour
+        escalationRecipients: ['cs-management@company.com']
       },
       cooldownPeriod: 240 // 4 hours cooldown
     }
@@ -192,7 +201,7 @@ class CriticalSignalNotificationService {
       return null; // No rules triggered
     }
 
-    // Check cooldown for this account
+    // Check cooldown period for this account
     if (this.isAccountInCooldown(account.id, triggeredRules)) {
       console.log(`Account ${account.name} is in cooldown period, skipping notifications`);
       return null;
@@ -206,8 +215,8 @@ class CriticalSignalNotificationService {
       triggeredRules,
       timestamp: new Date().toISOString(),
       notificationsSent: {
-        teams: false,
         email: false,
+        teams: false,
         toast: false
       },
       escalated: false,
@@ -219,8 +228,8 @@ class CriticalSignalNotificationService {
 
     // Add to events history
     this.events.unshift(event);
-    
-    // Keep only last 100 events
+
+    // Keep only recent 100 events
     if (this.events.length > 100) {
       this.events = this.events.slice(0, 100);
     }
@@ -243,251 +252,113 @@ class CriticalSignalNotificationService {
 
       // Check category if specified
       if (rule.conditions.categories && signal.category && 
-          !rule.conditions.categories.includes(signal.category)) return false;
-
-      // Check value thresholds if specified
-      if (rule.conditions.valueThresholds && signal.value !== undefined) {
-        const thresholdMet = rule.conditions.valueThresholds.some(threshold => {
-          switch (threshold.operator) {
-            case 'gt': return signal.value! > threshold.value;
-            case 'lt': return signal.value! < threshold.value;
-            case 'eq': return signal.value! === threshold.value;
-            case 'gte': return signal.value! >= threshold.value;
-            case 'lte': return signal.value! <= threshold.value;
-            default: return false;
-          }
-        });
-        if (!thresholdMet) return false;
+          !rule.conditions.categories.includes(signal.category)) {
+        return false;
       }
 
-      // Special condition for high-value accounts (>$10M ARR)
+      // Check value thresholds if specified
+      if (rule.conditions.valueThresholds) {
+        for (const threshold of rule.conditions.valueThresholds) {
+          const signalValue = typeof signal.value === 'number' ? signal.value : 0;
+          
+          switch (threshold.operator) {
+            case 'gt':
+              if (!(signalValue > threshold.value)) return false;
+              break;
+            case 'lt':
+              if (!(signalValue < threshold.value)) return false;
+              break;
+            case 'eq':
+              if (!(signalValue === threshold.value)) return false;
+              break;
+            case 'gte':
+              if (!(signalValue >= threshold.value)) return false;
+              break;
+            case 'lte':
+              if (!(signalValue <= threshold.value)) return false;
+              break;
+          }
+        }
+      }
+
+      // Check if account is high-value for special rules
       if (rule.id === 'high-value-account-risk' && account.arr < 10000000) {
-        return false;
+        return false; // Only trigger for accounts with >$10M ARR
       }
 
       return true;
     });
   }
 
-  private isAccountInCooldown(accountId: string, rules: NotificationRule[]): boolean {
+  private async sendNotifications(event: CriticalSignalEvent): Promise<void> {
+    const { signal, account, triggeredRules } = event;
+
+    // Determine which notifications to send based on triggered rules
+    const shouldSendEmail = triggeredRules.some(rule => rule.actions.sendEmailNotification);
+    const shouldSendTeams = triggeredRules.some(rule => rule.actions.sendTeamsNotification);
+    const shouldCreateToast = triggeredRules.some(rule => rule.actions.createToastAlert);
+    const shouldEscalate = triggeredRules.some(rule => rule.actions.escalateToManagement);
+
+    try {
+      // Send toast notification (always works)
+      if (shouldCreateToast) {
+        toast.error(
+          `🚨 Critical Signal: ${signal.description} for ${account.name}`,
+          {
+            duration: 10000,
+            action: {
+              label: 'View Details',
+              onClick: () => console.log('Viewing signal details:', signal)
+            }
+          }
+        );
+        event.notificationsSent.toast = true;
+      }
+
+      // Send Teams notification (simulated)
+      if (shouldSendTeams) {
+        console.log(`Sending Teams notification for critical signal: ${signal.description}`);
+        // In real implementation, this would integrate with Microsoft Teams API
+        event.notificationsSent.teams = true;
+      }
+
+      // Send email notification (simulated)
+      if (shouldSendEmail) {
+        console.log(`Sending email notification for critical signal: ${signal.description}`);
+        // In real implementation, this would integrate with email service
+        event.notificationsSent.email = true;
+      }
+
+      // Handle escalation
+      if (shouldEscalate) {
+        console.log(`Escalating critical signal to management: ${signal.description}`);
+        event.escalated = true;
+      }
+
+    } catch (error) {
+      console.error('Error sending notifications:', error);
+    }
+  }
+
+  private isAccountInCooldown(accountId: string, triggeredRules: NotificationRule[]): boolean {
     const lastNotification = this.accountCooldowns.get(accountId);
     if (!lastNotification) return false;
 
-    const minCooldown = Math.min(...rules.map(r => r.cooldownPeriod || 60));
-    const cooldownEnd = new Date(lastNotification.getTime() + minCooldown * 60 * 1000);
+    // Use the shortest cooldown period from triggered rules
+    const shortestCooldown = Math.min(...triggeredRules.map(rule => rule.cooldownPeriod));
+    const cooldownMs = shortestCooldown * 60 * 1000; // Convert minutes to milliseconds
     
-    return new Date() < cooldownEnd;
+    return Date.now() - lastNotification.getTime() < cooldownMs;
   }
 
-  private setCooldown(accountId: string, rules: NotificationRule[]): void {
+  private setCooldown(accountId: string, triggeredRules: NotificationRule[]): void {
     this.accountCooldowns.set(accountId, new Date());
   }
 
-  private async sendNotifications(event: CriticalSignalEvent): Promise<void> {
-    const { signal, account, triggeredRules } = event;
-    const promises: Promise<any>[] = [];
-
-    // Determine notification actions from triggered rules
-    const shouldSendTeams = triggeredRules.some(r => r.actions.sendTeamsNotification);
-    const shouldSendEmail = triggeredRules.some(r => r.actions.sendEmailNotification);
-    const shouldShowToast = triggeredRules.some(r => r.actions.createToastAlert);
-    const shouldEscalate = triggeredRules.some(r => r.actions.escalateToManagement);
-
-    // Send Teams notification
-    if (shouldSendTeams) {
-      promises.push(this.sendTeamsNotification(event));
-    }
-
-    // Send email notification
-    if (shouldSendEmail) {
-      promises.push(this.sendEmailNotification(event));
-    }
-
-    // Show toast notification
-    if (shouldShowToast) {
-      this.sendToastNotification(event);
-      event.notificationsSent.toast = true;
-    }
-
-    // Handle escalation
-    if (shouldEscalate) {
-      promises.push(this.handleEscalation(event));
-    }
-
-    try {
-      const results = await Promise.allSettled(promises);
-      
-      // Update notification status based on results
-      results.forEach((result, index) => {
-        if (result.status === 'fulfilled') {
-          if (index === 0 && shouldSendTeams) event.notificationsSent.teams = true;
-          else if ((index === 0 && !shouldSendTeams) || (index === 1 && shouldSendTeams)) {
-            event.notificationsSent.email = true;
-          }
-        }
-      });
-
-    } catch (error) {
-      console.error('Error sending critical signal notifications:', error);
-    }
-  }
-
-  private async sendTeamsNotification(event: CriticalSignalEvent): Promise<boolean> {
-    const { signal, account } = event;
-    
-    const urgencyEmoji = {
-      'low': '🟡',
-      'medium': '🟠', 
-      'high': '🔴',
-      'critical': '🚨'
-    };
-
-    const message = {
-      title: `${urgencyEmoji[signal.severity]} Critical Signal Alert: ${account.name}`,
-      text: `**Signal Type:** ${signal.type.replace('_', ' ').toUpperCase()}\n**Severity:** ${signal.severity.toUpperCase()}\n**Description:** ${signal.description}\n**Account ARR:** $${(account.arr / 1000000).toFixed(1)}M\n**Health Score:** ${account.healthScore}/100`,
-      type: signal.severity === 'critical' ? 'error' : 'warning' as const,
-      actions: [
-        {
-          text: 'View Account Details',
-          value: `view-account-${account.id}`,
-          style: 'default' as const
-        },
-        {
-          text: 'Acknowledge Alert',
-          value: `acknowledge-${event.id}`,
-          style: 'positive' as const
-        },
-        {
-          text: 'Create Action Plan',
-          value: `action-plan-${account.id}`,
-          style: 'default' as const
-        }
-      ]
-    };
-
-    try {
-      // This would connect to the actual Teams integration
-      console.log('Sending Teams notification:', message);
-      return true;
-    } catch (error) {
-      console.error('Error sending Teams notification:', error);
-      return false;
-    }
-  }
-
-  private async sendEmailNotification(event: CriticalSignalEvent): Promise<boolean> {
-    const { signal, account, triggeredRules } = event;
-    
-    const recipients = [
-      `${account.csam}@company.com`,
-      `${account.ae}@company.com`
-    ];
-
-    // Add escalation recipients if needed
-    const escalationRecipients = triggeredRules
-      .filter(r => r.escalationRules)
-      .flatMap(r => r.escalationRules!.escalationRecipients);
-    
-    recipients.push(...escalationRecipients);
-
-    const urgencyColor = {
-      'low': '#FFA500',
-      'medium': '#FF8C00',
-      'high': '#DC143C',
-      'critical': '#B22222'
-    };
-
-    try {
-      // This would connect to the actual email service
-      console.log('Sending email notification to:', recipients);
-      console.log('Subject:', `Critical Signal Alert - ${account.name}`);
-      console.log('Signal:', signal.description);
-      return true;
-    } catch (error) {
-      console.error('Error sending email notification:', error);
-      return false;
-    }
-  }
-
-  private sendToastNotification(event: CriticalSignalEvent): void {
-    const { signal, account } = event;
-    
-    const urgencyEmoji = {
-      'low': '🟡',
-      'medium': '🟠',
-      'high': '🔴', 
-      'critical': '🚨'
-    };
-
-    const message = `${urgencyEmoji[signal.severity]} Critical Signal - ${account.name}: ${signal.description}`;
-    
-    const toastOptions = {
-      duration: signal.severity === 'critical' ? 10000 : 8000,
-      action: {
-        label: 'View Details',
-        onClick: () => {
-          toast.info(`Account: ${account.name} | Type: ${signal.type} | Severity: ${signal.severity}`, {
-            duration: 5000
-          });
-        }
-      }
-    };
-
-    if (signal.severity === 'critical') {
-      toast.error(message, toastOptions);
-    } else {
-      toast.warning(message, toastOptions);
-    }
-  }
-
-  private async handleEscalation(event: CriticalSignalEvent): Promise<void> {
-    const { signal, account, triggeredRules } = event;
-
-    const escalationRules = triggeredRules.filter(r => r.escalationRules);
-    
-    for (const rule of escalationRules) {
-      if (rule.escalationRules) {
-        // Schedule escalation after specified time
-        setTimeout(async () => {
-          if (!event.acknowledged) {
-            await this.escalateAlert(event, rule);
-          }
-        }, rule.escalationRules.timeToEscalate * 60 * 1000);
-      }
-    }
-  }
-
-  private async escalateAlert(event: CriticalSignalEvent, rule: NotificationRule): Promise<void> {
-    const { signal, account } = event;
-    
-    console.log(`Escalating alert for ${account.name} - Rule: ${rule.name}`);
-    
-    // Send escalation notification to management
-    if (rule.escalationRules) {
-      try {
-        // This would send to management/executive team
-        const escalationMessage = {
-          title: `🚨 ESCALATED ALERT: ${account.name}`,
-          text: `Critical signal has not been acknowledged within ${rule.escalationRules.timeToEscalate} minutes.\n\n**Account:** ${account.name}\n**ARR:** $${(account.arr / 1000000).toFixed(1)}M\n**Signal:** ${signal.description}\n**Severity:** ${signal.severity.toUpperCase()}\n\n**IMMEDIATE ACTION REQUIRED**`,
-          recipients: rule.escalationRules.escalationRecipients
-        };
-        
-        console.log('Sending escalation notification:', escalationMessage);
-        
-        event.escalated = true;
-        
-      } catch (error) {
-        console.error('Error escalating alert:', error);
-      }
-    }
-  }
-
-  // Public methods for managing notifications
-  acknowledgeEvent(eventId: string, acknowledgedBy: string): boolean {
+  acknowledgeEvent(eventId: string): boolean {
     const event = this.events.find(e => e.id === eventId);
     if (event) {
       event.acknowledged = true;
-      event.acknowledgedBy = acknowledgedBy;
       event.acknowledgedAt = new Date().toISOString();
       return true;
     }
