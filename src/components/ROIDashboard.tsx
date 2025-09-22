@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -31,6 +31,61 @@ export function ROIDashboard() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   
   const safeROIResults = roiResults || [];
+
+  // Initialize with sample ROI calculations if none exist
+  useEffect(() => {
+    if (safeROIResults.length === 0) {
+      const sampleCalculations: ROIResult[] = [
+        {
+          solution: 'Microsoft 365 Copilot Enterprise',
+          metrics: {
+            investment: 2800000,
+            npv: 8400000,
+            roi: 300,
+            payback: 8.5,
+            savings: 1200000,
+            productivity: 35,
+            revenue: 2100000,
+            implementation: 6,
+            timeline: 36
+          },
+          timestamp: new Date().toISOString()
+        },
+        {
+          solution: 'Azure Cloud Migration & Modernization',
+          metrics: {
+            investment: 4200000,
+            npv: 12600000,
+            roi: 280,
+            payback: 12,
+            savings: 1800000,
+            productivity: 28,
+            revenue: 3200000,
+            implementation: 9,
+            timeline: 36
+          },
+          timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+        },
+        {
+          solution: 'Power Platform Suite',
+          metrics: {
+            investment: 850000,
+            npv: 2550000,
+            roi: 200,
+            payback: 14,
+            savings: 680000,
+            productivity: 42,
+            revenue: 920000,
+            implementation: 4,
+            timeline: 24
+          },
+          timestamp: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString()
+        }
+      ];
+      
+      setROIResults(sampleCalculations);
+    }
+  }, [safeROIResults.length, setROIResults]);
 
   const categories = [
     { id: 'all', name: 'All Solutions', icon: ChartBar, color: 'bg-gray-100 text-gray-800' }

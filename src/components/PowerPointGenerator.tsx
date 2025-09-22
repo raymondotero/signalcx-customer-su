@@ -66,41 +66,11 @@ export function PowerPointGenerator() {
 
       // Step 2: Generate executive summary content
       setGenerationProgress(25);
-      let executiveSummary = '';
-      
-      try {
-        if ((window as any).spark && (window as any).spark.llm) {
-          const executiveSummaryPrompt = (window as any).spark.llmPrompt`
-Generate executive summary content for a Microsoft Solutions ROI presentation:
-
-Portfolio Metrics:
-- Total Investment: $${portfolio.totalInvestment.toLocaleString()}
-- Total NPV: $${portfolio.totalNPV.toLocaleString()}
-- Portfolio ROI: ${((portfolio.totalNPV / portfolio.totalInvestment) * 100).toFixed(1)}%
-- Solutions Count: ${portfolio.solutions}
-
-Create 4-5 powerful bullet points focusing on:
-1. Strategic business transformation
-2. Financial impact and returns
-3. Risk mitigation and compliance
-4. Competitive advantage
-5. Implementation confidence
-
-Make each point executive-level and outcome-focused.
-`;
-
-          executiveSummary = await (window as any).spark.llm(executiveSummaryPrompt);
-        } else {
-          throw new Error('AI service not available');
-        }
-      } catch (error) {
-        console.warn('Using fallback content for executive summary:', error);
-        executiveSummary = `• Strategic transformation through Microsoft's integrated technology ecosystem delivers measurable business outcomes and competitive differentiation
+      const executiveSummary = `• Strategic transformation through Microsoft's integrated technology ecosystem delivers measurable business outcomes and competitive differentiation
 • Portfolio investment of $${portfolio.totalInvestment.toLocaleString()} generates $${portfolio.totalNPV.toLocaleString()} in net present value with ${((portfolio.totalNPV / portfolio.totalInvestment) * 100).toFixed(1)}% ROI over 3 years
 • Risk mitigation through enterprise-grade security, compliance frameworks, and proven implementation methodologies reduces operational exposure
 • Competitive advantage achieved through AI-powered productivity gains, data-driven insights, and accelerated digital transformation capabilities
 • Implementation confidence backed by Microsoft's global support infrastructure and proven success patterns across similar enterprises`;
-      }
 
       // Step 3: Generate solution-specific slides
       setGenerationProgress(50);
@@ -108,39 +78,11 @@ Make each point executive-level and outcome-focused.
       
       for (let i = 0; i < Math.min(3, safeROIResults.length); i++) {
         const result = safeROIResults[i];
-        let solutionContent = '';
-        
-        try {
-          if ((window as any).spark && (window as any).spark.llm) {
-            const solutionPrompt = (window as any).spark.llmPrompt`
-Create slide content for ${result.solution} with these metrics:
-- ROI: ${result.metrics.roi?.toFixed(1) || 0}%
-- NPV: $${result.metrics.npv?.toLocaleString() || 0}
-- Investment: $${result.metrics.investment?.toLocaleString() || 0}
-- Payback: ${result.metrics.payback?.toFixed(1) || 0} months
-
-Generate 4-5 bullet points covering:
-1. Business challenge addressed
-2. Solution capabilities
-3. Quantified benefits
-4. Implementation approach
-5. Success criteria
-
-Focus on business value and executive messaging.
-`;
-            
-            solutionContent = await (window as any).spark.llm(solutionPrompt);
-          } else {
-            throw new Error('AI service not available');
-          }
-        } catch (error) {
-          console.warn(`Using fallback content for ${result.solution}:`, error);
-          solutionContent = `• Addresses critical business challenges in digital transformation and operational efficiency for modern enterprises
+        const solutionContent = `• Addresses critical business challenges in digital transformation and operational efficiency for modern enterprises
 • ${result.solution} delivers comprehensive capabilities including automation, analytics, security, and scalability features
 • Quantified benefits include ${result.metrics.roi?.toFixed(1) || 0}% ROI with $${result.metrics.npv?.toLocaleString() || 0} net present value over 3 years
 • Phased implementation approach minimizes disruption while accelerating value realization within ${result.metrics.payback?.toFixed(1) || 0} months
 • Success criteria focused on measurable productivity gains, cost reduction, and enhanced security posture`;
-        }
         
         solutionSlides.push({
           title: `${result.solution} - Strategic Investment`,
@@ -158,33 +100,11 @@ Focus on business value and executive messaging.
 
       // Step 4: Generate implementation timeline
       setGenerationProgress(75);
-      let timelineContent = '';
-      
-      try {
-        if ((window as any).spark && (window as any).spark.llm) {
-          const timelinePrompt = (window as any).spark.llmPrompt`
-Create an implementation timeline for ${portfolio.solutions} Microsoft solutions with these phases:
-
-Phase 1: Foundation (Months 1-3)
-Phase 2: Core Deployment (Months 4-9)
-Phase 3: Optimization (Months 10-18)
-
-Include key milestones, dependencies, and success checkpoints for each phase.
-Format as bullet points suitable for executive presentation.
-`;
-
-          timelineContent = await (window as any).spark.llm(timelinePrompt);
-        } else {
-          throw new Error('AI service not available');
-        }
-      } catch (error) {
-        console.warn('Using fallback content for timeline:', error);
-        timelineContent = `• Phase 1 (Months 1-3): Foundation setup including infrastructure assessment, licensing procurement, security baseline establishment, and core team training
+      const timelineContent = `• Phase 1 (Months 1-3): Foundation setup including infrastructure assessment, licensing procurement, security baseline establishment, and core team training
 • Phase 2 (Months 4-9): Core deployment with pilot rollouts, user onboarding, integration with existing systems, and initial productivity measurements
 • Phase 3 (Months 10-18): Optimization through advanced feature adoption, process refinement, performance monitoring, and continuous improvement initiatives
 • Key milestones include 30-day readiness checkpoint, 90-day pilot validation, 6-month adoption metrics review, and 12-month ROI assessment
 • Success checkpoints focus on user adoption rates, productivity gains, security compliance, and measurable business impact across all ${portfolio.solutions} solutions`;
-      }
 
       // Step 5: Build complete slide deck
       setGenerationProgress(90);
