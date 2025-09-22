@@ -488,6 +488,115 @@ const integrationTemplates: Integration[] = [
     ]
   },
   {
+    id: 'azure-ai-foundry',
+    name: 'Azure AI Foundry',
+    category: 'AI & Machine Learning',
+    type: 'Microsoft',
+    description: 'Connect to your Azure AI Foundry deployment for enhanced AI recommendations and insights',
+    status: 'not_configured',
+    icon: <Sparkle className="w-5 h-5" />,
+    realTimeCapable: true,
+    authMethod: 'api_key',
+    documentationUrl: 'https://docs.microsoft.com/en-us/azure/ai-studio/',
+    fields: [
+      { 
+        id: 'endpoint', 
+        label: 'AI Foundry Endpoint', 
+        type: 'text', 
+        required: true,
+        placeholder: 'https://your-deployment.openai.azure.com/',
+        description: 'Your Azure OpenAI service endpoint URL',
+        validation: { pattern: '^https://.*\\.openai\\.azure\\.com/?$' }
+      },
+      { 
+        id: 'apiKey', 
+        label: 'API Key', 
+        type: 'password', 
+        required: true,
+        description: 'Azure OpenAI API key from your deployment'
+      },
+      { 
+        id: 'deploymentName', 
+        label: 'Deployment Name', 
+        type: 'text', 
+        required: true,
+        placeholder: 'gpt-4o',
+        description: 'Name of your model deployment in Azure AI Foundry',
+        validation: { minLength: 1, maxLength: 64 }
+      },
+      { 
+        id: 'apiVersion', 
+        label: 'API Version', 
+        type: 'select', 
+        required: true,
+        options: ['2024-02-01', '2023-12-01-preview', '2023-10-01-preview', '2023-09-01-preview'],
+        description: 'Azure OpenAI API version to use'
+      },
+      { 
+        id: 'enableRag', 
+        label: 'Enable RAG (Retrieval Augmented Generation)', 
+        type: 'checkbox', 
+        required: false,
+        description: 'Use RAG for enhanced context-aware recommendations'
+      },
+      { 
+        id: 'searchEndpoint', 
+        label: 'Azure Cognitive Search Endpoint', 
+        type: 'text', 
+        required: false,
+        placeholder: 'https://your-search.search.windows.net',
+        description: 'Optional: for RAG implementation with Azure Cognitive Search',
+        validation: { pattern: '^https://.*\\.search\\.windows\\.net/?$' }
+      },
+      { 
+        id: 'searchApiKey', 
+        label: 'Search API Key', 
+        type: 'password', 
+        required: false,
+        description: 'API key for Azure Cognitive Search (if using RAG)'
+      },
+      { 
+        id: 'indexName', 
+        label: 'Search Index Name', 
+        type: 'text', 
+        required: false,
+        placeholder: 'signalcx-knowledge-base',
+        description: 'Name of the search index for RAG context'
+      },
+      { 
+        id: 'maxTokens', 
+        label: 'Max Tokens', 
+        type: 'select', 
+        required: true,
+        options: ['1000', '2000', '4000', '8000', '16000'],
+        description: 'Maximum tokens per AI request'
+      },
+      { 
+        id: 'temperature', 
+        label: 'Temperature', 
+        type: 'select', 
+        required: true,
+        options: ['0.0', '0.3', '0.5', '0.7', '1.0'],
+        description: 'Controls randomness in AI responses (0.0 = deterministic, 1.0 = creative)'
+      },
+      { 
+        id: 'enableContentFilter', 
+        label: 'Enable Content Filtering', 
+        type: 'checkbox', 
+        required: false,
+        description: 'Use Azure OpenAI content filtering for responsible AI'
+      },
+      { 
+        id: 'customPromptTemplates', 
+        label: 'Custom Prompt Templates', 
+        type: 'textarea', 
+        required: false,
+        placeholder: 'NBA_PROMPT: "Analyze customer signals and recommend..."\nRISK_PROMPT: "Evaluate account health..."',
+        description: 'Custom prompt templates for specific use cases (one per line)'
+      }
+    ]
+  },
+  {
     id: 'custom-api',
     name: 'Custom REST API',
     category: 'API Integration',
@@ -727,6 +836,46 @@ export function IntegrationWizard() {
           await new Promise(resolve => setTimeout(resolve, 2500));
           return Math.random() > 0.25;
           
+        case 'azure-ai-foundry':
+          // Test Azure AI Foundry connection
+          if (!data.endpoint || !data.apiKey || !data.deploymentName) {
+            throw new Error('Missing required Azure AI Foundry parameters');
+          }
+          
+          // Validate Azure OpenAI endpoint format
+          const azureOpenAIRegex = /^https:\/\/.*\.openai\.azure\.com\/?$/;
+          if (!azureOpenAIRegex.test(data.endpoint)) {
+            throw new Error('Endpoint must be a valid Azure OpenAI endpoint (*.openai.azure.com)');
+          }
+          
+          // Validate deployment name
+          if (data.deploymentName.length < 1 || data.deploymentName.length > 64) {
+            throw new Error('Deployment name must be between 1 and 64 characters');
+          }
+          
+          // Check API key format (Azure OpenAI keys are typically 32 characters)
+          if (data.apiKey.length < 20) {
+            throw new Error('API key appears to be too short for Azure OpenAI');
+          }
+          
+          // If RAG is enabled, validate search endpoint
+          if (data.enableRag === 'true') {
+            if (!data.searchEndpoint || !data.searchApiKey) {
+              throw new Error('Search endpoint and API key required when RAG is enabled');
+            }
+            
+            const searchRegex = /^https:\/\/.*\.search\.windows\.net\/?$/;
+            if (!searchRegex.test(data.searchEndpoint)) {
+              throw new Error('Search endpoint must be a valid Azure Cognitive Search endpoint');
+            }
+          }
+          
+          // Simulate AI service validation
+          await new Promise(resolve => setTimeout(resolve, 3000));
+          
+          // 90% success rate for AI Foundry (higher because it's Microsoft's own service)
+          return Math.random() > 0.1;
+          
         default:
           // Generic connection test
           await new Promise(resolve => setTimeout(resolve, 2000));
@@ -811,9 +960,13 @@ export function IntegrationWizard() {
             connectionData: connectionSuccess ? {
               lastTestDate: new Date().toISOString(),
               dataQuality: Math.floor(Math.random() * 30) + 70, // 70-100%
-              recordCount: Math.floor(Math.random() * 10000) + 1000,
+              recordCount: selectedIntegration.id === 'azure-ai-foundry' 
+                ? Math.floor(Math.random() * 5000) + 15000 // 15K-20K tokens/min for AI Foundry
+                : Math.floor(Math.random() * 10000) + 1000, // Regular record count for other integrations
               apiVersion: selectedIntegration.type === 'Microsoft' ? 'v2.0' : 'v1.0',
-              permissions: selectedIntegration.id === 'azure-ad' ? ['User.Read', 'Organization.Read.All'] : undefined
+              permissions: selectedIntegration.id === 'azure-ad' ? ['User.Read', 'Organization.Read.All'] : 
+                          selectedIntegration.id === 'azure-ai-foundry' ? ['Chat.Generate', 'Embedding.Create', 'Model.Deploy'] :
+                          undefined
             } : undefined
           };
 
@@ -1038,17 +1191,26 @@ export function IntegrationWizard() {
                         const displayIntegration = configuredIntegration || integration;
                         
                         return (
-                          <Card key={integration.id} className="border-visible hover:shadow-md transition-shadow">
+                          <Card key={integration.id} className={`border-visible hover:shadow-md transition-shadow ${
+                            integration.id === 'azure-ai-foundry' ? 'ring-2 ring-purple-200 bg-gradient-to-br from-purple-50 to-blue-50' : ''
+                          }`}>
                             <CardContent className="p-4">
                               <div className="flex items-start justify-between mb-3">
                                 <div className="flex items-center gap-3">
                                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                                     integration.type === 'Microsoft' ? 'bg-blue-100' : 'bg-gray-100'
-                                  }`}>
+                                  } ${integration.id === 'azure-ai-foundry' ? 'bg-gradient-to-br from-purple-100 to-blue-100' : ''}`}>
                                     {integration.icon}
                                   </div>
                                   <div>
-                                    <h5 className="font-medium">{integration.name}</h5>
+                                    <h5 className="font-medium flex items-center gap-2">
+                                      {integration.name}
+                                      {integration.id === 'azure-ai-foundry' && (
+                                        <Badge className="bg-gradient-to-r from-purple-100 to-blue-100 text-purple-700 border-purple-200 text-xs">
+                                          AI Enhanced
+                                        </Badge>
+                                      )}
+                                    </h5>
                                     <div className="flex items-center gap-2 mt-1">
                                       <Badge variant="outline" className="text-xs">
                                         {integration.type}
@@ -1093,9 +1255,30 @@ export function IntegrationWizard() {
                                     <span className="ml-1 font-medium">{displayIntegration.connectionData.dataQuality}%</span>
                                   </div>
                                   <div>
-                                    <span className="text-muted-foreground">Records:</span>
-                                    <span className="ml-1 font-medium">{displayIntegration.connectionData.recordCount?.toLocaleString()}</span>
+                                    <span className="text-muted-foreground">
+                                      {integration.id === 'azure-ai-foundry' ? 'Tokens/min:' : 'Records:'}
+                                    </span>
+                                    <span className="ml-1 font-medium">
+                                      {integration.id === 'azure-ai-foundry' 
+                                        ? `${displayIntegration.connectionData.recordCount?.toLocaleString()}/min`
+                                        : displayIntegration.connectionData.recordCount?.toLocaleString()
+                                      }
+                                    </span>
                                   </div>
+                                  {integration.id === 'azure-ai-foundry' && (
+                                    <>
+                                      <div>
+                                        <span className="text-muted-foreground">Model:</span>
+                                        <span className="ml-1 font-medium">{displayIntegration.credentials?.deploymentName || 'N/A'}</span>
+                                      </div>
+                                      <div>
+                                        <span className="text-muted-foreground">RAG:</span>
+                                        <span className="ml-1 font-medium">
+                                          {displayIntegration.credentials?.enableRag === 'true' ? 'Enabled' : 'Disabled'}
+                                        </span>
+                                      </div>
+                                    </>
+                                  )}
                                 </div>
                               )}
                               
