@@ -318,7 +318,7 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
             className="top-scrollbar overflow-x-auto overflow-y-hidden h-[17px] bg-background border-b border-border"
             style={{ display: 'none' }}
           >
-            <div style={{ width: '100%', height: '1px' }}></div>
+            <div style={{ width: '1424px', height: '1px' }}></div>
           </div>
           <div ref={tableWrapperRef} className="table-wrapper">
             <Table>
