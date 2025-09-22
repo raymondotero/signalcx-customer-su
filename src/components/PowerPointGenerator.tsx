@@ -16,7 +16,8 @@ import {
   ChartBar,
   TrendUp,
   Target,
-  Users
+  Users,
+  Calculator
 } from '@phosphor-icons/react';
 import { useKV } from '@github/spark/hooks';
 import { toast } from 'sonner';
@@ -36,7 +37,7 @@ interface PowerPointSlide {
 }
 
 export function PowerPointGenerator() {
-  const [roiResults] = useKV<ROIResult[]>('roi-calculations', []);
+  const [roiResults, setROIResults] = useKV<ROIResult[]>('roi-calculations', []);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationProgress, setGenerationProgress] = useState(0);
   const [generatedSlides, setGeneratedSlides] = useState<PowerPointSlide[]>([]);
@@ -44,6 +45,8 @@ export function PowerPointGenerator() {
   const safeROIResults = roiResults || [];
 
   const generatePowerPoint = async () => {
+    console.log('PowerPoint generation started, ROI results:', safeROIResults.length);
+    
     if (safeROIResults.length === 0) {
       toast.error('No ROI calculations available. Please calculate ROI first.');
       return;
@@ -54,6 +57,7 @@ export function PowerPointGenerator() {
     setGeneratedSlides([]);
 
     try {
+      console.log('Starting PowerPoint generation process...');
       // Step 1: Calculate portfolio metrics
       setGenerationProgress(10);
       const portfolio = {
@@ -297,27 +301,64 @@ Next Steps:
         }
       ];
 
-      // Download files
-      files.forEach(file => {
-        const blob = new Blob([file.content], { type: file.type });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = file.name;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-      });
+      // Download files with enhanced error handling
+      console.log('Downloading files:', files.length);
+      let downloadCount = 0;
+      
+      // Add delay between downloads to prevent browser blocking
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        try {
+          // Add small delay between downloads
+          if (i > 0) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
+          
+          const blob = new Blob([file.content], { type: file.type });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = file.name;
+          link.style.display = 'none';
+          
+          // Add to DOM, click, and remove immediately
+          document.body.appendChild(link);
+          
+          // Trigger download with user gesture context
+          link.click();
+          
+          // Clean up
+          setTimeout(() => {
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+          }, 100);
+          
+          downloadCount++;
+          console.log(`Downloaded file ${i + 1}/${files.length}: ${file.name}`);
+          
+        } catch (fileError) {
+          console.error(`Error downloading ${file.name}:`, fileError);
+          toast.error(`Failed to download ${file.name}: ${fileError.message}`);
+        }
+      }
 
-      toast.success(`Professional PowerPoint presentation with ${slides.length} slides generated and downloaded!`);
+      toast.success(`Professional PowerPoint presentation with ${slides.length} slides generated! Downloaded ${downloadCount} files successfully.`);
+      
+      if (downloadCount === 0) {
+        toast.info('Download may have been blocked by browser. Please check your download folder or allow downloads for this site.');
+      } else if (downloadCount < files.length) {
+        toast.warning(`Downloaded ${downloadCount} of ${files.length} files. Some downloads may have been blocked.`);
+      }
+      
+      console.log('PowerPoint generation completed successfully');
       
     } catch (error) {
       console.error('Error generating PowerPoint:', error);
-      toast.error('Failed to generate PowerPoint presentation. Please try again.');
+      toast.error(`Failed to generate PowerPoint presentation: ${error.message || 'Unknown error'}. Please try again.`);
     } finally {
       setIsGenerating(false);
       setGenerationProgress(0);
+      console.log('PowerPoint generation process finished');
     }
   };
 
@@ -432,9 +473,31 @@ Next Steps:
           {generatedSlides.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="w-5 h-5" />
-                  Generated Slide Preview
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-5 h-5" />
+                    Generated Slide Preview
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      // Copy all slide content to clipboard as fallback
+                      const allContent = generatedSlides.map((slide, index) => 
+                        `Slide ${index + 1}: ${slide.title}\n${slide.content.join('\n')}\n\n`
+                      ).join('');
+                      
+                      navigator.clipboard.writeText(allContent).then(() => {
+                        toast.success('All slide content copied to clipboard!');
+                      }).catch(() => {
+                        toast.error('Failed to copy to clipboard');
+                      });
+                    }}
+                    className="gap-2"
+                  >
+                    <FileText className="w-4 h-4" />
+                    Copy to Clipboard
+                  </Button>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -534,8 +597,111 @@ Next Steps:
             </Card>
           )}
 
-          {/* Action Button */}
-          <div className="flex justify-center">
+          {/* Action Buttons */}
+          <div className="flex justify-center gap-4">
+            {safeROIResults.length === 0 && (
+              <Button 
+                onClick={async () => {
+                  // Add sample ROI results for demo
+                  const sampleCalculations: ROIResult[] = [
+                    {
+                      solution: 'Microsoft 365 Copilot Enterprise',
+                      metrics: {
+                        investment: 2800000,
+                        npv: 8400000,
+                        roi: 300,
+                        payback: 8.5,
+                        savings: 1200000,
+                        productivity: 35,
+                        revenue: 2100000,
+                        implementation: 6,
+                        timeline: 36
+                      },
+                      timestamp: new Date().toISOString()
+                    },
+                    {
+                      solution: 'Azure Cloud Migration & Modernization',
+                      metrics: {
+                        investment: 4200000,
+                        npv: 12600000,
+                        roi: 280,
+                        payback: 12,
+                        savings: 1800000,
+                        productivity: 28,
+                        revenue: 3200000,
+                        implementation: 9,
+                        timeline: 36
+                      },
+                      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+                    },
+                    {
+                      solution: 'Power Platform Suite',
+                      metrics: {
+                        investment: 850000,
+                        npv: 2550000,
+                        roi: 200,
+                        payback: 14,
+                        savings: 680000,
+                        productivity: 42,
+                        revenue: 920000,
+                        implementation: 4,
+                        timeline: 24
+                      },
+                      timestamp: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString()
+                    }
+                  ];
+                  
+                  setROIResults(sampleCalculations);
+                  toast.success('Sample ROI calculations loaded successfully');
+                }}
+                variant="outline"
+                size="lg"
+                className="gap-2"
+              >
+                <Calculator className="w-5 h-5" />
+                Load Sample ROI Data
+              </Button>
+            )}
+            
+            <Button 
+              onClick={async () => {
+                // Test file download functionality
+                try {
+                  const testContent = `Test PowerPoint Content
+                  
+Generated: ${new Date().toLocaleString()}
+Portfolio Summary:
+- Total Investment: $7,850,000
+- Expected NPV: $23,550,000
+- Portfolio ROI: 300.0%
+- Solutions: 3
+
+This is a test file to verify download functionality works correctly.`;
+                  
+                  const blob = new Blob([testContent], { type: 'text/plain' });
+                  const url = URL.createObjectURL(blob);
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.download = 'PowerPoint_Test_Download.txt';
+                  link.style.display = 'none';
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                  URL.revokeObjectURL(url);
+                  
+                  toast.success('Test download completed successfully!');
+                } catch (error) {
+                  toast.error(`Test download failed: ${error.message}`);
+                }
+              }}
+              variant="outline"
+              size="sm"
+              className="gap-2"
+            >
+              <Download className="w-4 h-4" />
+              Test Download
+            </Button>
+            
             <Button 
               onClick={generatePowerPoint}
               disabled={isGenerating || safeROIResults.length === 0}
