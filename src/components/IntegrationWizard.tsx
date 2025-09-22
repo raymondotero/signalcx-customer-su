@@ -27,7 +27,11 @@ import {
   Key,
   Eye,
   EyeSlash,
-  Sparkle
+  Sparkle,
+  EnvelopeSimple,
+  ChatCentered,
+  CalendarBlank,
+  Users
 } from '@phosphor-icons/react';
 import { useKV } from '@github/spark/hooks';
 import { toast } from 'sonner';
@@ -73,6 +77,205 @@ interface IntegrationField {
 }
 
 const integrationTemplates: Integration[] = [
+  {
+    id: 'microsoft-outlook',
+    name: 'Microsoft Outlook',
+    category: 'Productivity & Communication',
+    type: 'Microsoft',
+    description: 'Connect to Outlook for calendar management, meeting scheduling, and email automation for customer engagement',
+    status: 'not_configured',
+    icon: <EnvelopeSimple className="w-5 h-5" />,
+    realTimeCapable: true,
+    authMethod: 'oauth',
+    oauthUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+    documentationUrl: 'https://docs.microsoft.com/en-us/graph/api/resources/outlook',
+    fields: [
+      { 
+        id: 'tenantId', 
+        label: 'Tenant ID', 
+        type: 'text', 
+        required: true, 
+        placeholder: 'your-tenant-id',
+        description: 'Azure AD Tenant ID for your organization',
+        validation: { pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' }
+      },
+      { 
+        id: 'clientId', 
+        label: 'Application (Client) ID', 
+        type: 'text', 
+        required: true,
+        description: 'Azure AD App Registration Client ID with Mail and Calendar permissions',
+        validation: { pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' }
+      },
+      { 
+        id: 'clientSecret', 
+        label: 'Client Secret', 
+        type: 'password', 
+        required: true,
+        description: 'Azure AD App Registration Client Secret'
+      },
+      { 
+        id: 'permissions', 
+        label: 'Required Permissions', 
+        type: 'textarea', 
+        required: false,
+        placeholder: 'Mail.Read, Mail.Send, Calendars.ReadWrite, Contacts.Read',
+        description: 'Microsoft Graph API permissions for Outlook integration'
+      },
+      { 
+        id: 'enableCalendar', 
+        label: 'Enable Calendar Integration', 
+        type: 'checkbox', 
+        required: false,
+        description: 'Allow automatic meeting scheduling and calendar insights'
+      },
+      { 
+        id: 'enableEmail', 
+        label: 'Enable Email Integration', 
+        type: 'checkbox', 
+        required: false,
+        description: 'Enable automated email workflows and engagement tracking'
+      },
+      { 
+        id: 'sharedMailboxes', 
+        label: 'Shared Mailboxes', 
+        type: 'textarea', 
+        required: false,
+        placeholder: 'support@company.com, sales@company.com',
+        description: 'Comma-separated list of shared mailboxes to monitor'
+      },
+      { 
+        id: 'meetingRooms', 
+        label: 'Meeting Room Resources', 
+        type: 'textarea', 
+        required: false,
+        placeholder: 'conference-room-a@company.com, boardroom@company.com',
+        description: 'Room resources for automatic meeting scheduling'
+      },
+      { 
+        id: 'timeZone', 
+        label: 'Default Time Zone', 
+        type: 'select', 
+        required: true,
+        options: ['Eastern Standard Time', 'Central Standard Time', 'Mountain Standard Time', 'Pacific Standard Time', 'UTC'],
+        description: 'Default timezone for calendar operations'
+      },
+      { 
+        id: 'syncFrequency', 
+        label: 'Sync Frequency', 
+        type: 'select', 
+        required: true, 
+        options: ['Real-time (Webhook)', 'Every 5 minutes', 'Every 15 minutes', 'Hourly']
+      }
+    ]
+  },
+  {
+    id: 'microsoft-teams',
+    name: 'Microsoft Teams',
+    category: 'Productivity & Communication',
+    type: 'Microsoft',
+    description: 'Connect to Microsoft Teams for channel communications, meeting coordination, and adaptive card approvals',
+    status: 'not_configured',
+    icon: <ChatCentered className="w-5 h-5" />,
+    realTimeCapable: true,
+    authMethod: 'oauth',
+    oauthUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+    documentationUrl: 'https://docs.microsoft.com/en-us/microsoftteams/platform/',
+    fields: [
+      { 
+        id: 'tenantId', 
+        label: 'Tenant ID', 
+        type: 'text', 
+        required: true, 
+        placeholder: 'your-tenant-id',
+        description: 'Azure AD Tenant ID for your Teams organization',
+        validation: { pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' }
+      },
+      { 
+        id: 'clientId', 
+        label: 'Teams App ID', 
+        type: 'text', 
+        required: true,
+        description: 'Microsoft Teams App ID from App Studio or Developer Portal',
+        validation: { pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' }
+      },
+      { 
+        id: 'clientSecret', 
+        label: 'App Secret', 
+        type: 'password', 
+        required: true,
+        description: 'Teams App Secret for secure API access'
+      },
+      { 
+        id: 'botId', 
+        label: 'Bot Framework ID', 
+        type: 'text', 
+        required: false,
+        description: 'Optional: Bot ID for proactive messaging capabilities'
+      },
+      { 
+        id: 'permissions', 
+        label: 'Required Permissions', 
+        type: 'textarea', 
+        required: false,
+        placeholder: 'Channel.ReadBasic.All, Chat.Read, TeamsActivity.Send',
+        description: 'Microsoft Graph and Teams-specific permissions'
+      },
+      { 
+        id: 'defaultTeamId', 
+        label: 'Default Team ID', 
+        type: 'text', 
+        required: false,
+        placeholder: '19:xxxxx@thread.tacv2',
+        description: 'Primary team for SignalCX notifications and approvals'
+      },
+      { 
+        id: 'channelMappings', 
+        label: 'Channel Mappings', 
+        type: 'textarea', 
+        required: false,
+        placeholder: 'alerts:19:xxxxx@thread.tacv2\napprovals:19:yyyyy@thread.tacv2',
+        description: 'Map notification types to Teams channels (type:channelId per line)'
+      },
+      { 
+        id: 'enableAdaptiveCards', 
+        label: 'Enable Adaptive Cards', 
+        type: 'checkbox', 
+        required: false,
+        description: 'Use rich interactive cards for approvals and workflows'
+      },
+      { 
+        id: 'enableProactiveMessaging', 
+        label: 'Enable Proactive Messaging', 
+        type: 'checkbox', 
+        required: false,
+        description: 'Send automated notifications and alerts to users'
+      },
+      { 
+        id: 'enableMeetingIntegration', 
+        label: 'Enable Meeting Integration', 
+        type: 'checkbox', 
+        required: false,
+        description: 'Integrate with Teams meetings for customer calls'
+      },
+      { 
+        id: 'webhookUrl', 
+        label: 'Incoming Webhook URL', 
+        type: 'text', 
+        required: false,
+        placeholder: 'https://outlook.office.com/webhook/xxxxx',
+        description: 'Optional: Teams channel webhook for simple notifications'
+      },
+      { 
+        id: 'messageFormat', 
+        label: 'Message Format', 
+        type: 'select', 
+        required: true,
+        options: ['Adaptive Cards', 'Rich Text', 'Plain Text'],
+        description: 'Default format for automated messages'
+      }
+    ]
+  },
   {
     id: 'dynamics-crm',
     name: 'Microsoft Dynamics 365 CRM',
@@ -770,7 +973,92 @@ export function IntegrationWizard() {
   // Real connection testing with actual API calls
   const testRealConnection = async (integration: Integration, data: Record<string, string>): Promise<boolean> => {
     try {
+      // Common validation patterns
+      const guidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      
       switch (integration.id) {
+        case 'microsoft-outlook':
+          // Test Outlook/Exchange Online connection
+          if (!data.tenantId || !data.clientId || !data.clientSecret) {
+            throw new Error('Missing required Outlook connection parameters');
+          }
+          
+          // Validate GUID format for tenant and client IDs
+          if (!guidRegex.test(data.tenantId)) {
+            throw new Error('Tenant ID must be a valid GUID');
+          }
+          if (!guidRegex.test(data.clientId)) {
+            throw new Error('Client ID must be a valid GUID');
+          }
+          
+          // Validate permissions if provided
+          if (data.permissions) {
+            const validPermissions = ['Mail.Read', 'Mail.Send', 'Mail.ReadWrite', 'Calendars.Read', 'Calendars.ReadWrite', 'Contacts.Read'];
+            const requestedPerms = data.permissions.split(',').map(p => p.trim());
+            const invalidPerms = requestedPerms.filter(p => !validPermissions.some(vp => p.includes(vp)));
+            if (invalidPerms.length > 0) {
+              throw new Error(`Invalid permissions: ${invalidPerms.join(', ')}`);
+            }
+          }
+          
+          // Simulate OAuth flow and Graph API test
+          await new Promise(resolve => setTimeout(resolve, 2500));
+          
+          // Check if both calendar and email are disabled
+          if (data.enableCalendar !== 'true' && data.enableEmail !== 'true') {
+            throw new Error('At least one feature (Calendar or Email) must be enabled');
+          }
+          
+          // 90% success rate for Outlook (Microsoft's own service)
+          return Math.random() > 0.1;
+          
+        case 'microsoft-teams':
+          // Test Teams connection
+          if (!data.tenantId || !data.clientId || !data.clientSecret) {
+            throw new Error('Missing required Teams connection parameters');
+          }
+          
+          // Validate GUID format
+          if (!guidRegex.test(data.tenantId)) {
+            throw new Error('Tenant ID must be a valid GUID');
+          }
+          if (!guidRegex.test(data.clientId)) {
+            throw new Error('Teams App ID must be a valid GUID');
+          }
+          
+          // Validate webhook URL if provided
+          if (data.webhookUrl) {
+            try {
+              const webhookURL = new URL(data.webhookUrl);
+              if (!webhookURL.hostname.includes('outlook.office.com')) {
+                throw new Error('Webhook URL must be a valid Teams incoming webhook');
+              }
+            } catch {
+              throw new Error('Invalid webhook URL format');
+            }
+          }
+          
+          // Validate Teams-specific permissions
+          if (data.permissions) {
+            const validTeamsPerms = ['Channel.ReadBasic.All', 'Chat.Read', 'TeamsActivity.Send', 'TeamsAppInstallation.ReadWriteForUser'];
+            const requestedPerms = data.permissions.split(',').map(p => p.trim());
+            const hasValidPerm = requestedPerms.some(p => validTeamsPerms.some(vp => p.includes(vp)));
+            if (!hasValidPerm) {
+              throw new Error('At least one valid Teams permission is required');
+            }
+          }
+          
+          // Validate message format
+          if (!['Adaptive Cards', 'Rich Text', 'Plain Text'].includes(data.messageFormat)) {
+            throw new Error('Invalid message format selected');
+          }
+          
+          // Simulate Teams API connection test
+          await new Promise(resolve => setTimeout(resolve, 3000));
+          
+          // 88% success rate for Teams
+          return Math.random() > 0.12;
+          
         case 'azure-sql':
           // Simulate Azure SQL connection test
           if (!data.server || !data.database || !data.username || !data.password) {
@@ -827,8 +1115,7 @@ export function IntegrationWizard() {
             throw new Error('Missing tenant ID or workspace ID');
           }
           
-          // Validate GUID format
-          const guidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+          // Validate GUID format using the already declared guidRegex
           if (!guidRegex.test(data.tenantId)) {
             throw new Error('Tenant ID must be a valid GUID');
           }

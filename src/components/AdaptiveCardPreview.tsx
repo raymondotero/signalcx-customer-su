@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { CheckCircle, XCircle, Clock, User, Calendar, Target } from '@phosphor-icons/react';
+import { CheckCircle, XCircle, Clock, User, Calendar, Target, ChatCentered } from '@phosphor-icons/react';
 import { NextBestAction, AdaptiveCard } from '@/types';
 import { useAgentMemory } from '@/hooks/useData';
+import { teamsIntegration } from '@/services/teamsIntegration';
+import { useKV } from '@github/spark/hooks';
+import { toast } from 'sonner';
 
 interface AdaptiveCardPreviewProps {
   nba: NextBestAction;
@@ -17,7 +20,42 @@ interface AdaptiveCardPreviewProps {
 export function AdaptiveCardPreview({ nba, accountName, onApprovalDecision }: AdaptiveCardPreviewProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [decision, setDecision] = useState<boolean | null>(null);
+  const [integrations] = useKV<any[]>('integrations', []);
   const { addMemoryEntry } = useAgentMemory();
+  
+  // Check if Teams integration is available
+  const teamsConnected = integrations?.find(i => i.id === 'microsoft-teams' && i.status === 'connected');
+
+  useEffect(() => {
+    if (teamsConnected) {
+      teamsIntegration.setIntegrations(integrations || []);
+    }
+  }, [integrations, teamsConnected]);
+
+  const sendToTeams = async () => {
+    if (!teamsConnected) {
+      toast.error('Teams integration not configured');
+      return;
+    }
+
+    try {
+      const success = await teamsIntegration.sendNBAApproval(
+        accountName,
+        nba.title,
+        nba.estimatedImpact,
+        nba.accountId
+      );
+
+      if (success) {
+        toast.success('Approval request sent to Microsoft Teams');
+      } else {
+        toast.error('Failed to send approval request to Teams');
+      }
+    } catch (error) {
+      console.error('Error sending to Teams:', error);
+      toast.error('Error sending to Teams. Please try again.');
+    }
+  };
 
   const handleDecision = async (approved: boolean) => {
     setIsProcessing(true);
@@ -212,44 +250,60 @@ export function AdaptiveCardPreview({ nba, accountName, onApprovalDecision }: Ad
 
           {/* Decision Section */}
           {decision === null ? (
-            <div className="flex gap-3">
-              <Button
-                onClick={() => handleDecision(true)}
-                disabled={isProcessing}
-                className="flex-1 bg-green-600 hover:bg-green-700"
-                size="lg"
-              >
-                {isProcessing ? (
-                  <div className="animate-pulse flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
-                    Processing...
-                  </div>
-                ) : (
-                  <>
-                    <CheckCircle className="w-4 h-4 mr-2" />
-                    Approve
-                  </>
-                )}
-              </Button>
-              <Button
-                onClick={() => handleDecision(false)}
-                disabled={isProcessing}
-                variant="destructive"
-                className="flex-1"
-                size="lg"
-              >
-                {isProcessing ? (
-                  <div className="animate-pulse flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
-                    Processing...
-                  </div>
-                ) : (
-                  <>
-                    <XCircle className="w-4 h-4 mr-2" />
-                    Reject
-                  </>
-                )}
-              </Button>
+            <div className="space-y-3">
+              {teamsConnected && (
+                <div className="flex justify-center">
+                  <Button
+                    onClick={sendToTeams}
+                    variant="outline"
+                    size="sm"
+                    className="text-blue-700 border-blue-200 hover:bg-blue-50"
+                  >
+                    <ChatCentered className="w-4 h-4 mr-2" />
+                    Send to Microsoft Teams
+                  </Button>
+                </div>
+              )}
+              
+              <div className="flex gap-3">
+                <Button
+                  onClick={() => handleDecision(true)}
+                  disabled={isProcessing}
+                  className="flex-1 bg-green-600 hover:bg-green-700"
+                  size="lg"
+                >
+                  {isProcessing ? (
+                    <div className="animate-pulse flex items-center gap-2">
+                      <Clock className="w-4 h-4" />
+                      Processing...
+                    </div>
+                  ) : (
+                    <>
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      Approve
+                    </>
+                  )}
+                </Button>
+                <Button
+                  onClick={() => handleDecision(false)}
+                  disabled={isProcessing}
+                  variant="destructive"
+                  className="flex-1"
+                  size="lg"
+                >
+                  {isProcessing ? (
+                    <div className="animate-pulse flex items-center gap-2">
+                      <Clock className="w-4 h-4" />
+                      Processing...
+                    </div>
+                  ) : (
+                    <>
+                      <XCircle className="w-4 h-4 mr-2" />
+                      Reject
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
           ) : (
             <div className={`text-center p-4 rounded-lg ${

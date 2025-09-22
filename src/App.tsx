@@ -21,6 +21,7 @@ import { ROIDashboard } from '@/components/ROIDashboard';
 import { DataSyncScheduler } from '@/components/DataSyncScheduler';
 import { IntegrationWizard } from '@/components/IntegrationWizard';
 import HelpGuide from '@/components/HelpGuide';
+import { notificationService } from '@/services/notificationService';
 
 import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
 import { SystemHealthDialog } from '@/components/SystemHealthDialog';
@@ -46,10 +47,23 @@ function App() {
   const realTimeAI = useRealTimeAI();
   const aiMetrics = useAIMetrics();
   const [targets] = useKV<SignalTarget[]>('signal-targets', []);
+  const [integrations] = useKV<any[]>('integrations', []);
   const safeTargets = Array.isArray(targets) ? targets : [];
+  const safeIntegrations = Array.isArray(integrations) ? integrations : [];
   
   // Debug targets to prevent object rendering issues
   console.log('Targets:', targets, 'Safe targets length:', safeTargets.length);
+  
+  // Initialize notification service with integrations
+  React.useEffect(() => {
+    notificationService.setContext({
+      integrations: safeIntegrations,
+      currentUser: {
+        email: 'user@company.com',
+        name: 'Current User'
+      }
+    });
+  }, [safeIntegrations]);
   
   // Enable real-time notifications
   useRealtimeNotifications();
@@ -344,6 +358,28 @@ function App() {
                     <Target className="w-3 h-3 mr-1" />
                     {String(safeTargets.length)} Targets Active
                   </Badge>
+                )}
+                
+                {(safeIntegrations.filter(i => i.id === 'microsoft-teams' && i.status === 'connected').length > 0 ||
+                  safeIntegrations.filter(i => i.id === 'microsoft-outlook' && i.status === 'connected').length > 0) && (
+                  <Button 
+                    size="sm"
+                    variant="outline"
+                    onClick={async () => {
+                      const testAccount = accounts[0];
+                      if (testAccount) {
+                        await notificationService.notifyHealthScoreChange(
+                          testAccount,
+                          testAccount.healthScore + 15,
+                          testAccount.healthScore - 8
+                        );
+                        toast.success('Test notification sent to connected integrations');
+                      }
+                    }}
+                    className="text-blue-700 border-blue-200 hover:bg-blue-50"
+                  >
+                    🔔 Test Integrations
+                  </Button>
                 )}
               </div>
               

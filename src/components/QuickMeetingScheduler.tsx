@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,9 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, VideoCamera, MapPin, Envelope, Users } from '@phosphor-icons/react';
+import { Calendar, Clock, VideoCamera, MapPin, Envelope, Users, CheckCircle } from '@phosphor-icons/react';
 import { Account } from '@/types';
 import { toast } from 'sonner';
+import { outlookIntegration } from '@/services/outlookIntegration';
+import { useKV } from '@github/spark/hooks';
 
 interface QuickMeetingSchedulerProps {
   account: Account;
@@ -76,8 +78,82 @@ export function QuickMeetingScheduler({ account, children }: QuickMeetingSchedul
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [format, setFormat] = useState<'teams' | 'onsite' | 'phone'>('teams');
-
+  const [availableSlots, setAvailableSlots] = useState<Date[]>([]);
+  const [isLoadingSlots, setIsLoadingSlots] = useState(false);
+  const [integrations] = useKV<any[]>('integrations', []);
+  
   const selectedMeetingType = MEETING_TYPES[meetingType];
+  
+  // Check if Outlook integration is available
+  const outlookConnected = integrations?.find(i => i.id === 'microsoft-outlook' && i.status === 'connected');
+
+  useEffect(() => {
+    if (outlookConnected) {
+      outlookIntegration.setIntegrations(integrations || []);
+    }
+  }, [integrations, outlookConnected]);
+
+  const loadAvailableTimeSlots = async () => {
+    if (!outlookConnected) return;
+    
+    setIsLoadingSlots(true);
+    try {
+      const attendees = [
+        `${account.csam}@company.com`,
+        `${account.ae}@company.com`
+      ];
+      
+      const slots = await outlookIntegration.getAvailableTimeSlots(
+        attendees,
+        parseInt(selectedMeetingType.duration),
+        7
+      );
+      
+      setAvailableSlots(slots);
+      
+      if (slots.length > 0) {
+        toast.success(`Found ${slots.length} available time slots`);
+      }
+    } catch (error) {
+      console.error('Failed to load time slots:', error);
+      toast.error('Failed to load available time slots');
+    } finally {
+      setIsLoadingSlots(false);
+    }
+  };
+
+  const handleScheduleWithOutlook = async () => {
+    if (!date || !time) {
+      toast.error('Please select a date and time for the meeting');
+      return;
+    }
+
+    if (!outlookConnected) {
+      toast.error('Outlook integration not configured. Using fallback method.');
+      handleScheduleMeeting('outlook');
+      return;
+    }
+
+    try {
+      const success = await outlookIntegration.scheduleCustomerMeeting(
+        account.name,
+        account.csam,
+        account.ae,
+        selectedMeetingType.title,
+        parseInt(selectedMeetingType.duration)
+      );
+
+      if (success) {
+        toast.success(`Meeting scheduled successfully via Outlook integration`);
+        setIsOpen(false);
+      } else {
+        toast.error('Failed to schedule meeting via Outlook integration');
+      }
+    } catch (error) {
+      console.error('Error scheduling with Outlook:', error);
+      toast.error('Error scheduling meeting. Please try again.');
+    }
+  };
 
   const generateCalendarLink = (platform: 'outlook' | 'google') => {
     const startDate = new Date(`${date}T${time}`);
@@ -335,9 +411,50 @@ export function QuickMeetingScheduler({ account, children }: QuickMeetingSchedul
               <CardTitle className="text-base flex items-center gap-2">
                 {getMeetingIcon()}
                 Create Calendar Invitation
+                {outlookConnected && (
+                  <Badge className="bg-green-100 text-green-800 border-green-200">
+                    <CheckCircle className="w-3 h-3 mr-1" />
+                    Outlook Connected
+                  </Badge>
+                )}
               </CardTitle>
             </CardHeader>
             <CardContent>
+              {outlookConnected && (
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <Label>Available Time Slots</Label>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={loadAvailableTimeSlots}
+                      disabled={isLoadingSlots}
+                    >
+                      {isLoadingSlots ? 'Loading...' : 'Find Available Times'}
+                    </Button>
+                  </div>
+                  
+                  {availableSlots.length > 0 && (
+                    <div className="grid grid-cols-2 gap-2 max-h-24 overflow-y-auto">
+                      {availableSlots.slice(0, 8).map((slot, index) => (
+                        <Button
+                          key={index}
+                          size="sm"
+                          variant="outline"
+                          className="text-xs"
+                          onClick={() => {
+                            setDate(slot.toISOString().split('T')[0]);
+                            setTime(slot.toTimeString().slice(0, 5));
+                          }}
+                        >
+                          {slot.toLocaleDateString()} {slot.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </Button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
               {date && time && (
                 <div className="text-center p-3 bg-blue-50 rounded-lg mb-4">
                   <p className="text-sm text-blue-700">
@@ -351,24 +468,37 @@ export function QuickMeetingScheduler({ account, children }: QuickMeetingSchedul
                 </div>
               )}
               
-              <div className="grid grid-cols-2 gap-3">
-                <Button
-                  onClick={() => handleScheduleMeeting('outlook')}
-                  className="w-full"
-                  disabled={!date || !time}
-                >
-                  <Envelope className="w-4 h-4 mr-2" />
-                  Outlook Calendar
-                </Button>
-                <Button
-                  onClick={() => handleScheduleMeeting('google')}
-                  variant="outline"
-                  className="w-full"
-                  disabled={!date || !time}
-                >
-                  <Calendar className="w-4 h-4 mr-2" />
-                  Google Calendar
-                </Button>
+              <div className="grid grid-cols-1 gap-3">
+                {outlookConnected ? (
+                  <Button
+                    onClick={handleScheduleWithOutlook}
+                    className="w-full"
+                    disabled={!date || !time}
+                  >
+                    <Envelope className="w-4 h-4 mr-2" />
+                    Schedule with Outlook Integration
+                  </Button>
+                ) : (
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button
+                      onClick={() => handleScheduleMeeting('outlook')}
+                      className="w-full"
+                      disabled={!date || !time}
+                    >
+                      <Envelope className="w-4 h-4 mr-2" />
+                      Outlook Calendar
+                    </Button>
+                    <Button
+                      onClick={() => handleScheduleMeeting('google')}
+                      variant="outline"
+                      className="w-full"
+                      disabled={!date || !time}
+                    >
+                      <Calendar className="w-4 h-4 mr-2" />
+                      Google Calendar
+                    </Button>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
