@@ -9,11 +9,8 @@ export interface NotificationRule {
   conditions: {
     signalTypes: string[];
     severityLevels: string[];
-    categories?: string[];
-    valueThresholds?: {
-      operator: 'gt' | 'lt' | 'eq' | 'gte' | 'lte';
-      value: number;
-    }[];
+    accountValueThreshold?: number;
+    minimumValue?: number;
   };
   actions: {
     sendEmailNotification: boolean;
@@ -47,29 +44,19 @@ export interface CriticalSignalEvent {
 }
 
 class CriticalSignalNotificationService {
-  private static instance: CriticalSignalNotificationService;
   private events: CriticalSignalEvent[] = [];
-  private accountCooldowns = new Map<string, Date>();
+  private cooldownMap: Map<string, number> = new Map();
 
-  private constructor() {}
-
-  static getInstance(): CriticalSignalNotificationService {
-    if (!CriticalSignalNotificationService.instance) {
-      CriticalSignalNotificationService.instance = new CriticalSignalNotificationService();
-    }
-    return CriticalSignalNotificationService.instance;
-  }
-
-  // Default notification rules for critical signals
   private defaultRules: NotificationRule[] = [
     {
-      id: 'critical-churn-risk',
-      name: 'Critical Churn Risk',
-      description: 'Alert for critical churn risk signals that require immediate attention',
+      id: 'critical-severity-alert',
+      name: 'Critical Severity Alert',
+      description: 'Immediate notification for any critical severity signal',
       enabled: true,
       conditions: {
-        signalTypes: ['churn_risk', 'usage', 'support'],
-        severityLevels: ['critical', 'high'],
+        signalTypes: ['churn_risk', 'health_decline', 'usage', 'support', 'engagement'],
+        severityLevels: ['critical'],
+        minimumValue: 0
       },
       actions: {
         sendEmailNotification: true,
@@ -94,6 +81,7 @@ class CriticalSignalNotificationService {
       conditions: {
         signalTypes: ['churn_risk', 'health_decline', 'usage', 'support', 'engagement'],
         severityLevels: ['critical', 'high', 'medium'],
+        accountValueThreshold: 10000000 // $10M
       },
       actions: {
         sendEmailNotification: true,
@@ -148,11 +136,9 @@ class CriticalSignalNotificationService {
     this.events.unshift(event);
 
     // Keep only recent 100 events
-    if (this.events.length > 100) {
-      this.events = this.events.slice(0, 100);
-    }
+    this.events = this.events.slice(0, 100);
 
-    // Set cooldown for account
+    // Set cooldown period
     this.setCooldown(account.id, triggeredRules);
 
     return event;
@@ -168,110 +154,118 @@ class CriticalSignalNotificationService {
       // Check severity level
       if (!rule.conditions.severityLevels.includes(signal.severity)) return false;
 
-      // Check category if specified
-      if (rule.conditions.categories && signal.category && 
-          !rule.conditions.categories.includes(signal.category)) {
+      // Check account value threshold if specified
+      if (rule.conditions.accountValueThreshold && account.arr < rule.conditions.accountValueThreshold) {
         return false;
       }
 
-      // Check value thresholds if specified
-      if (rule.conditions.valueThresholds) {
-        for (const threshold of rule.conditions.valueThresholds) {
-          const signalValue = typeof signal.value === 'number' ? signal.value : 0;
-
-          switch (threshold.operator) {
-            case 'gt':
-              if (!(signalValue > threshold.value)) return false;
-              break;
-            case 'lt':
-              if (!(signalValue < threshold.value)) return false;
-              break;
-            case 'eq':
-              if (!(signalValue === threshold.value)) return false;
-              break;
-            case 'gte':
-              if (!(signalValue >= threshold.value)) return false;
-              break;
-            case 'lte':
-              if (!(signalValue <= threshold.value)) return false;
-              break;
-          }
-        }
-      }
-
-      // Check if account is high-value for special rules
-      if (rule.id === 'high-value-account-risk' && account.arr < 10000000) {
-        return false; // Only trigger for accounts with >$10M ARR
+      // Check minimum signal value if specified
+      if (rule.conditions.minimumValue && signal.value !== undefined && signal.value < rule.conditions.minimumValue) {
+        return false;
       }
 
       return true;
     });
   }
 
+  private isAccountInCooldown(accountId: string, rules: NotificationRule[]): boolean {
+    const now = Date.now();
+    const cooldownKey = `${accountId}-${rules.map(r => r.id).join('-')}`;
+    const cooldownUntil = this.cooldownMap.get(cooldownKey);
+    
+    return cooldownUntil ? now < cooldownUntil : false;
+  }
+
+  private setCooldown(accountId: string, rules: NotificationRule[]): void {
+    const now = Date.now();
+    const maxCooldown = Math.max(...rules.map(r => r.cooldownPeriod));
+    const cooldownKey = `${accountId}-${rules.map(r => r.id).join('-')}`;
+    
+    this.cooldownMap.set(cooldownKey, now + (maxCooldown * 60 * 1000));
+  }
+
   private async sendNotifications(event: CriticalSignalEvent): Promise<void> {
-    try {
-      const triggeredRules = event.triggeredRules;
-      const shouldSendEmail = triggeredRules.some(rule => rule.actions.sendEmailNotification);
-      const shouldSendTeams = triggeredRules.some(rule => rule.actions.sendTeamsNotification);
-      const shouldCreateToast = triggeredRules.some(rule => rule.actions.createToastAlert);
-      const shouldEscalate = triggeredRules.some(rule => rule.actions.escalateToManagement);
+    for (const rule of event.triggeredRules) {
+      try {
+        if (rule.actions.createToastAlert) {
+          this.sendToastNotification(event);
+          event.notificationsSent.toast = true;
+        }
 
-      // Send toast notification (always available)
-      if (shouldCreateToast) {
-        toast.error(
-          `🚨 Critical Signal: ${event.signal.description}`,
-          {
-            description: `Account: ${event.account.name} - ${event.triggeredRules.map(r => r.name).join(', ')}`,
-            duration: 10000,
-            action: {
-              label: 'View Details',
-              onClick: () => {
-                // Could trigger a modal or navigation to details
-              }
-            }
-          }
-        );
-        event.notificationsSent.toast = true;
+        if (rule.actions.sendEmailNotification) {
+          await this.sendEmailNotification(event, rule);
+          event.notificationsSent.email = true;
+        }
+
+        if (rule.actions.sendTeamsNotification) {
+          await this.sendTeamsNotification(event, rule);
+          event.notificationsSent.teams = true;
+        }
+
+        console.log(`Sent notifications for rule ${rule.name} to account ${event.account.name}`);
+      } catch (error) {
+        console.error(`Failed to send notification for rule ${rule.name}:`, error);
       }
-
-      // Send email notification
-      if (shouldSendEmail) {
-        // In real implementation, this would integrate with email service
-        console.log(`Sending email notification for critical signal: ${event.signal.description}`);
-        event.notificationsSent.email = true;
-      }
-
-      // Send Teams notification
-      if (shouldSendTeams) {
-        // In real implementation, this would integrate with Teams webhook
-        console.log(`Sending Teams notification for critical signal: ${event.signal.description}`);
-        event.notificationsSent.teams = true;
-      }
-
-      // Handle escalation
-      if (shouldEscalate) {
-        event.escalated = true;
-        console.log(`Escalating critical signal to management: ${event.signal.description}`);
-      }
-
-    } catch (error) {
-      console.error('Error sending notifications:', error);
     }
   }
 
-  private isAccountInCooldown(accountId: string, triggeredRules: NotificationRule[]): boolean {
-    const lastNotification = this.accountCooldowns.get(accountId);
-    if (!lastNotification) return false;
-
-    // Use the shortest cooldown period from triggered rules
-    const shortestCooldown = Math.min(...triggeredRules.map(rule => rule.cooldownPeriod));
-    const cooldownMs = shortestCooldown * 60 * 1000; // Convert to milliseconds
-
-    return Date.now() - lastNotification.getTime() < cooldownMs;
+  private sendToastNotification(event: CriticalSignalEvent): void {
+    const severity = event.signal.severity;
+    const message = `🚨 ${event.signal.description} - ${event.account.name}`;
+    
+    if (severity === 'critical') {
+      toast.error(message, {
+        duration: 10000,
+        action: {
+          label: 'View Details',
+          onClick: () => {
+            console.log('Navigate to signal details:', event.signal.id);
+          }
+        }
+      });
+    } else if (severity === 'high') {
+      toast.warning(message, {
+        duration: 8000,
+        action: {
+          label: 'Review',
+          onClick: () => {
+            console.log('Navigate to signal details:', event.signal.id);
+          }
+        }
+      });
+    } else {
+      toast.info(message, {
+        duration: 5000
+      });
+    }
   }
 
-  private setCooldown(accountId: string, triggeredRules: NotificationRule[]): void {
-    this.accountCooldowns.set(accountId, new Date());
+  private async sendEmailNotification(event: CriticalSignalEvent, rule: NotificationRule): Promise<void> {
+    // Simulate email sending
+    console.log(`📧 Email notification sent for ${event.signal.description}`);
+    console.log(`Recipients: ${rule.escalationRules.escalationRecipients.join(', ')}`);
+    
+    // In a real implementation, you would integrate with your email service
+    // await emailService.send({
+    //   to: rule.escalationRules.escalationRecipients,
+    //   subject: `Critical Signal Alert: ${event.account.name}`,
+    //   body: this.generateEmailTemplate(event, rule)
+    // });
+  }
+
+  private async sendTeamsNotification(event: CriticalSignalEvent, rule: NotificationRule): Promise<void> {
+    // Simulate Teams notification
+    console.log(`🔔 Teams notification sent for ${event.signal.description}`);
+    
+    // In a real implementation, you would send to Teams webhook
+    // await teamsService.sendAdaptiveCard({
+    //   webhook: process.env.TEAMS_WEBHOOK_URL,
+    //   card: this.generateTeamsCard(event, rule)
+    // });
+  }
+
+  getRecentEvents(limit: number = 50): CriticalSignalEvent[] {
+    return this.events.slice(0, limit);
   }
 
   acknowledgeEvent(eventId: string): boolean {
@@ -283,22 +277,27 @@ class CriticalSignalNotificationService {
     return false;
   }
 
-  getRecentEvents(limit: number = 50): CriticalSignalEvent[] {
-    return this.events.slice(0, limit);
-  }
-
-  getCriticalEvents(limit: number = 20): CriticalSignalEvent[] {
-    return this.events
-      .filter(event => event.signal.severity === 'critical')
-      .slice(0, limit);
-  }
-
-  getNotificationRules(): NotificationRule[] {
+  getRules(): NotificationRule[] {
     return [...this.defaultRules];
   }
 
-  updateNotificationRule(ruleId: string, updates: Partial<NotificationRule>): boolean {
-    const ruleIndex = this.defaultRules.findIndex(rule => rule.id === ruleId);
+  getNotificationRules(): NotificationRule[] {
+    return this.getRules();
+  }
+
+  getStats() {
+    return {
+      totalEvents: this.events.length,
+      activeAlerts: this.getActiveAlertsCount(),
+      criticalAlerts: this.getCriticalAlertsCount(),
+      acknowledgedEvents: this.events.filter(e => e.acknowledged).length,
+      rulesEnabled: this.defaultRules.filter(r => r.enabled).length,
+      totalRules: this.defaultRules.length
+    };
+  }
+
+  updateRule(ruleId: string, updates: Partial<NotificationRule>): boolean {
+    const ruleIndex = this.defaultRules.findIndex(r => r.id === ruleId);
     if (ruleIndex !== -1) {
       this.defaultRules[ruleIndex] = { ...this.defaultRules[ruleIndex], ...updates };
       return true;
@@ -306,19 +305,23 @@ class CriticalSignalNotificationService {
     return false;
   }
 
-  getStats() {
-    const now = new Date();
-    const last24Hours = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-    const recentEvents = this.events.filter(event => new Date(event.timestamp) > last24Hours);
-    
-    return {
-      total: this.events.length,
-      recent: recentEvents.length,
-      critical: this.events.filter(event => event.signal.severity === 'critical').length,
-      acknowledged: this.events.filter(event => event.acknowledged).length,
-      escalated: this.events.filter(event => event.escalated).length
-    };
+  updateNotificationRule(ruleId: string, updates: Partial<NotificationRule>): boolean {
+    return this.updateRule(ruleId, updates);
+  }
+
+  clearCooldowns(): void {
+    this.cooldownMap.clear();
+  }
+
+  getActiveAlertsCount(): number {
+    return this.events.filter(e => !e.acknowledged).length;
+  }
+
+  getCriticalAlertsCount(): number {
+    return this.events.filter(e => 
+      !e.acknowledged && e.signal.severity === 'critical'
+    ).length;
   }
 }
 
-export const criticalSignalNotificationService = CriticalSignalNotificationService.getInstance();
+export const criticalSignalNotificationService = new CriticalSignalNotificationService();
