@@ -10,19 +10,17 @@ export interface NotificationRule {
     signalTypes: string[];
     severityLevels: string[];
     accountValueThreshold?: number;
-    minimumValue?: number;
+    timeToEscalate: number;
   };
   actions: {
-    createToastAlert: boolean;
     sendEmailNotification: boolean;
     sendTeamsNotification: boolean;
-    escalateToManager: boolean;
     createWorkflowTask: boolean;
+    escalateToManager: boolean;
     scheduleFollowup: boolean;
   };
   escalationRules: {
-    escalateAfterCount: number;
-    timeToEscalate: number; // minutes
+    escalateAfter: number; // minutes
     escalationRecipients: string[];
   };
   cooldownPeriod: number; // minutes
@@ -46,141 +44,128 @@ export interface CriticalSignalEvent {
 export class CriticalSignalNotificationService {
   private events: CriticalSignalEvent[] = [];
   private cooldownMap: Map<string, number> = new Map();
-  private initialized: boolean = false;
-
-  constructor() {
-    try {
-      // Initialize with some sample data for demo purposes
-      this.initializeSampleData();
-      this.initialized = true;
-    } catch (error) {
-      console.error('Error initializing CriticalSignalNotificationService:', error);
-      this.initialized = false;
-    }
-  }
-
-  private checkInitialized(): boolean {
-    if (!this.initialized) {
-      console.warn('CriticalSignalNotificationService not properly initialized, using fallbacks');
-      return false;
-    }
-    return true;
-  }
-
-  private initializeSampleData() {
-    // Add some sample events for demonstration
-    const sampleEvents: CriticalSignalEvent[] = [
-      {
-        id: 'event-sample-1',
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
-        signal: {
-          id: 'signal-sample-1',
-          accountId: 'acc-1',
-          accountName: 'TechCorp Solutions',
-          type: 'churn_risk',
-          description: 'Critical churn risk detected - health score dropped below 30',
-          severity: 'critical',
-          value: 28,
-          timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-          category: 'risk'
-        },
-        account: {
-          id: 'acc-1',
-          name: 'TechCorp Solutions',
-          industry: 'Technology',
-          arr: 2800000,
-          healthScore: 28,
-          status: 'At Risk',
-          csam: 'Sarah Johnson',
-          ae: 'Mike Chen',
-          contractEnd: '2024-12-31',
-          lastActivity: new Date().toISOString(),
-          expansionOpportunity: 150000
-        },
-        triggeredRules: [],
-        notificationsSent: {
-          email: true,
-          teams: true,
-          toast: true
-        },
-        escalated: true,
-        acknowledged: false
-      }
-    ];
-
-    this.events = sampleEvents;
-  }
+  private initialized = false;
 
   private defaultRules: NotificationRule[] = [
     {
       id: 'critical-churn-risk',
       name: 'Critical Churn Risk Alert',
-      description: 'Immediate notification for critical churn risk signals',
+      description: 'Alerts for signals indicating immediate churn risk',
       enabled: true,
       conditions: {
-        signalTypes: ['churn_risk', 'health_decline', 'contract_risk'],
-        severityLevels: ['critical', 'high'],
-        accountValueThreshold: 1000000, // $1M+ accounts
+        signalTypes: ['churn_risk', 'health_decline', 'usage_drop'],
+        severityLevels: ['critical'],
+        accountValueThreshold: 1000000,
+        timeToEscalate: 15
       },
       actions: {
-        createToastAlert: true,
         sendEmailNotification: true,
         sendTeamsNotification: true,
-        escalateToManager: true,
         createWorkflowTask: true,
+        escalateToManager: true,
         scheduleFollowup: true,
       },
       escalationRules: {
-        escalateAfterCount: 1,
-        timeToEscalate: 15, // 15 minutes
-        escalationRecipients: ['manager@company.com', 'director@company.com'],
+        escalateAfter: 30,
+        escalationRecipients: ['csm-manager@company.com', 'vp-cs@company.com']
       },
-      cooldownPeriod: 30 // 30 minutes cooldown
+      cooldownPeriod: 120 // 2 hours cooldown
     },
     {
       id: 'high-value-account-alert',
-      name: 'High Value Account Alert',
+      name: 'High-Value Account Alert',
       description: 'Special monitoring for high-value accounts',
       enabled: true,
       conditions: {
-        signalTypes: ['usage_decline', 'support_escalation', 'license_violation'],
+        signalTypes: ['renewal_risk', 'stakeholder_change', 'support_escalation'],
         severityLevels: ['high', 'medium'],
-        accountValueThreshold: 5000000, // $5M+ accounts
+        accountValueThreshold: 5000000,
+        timeToEscalate: 60
       },
       actions: {
-        createToastAlert: true,
         sendEmailNotification: true,
         sendTeamsNotification: false,
-        escalateToManager: false,
         createWorkflowTask: true,
+        escalateToManager: false,
         scheduleFollowup: true,
       },
       escalationRules: {
-        escalateAfterCount: 2,
-        timeToEscalate: 60, // 1 hour
-        escalationRecipients: ['csm@company.com'],
+        escalateAfter: 120,
+        escalationRecipients: ['senior-csm@company.com']
       },
       cooldownPeriod: 60 // 1 hour cooldown
     }
   ];
 
+  constructor() {
+    this.initialize();
+  }
+
+  private initialize(): void {
+    if (this.initialized) return;
+    
+    // Initialize with some sample events for demo
+    this.events = [
+      {
+        id: 'event-1',
+        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+        signal: {
+          id: 'sig-1',
+          type: 'churn_risk',
+          severity: 'critical',
+          description: 'Critical health score decline detected',
+          accountId: 'acc-1',
+          accountName: 'TechCorp Solutions',
+          timestamp: new Date().toISOString(),
+          category: 'risk',
+          value: 25,
+          trend: 'declining',
+          metadata: {}
+        },
+        account: {
+          id: 'acc-1',
+          name: 'TechCorp Solutions',
+          industry: 'Technology',
+          arr: 12500000,
+          healthScore: 45,
+          status: 'At Risk' as const,
+          contractEnd: '2024-12-31',
+          csam: 'Sarah Johnson',
+          ae: 'Mike Chen',
+          lastActivity: new Date().toISOString(),
+          expansionOpportunity: 2500000
+        },
+        triggeredRules: [this.defaultRules[0]],
+        notificationsSent: {
+          email: true,
+          teams: true,
+          toast: true
+        },
+        escalated: false,
+        acknowledged: false
+      }
+    ];
+    
+    this.initialized = true;
+  }
+
   processSignal = async (signal: Signal, account: Account): Promise<CriticalSignalEvent | null> => {
     if (!this.checkInitialized()) return null;
+    
     const triggeredRules = this.evaluateRules(signal, account);
-
     if (triggeredRules.length === 0) {
       return null;
     }
 
     // Check cooldown period for this account
-    if (this.isAccountInCooldown(account.id, triggeredRules)) {
-      console.log(`Account ${account.name} is in cooldown period, skipping notifications`);
+    if (this.isInCooldown(account.id)) {
+      console.log(`Account ${account.name} is in cooldown period, skipping notification`);
       return null;
     }
 
     // Create critical signal event
     const event: CriticalSignalEvent = {
-      id: `event-${Date.now()}-${signal.id}`,
+      id: `event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       timestamp: new Date().toISOString(),
       signal,
       account,
@@ -197,15 +182,13 @@ export class CriticalSignalNotificationService {
     // Send notifications based on triggered rules
     await this.sendNotifications(event);
 
-    // Add to events history
+    // Add to events
     this.events.unshift(event);
 
-    // Keep only recent 100 events
-    this.events = this.events.slice(0, 100);
-
-    // Set cooldown for this account
+    // Set cooldown
     this.setCooldown(account.id, triggeredRules);
 
+    console.log(`Critical signal processed for ${account.name}: ${signal.description}`);
     return event;
   }
 
@@ -224,39 +207,26 @@ export class CriticalSignalNotificationService {
         return false;
       }
 
-      // Check minimum signal value if specified
-      if (rule.conditions.minimumValue && signal.value !== undefined && signal.value < rule.conditions.minimumValue) {
-        return false;
-      }
-
       return true;
     });
   }
 
-  private isAccountInCooldown(accountId: string, rules: NotificationRule[]): boolean {
+  private isInCooldown(accountId: string): boolean {
     const now = Date.now();
-    const cooldownKey = `${accountId}-${rules.map(r => r.id).join('-')}`;
-    const cooldownUntil = this.cooldownMap.get(cooldownKey);
-    
-    return cooldownUntil ? now < cooldownUntil : false;
+    const cooldownEnd = this.cooldownMap.get(accountId) || 0;
+    return cooldownEnd > now;
   }
 
   private setCooldown(accountId: string, rules: NotificationRule[]): void {
     const now = Date.now();
+    const cooldownKey = `${accountId}`;
     const maxCooldown = Math.max(...rules.map(r => r.cooldownPeriod));
-    const cooldownKey = `${accountId}-${rules.map(r => r.id).join('-')}`;
-    
     this.cooldownMap.set(cooldownKey, now + (maxCooldown * 60 * 1000));
   }
 
   private async sendNotifications(event: CriticalSignalEvent): Promise<void> {
     for (const rule of event.triggeredRules) {
       try {
-        if (rule.actions.createToastAlert) {
-          this.sendToastNotification(event);
-          event.notificationsSent.toast = true;
-        }
-
         if (rule.actions.sendEmailNotification) {
           await this.sendEmailNotification(event, rule);
           event.notificationsSent.email = true;
@@ -265,6 +235,11 @@ export class CriticalSignalNotificationService {
         if (rule.actions.sendTeamsNotification) {
           await this.sendTeamsNotification(event, rule);
           event.notificationsSent.teams = true;
+        }
+
+        if (rule.actions.createWorkflowTask) {
+          this.sendToastNotification(event);
+          event.notificationsSent.toast = true;
         }
 
         console.log(`Sent notifications for rule ${rule.name} to account ${event.account.name}`);
@@ -329,12 +304,20 @@ export class CriticalSignalNotificationService {
     // });
   }
 
-  getRecentEvents = (limit: number = 50): CriticalSignalEvent[] => {
+  private checkInitialized(): boolean {
+    if (!this.initialized) {
+      console.warn('CriticalSignalNotificationService not initialized');
+      return false;
+    }
+    return true;
+  }
+
+  getRecentEvents(limit: number = 50): CriticalSignalEvent[] {
     if (!this.checkInitialized()) return [];
     return this.events.slice(0, limit);
   }
 
-  acknowledgeEvent = (eventId: string): boolean => {
+  acknowledgeEvent(eventId: string): boolean {
     if (!this.checkInitialized()) return false;
     const event = this.events.find(e => e.id === eventId);
     if (event) {
@@ -344,13 +327,11 @@ export class CriticalSignalNotificationService {
     return false;
   }
 
-  getRules = (): NotificationRule[] => {
-    if (!this.checkInitialized()) return [];
+  getRules(): NotificationRule[] {
     return [...this.defaultRules];
   }
 
-  updateRule = (ruleId: string, updates: Partial<NotificationRule>): boolean => {
-    if (!this.checkInitialized()) return false;
+  updateRule(ruleId: string, updates: Partial<NotificationRule>): boolean {
     const ruleIndex = this.defaultRules.findIndex(r => r.id === ruleId);
     if (ruleIndex !== -1) {
       this.defaultRules[ruleIndex] = { ...this.defaultRules[ruleIndex], ...updates };
@@ -359,30 +340,29 @@ export class CriticalSignalNotificationService {
     return false;
   }
 
-  clearEvents = (): void => {
+  clearEvents(): void {
     if (!this.checkInitialized()) return;
     this.events = [];
     this.cooldownMap.clear();
   }
 
-  getUnacknowledgedCount = (): number => {
+  getUnacknowledgedCount(): number {
     if (!this.checkInitialized()) return 0;
     return this.events.filter(e => !e.acknowledged).length;
   }
 
-  getCriticalAlertsCount = (): number => {
+  getCriticalAlertsCount(): number {
     if (!this.checkInitialized()) return 0;
     return this.events.filter(e => 
       e.signal.severity === 'critical' && !e.acknowledged
     ).length;
   }
 
-  getNotificationRules = (): NotificationRule[] => {
-    if (!this.checkInitialized()) return [];
+  getNotificationRules(): NotificationRule[] {
     return this.getRules();
   }
 
-  getStats = () => {
+  getStats() {
     if (!this.checkInitialized()) {
       return {
         totalEvents: 0,
@@ -395,6 +375,7 @@ export class CriticalSignalNotificationService {
         avgResponseTime: 0
       };
     }
+
     const totalEvents = this.events.length;
     const unacknowledged = this.getUnacknowledgedCount();
     const criticalSignals = this.getCriticalAlertsCount();
@@ -460,26 +441,9 @@ export class CriticalSignalNotificationService {
     };
   }
 
-  updateNotificationRule = (ruleId: string, updates: Partial<NotificationRule>): boolean => {
-    if (!this.checkInitialized()) return false;
+  updateNotificationRule(ruleId: string, updates: Partial<NotificationRule>): boolean {
     return this.updateRule(ruleId, updates);
   }
-
-  // Test method to verify service is working
-  isServiceWorking = (): boolean => {
-    return this.initialized && 
-           Array.isArray(this.events) && 
-           Array.isArray(this.defaultRules) && 
-           this.cooldownMap instanceof Map;
-  }
 }
 
-// Create and export the singleton instance
 export const criticalSignalNotificationService = new CriticalSignalNotificationService();
-
-// Verify service is properly initialized
-if (!criticalSignalNotificationService.isServiceWorking()) {
-  console.error('Critical signal notification service failed to initialize properly');
-} else {
-  console.log('Critical signal notification service initialized successfully');
-}
