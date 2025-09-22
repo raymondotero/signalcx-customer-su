@@ -21,6 +21,7 @@ import { ROIDashboard } from '@/components/ROIDashboard';
 import { DataSyncScheduler } from '@/components/DataSyncScheduler';
 import { IntegrationWizard } from '@/components/IntegrationWizard';
 import { CriticalSignalMonitor } from '@/components/CriticalSignalMonitor';
+import { PortfolioAnalysisExport } from '@/components/PortfolioAnalysisExport';
 import HelpGuide from '@/components/HelpGuide';
 import { notificationService } from '@/services/notificationService';
 
@@ -408,6 +409,7 @@ function App() {
               </div>
               
               <ROIDashboard />
+              <PortfolioAnalysisExport accounts={accounts} />
               <DataSyncScheduler />
               <IntegrationWizard />
               <HelpGuide />
