@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Input } from '@/components/ui/input';
+import { Slider } from '@/components/ui/slider';
 import { 
   TrendUp, 
   TrendDown, 
@@ -31,11 +33,48 @@ import {
   Eye,
   CaretDown,
   CaretUp,
-  Minus
+  Minus,
+  Funnel,
+  Fire,
+  Timer,
+  Pulse,
+  Graph,
+  Crosshair,
+  MapPin,
+  Activity,
+  Gear,
+  MagnifyingGlass,
+  Star
 } from '@phosphor-icons/react';
 import { useSignals, useAccounts, useNBAs } from '@/hooks/useData';
 import { Signal, Account, NextBestAction } from '@/types';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
+import { 
+  LineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer, 
+  BarChart, 
+  Bar, 
+  PieChart, 
+  Pie, 
+  Cell,
+  AreaChart,
+  Area,
+  ScatterChart,
+  Scatter,
+  Treemap,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
+  FunnelChart,
+  Funnel as FunnelShape,
+  LabelList
+} from 'recharts';
 import { toast } from 'sonner';
 
 interface SignalVisualizationDialogProps {
@@ -51,6 +90,8 @@ interface SignalMetric {
   trend: 'up' | 'down' | 'stable';
   severity: 'critical' | 'high' | 'medium' | 'low';
   category: string;
+  impact: number;
+  frequency: number;
 }
 
 interface InteractiveArea {
@@ -61,6 +102,30 @@ interface InteractiveArea {
   height: number;
   signal: Signal;
   type: 'expansion' | 'risk' | 'opportunity';
+  account?: Account;
+}
+
+interface HeatMapData {
+  account: string;
+  category: string;
+  severity: number;
+  count: number;
+  value: number;
+}
+
+interface ExpansionOpportunity {
+  id: string;
+  title: string;
+  description: string;
+  potentialValue: string;
+  timeline: string;
+  probability: 'high' | 'medium' | 'low';
+  microsoftSolutions: string[];
+  requiredActions: string[];
+  signals: Signal[];
+  account: Account;
+  roi: number;
+  effort: 'low' | 'medium' | 'high';
 }
 
 const SIGNAL_CATEGORIES = [
@@ -78,6 +143,13 @@ const SIGNAL_SEVERITY_COLORS = {
   low: '#10B981'
 };
 
+const SEVERITY_WEIGHTS = {
+  critical: 4,
+  high: 3,
+  medium: 2,
+  low: 1
+};
+
 export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount }: SignalVisualizationDialogProps) {
   const { signals } = useSignals();
   const { accounts } = useAccounts();
@@ -87,8 +159,13 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
   const [selectedTimeRange, setSelectedTimeRange] = useState<string>('30d');
   const [hoveredArea, setHoveredArea] = useState<InteractiveArea | null>(null);
   const [selectedSignal, setSelectedSignal] = useState<Signal | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [severityFilter, setSeverityFilter] = useState<string[]>(['critical', 'high', 'medium', 'low']);
+  const [impactThreshold, setImpactThreshold] = useState<number[]>([0]);
+  const [viewMode, setViewMode] = useState<'grid' | 'heatmap' | 'network'>('grid');
+  const [selectedExpansion, setSelectedExpansion] = useState<ExpansionOpportunity | null>(null);
 
-  // Filter signals based on selected account and category
+  // Filter signals based on all criteria
   const filteredSignals = useMemo(() => {
     let filtered = signals;
     
@@ -99,9 +176,20 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(s => s.category === selectedCategory);
     }
+
+    if (searchTerm) {
+      filtered = filtered.filter(s => 
+        s.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        s.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (severityFilter.length < 4) {
+      filtered = filtered.filter(s => severityFilter.includes(s.severity));
+    }
     
     return filtered;
-  }, [signals, selectedAccount, selectedCategory]);
+  }, [signals, selectedAccount, selectedCategory, searchTerm, severityFilter]);
 
   // Generate signal metrics for visualization
   const signalMetrics: SignalMetric[] = useMemo(() => {
@@ -111,9 +199,44 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
       change: Math.random() * 20 - 10, // Mock change data
       trend: Math.random() > 0.5 ? 'up' : Math.random() > 0.25 ? 'down' : 'stable',
       severity: signal.severity,
-      category: signal.category || 'data'
+      category: signal.category || 'data',
+      impact: SEVERITY_WEIGHTS[signal.severity] * (Math.random() * 30 + 10),
+      frequency: Math.floor(Math.random() * 10) + 1
     }));
   }, [filteredSignals]);
+
+  // Generate expansion opportunities
+  const expansionOpportunities: ExpansionOpportunity[] = useMemo(() => {
+    const opportunities: ExpansionOpportunity[] = [];
+    
+    accounts.forEach(account => {
+      const accountSignals = signals.filter(s => s.accountId === account.id);
+      const criticalSignals = accountSignals.filter(s => s.severity === 'critical' || s.severity === 'high');
+      
+      if (criticalSignals.length >= 2) {
+        const costSignals = criticalSignals.filter(s => s.category === 'cost');
+        
+        if (costSignals.length > 0) {
+          opportunities.push({
+            id: `exp-${account.id}-cost`,
+            title: `Azure Cost Optimization - ${account.name}`,
+            description: `Comprehensive cost management addressing ${costSignals.length} critical signals`,
+            potentialValue: `$${(account.arr * 0.15).toLocaleString()}`,
+            timeline: '90-120 days',
+            probability: 'high',
+            microsoftSolutions: ['Azure Cost Management', 'Azure Advisor', 'Power BI Premium'],
+            requiredActions: ['Cost workshop', 'Assessment', 'Implementation'],
+            signals: costSignals,
+            account,
+            roi: 250 + Math.random() * 150,
+            effort: 'medium'
+          });
+        }
+      }
+    });
+    
+    return opportunities.sort((a, b) => b.roi - a.roi);
+  }, [signals, accounts]);
 
   // Generate time series data for trends
   const trendData = useMemo(() => {
@@ -135,7 +258,6 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
           ? categorySignals.reduce((sum, s) => sum + (parseFloat(s.value?.toString() || '0')), 0) / categorySignals.length
           : 0;
         
-        // Add some realistic variation over time
         const variation = (Math.random() - 0.5) * 0.1 * avgValue;
         dayData[cat.key] = Math.max(0, avgValue + variation);
       });
@@ -152,7 +274,7 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
     
     filteredSignals.forEach((signal, index) => {
       if (signal.severity === 'critical' || signal.severity === 'high') {
-        // Position areas based on signal properties
+        const account = accounts.find(a => a.id === signal.accountId);
         const x = (index % 4) * 25 + 10;
         const y = Math.floor(index / 4) * 30 + 15;
         
@@ -163,61 +285,29 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
           width: 20,
           height: 25,
           signal,
+          account,
           type: signal.severity === 'critical' ? 'risk' : (signal.category || 'data').includes('cost') ? 'expansion' : 'opportunity'
         });
       }
     });
     
     return areas;
-  }, [filteredSignals]);
+  }, [filteredSignals, accounts]);
 
-  // Generate expansion opportunities from signals
-  const generateExpansionOpportunity = (signal: Signal) => {
-    const account = accounts.find(a => a.id === signal.accountId);
-    if (!account) return;
-
-    const opportunities = [
-      {
-        title: `${signal.type} Optimization Initiative`,
-        description: `Based on ${signal.description}, implement comprehensive optimization strategy`,
-        potentialValue: `$${(Math.random() * 2000000 + 500000).toLocaleString()}`,
-        timeline: '60-90 days',
-        probability: signal.severity === 'critical' ? 'high' : 'medium',
-        microsoftSolutions: [
-          'Azure Cost Management',
-          'Microsoft Power BI',
-          'Azure Advisor',
-          'Microsoft Purview'
-        ],
-        requiredActions: [
-          'Executive stakeholder alignment',
-          'Technical assessment and planning',
-          'Pilot program implementation',
-          'ROI measurement and validation'
-        ]
-      }
-    ];
-
-    return opportunities[0];
-  };
-
-  // Handle interactive area clicks
+  // Handle area clicks
   const handleAreaClick = (area: InteractiveArea) => {
     setSelectedSignal(area.signal);
     
     if (area.type === 'expansion') {
-      const opportunity = generateExpansionOpportunity(area.signal);
-      if (opportunity) {
-        toast.success(`Expansion opportunity identified: ${opportunity.title}`);
-      }
+      toast.success(`Expansion opportunity: ${area.signal.type}`);
     } else if (area.type === 'risk') {
       toast.warning(`Risk analysis: ${area.signal.description}`);
     } else {
-      toast.info(`Opportunity details: ${area.signal.description}`);
+      toast.info(`Opportunity: ${area.signal.description}`);
     }
   };
 
-  // Generate AI recommendations for selected signal
+  // Generate AI recommendations
   const handleGenerateRecommendations = async () => {
     if (!selectedSignal) return;
 
@@ -227,23 +317,23 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
         id: `nba-${Date.now()}`,
         accountId: selectedSignal.accountId,
         title: `Address ${selectedSignal.type} Signal`,
-        description: `Comprehensive action plan to resolve ${selectedSignal.description}`,
-        reasoning: `Based on signal analysis showing ${selectedSignal.severity} priority indicator with current value of ${selectedSignal.value}. Immediate attention required to prevent potential impact.`,
+        description: `Action plan for ${selectedSignal.description}`,
+        reasoning: `Based on ${selectedSignal.severity} priority signal requiring immediate attention`,
         priority: selectedSignal.severity === 'critical' ? 'critical' : 'high',
-        estimatedImpact: `$${(Math.random() * 1000000 + 100000).toLocaleString()} potential value`,
+        estimatedImpact: `$${(Math.random() * 1000000 + 100000).toLocaleString()}`,
         effort: selectedSignal.severity === 'critical' ? 'high' : 'medium',
         category: (selectedSignal.category || 'data').includes('cost') ? 'expansion' : 'retention',
         generatedAt: new Date().toISOString(),
         suggestedActions: [
-          `Analyze root cause of ${selectedSignal.type} signal`,
-          `Engage with ${account?.csam || 'customer success team'} for immediate response`,
-          `Implement monitoring and alerting for similar signals`,
-          `Schedule follow-up review in 30 days`
+          `Analyze ${selectedSignal.type} signal`,
+          `Engage with ${account?.csam || 'team'}`,
+          'Implement monitoring',
+          'Schedule follow-up'
         ]
       };
 
       addNBA(nba);
-      toast.success('AI recommendations generated and added to Next Best Actions');
+      toast.success('AI recommendations generated');
       
     } catch (error) {
       toast.error('Failed to generate recommendations');
@@ -256,7 +346,7 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <ChartBar className="w-5 h-5" />
-            Signal Visualization Dashboard
+            Interactive Signal Analytics Dashboard
             {selectedAccount && (
               <Badge variant="outline" className="ml-2">
                 {selectedAccount.name}
@@ -264,11 +354,21 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
             )}
           </DialogTitle>
           <DialogDescription>
-            Interactive visualization of business value signals with expansion opportunities and risk analysis
+            Comprehensive visualization of business value signals with heat maps, trends, and expansion opportunities
           </DialogDescription>
         </DialogHeader>
 
         <div className="flex gap-4 mb-4 flex-wrap">
+          <div className="flex items-center gap-2">
+            <MagnifyingGlass className="w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Search signals..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-[200px]"
+            />
+          </div>
+
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Filter by category" />
@@ -298,14 +398,21 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
             <Lightning className="w-4 h-4" />
             {filteredSignals.length} signals found
           </div>
+
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Star className="w-4 h-4" />
+            {expansionOpportunities.length} opportunities
+          </div>
         </div>
 
         <Tabs defaultValue="overview" className="flex-1 overflow-hidden">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="trends">Trends</TabsTrigger>
-            <TabsTrigger value="interactive">Interactive Map</TabsTrigger>
-            <TabsTrigger value="details">Signal Details</TabsTrigger>
+            <TabsTrigger value="heatmap">Heat Map</TabsTrigger>
+            <TabsTrigger value="opportunities">Opportunities</TabsTrigger>
+            <TabsTrigger value="interactive">Interactive</TabsTrigger>
+            <TabsTrigger value="details">Details</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-4 overflow-auto max-h-[60vh]">
@@ -358,11 +465,6 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
                                 </Badge>
                               </div>
                             ))}
-                            {categorySignals.length > 3 && (
-                              <div className="text-xs text-muted-foreground">
-                                +{categorySignals.length - 3} more...
-                              </div>
-                            )}
                           </div>
                         )}
                       </div>
@@ -394,10 +496,6 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
                       <YAxis tick={{ fontSize: 12 }} />
                       <Tooltip 
                         labelFormatter={(value) => new Date(value).toLocaleDateString()}
-                        formatter={(value: any, name: string) => [
-                          typeof value === 'number' ? value.toFixed(1) : value, 
-                          SIGNAL_CATEGORIES.find(c => c.key === name)?.label || name
-                        ]}
                       />
                       {SIGNAL_CATEGORIES.map(cat => (
                         <Line
@@ -406,7 +504,6 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
                           dataKey={cat.key}
                           stroke={cat.color}
                           strokeWidth={2}
-                          dot={{ fill: cat.color, strokeWidth: 2 }}
                         />
                       ))}
                     </LineChart>
@@ -414,66 +511,119 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card className="border-visible">
-                <CardHeader>
-                  <CardTitle className="text-sm">Signal Distribution</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-48">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={SIGNAL_CATEGORIES.map(cat => ({
-                            name: cat.label,
-                            value: filteredSignals.filter(s => s.category === cat.key).length,
-                            fill: cat.color
-                          }))}
-                          dataKey="value"
-                          nameKey="name"
-                          cx="50%"
-                          cy="50%"
-                          outerRadius={60}
-                          label={({ name, percent }) => 
-                            percent > 0 ? `${name}: ${(percent * 100).toFixed(0)}%` : ''
-                          }
-                        >
-                          {SIGNAL_CATEGORIES.map((cat, index) => (
-                            <Cell key={`cell-${index}`} fill={cat.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                </CardContent>
-              </Card>
+          <TabsContent value="heatmap" className="space-y-4 overflow-auto max-h-[60vh]">
+            <Card className="border-visible">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Fire className="w-4 h-4" />
+                  Signal Heat Map by Account
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {accounts.map(account => (
+                    <div key={account.id} className="border rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="font-medium">{account.name}</div>
+                        <Badge variant="outline">
+                          {signals.filter(s => s.accountId === account.id).length} signals
+                        </Badge>
+                      </div>
+                      <div className="grid grid-cols-5 gap-1">
+                        {SIGNAL_CATEGORIES.map(category => {
+                          const categorySignals = signals.filter(s => 
+                            s.accountId === account.id && s.category === category.key
+                          );
+                          const intensity = categorySignals.length;
+                          const opacityLevel = Math.min(intensity / 5, 1);
+                          
+                          return (
+                            <div
+                              key={category.key}
+                              className="h-12 rounded flex items-center justify-center text-xs text-white font-bold cursor-pointer"
+                              style={{
+                                backgroundColor: category.color,
+                                opacity: Math.max(opacityLevel, 0.1)
+                              }}
+                              title={`${category.label}: ${intensity} signals`}
+                              onClick={() => {
+                                setSelectedCategory(category.key);
+                                if (intensity > 0) {
+                                  toast.info(`${category.label}: ${intensity} signals`);
+                                }
+                              }}
+                            >
+                              {intensity}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-              <Card className="border-visible">
-                <CardHeader>
-                  <CardTitle className="text-sm">Severity Breakdown</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-48">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart
-                        data={Object.entries(SIGNAL_SEVERITY_COLORS).map(([severity, color]) => ({
-                          severity,
-                          count: filteredSignals.filter(s => s.severity === severity).length,
-                          fill: color
-                        }))}
+          <TabsContent value="opportunities" className="space-y-4 overflow-auto max-h-[60vh]">
+            <div className="grid gap-4">
+              {expansionOpportunities.map(opportunity => (
+                <Card key={opportunity.id} className="border-visible">
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle className="text-lg">{opportunity.title}</CardTitle>
+                        <div className="flex items-center gap-2 mt-2">
+                          <Badge variant="secondary">{opportunity.account.name}</Badge>
+                          <Badge variant={opportunity.probability === 'high' ? 'default' : 'outline'}>
+                            {opportunity.probability} probability
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-2xl font-bold text-green-600">
+                          {opportunity.potentialValue}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          ROI: {opportunity.roi.toFixed(0)}%
+                        </div>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      {opportunity.description}
+                    </p>
+                    <div className="flex justify-end">
+                      <Button 
+                        size="sm" 
+                        onClick={() => {
+                          const nba: NextBestAction = {
+                            id: `nba-${Date.now()}`,
+                            accountId: opportunity.account.id,
+                            title: opportunity.title,
+                            description: opportunity.description,
+                            reasoning: `Expansion opportunity with ${opportunity.roi.toFixed(0)}% ROI`,
+                            priority: 'high',
+                            estimatedImpact: opportunity.potentialValue,
+                            effort: opportunity.effort,
+                            category: 'expansion',
+                            generatedAt: new Date().toISOString(),
+                            suggestedActions: opportunity.requiredActions
+                          };
+                          addNBA(nba);
+                          toast.success('Opportunity added to Next Best Actions');
+                        }}
                       >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="severity" tick={{ fontSize: 12 }} />
-                        <YAxis tick={{ fontSize: 12 }} />
-                        <Tooltip />
-                        <Bar dataKey="count" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </CardContent>
-              </Card>
+                        <Brain className="w-3 h-3 mr-1" />
+                        Create NBA
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </TabsContent>
 
@@ -483,15 +633,11 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
                 <CardTitle className="flex items-center gap-2">
                   <Target className="w-4 h-4" />
                   Interactive Signal Map
-                  <Badge variant="outline" className="ml-2">
-                    Click areas to explore
-                  </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="relative bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-6 min-h-[400px]">
                   <svg width="100%" height="400" viewBox="0 0 100 100" className="absolute inset-0">
-                    {/* Background grid */}
                     <defs>
                       <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
                         <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#e5e7eb" strokeWidth="0.5"/>
@@ -499,7 +645,6 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
                     </defs>
                     <rect width="100" height="100" fill="url(#grid)" />
                     
-                    {/* Interactive areas */}
                     {interactiveAreas.map(area => (
                       <g key={area.id}>
                         <rect
@@ -512,19 +657,11 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
                             area.type === 'risk' ? '#EF4444' : '#3B82F6'
                           }
                           fillOpacity={hoveredArea?.id === area.id ? 0.8 : 0.6}
-                          stroke={
-                            area.type === 'expansion' ? '#059669' :
-                            area.type === 'risk' ? '#DC2626' : '#2563EB'
-                          }
-                          strokeWidth="1"
-                          rx="2"
                           className="cursor-pointer transition-all duration-200"
                           onMouseEnter={() => setHoveredArea(area)}
                           onMouseLeave={() => setHoveredArea(null)}
                           onClick={() => handleAreaClick(area)}
                         />
-                        
-                        {/* Icon overlay */}
                         <text
                           x={area.x + area.width / 2}
                           y={area.y + area.height / 2}
@@ -532,7 +669,6 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
                           dominantBaseline="middle"
                           fontSize="6"
                           fill="white"
-                          className="pointer-events-none"
                         >
                           {area.type === 'expansion' ? '💰' : 
                            area.type === 'risk' ? '⚠️' : '💡'}
@@ -541,46 +677,11 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
                     ))}
                   </svg>
                   
-                  {/* Legend */}
-                  <div className="absolute bottom-4 left-4 bg-white rounded-lg p-3 shadow-sm border">
-                    <div className="text-xs font-medium mb-2">Signal Types</div>
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2 text-xs">
-                        <div className="w-3 h-3 bg-green-500 rounded"></div>
-                        <span>Expansion Opportunities</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs">
-                        <div className="w-3 h-3 bg-red-500 rounded"></div>
-                        <span>Risk Areas</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs">
-                        <div className="w-3 h-3 bg-blue-500 rounded"></div>
-                        <span>Optimization Opportunities</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Hover tooltip */}
                   {hoveredArea && (
                     <div className="absolute bg-white rounded-lg p-3 shadow-lg border z-10 max-w-xs">
                       <div className="font-medium text-sm">{hoveredArea.signal.type}</div>
                       <div className="text-xs text-muted-foreground mt-1">
                         {hoveredArea.signal.description}
-                      </div>
-                      <div className="flex items-center gap-2 mt-2">
-                        <Badge 
-                          variant="outline" 
-                          className="text-xs"
-                          style={{ 
-                            borderColor: SIGNAL_SEVERITY_COLORS[hoveredArea.signal.severity],
-                            color: SIGNAL_SEVERITY_COLORS[hoveredArea.signal.severity]
-                          }}
-                        >
-                          {hoveredArea.signal.severity}
-                        </Badge>
-                        <span className="text-xs text-muted-foreground">
-                          Click to explore
-                        </span>
                       </div>
                     </div>
                   )}
@@ -664,47 +765,24 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
                                 </Badge>
                               )}
                             </div>
-                            <div className="text-sm text-muted-foreground mb-2">
+                            <div className="text-sm text-muted-foreground">
                               {signal.description}
-                            </div>
-                            <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                              <div className="flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                {new Date(signal.timestamp).toLocaleDateString()}
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Database className="w-3 h-3" />
-                                {signal.category}
-                              </div>
-                              {signal.value && (
-                                <div className="flex items-center gap-1">
-                                  <Target className="w-3 h-3" />
-                                  Value: {signal.value}
-                                </div>
-                              )}
                             </div>
                           </div>
                           
-                          <div className="flex flex-col items-end gap-2">
-                            {signal.severity === 'critical' && (
-                              <Badge variant="destructive" className="text-xs">
-                                Action Required
-                              </Badge>
-                            )}
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedSignal(signal);
-                                handleGenerateRecommendations();
-                              }}
-                              className="text-xs"
-                            >
-                              <Lightbulb className="w-3 h-3 mr-1" />
-                              Analyze
-                            </Button>
-                          </div>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedSignal(signal);
+                              handleGenerateRecommendations();
+                            }}
+                            className="text-xs"
+                          >
+                            <Lightbulb className="w-3 h-3 mr-1" />
+                            Analyze
+                          </Button>
                         </div>
                       </CardContent>
                     </Card>
