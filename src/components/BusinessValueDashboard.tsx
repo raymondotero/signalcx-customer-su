@@ -5,12 +5,13 @@ import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { CurrencyDollar, Rocket, Database, Shield, Users, TrendUp, TrendDown, Minus, Target, CheckCircle, Warning, Brain, CaretDown, CaretUp, Lightbulb, ArrowRight } from '@phosphor-icons/react';
+import { CurrencyDollar, Rocket, Database, Shield, Users, TrendUp, TrendDown, Minus, Target, CheckCircle, Warning, Brain, CaretDown, CaretUp, Lightbulb, ArrowRight, ChartBar } from '@phosphor-icons/react';
 import { useSignals, useNBAs, useAccounts, useAgentMemory } from '@/hooks/useData';
 import { useKV } from '@github/spark/hooks';
 import { Signal, NextBestAction, Account, AIRecommendation, SignalAnalysis } from '@/types';
 import { TargetSettingsDialog, SignalTarget } from '@/components/TargetSettingsDialog';
 import { AIRecommendationsDialog } from '@/components/AIRecommendationsDialog';
+import { SignalVisualizationDialog } from '@/components/SignalVisualizationDialog';
 import { getSparkAIStatus, createAIPrompt, callSparkAI, formatSparkError, SparkAIError } from '@/lib/sparkAI';
 import { toast } from 'sonner';
 
@@ -47,6 +48,8 @@ export function BusinessValueDashboard() {
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [selectedSignal, setSelectedSignal] = useState<Signal | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [visualizationDialogOpen, setVisualizationDialogOpen] = useState(false);
+  const [selectedAccountForViz, setSelectedAccountForViz] = useState<Account | undefined>(undefined);
   const [aiRecommendations, setAiRecommendations] = useState<AIRecommendation[]>([]);
   const [aiAnalysis, setAiAnalysis] = useState<SignalAnalysis | null>(null);
   const [isLoadingAI, setIsLoadingAI] = useState(false);
@@ -630,7 +633,18 @@ Return JSON with this structure:
               </Badge>
             )}
           </div>
-          <TargetSettingsDialog />
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setVisualizationDialogOpen(true)}
+              className="flex items-center gap-2 text-blue-700 border-blue-200 hover:bg-blue-50"
+            >
+              <ChartBar className="w-4 h-4" />
+              Visual Analytics
+            </Button>
+            <TargetSettingsDialog />
+          </div>
         </div>
       </CardHeader>
       
@@ -753,15 +767,30 @@ Return JSON with this structure:
                                   )}
                                 </div>
                                 
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => generateRecommendationsForSignal(signal)}
-                                  className="text-xs h-7"
-                                >
-                                  <Lightbulb className="w-3 h-3 mr-1" />
-                                  View AI Recommendations
-                                </Button>
+                                <div className="flex items-center gap-1">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => {
+                                      const account = accounts.find(a => a.id === signal.accountId);
+                                      setSelectedAccountForViz(account);
+                                      setVisualizationDialogOpen(true);
+                                    }}
+                                    className="text-xs h-7"
+                                  >
+                                    <ChartBar className="w-3 h-3 mr-1" />
+                                    Visualize
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => generateRecommendationsForSignal(signal)}
+                                    className="text-xs h-7"
+                                  >
+                                    <Lightbulb className="w-3 h-3 mr-1" />
+                                    View AI Recommendations
+                                  </Button>
+                                </div>
                               </div>
                               
                               {signalMap.recommendations.length > 0 && (
@@ -868,6 +897,13 @@ Return JSON with this structure:
         onRetry={handleRetryAI}
         onAccept={handleAcceptSignal}
         onReject={handleRejectSignal}
+      />
+
+      {/* Signal Visualization Dialog */}
+      <SignalVisualizationDialog
+        open={visualizationDialogOpen}
+        onOpenChange={setVisualizationDialogOpen}
+        selectedAccount={selectedAccountForViz}
       />
     </Card>
   );

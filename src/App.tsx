@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { ArrowClockwise, Database, Shield, Activity, Brain, Target } from '@phosphor-icons/react';
+import { ArrowClockwise, Database, Shield, Activity, Brain, Target, ChartBar } from '@phosphor-icons/react';
 import { AccountsTable } from '@/components/AccountsTable';
 import { NBADisplay } from '@/components/NBADisplay';
 import { LiveSignals } from '@/components/LiveSignals';
@@ -23,6 +23,7 @@ import { IntegrationWizard } from '@/components/IntegrationWizard';
 import { CriticalSignalMonitor } from '@/components/CriticalSignalMonitor';
 import { PortfolioAnalysisExport } from '@/components/PortfolioAnalysisExport';
 import HelpGuide from '@/components/HelpGuide';
+import { SignalVisualizationDialog } from '@/components/SignalVisualizationDialog';
 import { notificationService } from '@/services/notificationService';
 
 import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
@@ -41,6 +42,7 @@ import { Toaster } from '@/components/ui/sonner';
 function App() {
   const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
   const [selectedNBA, setSelectedNBA] = useState<NextBestAction | null>(null);
+  const [signalVisualizationOpen, setSignalVisualizationOpen] = useState(false);
   const { accounts, resetAccounts } = useAccounts();
   const { setNBAs } = useNBAs();
   const { clearMemory, addMemoryEntry, setMemory } = useAgentMemory();
@@ -411,6 +413,15 @@ function App() {
               <ROIDashboard />
               <PortfolioAnalysisExport accounts={accounts} />
               <DataSyncScheduler />
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setSignalVisualizationOpen(true)}
+                className="flex items-center gap-2 text-purple-700 border-purple-200 hover:bg-purple-50"
+              >
+                <ChartBar className="w-4 h-4" />
+                Signal Analytics
+              </Button>
               <IntegrationWizard />
               <HelpGuide />
               <CSVUpload />
@@ -649,6 +660,13 @@ function App() {
           </div>
         </div>
       </div>
+
+      {/* Signal Visualization Dialog */}
+      <SignalVisualizationDialog
+        open={signalVisualizationOpen}
+        onOpenChange={setSignalVisualizationOpen}
+        selectedAccount={selectedAccount || undefined}
+      />
     </div>
   );
 }
