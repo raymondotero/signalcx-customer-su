@@ -583,15 +583,24 @@ export function useAgentMemory() {
 // Helper function to generate enhanced signals based on accounts
 export function generateEnhancedSignals(accounts: Account[]): Signal[] {
   const signals: Signal[] = [];
+  const categories = ['cost', 'agility', 'data', 'risk', 'culture'] as const;
   
   accounts.forEach(account => {
-    // Generate 5-8 signals per account for demo purposes
-    const signalCount = Math.floor(Math.random() * 4) + 5;
-    
-    for (let i = 0; i < signalCount; i++) {
-      const signal = generateBusinessValueSignal(account.id, account.name);
-      signals.push(signal);
-    }
+    // Generate signals across all categories for better heat map visualization
+    categories.forEach(category => {
+      // Generate 2-4 signals per category per account
+      const signalCount = Math.floor(Math.random() * 3) + 2;
+      
+      for (let i = 0; i < signalCount; i++) {
+        const signal = generateBusinessValueSignal(account.id, account.name);
+        // Override category to ensure distribution
+        signal.category = category;
+        // Vary severity for better heat map visualization
+        const severityOptions: Array<'low' | 'medium' | 'high' | 'critical'> = ['low', 'medium', 'high', 'critical'];
+        signal.severity = severityOptions[Math.floor(Math.random() * severityOptions.length)];
+        signals.push(signal);
+      }
+    });
     
     // Add industry-specific signals
     const industrySignal = generateIndustrySpecificSignal(account.id, account.name, account.industry);

@@ -1,5 +1,39 @@
 import { Signal } from '@/types';
 
+// Signal category definitions with metadata
+export const signalCategories = {
+  cost: {
+    name: 'Cost Optimization',
+    description: 'Financial efficiency and cost management signals',
+    color: 'bg-green-500',
+    icon: '💰'
+  },
+  agility: {
+    name: 'Business Agility', 
+    description: 'Development velocity and operational efficiency signals',
+    color: 'bg-blue-500',
+    icon: '⚡'
+  },
+  data: {
+    name: 'Data Intelligence',
+    description: 'Data quality, analytics, and AI adoption signals', 
+    color: 'bg-purple-500',
+    icon: '📊'
+  },
+  risk: {
+    name: 'Risk & Compliance',
+    description: 'Security, compliance, and operational risk signals',
+    color: 'bg-red-500', 
+    icon: '🛡️'
+  },
+  culture: {
+    name: 'Digital Culture',
+    description: 'Adoption, training, and change management signals',
+    color: 'bg-orange-500',
+    icon: '👥'
+  }
+} as const;
+
 // Business value signal definitions organized by category
 export const SIGNAL_CATALOG = {
   cost: [

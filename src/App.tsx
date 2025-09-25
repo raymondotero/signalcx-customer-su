@@ -158,28 +158,13 @@ function App() {
   const handleRestoreFullData = async () => {
     try {
       // Import the enhanced signal generation functions
-      const { generateBusinessValueSignal, generateIndustrySpecificSignal } = await import('@/services/signalCatalog');
+      const { generateEnhancedSignals } = await import('@/hooks/useData');
       
       // Reset accounts first
       resetAccounts();
       
-      // Generate enhanced signals for all accounts
-      const enhancedSignals: any[] = [];
-      sampleAccounts.forEach(account => {
-        // Generate 8-12 business value signals per account
-        const signalCount = Math.floor(Math.random() * 5) + 8;
-        
-        for (let i = 0; i < signalCount; i++) {
-          const signal = generateBusinessValueSignal(account.id, account.name);
-          enhancedSignals.push(signal);
-        }
-        
-        // Add 2-3 industry-specific signals
-        for (let i = 0; i < 3; i++) {
-          const industrySignal = generateIndustrySpecificSignal(account.id, account.name, account.industry);
-          enhancedSignals.push(industrySignal);
-        }
-      });
+      // Generate enhanced signals for all accounts with proper category distribution
+      const enhancedSignals = generateEnhancedSignals(sampleAccounts);
       
       // Set the signals using the hook
       setSignals(enhancedSignals);
@@ -382,6 +367,21 @@ function App() {
                     🔔 Test Integrations
                   </Button>
                 )}
+                
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={async () => {
+                    // Generate enhanced signals with proper category distribution
+                    const { generateEnhancedSignals } = await import('@/hooks/useData');
+                    const enhancedSignals = generateEnhancedSignals(accounts);
+                    setSignals(enhancedSignals);
+                    toast.success(`Generated ${enhancedSignals.length} signals across all categories for heat map visualization`);
+                  }}
+                  className="text-purple-700 border-purple-200 hover:bg-purple-50"
+                >
+                  🔥 Generate Heat Map Data
+                </Button>
                 
                 <Button 
                   size="sm"

@@ -75,6 +75,7 @@ import {
   Funnel as FunnelShape,
   LabelList
 } from 'recharts';
+import { SignalHeatMap } from '@/components/SignalHeatMap';
 import { toast } from 'sonner';
 
 interface SignalVisualizationDialogProps {
@@ -514,57 +515,7 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
           </TabsContent>
 
           <TabsContent value="heatmap" className="space-y-4 overflow-auto max-h-[60vh]">
-            <Card className="border-visible">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Fire className="w-4 h-4" />
-                  Signal Heat Map by Account
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {accounts.map(account => (
-                    <div key={account.id} className="border rounded-lg p-3">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="font-medium">{account.name}</div>
-                        <Badge variant="outline">
-                          {signals.filter(s => s.accountId === account.id).length} signals
-                        </Badge>
-                      </div>
-                      <div className="grid grid-cols-5 gap-1">
-                        {SIGNAL_CATEGORIES.map(category => {
-                          const categorySignals = signals.filter(s => 
-                            s.accountId === account.id && s.category === category.key
-                          );
-                          const intensity = categorySignals.length;
-                          const opacityLevel = Math.min(intensity / 5, 1);
-                          
-                          return (
-                            <div
-                              key={category.key}
-                              className="h-12 rounded flex items-center justify-center text-xs text-white font-bold cursor-pointer"
-                              style={{
-                                backgroundColor: category.color,
-                                opacity: Math.max(opacityLevel, 0.1)
-                              }}
-                              title={`${category.label}: ${intensity} signals`}
-                              onClick={() => {
-                                setSelectedCategory(category.key);
-                                if (intensity > 0) {
-                                  toast.info(`${category.label}: ${intensity} signals`);
-                                }
-                              }}
-                            >
-                              {intensity}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <SignalHeatMap selectedAccount={selectedAccount} />
           </TabsContent>
 
           <TabsContent value="opportunities" className="space-y-4 overflow-auto max-h-[60vh]">
