@@ -104,11 +104,11 @@ export function CriticalSignalMonitor() {
         <CardContent>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div className="text-center">
-              <div className="text-2xl font-bold text-red-600">{criticalCount}</div>
+              <div className="text-2xl font-bold text-red-600">{String(criticalCount)}</div>
               <div className="text-muted-foreground">Critical Alerts</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-primary">{stats.last24Hours || 0}</div>
+              <div className="text-2xl font-bold text-primary">{String(stats.last24Hours || 0)}</div>
               <div className="text-muted-foreground">Last 24h</div>
             </div>
           </div>
@@ -126,7 +126,7 @@ export function CriticalSignalMonitor() {
             <CardTitle>Critical Signal Monitor</CardTitle>
             {unacknowledgedCount > 0 && (
               <Badge variant="destructive" className="animate-pulse">
-                {unacknowledgedCount} Active Alerts
+                {String(unacknowledgedCount)} Active Alerts
               </Badge>
             )}
           </div>
@@ -199,8 +199,8 @@ export function CriticalSignalMonitor() {
                                 <Clock className="w-3 h-3" />
                                 {formatDistanceToNow(new Date(event.timestamp), { addSuffix: true })}
                               </span>
-                              <span>ARR: ${(event.account.arr / 1000000).toFixed(1)}M</span>
-                              <span>Health: {event.account.healthScore}/100</span>
+                              <span>ARR: ${String((event.account.arr / 1000000).toFixed(1))}M</span>
+                              <span>Health: {String(event.account.healthScore)}/100</span>
                             </div>
                           </div>
                         </div>

@@ -760,8 +760,8 @@ Return JSON with this structure:
                                   {signal.value !== undefined && (
                                     <span className="text-xs text-muted-foreground">
                                       {typeof signal.value === 'number' && signal.unit === '%' ? 
-                                        `${signal.value.toFixed(1)}${signal.unit}` : 
-                                        `${signal.value}${signal.unit}`
+                                        `${signal.value.toFixed(1)}${signal.unit || ''}` : 
+                                        `${String(signal.value)}${signal.unit || ''}`
                                       }
                                     </span>
                                   )}

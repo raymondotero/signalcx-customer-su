@@ -88,7 +88,7 @@ export function AIRecommendationsDialog({
                     </Badge>
                     {signal.value !== undefined && (
                       <Badge variant="outline">
-                        {signal.value}{signal.unit || ''}
+                        {String(signal.value)}{signal.unit || ''}
                       </Badge>
                     )}
                   </div>

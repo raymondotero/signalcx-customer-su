@@ -398,12 +398,12 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
 
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Lightning className="w-4 h-4" />
-            {filteredSignals.length} signals found
+            {String(filteredSignals.length)} signals found
           </div>
 
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Star className="w-4 h-4" />
-            {expansionOpportunities.length} opportunities
+            {String(expansionOpportunities.length)} opportunities
           </div>
         </div>
 
@@ -436,16 +436,16 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
                     <CardContent>
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-2xl font-bold">{categorySignals.length}</span>
+                          <span className="text-2xl font-bold">{String(categorySignals.length)}</span>
                           <div className="flex gap-1">
                             {criticalCount > 0 && (
                               <Badge variant="destructive" className="text-xs px-1">
-                                {criticalCount} Critical
+                                {String(criticalCount)} Critical
                               </Badge>
                             )}
                             {highCount > 0 && (
                               <Badge variant="secondary" className="text-xs px-1">
-                                {highCount} High
+                                {String(highCount)} High
                               </Badge>
                             )}
                           </div>

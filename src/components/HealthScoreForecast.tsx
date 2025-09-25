@@ -518,7 +518,7 @@ export function HealthScoreForecast({ accounts, selectedAccount }: ForecastingPr
                 {progressStep}
               </p>
               <p className="text-xs font-medium">
-                {progressPercent.toFixed(1)}%
+                {String(progressPercent.toFixed(1))}%
               </p>
             </div>
             <Progress value={progressPercent} className="h-2" />
@@ -541,7 +541,7 @@ export function HealthScoreForecast({ accounts, selectedAccount }: ForecastingPr
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-muted-foreground">Current Score</p>
-                <p className="text-2xl font-bold">{selectedForecast.currentScore}</p>
+                <p className="text-2xl font-bold">{String(selectedForecast.currentScore)}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Predicted Status</p>
@@ -555,7 +555,7 @@ export function HealthScoreForecast({ accounts, selectedAccount }: ForecastingPr
               <div className="flex items-center justify-between mb-2">
                 <p className="text-sm font-medium">Detailed Forecast Breakdown</p>
                 <Badge variant="outline">
-                  {selectedForecast.confidence.toFixed(1)}% confidence
+                  {String(selectedForecast.confidence.toFixed(1))}% confidence
                 </Badge>
               </div>
               
@@ -563,7 +563,7 @@ export function HealthScoreForecast({ accounts, selectedAccount }: ForecastingPr
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>30 days</span>
-                    <span className="font-medium">{selectedForecast.forecastedScores.days30}</span>
+                    <span className="font-medium">{String(selectedForecast.forecastedScores.days30)}</span>
                   </div>
                   <Progress value={selectedForecast.forecastedScores.days30} />
                 </div>
@@ -571,7 +571,7 @@ export function HealthScoreForecast({ accounts, selectedAccount }: ForecastingPr
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>60 days</span>
-                    <span className="font-medium">{selectedForecast.forecastedScores.days60}</span>
+                    <span className="font-medium">{String(selectedForecast.forecastedScores.days60)}</span>
                   </div>
                   <Progress value={selectedForecast.forecastedScores.days60} />
                 </div>
@@ -579,7 +579,7 @@ export function HealthScoreForecast({ accounts, selectedAccount }: ForecastingPr
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>90 days</span>
-                    <span className="font-medium">{selectedForecast.forecastedScores.days90}</span>
+                    <span className="font-medium">{String(selectedForecast.forecastedScores.days90)}</span>
                   </div>
                   <Progress value={selectedForecast.forecastedScores.days90} />
                 </div>
@@ -587,7 +587,7 @@ export function HealthScoreForecast({ accounts, selectedAccount }: ForecastingPr
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>180 days</span>
-                    <span className="font-medium">{selectedForecast.forecastedScores.days180}</span>
+                    <span className="font-medium">{String(selectedForecast.forecastedScores.days180)}</span>
                   </div>
                   <Progress value={selectedForecast.forecastedScores.days180} />
                 </div>
