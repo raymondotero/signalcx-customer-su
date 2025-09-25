@@ -24,6 +24,7 @@ import { CriticalSignalMonitor } from '@/components/CriticalSignalMonitor';
 import { PortfolioAnalysisExport } from '@/components/PortfolioAnalysisExport';
 import HelpGuide from '@/components/HelpGuide';
 import { SignalVisualizationDialog } from '@/components/SignalVisualizationDialog';
+import { PredictiveHeatMapDialog } from '@/components/PredictiveHeatMapDialog';
 import { notificationService } from '@/services/notificationService';
 
 import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
@@ -422,6 +423,7 @@ function App() {
                 <ChartBar className="w-4 h-4" />
                 Signal Analytics
               </Button>
+              <PredictiveHeatMapDialog />
               <IntegrationWizard />
               <HelpGuide />
               <CSVUpload />

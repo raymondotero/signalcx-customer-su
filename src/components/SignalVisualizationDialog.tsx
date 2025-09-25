@@ -48,6 +48,7 @@ import {
 } from '@phosphor-icons/react';
 import { useSignals, useAccounts, useNBAs } from '@/hooks/useData';
 import { Signal, Account, NextBestAction } from '@/types';
+import { PredictiveHeatMap } from './PredictiveHeatMap';
 import { 
   LineChart, 
   Line, 
@@ -407,10 +408,11 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
         </div>
 
         <Tabs defaultValue="overview" className="flex-1 overflow-hidden">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="trends">Trends</TabsTrigger>
             <TabsTrigger value="heatmap">Heat Map</TabsTrigger>
+            <TabsTrigger value="predictive">Predictive</TabsTrigger>
             <TabsTrigger value="opportunities">Opportunities</TabsTrigger>
             <TabsTrigger value="interactive">Interactive</TabsTrigger>
             <TabsTrigger value="details">Details</TabsTrigger>
@@ -516,6 +518,10 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
 
           <TabsContent value="heatmap" className="space-y-4 overflow-auto max-h-[60vh]">
             <SignalHeatMap selectedAccount={selectedAccount} />
+          </TabsContent>
+
+          <TabsContent value="predictive" className="space-y-4 overflow-auto max-h-[60vh]">
+            <PredictiveHeatMap />
           </TabsContent>
 
           <TabsContent value="opportunities" className="space-y-4 overflow-auto max-h-[60vh]">
