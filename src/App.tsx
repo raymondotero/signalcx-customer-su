@@ -56,6 +56,23 @@ function App() {
   const safeTargets = Array.isArray(targets) ? targets : [];
   const safeIntegrations = Array.isArray(integrations) ? integrations : [];
   
+  // Auto-generate enhanced signals on first load
+  React.useEffect(() => {
+    const initializeEnhancedData = async () => {
+      if (accounts.length > 0) {
+        try {
+          const { generateEnhancedSignals } = await import('@/hooks/useData');
+          const enhancedSignals = generateEnhancedSignals(accounts);
+          setSignals(enhancedSignals);
+        } catch (error) {
+          console.error('Error generating enhanced signals:', error);
+        }
+      }
+    };
+    
+    initializeEnhancedData();
+  }, [accounts.length, setSignals]);
+  
   // Initialize notification service with integrations
   React.useEffect(() => {
     notificationService.setContext({
@@ -170,7 +187,7 @@ function App() {
       // Set the signals using the hook
       setSignals(enhancedSignals);
       
-      // Generate sample NBA recommendations with correct type
+      // Generate sample NBA recommendations with correct type for expanded account base
       const enhancedNBAs: NextBestAction[] = [
         {
           id: 'nba-1',
@@ -192,20 +209,20 @@ function App() {
         },
         {
           id: 'nba-2',
-          accountId: 'acc-2',
-          title: 'Manufacturing IoT Analytics Expansion',
-          description: 'Global Manufacturing shows strong IoT signal patterns indicating readiness for predictive maintenance platform expansion.',
-          reasoning: 'IoT sensor data quality scores improved 45%, maintenance costs increased 15% YoY, and COO champion actively supports digital transformation initiatives.',
+          accountId: 'acc-12',
+          title: 'Insurance AI Fraud Detection Expansion',
+          description: 'InsureTech Solutions showing strong fraud detection signals indicating readiness for comprehensive AI platform expansion.',
+          reasoning: 'Fraud detection accuracy improved 28%, claims processing showing automation potential, and risk assessment needs indicate perfect timing for AI expansion.',
           priority: 'high',
-          estimatedImpact: '$4.2M ARR expansion',
+          estimatedImpact: '$8.2M ARR expansion',
           effort: 'high',
           category: 'expansion',
           generatedAt: new Date().toISOString(),
           suggestedActions: [
-            'Present predictive maintenance ROI study from similar manufacturers',
-            'Schedule plant visits with operations teams',
-            'Demonstrate Azure Digital Twins for manufacturing optimization',
-            'Align with their sustainability and efficiency initiatives'
+            'Present AI fraud detection ROI analysis with industry benchmarks',
+            'Schedule demo of advanced machine learning capabilities',
+            'Coordinate with risk management and actuarial teams',
+            'Align with regulatory compliance and audit requirements'
           ]
         },
         {
@@ -225,16 +242,52 @@ function App() {
             'Dedicated technical account manager assignment',
             'Quarterly business review reset with new success metrics'
           ]
+        },
+        {
+          id: 'nba-4',
+          accountId: 'acc-14',
+          title: 'BioPharm AI Drug Discovery Acceleration',
+          description: 'BioPharm Research showing optimal readiness indicators for advanced AI-powered drug discovery platform implementation.',
+          reasoning: 'Research productivity metrics improved, clinical trial success patterns emerging, and R&D team expressing strong AI adoption signals.',
+          priority: 'high',
+          estimatedImpact: '$9.2M ARR expansion',
+          effort: 'high',
+          category: 'expansion',
+          generatedAt: new Date().toISOString(),
+          suggestedActions: [
+            'Schedule AI drug discovery demonstration with Chief Scientific Officer',
+            'Present pharmaceutical industry AI success stories and ROI analysis',
+            'Coordinate technical architecture review with bioinformatics team',
+            'Align with current research pipeline and regulatory requirements'
+          ]
+        },
+        {
+          id: 'nba-5',
+          accountId: 'acc-18',
+          title: 'CyberGuard Advanced Threat Detection Enhancement',
+          description: 'CyberGuard Security demonstrating exceptional readiness for next-generation AI-powered threat detection platform.',
+          reasoning: 'Security operations efficiency increased 42%, threat detection accuracy at 96%, and SOC team actively seeking advanced analytics capabilities.',
+          priority: 'high',
+          estimatedImpact: '$7.3M ARR expansion',
+          effort: 'medium',
+          category: 'expansion',
+          generatedAt: new Date().toISOString(),
+          suggestedActions: [
+            'Demonstrate advanced AI threat hunting capabilities to CISO',
+            'Present security operations optimization ROI with industry benchmarks',
+            'Schedule technical deep-dive with security analytics team',
+            'Align with current security posture improvement initiatives'
+          ]
         }
       ];
       
       setNBAs(enhancedNBAs);
       
-      // Generate sample memory entries and add them
+      // Generate comprehensive memory entries for expanded account base
       const enhancedMemory: MemoryEntry[] = [
         {
           id: 'memory-1',
-          timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+          timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
           type: 'workflow_executed',
           accountId: 'acc-1',
           accountName: 'TechCorp Solutions',
@@ -244,22 +297,52 @@ function App() {
         },
         {
           id: 'memory-2',
-          timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+          timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
           type: 'nba_generated',
-          accountId: 'acc-2',
-          accountName: 'Global Manufacturing Inc',
-          description: 'AI detected significant increase in IoT sensor data quality scores',
-          metadata: { signalType: 'data_quality', confidence: 92 },
+          accountId: 'acc-12',
+          accountName: 'InsureTech Solutions',
+          description: 'AI detected significant fraud detection accuracy improvements and expansion readiness',
+          metadata: { signalType: 'fraud_detection', confidence: 94, expansionValue: 8200000 },
           outcome: 'success'
         },
         {
           id: 'memory-3',
-          timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+          timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
           type: 'approval_requested',
           accountId: 'acc-3',
           accountName: 'FinanceFirst Bank',
           description: 'Executive escalation approved for critical account intervention',
-          metadata: { escalationLevel: 'CVP', priority: 'critical' },
+          metadata: { escalationLevel: 'CVP', priority: 'critical', arrAtRisk: 89000000 },
+          outcome: 'success'
+        },
+        {
+          id: 'memory-4',
+          timestamp: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
+          type: 'workflow_executed',
+          accountId: 'acc-14',
+          accountName: 'BioPharm Research',
+          description: 'Drug discovery analytics platform assessment completed successfully',
+          metadata: { workflowType: 'assessment', researchEfficiencyGain: 30 },
+          outcome: 'success'
+        },
+        {
+          id: 'memory-5',
+          timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+          type: 'nba_generated',
+          accountId: 'acc-18',
+          accountName: 'CyberGuard Security',
+          description: 'Advanced threat detection expansion opportunity identified with high confidence',
+          metadata: { signalType: 'security_enhancement', confidence: 91, expansionValue: 7300000 },
+          outcome: 'success'
+        },
+        {
+          id: 'memory-6',
+          timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+          type: 'signal_processed',
+          accountId: 'acc-11',
+          accountName: 'MediaStreams Inc',
+          description: 'Content creation workflow optimization signals processed and analyzed',
+          metadata: { signalCount: 8, prioritySignals: 3, automationOpportunity: true },
           outcome: 'success'
         }
       ];
@@ -278,7 +361,7 @@ function App() {
         recommendation: true
       });
       
-      toast.success('Full data restored successfully - all enhanced signals, NBAs, and memory entries are back!');
+      toast.success(`Full data restored: ${sampleAccounts.length} diverse accounts, ${enhancedSignals.length} signals, and ${enhancedNBAs.length} NBA recommendations loaded!`);
       
     } catch (error) {
       console.error('Error restoring data:', error);
@@ -293,9 +376,10 @@ function App() {
     const totalARR = accounts.reduce((sum, a) => sum + a.arr, 0);
     
     // Calculate stable portfolio QoQ growth based on account composition (quarterly rates)
-    const avgGrowthGood = 3.1; // Good accounts average ~3.1% quarterly growth (12.3% annual)
-    const avgGrowthWatch = 1.4; // Watch accounts average ~1.4% quarterly growth (5.7% annual)
-    const avgGrowthRisk = -0.3; // At Risk accounts average ~-0.3% quarterly growth (-1.2% annual)
+    // More realistic calculations for larger, diverse portfolio
+    const avgGrowthGood = 2.8; // Good accounts average ~2.8% quarterly growth (11.7% annual)
+    const avgGrowthWatch = 1.2; // Watch accounts average ~1.2% quarterly growth (4.9% annual)
+    const avgGrowthRisk = -0.4; // At Risk accounts average ~-0.4% quarterly growth (-1.6% annual)
     
     const weightedGrowth = accounts.length > 0 ? 
       (good * avgGrowthGood + watch * avgGrowthWatch + risk * avgGrowthRisk) / accounts.length : 0;
@@ -377,11 +461,11 @@ function App() {
                     const { generateEnhancedSignals } = await import('@/hooks/useData');
                     const enhancedSignals = generateEnhancedSignals(accounts);
                     setSignals(enhancedSignals);
-                    toast.success(`Generated ${enhancedSignals.length} signals across all categories for heat map visualization`);
+                    toast.success(`Generated ${enhancedSignals.length} diverse signals across ${accounts.length} accounts for comprehensive heat map visualization`);
                   }}
                   className="text-purple-700 border-purple-200 hover:bg-purple-50"
                 >
-                  🔥 Generate Heat Map Data
+                  🔥 Generate Rich Signal Data
                 </Button>
                 
                 <Button 
