@@ -5,11 +5,12 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Brain, Play, Clock, Target, Sparkle, TrendUp, CheckCircle } from '@phosphor-icons/react';
+import { Brain, Play, Clock, Target, Sparkle, TrendUp, CheckCircle, Buildings } from '@phosphor-icons/react';
 import { Account, NextBestAction, Signal, MemoryEntry } from '@/types';
 import { useNBAs, useAgentMemory, useSignals } from '@/hooks/useData';
 import { useTargetAwareRecommendations } from '@/hooks/useTargetAwareRecommendations';
 import { azureOpenAI, RecommendationContext, SmartRecommendation } from '@/services/azureOpenAI';
+import { dynamics365Service } from '@/services/dynamics365Integration';
 import { WorkflowAutomation } from '@/components/WorkflowAutomation';
 import { ROICalculator } from '@/components/ROICalculator';
 import { toast } from 'sonner';
@@ -389,6 +390,17 @@ export function NBADisplay({ account, onPlanAndRun, defaultTab = "ai-recommendat
                           }}
                         />
                         <Button 
+                          variant="outline"
+                          size="sm"
+                          onClick={async () => {
+                            await dynamics365Service.createOpportunity(selectedNBA, account);
+                          }}
+                          className="text-blue-700 border-blue-200 hover:bg-blue-50"
+                        >
+                          <Buildings className="w-4 h-4 mr-1" />
+                          Create in D365
+                        </Button>
+                        <Button 
                           onClick={handlePlanAndRun}
                           size="sm"
                         >
@@ -501,6 +513,17 @@ export function NBADisplay({ account, onPlanAndRun, defaultTab = "ai-recommendat
                           >
                             Select
                           </Button>
+                          <Button 
+                            variant="outline"
+                            size="sm"
+                            onClick={async () => {
+                              await dynamics365Service.createOpportunity(rec.nba, account, { confidence: rec.confidence });
+                            }}
+                            className="text-blue-700 border-blue-200 hover:bg-blue-50"
+                          >
+                            <Buildings className="w-4 h-4 mr-1" />
+                            D365
+                          </Button>
                           <WorkflowAutomation 
                             nba={rec.nba}
                             account={account}
@@ -597,6 +620,23 @@ export function NBADisplay({ account, onPlanAndRun, defaultTab = "ai-recommendat
                         >
                           <Target className="w-4 h-4 mr-2" />
                           Use Target-Based Recommendation
+                        </Button>
+                        <Button 
+                          variant="outline"
+                          onClick={async () => {
+                            await dynamics365Service.createOpportunity(
+                              targetRecommendation.nba, 
+                              account, 
+                              { 
+                                confidence: targetRecommendation.confidence,
+                                targetImpact: targetRecommendation.targetImpact
+                              }
+                            );
+                          }}
+                          className="text-blue-700 border-blue-200 hover:bg-blue-50"
+                        >
+                          <Buildings className="w-4 h-4 mr-1" />
+                          D365
                         </Button>
                         <WorkflowAutomation 
                           nba={targetRecommendation.nba}

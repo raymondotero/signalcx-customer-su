@@ -25,6 +25,7 @@ import { PortfolioAnalysisExport } from '@/components/PortfolioAnalysisExport';
 import HelpGuide from '@/components/HelpGuide';
 import { SignalVisualizationDialog } from '@/components/SignalVisualizationDialog';
 import { PredictiveHeatMapDialog } from '@/components/PredictiveHeatMapDialog';
+import { Dynamics365ConfigDialog } from '@/components/Dynamics365ConfigDialog';
 import { notificationService } from '@/services/notificationService';
 
 import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
@@ -533,6 +534,7 @@ function App() {
                 Signal Analytics
               </Button>
               <PredictiveHeatMapDialog />
+              <Dynamics365ConfigDialog />
               <IntegrationWizard />
               <HelpGuide />
               <CSVUpload />
