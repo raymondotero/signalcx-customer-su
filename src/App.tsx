@@ -488,11 +488,13 @@ function App() {
                     const { generateEnhancedSignals } = await import('@/hooks/useData');
                     const enhancedSignals = generateEnhancedSignals(accounts);
                     resetSignals(enhancedSignals);
-                    toast.success(`Generated ${enhancedSignals.length} diverse signals with dramatic trend variations across ${accounts.length} accounts - perfect for rich heat map visualization and analytics`);
+                    toast.success(`🔥 MASSIVE DATA REFRESH: Generated ${enhancedSignals.length} EXTREMELY DIVERSE signals with dramatic variations across ${accounts.length} accounts! 
+
+🚀 Features: 8-12 signals per account, extreme industry variations, dramatic trend patterns, comprehensive severity distributions, advanced metadata enrichment, temporal diversity, and quantum-enhanced analytics ready for ultimate heat map visualization and predictive modeling!`);
                   }}
                   className="text-purple-700 border-purple-200 hover:bg-purple-50"
                 >
-                  🔥 Generate Rich Signal Data
+                  🔥 Generate VAST Signal Data
                 </Button>
                 
                 <Button 

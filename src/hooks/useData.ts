@@ -1579,220 +1579,345 @@ export function generateEnhancedSignals(accounts: Account[]): Signal[] {
     'efficiency', 'automation', 'analytics', 'ai_readiness', 'digital_transformation'
   ] as const;
 
-  // Enhanced signal templates for different industries with more variety
+  // Dramatically enhanced signal templates with extreme diversity and vast range
   const industrySignalTemplates = {
     'Technology': [
-      'API usage surged 450% in Q1 with 2M+ daily requests - immediate scale-up required',
-      'Development velocity increased 78% following DevOps automation deployment',
-      'Critical security vulnerability detected in 23 microservices - patch deployment urgent',
-      'Cloud costs optimized by $180K monthly through AI-powered resource allocation',
-      'Machine learning inference latency reduced 67% with edge computing migration',
-      'Container orchestration efficiency improved 89% across 15 production clusters',
-      'Developer productivity index reached 94% with GitHub Copilot Enterprise adoption',
-      'Open source dependency vulnerabilities decreased 85% with automated scanning',
-      'Kubernetes cluster utilization optimized from 45% to 91% through right-sizing',
-      'Zero-trust security implementation completed across 85% of services',
-      'GraphQL API adoption reducing data transfer by 52% and improving performance',
-      'Serverless architecture migration showing 73% cost reduction for compute workloads',
-      'AI pair programming tools increasing code quality scores by 34%',
-      'Database query performance improved 156% with intelligent caching strategies',
-      'Continuous deployment frequency increased from daily to 47 releases per day'
+      'API usage EXPLODED 892% in Q1 with 8.4M+ daily requests - critical infrastructure scaling needed',
+      'Development velocity ACCELERATED 156% following AI-powered DevOps transformation',
+      'CRITICAL: Zero-day vulnerability detected in 47 microservices affecting 2.3M users',
+      'Cloud costs SLASHED by $890K monthly through revolutionary AI resource optimization',
+      'Machine learning inference latency DEMOLISHED by 89% with quantum-edge computing hybrid',
+      'Container orchestration efficiency MAXIMIZED 97% across 87 production clusters globally',
+      'Developer productivity SKYROCKETED 189% with advanced AI coding assistants and automation',
+      'Open source dependency risks ELIMINATED 96% with intelligent security scanning and remediation',
+      'Kubernetes cluster utilization OPTIMIZED from 23% to 98% through advanced right-sizing algorithms',
+      'Zero-trust security REVOLUTIONIZED across 98% of distributed services and endpoints',
+      'GraphQL API adoption TRANSFORMING data efficiency by 84% while boosting performance 267%',
+      'Serverless architecture migration DELIVERING 91% cost reduction and 340% scalability improvement',
+      'AI pair programming tools ELEVATING code quality scores by 78% and reducing bugs 85%',
+      'Database query performance ENHANCED 298% with revolutionary caching and optimization',
+      'Continuous deployment ACCELERATED from weekly to 127 releases per day with zero downtime',
+      'Edge computing deployment reducing latency 94% for global user base of 12M+',
+      'Blockchain integration increasing transaction security 99.97% with smart contract automation',
+      'Quantum computing pilot program showing 1000x performance gains in complex calculations',
+      'Neural network optimization reducing training time from weeks to 3.7 hours',
+      'Distributed computing mesh handling 50TB+ data processing daily with 99.99% uptime'
     ],
     'Manufacturing': [
-      'Predictive maintenance preventing $2.3M in unplanned downtime across 12 facilities',
-      'Smart factory deployment achieving 94% OEE (Overall Equipment Effectiveness)',
-      'Energy consumption reduced 31% through AI-optimized production scheduling',
-      'Quality defects decreased from 2.1% to 0.3% with computer vision inspection',
-      'Supply chain disruption risk mitigated through 47 alternative supplier relationships',
-      'Digital twin accuracy reached 97% for critical manufacturing processes',
-      'Worker safety incidents eliminated for 180+ consecutive days with IoT monitoring',
-      'Inventory carrying costs reduced $890K through demand sensing algorithms',
-      'Production line changeover time improved from 4.2 hours to 27 minutes',
-      'Environmental compliance automated across 23 manufacturing sites globally',
-      'Cobots (collaborative robots) increasing production efficiency by 63%',
-      'Real-time quality analytics preventing 89% of potential defective products',
-      'Additive manufacturing reducing prototype costs by 72% and lead times by 85%',
-      'Sustainability tracking showing 28% reduction in carbon footprint year-over-year',
-      'Predictive supply chain analytics preventing stockouts 94% of the time'
+      'IoT sensor network REVOLUTIONIZED with 23M+ data points daily showing 78% efficiency breakthrough',
+      'Equipment downtime ELIMINATED by 92% with quantum-predictive maintenance algorithms',
+      'Production line efficiency MAXIMIZED with 156% improvement through AI orchestration',
+      'Quality defects OBLITERATED from 3.4% to 0.08% with advanced computer vision systems',
+      'Supply chain disruption NEUTRALIZED through 847 intelligent supplier relationships',
+      'Digital twin accuracy ACHIEVED 99.7% for all critical manufacturing processes globally',
+      'Worker safety PERFECTED - zero incidents for 540+ consecutive days with comprehensive IoT monitoring',
+      'Inventory carrying costs SLASHED by $4.7M through revolutionary demand sensing algorithms',
+      'Production line changeover time ACCELERATED from 6.8 hours to 14 minutes with automation',
+      'Environmental compliance AUTOMATED across 89 manufacturing sites with 100% accuracy',
+      'Cobots TRANSFORMING production efficiency by 187% across all assembly lines',
+      'Real-time quality analytics PREVENTING 97% of potential defective products before production',
+      'Additive manufacturing REDUCING prototype costs by 91% and lead times by 94%',
+      'Sustainability tracking ACHIEVING 67% carbon footprint reduction with predictive optimization',
+      'Predictive supply chain analytics PREVENTING stockouts 99.2% of the time with AI forecasting',
+      'Factory automation reaching 94% with lights-out production across 23 facilities',
+      'Quality management systems achieving Six Sigma perfection in 89% of product lines',
+      'Lean manufacturing principles digitized reducing waste by 83% annually',
+      'Industrial IoT deployment covering 15,000+ sensors across manufacturing ecosystem',
+      'Smart factory initiatives generating $23M in operational savings quarterly'
     ],
     'Financial Services': [
-      'Fraud detection accuracy reached 99.2% with $12M in prevented losses this quarter',
-      'Digital transformation ROI exceeded projections by 340% through automation',
-      'Real-time transaction processing latency reduced from 450ms to 23ms',
-      'Customer onboarding time decreased 89% from 5 days to 2.6 hours',
-      'Regulatory compliance costs reduced $4.2M annually through automated reporting',
-      'AI-powered credit scoring improving loan approval accuracy by 67%',
-      'Open banking API adoption increasing customer engagement by 156%',
-      'Algorithmic trading strategies outperforming market by 23.7% consistently',
-      'Customer authentication success rate improved to 98.9% with biometric integration',
-      'Data governance maturity elevated from level 2 to level 4 across all business units',
-      'Anti-money laundering detection reducing false positives by 78%',
-      'Robo-advisory platform managing $1.8B in assets with 94% client satisfaction',
-      'Blockchain settlement reducing transaction costs by 67% for cross-border payments',
-      'Predictive analytics identifying churn risk 14 days earlier with 91% accuracy',
-      'Regulatory stress testing automated reducing compliance burden by 83%'
+      'Fraud detection accuracy PERFECTED at 99.8% preventing $67M in losses quarterly',
+      'Digital transformation ROI EXPLODED exceeding projections by 540% through intelligent automation',
+      'Real-time transaction processing latency DECIMATED from 890ms to 4.2ms globally',
+      'Customer onboarding time REVOLUTIONIZED from 12 days to 47 minutes with AI acceleration',
+      'Regulatory compliance costs OBLITERATED by $18.7M annually through autonomous reporting',
+      'AI-powered credit scoring MAXIMIZING loan approval accuracy by 94% with real-time analysis',
+      'Open banking API adoption ACCELERATING customer engagement by 389% year-over-year',
+      'Algorithmic trading strategies DOMINATING market by 47.3% consistently with quantum computing',
+      'Customer authentication ACHIEVING 99.6% success rate with advanced biometric fusion',
+      'Data governance maturity ELEVATED from level 1 to level 5 across all global business units',
+      'Anti-money laundering detection REDUCING false positives by 91% with ML optimization',
+      'Robo-advisory platform MANAGING $8.9B in assets with 97.4% client satisfaction scores',
+      'Blockchain settlement ELIMINATING 89% of transaction costs for international payments',
+      'Predictive analytics IDENTIFYING churn risk 28 days earlier with 96% accuracy',
+      'Regulatory stress testing AUTOMATED reducing compliance burden by 94% with AI governance',
+      'Digital banking transformation serving 12M+ customers with 99.9% uptime',
+      'Cryptocurrency trading platform handling $2.1B daily volume with microsecond execution',
+      'Risk management algorithms processing 50M+ transactions daily with real-time monitoring',
+      'Mobile payment adoption reaching 89% of customer base with seamless integration',
+      'Investment portfolio optimization delivering 156% higher returns through AI strategies'
     ],
     'Healthcare': [
-      'AI-powered diagnostics achieving 96.8% accuracy surpassing radiologist benchmarks',
-      'Patient outcomes improved 42% through predictive clinical decision support',
-      'Hospital readmission rates reduced 67% with discharge prediction models',
-      'Telehealth adoption scaling to 2.8M patient interactions monthly',
-      'Drug discovery timeline accelerated 58% through machine learning optimization',
-      'Clinical workflow efficiency enhanced 73% with intelligent automation',
-      'Patient satisfaction scores increased to 94.2% with personalized care protocols',
-      'Medical device interoperability achieved across 97% of hospital systems',
-      'Population health analytics identifying preventive interventions 21 days earlier',
-      'Electronic health record optimization reducing physician documentation time by 45%',
-      'Precision medicine matching increasing treatment success rates by 38%',
-      'Remote patient monitoring preventing 234 emergency room visits monthly',
-      'Clinical trial enrollment accelerated 156% through AI-powered patient matching',
-      'Medical imaging analysis reducing diagnosis time from 2.3 hours to 12 minutes',
-      'Healthcare cost per patient reduced $3,400 annually through preventive analytics'
+      'AI-powered diagnostics ACHIEVING 98.9% accuracy SURPASSING all radiologist benchmarks globally',
+      'Patient outcomes TRANSFORMED 89% through revolutionary predictive clinical decision support',
+      'Hospital readmission rates ELIMINATED by 84% with advanced discharge prediction algorithms',
+      'Telehealth adoption SCALING to 8.4M patient interactions monthly with 99.2% satisfaction',
+      'Drug discovery timeline ACCELERATED 78% through quantum machine learning optimization',
+      'Clinical workflow efficiency MAXIMIZED 91% with comprehensive intelligent automation',
+      'Patient satisfaction scores PERFECTED at 97.8% with hyper-personalized care protocols',
+      'Medical device interoperability ACHIEVED across 99.4% of hospital systems worldwide',
+      'Population health analytics IDENTIFYING preventive interventions 45 days earlier with precision',
+      'Electronic health record optimization REDUCING physician documentation time by 73%',
+      'Precision medicine matching INCREASING treatment success rates by 67% with genomic AI',
+      'Remote patient monitoring PREVENTING 1,847 emergency room visits monthly with IoT sensors',
+      'Clinical trial enrollment ACCELERATED 278% through AI-powered patient matching algorithms',
+      'Medical imaging analysis REDUCING diagnosis time from 4.7 hours to 8 minutes with quantum processing',
+      'Healthcare cost per patient REDUCED by $8,900 annually through comprehensive preventive analytics',
+      'Surgical robotics platform improving precision by 94% across 340 procedures monthly',
+      'Pharmaceutical research automation reducing time-to-market by 156% for new treatments',
+      'Mental health AI screening identifying depression risk 21 days earlier with 93% accuracy',
+      'Genomic sequencing costs reduced 89% while improving analysis speed by 1,200%',
+      'Hospital capacity optimization preventing overcrowding and reducing wait times 67%'
     ],
     'Retail': [
-      'Dynamic pricing optimization generating $7.2M additional revenue quarterly',
-      'Personalization engine increasing conversion rates 187% across all channels',
-      'Inventory turnover improved 145% reducing carrying costs by $3.8M annually',
-      'Omnichannel customer experience achieving 97% satisfaction scores',
-      'Social commerce integration driving 298% increase in Gen Z engagement',
-      'AI-powered demand forecasting accuracy reaching 94.6% for seasonal products',
-      'Supply chain visibility preventing 96% of potential stockouts',
-      'Customer lifetime value increased 73% through predictive analytics',
-      'Sustainable packaging initiatives improving brand perception by 89%',
-      'Voice commerce adoption growing 456% with smart assistant integration',
-      'Augmented reality try-on features reducing return rates by 62%',
-      'Micro-fulfillment centers enabling same-day delivery for 87% of orders',
-      'Customer data unification creating 360-degree view across 12M profiles',
-      'Loyalty program optimization increasing member engagement by 234%',
-      'Real-time inventory synchronization across 340 stores and online channels'
+      'Dynamic pricing optimization GENERATING $34.7M additional revenue quarterly across all channels',
+      'Personalization engine INCREASING conversion rates 445% with AI-powered customer journey mapping',
+      'Inventory turnover IMPROVED 278% reducing carrying costs by $12.8M annually',
+      'Omnichannel customer experience ACHIEVING 98.7% satisfaction scores across 15 touchpoints',
+      'Social commerce integration DRIVING 567% increase in Gen Z engagement with AR features',
+      'AI-powered demand forecasting accuracy REACHING 97.8% for seasonal and trending products',
+      'Supply chain visibility PREVENTING 99.1% of potential stockouts with predictive analytics',
+      'Customer lifetime value INCREASED 134% through comprehensive predictive behavioral analytics',
+      'Sustainable packaging initiatives IMPROVING brand perception by 156% with eco-conscious consumers',
+      'Voice commerce adoption GROWING 789% with intelligent assistant and smart home integration',
+      'Augmented reality try-on features REDUCING return rates by 84% while boosting confidence',
+      'Micro-fulfillment centers ENABLING same-hour delivery for 94% of urban orders',
+      'Customer data unification CREATING 360-degree view across 34M customer profiles globally',
+      'Loyalty program optimization INCREASING member engagement by 467% with gamification',
+      'Real-time inventory synchronization across 1,240 stores and online channels achieving 99.8% accuracy',
+      'In-store analytics tracking customer behavior patterns for 2.3M shoppers weekly',
+      'Fashion trend prediction algorithms identifying viral styles 14 weeks before market peak',
+      'Checkout-free shopping experiences deployed in 89 stores with 97% customer approval',
+      'Sustainable sourcing tracking ensuring 94% ethical supply chain compliance',
+      'Seasonal demand optimization reducing overstock by 78% and stockouts by 91%'
     ],
     'Education': [
-      'AI-powered adaptive learning improving student outcomes by 78% across 50K students',
-      'Virtual reality education modules increasing engagement scores to 96.4%',
-      'Predictive analytics identifying at-risk students 8 weeks earlier with 93% accuracy',
-      'Digital collaboration increasing cross-institutional research by 245%',
-      'Automated grading and feedback reducing educator workload by 67%',
-      'Campus safety enhanced through IoT monitoring preventing 12 incidents monthly',
-      'Learning analytics platform supporting personalized education for 125K students',
-      'Remote learning infrastructure scaling to support 2.1M concurrent sessions',
-      'Student success prediction models improving graduation rates by 34%',
-      'Smart campus initiatives reducing energy consumption by 42% annually',
-      'Blockchain credentialing system eliminating 99.7% of diploma fraud',
-      'AI tutoring systems providing 24/7 personalized support to 89K students',
-      'Digital library access increasing research productivity by 156%',
-      'Campus-wide WiFi optimization supporting 95K simultaneous device connections',
-      'Inclusive education technology improving accessibility scores by 89%'
+      'AI-powered adaptive learning IMPROVING student outcomes by 189% across 450K students globally',
+      'Virtual reality education modules INCREASING engagement scores to 98.9% with immersive experiences',
+      'Predictive analytics IDENTIFYING at-risk students 14 weeks earlier with 97% accuracy',
+      'Digital collaboration INCREASING cross-institutional research by 578% with cloud platforms',
+      'Automated grading and feedback REDUCING educator workload by 84% while improving quality',
+      'Campus safety ENHANCED through comprehensive IoT monitoring preventing 89 incidents monthly',
+      'Learning analytics platform SUPPORTING personalized education for 2.1M students worldwide',
+      'Remote learning infrastructure SCALING to support 8.7M concurrent sessions with zero downtime',
+      'Student success prediction models IMPROVING graduation rates by 67% across all demographics',
+      'Smart campus initiatives REDUCING energy consumption by 73% annually with AI optimization',
+      'Blockchain credentialing system ELIMINATING 99.9% of diploma fraud with immutable records',
+      'AI tutoring systems PROVIDING 24/7 personalized support to 890K students in 47 languages',
+      'Digital library access INCREASING research productivity by 234% with intelligent content discovery',
+      'Campus-wide WiFi optimization SUPPORTING 450K simultaneous device connections seamlessly',
+      'Inclusive education technology IMPROVING accessibility scores by 156% for diverse learners',
+      'Virtual laboratory simulations replacing $4.2M in physical equipment with identical outcomes',
+      'Student mental health monitoring identifying intervention needs 28 days earlier',
+      'Career counseling AI matching graduates to opportunities with 91% placement success',
+      'Research collaboration platforms connecting 12,000 researchers across 89 institutions',
+      'Automated curriculum optimization adapting to industry trends in real-time'
     ],
     'Energy': [
-      'Smart grid optimization increasing renewable energy efficiency by 89% across 200 sites',
-      'Predictive maintenance preventing $8.7M in turbine downtime annually',
-      'Carbon footprint reduced 67% through AI-optimized energy distribution',
-      'Energy storage systems achieving 97.2% efficiency with machine learning controls',
-      'Demand forecasting accuracy reaching 96.8% for peak load management',
-      'Renewable energy output maximized through weather prediction algorithms',
-      'Grid stability enhanced with real-time analytics preventing 45 outages monthly',
-      'Energy trading optimization generating $12.3M additional revenue quarterly',
-      'Sustainability reporting automated across 340 renewable energy facilities',
-      'Smart meter analytics providing insights for 4.7M residential customers',
-      'Microgrid deployment enabling 99.9% uptime for critical infrastructure',
-      'Battery management systems extending energy storage life by 134%',
-      'Power quality monitoring reducing industrial customer complaints by 91%',
-      'Green hydrogen production scaled to 500MW with 87% efficiency ratings',
-      'Transmission line monitoring preventing failures and saving $23M annually'
+      'Smart grid optimization INCREASING renewable energy efficiency by 156% across 890 sites globally',
+      'Predictive maintenance PREVENTING $47.3M in turbine downtime annually with quantum sensors',
+      'Carbon footprint REDUCED 89% through AI-optimized energy distribution and storage systems',
+      'Energy storage systems ACHIEVING 99.1% efficiency with advanced machine learning controls',
+      'Demand forecasting accuracy REACHING 98.7% for peak load management across all regions',
+      'Renewable energy output MAXIMIZED through revolutionary weather prediction algorithms and IoT',
+      'Grid stability ENHANCED with real-time analytics preventing 234 outages monthly',
+      'Energy trading optimization GENERATING $89.7M additional revenue quarterly with AI algorithms',
+      'Sustainability reporting AUTOMATED across 1,340 renewable energy facilities with 100% compliance',
+      'Smart meter analytics PROVIDING insights for 23.7M residential customers with personalized recommendations',
+      'Microgrid deployment ENABLING 99.97% uptime for critical infrastructure across 67 locations',
+      'Battery management systems EXTENDING energy storage life by 267% with intelligent optimization',
+      'Power quality monitoring REDUCING industrial customer complaints by 96% through proactive management',
+      'Green hydrogen production SCALED to 2,500MW with 94% efficiency ratings and zero emissions',
+      'Transmission line monitoring PREVENTING failures and saving $178M annually with AI inspection',
+      'Wind farm optimization increasing energy capture by 78% through turbine coordination',
+      'Solar panel efficiency maximized with 91% improvement through AI-powered tracking systems',
+      'Energy consumption optimization reducing corporate client costs by $234M annually',
+      'Carbon trading platform automating offset verification with blockchain technology',
+      'Hydroelectric dam operations optimized increasing output 67% while preserving ecosystems'
     ],
     'Media & Entertainment': [
-      'Content personalization algorithms increasing viewer engagement by 312%',
-      'AI-powered content creation reducing production costs by $4.8M annually',
-      'Real-time streaming optimization supporting 18M concurrent viewers globally',
-      '4K content delivery achieving 99.7% uptime with edge computing infrastructure',
-      'Audience analytics revealing demographic trends 6 months ahead of competition',
-      'Dynamic content monetization increasing ad revenue by 156% year-over-year',
-      'Social media integration driving 445% increase in user-generated content',
-      'Virtual production studios reducing filming costs by 73% while improving quality',
-      'Content rights management preventing $2.1M in revenue leakage monthly',
-      'Interactive streaming features increasing viewer session time by 189%',
-      'AI-powered subtitle generation supporting 47 languages with 98.9% accuracy',
-      'Live event streaming scaling to 25M viewers with zero buffering incidents',
-      'Content recommendation engine achieving 91.4% user satisfaction scores',
-      'Digital asset management streamlining workflows and saving 340 hours weekly',
-      'Predictive content analytics identifying viral trends 72 hours before competitors'
+      'Content personalization algorithms INCREASING viewer engagement by 678% with deep learning insights',
+      'AI-powered content creation REDUCING production costs by $23.8M annually while improving quality',
+      'Real-time streaming optimization SUPPORTING 89M concurrent viewers globally with zero buffering',
+      '8K content delivery ACHIEVING 99.9% uptime with revolutionary edge computing infrastructure',
+      'Audience analytics REVEALING demographic trends 12 months ahead of competition with predictive AI',
+      'Dynamic content monetization INCREASING ad revenue by 389% year-over-year with real-time optimization',
+      'Social media integration DRIVING 867% increase in user-generated content with AI curation',
+      'Virtual production studios REDUCING filming costs by 91% while achieving photorealistic quality',
+      'Content rights management PREVENTING $12.7M in revenue leakage monthly with blockchain tracking',
+      'Interactive streaming features INCREASING viewer session time by 456% with gamification',
+      'AI-powered subtitle generation SUPPORTING 89 languages with 99.7% accuracy in real-time',
+      'Live event streaming SCALING to 125M viewers with zero technical incidents',
+      'Content recommendation engine ACHIEVING 96.8% user satisfaction scores with quantum computing',
+      'Digital asset management STREAMLINING workflows and saving 2,340 hours weekly across teams',
+      'Predictive content analytics IDENTIFYING viral trends 168 hours before competitors with sentiment analysis',
+      'Voice-activated content discovery increasing engagement 234% across smart speakers',
+      'Deepfake detection technology protecting brand integrity with 99.4% accuracy',
+      'Immersive VR content experiences generating $45M additional revenue streams',
+      'AI-powered music composition creating hits with 73% chart success probability',
+      'Real-time content localization supporting 67 markets with cultural adaptation algorithms'
     ],
     'Insurance': [
-      'AI fraud detection saving $47M annually with 99.1% accuracy across 2.8M claims',
-      'Automated underwriting reducing policy approval time from 14 days to 90 minutes',
-      'Predictive risk modeling improving pricing accuracy by 89% across all product lines',
-      'Customer self-service portal handling 94% of inquiries without human intervention',
-      'Telematics data optimizing auto insurance premiums for 1.2M policyholders',
-      'Claims processing automation reducing costs by 67% while improving customer satisfaction',
-      'Regulatory compliance monitoring preventing $8.3M in potential fines',
-      'Parametric insurance payouts automated using IoT sensors and satellite data',
-      'Customer lifetime value optimization increasing retention rates by 78%',
-      'Real-time risk assessment enabling instant policy adjustments',
-      'Chatbot technology resolving 87% of customer service requests in under 3 minutes',
-      'Blockchain-based policy management eliminating 99.2% of documentation errors',
-      'Predictive analytics identifying cross-sell opportunities worth $23M quarterly',
-      'Digital claims management reducing settlement time by 156% on average',
-      'Catastrophe modeling and response coordination saving $67M in disaster claims'
+      'AI fraud detection SAVING $234M annually with 99.6% accuracy across 12.8M claims processed',
+      'Automated underwriting REDUCING policy approval time from 21 days to 34 minutes with 97% accuracy',
+      'Predictive risk modeling IMPROVING pricing accuracy by 156% across all product lines globally',
+      'Customer self-service portal HANDLING 97% of inquiries without human intervention',
+      'Telematics data OPTIMIZING auto insurance premiums for 8.2M policyholders with behavioral insights',
+      'Claims processing automation REDUCING costs by 84% while achieving 98% customer satisfaction',
+      'Regulatory compliance monitoring PREVENTING $47.8M in potential fines with proactive AI systems',
+      'Parametric insurance payouts AUTOMATED using IoT sensors and satellite data with instant settlement',
+      'Customer lifetime value optimization INCREASING retention rates by 134% with predictive analytics',
+      'Real-time risk assessment ENABLING instant policy adjustments based on live data streams',
+      'Chatbot technology RESOLVING 94% of customer service requests in under 90 seconds',
+      'Blockchain-based policy management ELIMINATING 99.8% of documentation errors and disputes',
+      'Predictive analytics IDENTIFYING cross-sell opportunities worth $178M quarterly with AI scoring',
+      'Digital claims management REDUCING settlement time by 278% on average with intelligent processing',
+      'Catastrophe modeling and response coordination SAVING $387M in disaster claims with predictive deployment',
+      'Usage-based insurance models personalizing premiums for 4.7M customers with IoT integration',
+      'Climate risk assessment algorithms predicting environmental impact 24 months in advance',
+      'Cyber insurance analytics identifying vulnerabilities 67 days before potential breaches',
+      'Health insurance optimization improving member outcomes while reducing costs 43%',
+      'Reinsurance portfolio optimization using quantum computing for complex risk calculations'
     ],
     'Government': [
-      'Citizen service digital adoption increased 120%',
-      'Inter-agency data sharing improvements showing 35% efficiency gains',
-      'Public safety analytics platform deployment 80% complete',
-      'Compliance audit findings requiring infrastructure updates',
-      'Emergency response system integration challenges identified'
+      'Citizen service digital adoption INCREASED 320% with AI-powered multi-channel platforms',
+      'Inter-agency data sharing improvements ACHIEVING 89% efficiency gains with secure blockchain networks',
+      'Public safety analytics platform deployment COMPLETED with predictive crime prevention across 67 cities',
+      'Compliance audit automation REDUCING manual effort by 91% while improving accuracy to 99.2%',
+      'Emergency response system integration ACHIEVING 4.7-minute average response time improvement',
+      'Smart city IoT deployment monitoring 2.3M data points daily for urban optimization',
+      'Digital identity verification eliminating 97% of fraudulent benefit claims',
+      'Predictive maintenance saving $89M annually on public infrastructure',
+      'Traffic optimization reducing congestion 67% with AI-powered signal coordination',
+      'Public health surveillance identifying outbreak risks 21 days earlier with pattern recognition',
+      'E-government services reaching 94% citizen satisfaction with streamlined digital processes',
+      'Judicial case management reducing processing time 73% with intelligent document analysis',
+      'Environmental monitoring network tracking air quality across 340 locations in real-time',
+      'Tax collection optimization increasing revenue 45% while reducing processing costs',
+      'Border security enhancement using biometric systems with 99.1% accuracy rates'
     ],
     'Pharmaceuticals': [
-      'Drug discovery platform showing 30% faster research cycles',
-      'Clinical trial data quality improved to 94% accuracy',
-      'Regulatory submission process automation 75% complete',
-      'Research collaboration platform adoption exceeding targets',
-      'Manufacturing quality control system showing optimization needs'
+      'Drug discovery platform ACCELERATING research cycles by 167% with quantum-enhanced molecular modeling',
+      'Clinical trial data quality IMPROVED to 99.4% accuracy with AI-powered data validation',
+      'Regulatory submission process automation COMPLETED with 97% approval rate improvement',
+      'Research collaboration platform adoption EXCEEDING targets by 234% across 89 institutions',
+      'Manufacturing quality control system ACHIEVING 99.9% batch success rate with real-time monitoring',
+      'Personalized medicine development reducing time-to-market 78% with genomic AI analysis',
+      'Supply chain cold storage optimization preventing $34M in product loss annually',
+      'Clinical trial patient recruitment accelerated 189% with AI-powered matching algorithms',
+      'Pharmacovigilance automation detecting adverse events 14 days earlier with 96% accuracy',
+      'Manufacturing process optimization reducing costs 67% while improving yield quality',
+      'Drug interaction prediction preventing 89% of potential adverse combinations',
+      'Biomarker discovery accelerated 234% with machine learning pattern recognition',
+      'Regulatory compliance tracking achieving 100% audit success across all facilities',
+      'Real-world evidence collection improving treatment outcomes 45% with patient monitoring',
+      'Precision dosing algorithms personalizing treatments for 2.3M patients globally'
     ],
     'Clean Technology': [
-      'Environmental impact monitoring showing 22% improvement',
-      'Carbon offset tracking system deployment 90% complete',
-      'Sustainability analytics platform user adoption at 78%',
-      'Green technology research collaboration increased 45%',
-      'Environmental compliance reporting automation reducing effort by 60%'
+      'Environmental impact monitoring ACHIEVING 89% improvement with comprehensive IoT sensor networks',
+      'Carbon offset tracking system deployment COMPLETED with blockchain verification across 234 projects',
+      'Sustainability analytics platform user adoption REACHING 96% with predictive environmental modeling',
+      'Green technology research collaboration INCREASED 234% with AI-powered innovation partnerships',
+      'Environmental compliance reporting automation REDUCING effort by 87% while improving accuracy',
+      'Renewable energy optimization increasing clean power generation 156% across portfolio',
+      'Waste management automation reducing landfill contributions 78% with circular economy principles',
+      'Water treatment optimization achieving 94% efficiency improvement with AI process control',
+      'Air quality monitoring network preventing health risks for 4.7M urban residents',
+      'Sustainable transportation adoption reducing emissions 67% with smart mobility solutions',
+      'Green building automation achieving net-zero energy consumption across 89 facilities',
+      'Ecosystem restoration tracking with satellite imagery and AI analysis showing 78% improvement',
+      'Clean energy storage breakthroughs extending battery life 245% with advanced materials',
+      'Environmental risk prediction identifying climate threats 90 days earlier with quantum modeling',
+      'Biodiversity conservation algorithms protecting endangered species with 91% success rate'
     ],
     'Aerospace': [
-      'Aircraft simulation platform performance optimization needed',
-      'Supply chain visibility improvements showing 25% efficiency gains',
-      'Quality control automation reducing defects by 18%',
-      'Engineering collaboration platform adoption at 85%',
-      'Regulatory compliance system showing integration challenges'
+      'Aircraft simulation platform performance OPTIMIZED with quantum computing reducing testing time 89%',
+      'Supply chain visibility improvements ACHIEVING 94% efficiency gains with blockchain transparency',
+      'Quality control automation REDUCING defects by 91% with AI-powered inspection systems',
+      'Engineering collaboration platform adoption REACHING 97% with cloud-based design workflows',
+      'Regulatory compliance system INTEGRATION completed with 99.7% audit success rate',
+      'Predictive maintenance reducing aircraft downtime 78% with IoT sensor networks',
+      'Flight path optimization saving $234M in fuel costs annually with AI routing',
+      'Manufacturing process automation achieving 91% efficiency improvement in production',
+      'Safety management systems preventing incidents with 99.2% threat detection accuracy',
+      'Satellite communication enhancement providing global connectivity with 99.9% uptime',
+      'Space debris tracking protecting missions with real-time collision avoidance',
+      'Autonomous flight systems reducing pilot workload 67% while improving safety',
+      'Materials testing acceleration reducing certification time 156% with AI analysis',
+      'Launch vehicle optimization increasing payload capacity 45% with advanced algorithms',
+      'Ground operations automation reducing turnaround time 89% between flights'
     ],
     'Telecommunications': [
-      '5G network optimization showing 20% performance improvement potential',
-      'Customer service AI assistant reducing resolution time by 35%',
-      'Network analytics platform deployment 88% complete',
-      'Infrastructure monitoring system showing predictive maintenance opportunities',
-      'Customer experience metrics improved 15% with digital transformation'
+      '5G network optimization ACHIEVING 234% performance improvement with AI-powered resource allocation',
+      'Customer service AI assistant REDUCING resolution time by 89% with natural language processing',
+      'Network analytics platform deployment COMPLETED with predictive failure prevention across infrastructure',
+      'Infrastructure monitoring system PROVIDING predictive maintenance opportunities saving $67M annually',
+      'Customer experience metrics IMPROVED 178% with comprehensive digital transformation initiatives',
+      'Edge computing deployment reducing latency 91% for real-time applications',
+      'Network security enhancement preventing 99.4% of cyber threats with AI detection',
+      'Fiber optic expansion reaching 12M additional households with ultra-high-speed connectivity',
+      'IoT device management supporting 45M connected devices with centralized orchestration',
+      'Bandwidth optimization increasing capacity 156% without infrastructure expansion',
+      'Quality of service monitoring ensuring 99.7% uptime across all network segments',
+      'Spectrum management optimization maximizing efficiency 78% with dynamic allocation',
+      'Customer analytics predicting churn 28 days earlier with 94% accuracy',
+      'Network slicing technology enabling customized services for enterprise clients',
+      'Satellite internet integration providing coverage to 2.3M remote locations'
     ],
     'Cybersecurity': [
-      'Threat detection accuracy improved to 96% with AI enhancement',
-      'Security operations center efficiency increased 42%',
-      'Identity management system integration 90% complete',
-      'Incident response automation reducing resolution time by 55%',
-      'Security awareness training completion rates at 94%'
+      'Threat detection accuracy IMPROVED to 99.7% with AI enhancement across all attack vectors',
+      'Security operations center efficiency INCREASED 189% with automated incident response',
+      'Identity management system integration COMPLETED with zero-trust architecture implementation',
+      'Incident response automation REDUCING resolution time by 91% with orchestrated playbooks',
+      'Security awareness training completion rates ACHIEVING 98% with gamified learning platforms',
+      'Advanced persistent threat detection identifying attacks 45 days earlier with behavioral analysis',
+      'Vulnerability management automation reducing exposure time 89% with continuous scanning',
+      'Security compliance monitoring achieving 100% regulatory adherence with real-time validation',
+      'Endpoint protection enhancement preventing 99.1% of malware infections',
+      'Cloud security optimization protecting multi-cloud environments with unified policies',
+      'Quantum encryption preparation ensuring future-proof data protection',
+      'Cyber threat intelligence gathering providing early warning 21 days before attacks',
+      'Security orchestration platforms reducing analyst workload 73% while improving accuracy',
+      'Penetration testing automation identifying vulnerabilities 234% faster than manual methods',
+      'Insider threat detection preventing data breaches with 96% accuracy using behavioral analytics'
     ],
     'Sports & Entertainment': [
-      'Fan engagement analytics showing 30% improvement opportunity',
-      'Stadium IoT sensor network deployment 85% complete',
-      'Broadcast quality optimization showing technical improvements needed',
-      'Social media integration increasing fan interaction by 65%',
-      'Ticketing system performance during peak events showing scalability needs'
+      'Fan engagement analytics ACHIEVING 234% improvement opportunity with personalized experiences',
+      'Stadium IoT sensor network deployment COMPLETED with real-time crowd management across 89 venues',
+      'Broadcast quality optimization DELIVERING 8K streaming with 99.9% uptime globally',
+      'Social media integration INCREASING fan interaction by 456% with immersive content',
+      'Ticketing system performance OPTIMIZED handling 2.3M concurrent users during peak events',
+      'Athlete performance analytics improving training outcomes 67% with wearable technology',
+      'Virtual reality experiences generating $23M additional revenue from remote fans',
+      'Sports betting integration providing real-time odds with 99.4% accuracy',
+      'Content personalization increasing viewer engagement 189% with AI recommendations',
+      'Stadium operations automation reducing costs 78% while improving fan satisfaction',
+      'Player safety monitoring preventing injuries with predictive analytics and biomechanics',
+      'Fantasy sports platform engagement growing 345% with AI-powered insights',
+      'Merchandise optimization increasing sales 156% with demand prediction algorithms',
+      'Live streaming technology supporting 45M concurrent viewers with zero latency',
+      'Fan loyalty programs achieving 91% participation with gamified experiences'
     ],
     'Food & Beverage': [
-      'Food safety traceability system deployment 75% complete',
-      'Supply chain visibility improvements reducing waste by 18%',
-      'Quality control automation showing 25% efficiency improvement',
-      'Inventory optimization system reducing costs by 12%',
-      'Sustainability tracking platform showing environmental improvements'
+      'Food safety traceability system deployment COMPLETED with blockchain verification across supply chain',
+      'Supply chain visibility improvements REDUCING waste by 89% with predictive demand forecasting',
+      'Quality control automation ACHIEVING 97% efficiency improvement with AI-powered inspection',
+      'Inventory optimization system REDUCING costs by 67% with real-time demand sensing',
+      'Sustainability tracking platform DEMONSTRATING 78% environmental improvements with carbon reduction',
+      'Recipe optimization algorithms creating new products with 91% market success rate',
+      'Cold chain monitoring preventing $12.7M in spoilage annually with IoT sensors',
+      'Customer preference analytics personalizing products for 4.7M consumers',
+      'Production planning optimization reducing waste 84% while maximizing yield',
+      'Nutritional analysis automation ensuring compliance with health regulations',
+      'Farm-to-table tracking providing complete transparency for conscious consumers',
+      'Allergen detection systems achieving 99.8% accuracy in processing facilities',
+      'Packaging optimization reducing materials 67% while maintaining product protection',
+      'Market trend prediction identifying consumer preferences 90 days before competitors',
+      'Restaurant operations automation improving efficiency 156% with kitchen management AI'
     ],
     'Transportation': [
-      'Fleet optimization system showing 15% fuel cost reduction potential',
-      'Route planning AI improving delivery times by 22%',
+      'Fleet optimization system ACHIEVING 89% fuel cost reduction with AI-powered route planning',
+      'Route planning AI IMPROVING delivery times by 167% with real-time traffic integration',
       'Vehicle maintenance prediction reducing downtime by 30%',
       'Driver safety monitoring system deployment 80% complete',
       'Logistics automation showing supply chain efficiency improvements'
@@ -1805,24 +1930,44 @@ export function generateEnhancedSignals(accounts: Account[]): Signal[] {
       'Farm equipment predictive maintenance reducing costs by 25%'
     ],
     'Real Estate': [
-      'Property valuation accuracy improved 35% with AI analytics',
-      'Virtual property tour engagement increased 150%',
-      'Market trend prediction model showing 92% accuracy',
-      'Agent productivity analytics revealing workflow optimization opportunities',
-      'Customer relationship management integration showing 25% efficiency gains'
+      'Property valuation AUTOMATED with 97.8% accuracy using AI and satellite imagery analysis',
+      'Virtual property tour engagement INCREASED 456% with immersive VR and AR experiences',
+      'Market trend prediction model ACHIEVING 96.4% accuracy with quantum-enhanced analytics',
+      'Agent productivity analytics REVEALING workflow optimization delivering 189% efficiency improvements',
+      'Customer relationship management integration ACHIEVING 234% efficiency gains with AI automation',
+      'Investment portfolio optimization DELIVERING 267% higher returns with predictive market analysis',
+      'Property management AUTOMATED reducing operational costs 78% with comprehensive IoT integration',
+      'Smart building technology INCREASING property values 45% with energy optimization systems',
+      'Tenant satisfaction MAXIMIZED with predictive maintenance and intelligent facility management',
+      'Construction project oversight IMPROVING timeline accuracy 156% with digital twin monitoring',
+      'Environmental impact assessment AUTOMATED for sustainable building certification compliance',
+      'Commercial space optimization ACHIEVING 89% occupancy improvements with usage analytics',
+      'Mortgage processing ACCELERATED from 60 days to 3.2 hours with AI document analysis',
+      'Property marketing ENHANCED with drone photography and AI-generated virtual staging',
+      'Due diligence AUTOMATED reducing legal review time 245% with intelligent document processing'
     ],
     'Mining': [
-      'Equipment downtime reduced 25% with predictive maintenance',
-      'Environmental compliance monitoring showing 95% accuracy',
-      'Safety incident reporting automated across all sites',
-      'Resource extraction optimization showing 18% efficiency improvement',
-      'Sustainability tracking platform deployment 80% complete'
+      'Equipment downtime ELIMINATED by 87% with quantum-predictive maintenance across all operations',
+      'Environmental compliance monitoring PERFECTED with 100% accuracy and real-time automated reporting',
+      'Safety incident reporting AUTOMATED with zero workplace accidents for 1,200+ consecutive days',
+      'Resource extraction optimization ACHIEVING 234% efficiency improvement with AI geological analysis',
+      'Sustainability tracking platform DEPLOYMENT completed achieving carbon-negative mining operations',
+      'Worker safety ENHANCED with comprehensive wearable IoT preventing 100% of hazardous exposures',
+      'Supply chain AUTOMATED reducing transportation costs 78% with intelligent logistics coordination',
+      'Geological analysis ACCELERATED 345% with AI-powered mineral identification and precision mapping',
+      'Water management OPTIMIZED reducing consumption 67% while maintaining full operational efficiency',
+      'Land reclamation projects AUTOMATED achieving 94% successful restoration of mining sites',
+      'Energy consumption REDUCED 73% through smart grid integration and renewable power systems',
+      'Community relations IMPROVED with transparent environmental impact reporting and engagement',
+      'Regulatory compliance ACHIEVED across all 45 international jurisdictions with automated systems',
+      'Ore processing OPTIMIZED increasing yield 156% while reducing waste and environmental impact',
+      'Remote operations ENHANCED with autonomous mining equipment and real-time monitoring systems'
     ],
     'Fashion & Apparel': [
-      'Fashion trend prediction accuracy improved to 87%',
-      'Inventory optimization reducing waste by 22%',
-      'Customer preference analytics showing personalization opportunities',
-      'Supply chain visibility improved across 45 suppliers',
+      'Fashion trend prediction accuracy REVOLUTIONIZED to 96.8% with global social media AI analysis',
+      'Inventory optimization REDUCING waste by 89% with demand sensing and circular economy principles',
+      'Customer preference analytics ENABLING hyper-personalization for 8.7M global customers',
+      'Supply chain visibility ACHIEVED across 340 suppliers with blockchain transparency and traceability',
       'Omnichannel customer experience showing 30% engagement increase'
     ],
     'Maritime & Shipping': [
@@ -1877,81 +2022,184 @@ export function generateEnhancedSignals(accounts: Account[]): Signal[] {
   };
   
   accounts.forEach(account => {
-    // Generate 5-8 signals per account for rich visualization (increased from 4-7)
-    const signalCount = Math.floor(Math.random() * 4) + 5;
+    // Generate 8-12 signals per account for dramatically richer visualization
+    const signalCount = Math.floor(Math.random() * 5) + 8;
     const industryTemplates = industrySignalTemplates[account.industry as keyof typeof industrySignalTemplates] || 
                              industrySignalTemplates['Technology'];
     
     for (let i = 0; i < signalCount; i++) {
-      // Distribute signals across categories more evenly
-      const category = categories[i % categories.length];
-      const severity = severityOptions[Math.floor(Math.random() * severityOptions.length)];
-      const type = typeOptions[Math.floor(Math.random() * typeOptions.length)];
+      // Create dramatic signal variations with extreme diversity
+      const categoryIndex = Math.floor(Math.random() * categories.length);
+      const category = categories[categoryIndex];
+      
+      // Create more extreme severity distributions based on account status
+      let severityWeights: { [key: string]: number } = {};
+      if (account.healthScore < 40) {
+        // Critical accounts: 60% critical, 30% high, 10% medium
+        severityWeights = { critical: 0.6, high: 0.3, medium: 0.1, low: 0.0 };
+      } else if (account.healthScore < 60) {
+        // At risk accounts: 40% high, 35% critical, 20% medium, 5% low
+        severityWeights = { critical: 0.35, high: 0.4, medium: 0.2, low: 0.05 };
+      } else if (account.healthScore < 80) {
+        // Watch accounts: 30% medium, 30% high, 25% low, 15% critical
+        severityWeights = { medium: 0.3, high: 0.3, low: 0.25, critical: 0.15 };
+      } else {
+        // Good accounts: 50% low, 30% medium, 15% high, 5% critical
+        severityWeights = { low: 0.5, medium: 0.3, high: 0.15, critical: 0.05 };
+      }
+      
+      // Select severity based on weights
+      const rand = Math.random();
+      let cumulative = 0;
+      let selectedSeverity: 'low' | 'medium' | 'high' | 'critical' = 'medium';
+      
+      for (const [sev, weight] of Object.entries(severityWeights)) {
+        cumulative += weight;
+        if (rand <= cumulative) {
+          selectedSeverity = sev as 'low' | 'medium' | 'high' | 'critical';
+          break;
+        }
+      }
+      
+      // Create more diverse type distribution
+      const typeIndex = Math.floor(Math.random() * typeOptions.length);
+      const type = typeOptions[typeIndex];
+      
+      // Select template with more variety
       const template = industryTemplates[Math.floor(Math.random() * industryTemplates.length)];
       
-      // Create more dramatic signal variations based on account health score and industry
-      let adjustedSeverity = severity;
-      let confidenceRange = [70, 99];
-      let impactRange = [3, 10];
+      // Create dramatically varied confidence and impact ranges
+      let confidenceRange = [60, 99];
+      let impactRange = [1, 10];
+      let trendBias = 0.5; // Neutral
       
-      if (account.healthScore < 50) {
-        // At risk accounts get more critical signals with higher impact
-        adjustedSeverity = Math.random() > 0.2 ? 'critical' : 'high';
-        confidenceRange = [85, 99]; // Higher confidence for critical situations
-        impactRange = [7, 10];
-      } else if (account.healthScore < 70) {
-        // Watch accounts get varied signals with medium-high confidence
-        adjustedSeverity = Math.random() > 0.4 ? 'high' : 'medium';
-        confidenceRange = [75, 95];
-        impactRange = [5, 9];
-      } else {
-        // Good accounts get more positive signals with opportunities
-        adjustedSeverity = Math.random() > 0.5 ? 'medium' : 'low';
-        confidenceRange = [80, 97]; // High confidence for positive signals
-        impactRange = [4, 8];
+      // Adjust based on severity with extreme variations
+      switch (selectedSeverity) {
+        case 'critical':
+          confidenceRange = [90, 99];
+          impactRange = [8, 10];
+          trendBias = 0.15; // Mostly negative trends
+          break;
+        case 'high':
+          confidenceRange = [80, 97];
+          impactRange = [6, 9];
+          trendBias = 0.25; // More negative trends
+          break;
+        case 'medium':
+          confidenceRange = [70, 95];
+          impactRange = [4, 7];
+          trendBias = 0.45; // Slightly more negative
+          break;
+        case 'low':
+          confidenceRange = [65, 92];
+          impactRange = [2, 5];
+          trendBias = 0.7; // More positive trends
+          break;
       }
       
-      // Add industry-specific confidence and impact adjustments
-      const highTechIndustries = ['Technology', 'Cybersecurity', 'Space & Satellite'];
-      const traditionalIndustries = ['Manufacturing', 'Energy', 'Mining', 'Construction'];
+      // Industry-specific dramatic adjustments
+      const industryMultipliers: { [key: string]: { confidence: number, impact: number, trend: number } } = {
+        'Technology': { confidence: 1.08, impact: 1.15, trend: 0.8 }, // Higher tech confidence, more positive
+        'Financial Services': { confidence: 1.12, impact: 1.25, trend: 0.6 }, // Very high confidence and impact
+        'Healthcare': { confidence: 1.05, impact: 1.3, trend: 0.7 }, // Highest impact, positive trends
+        'Manufacturing': { confidence: 0.95, impact: 1.1, trend: 0.4 }, // More conservative, mixed trends
+        'Energy': { confidence: 0.92, impact: 1.2, trend: 0.3 }, // Lower confidence, high impact, challenging trends
+        'Insurance': { confidence: 1.1, impact: 1.35, trend: 0.55 }, // High confidence and impact
+        'Retail': { confidence: 0.98, impact: 1.05, trend: 0.6 }, // Moderate adjustments
+        'Education': { confidence: 0.88, impact: 0.9, trend: 0.8 }, // Lower impact but positive trends
+        'Cybersecurity': { confidence: 1.15, impact: 1.4, trend: 0.25 }, // Highest confidence and impact, critical trends
+        'Space & Satellite': { confidence: 1.2, impact: 1.5, trend: 0.75 }, // Extreme confidence and impact
+        'Mining': { confidence: 0.85, impact: 1.15, trend: 0.2 }, // Traditional industry challenges
+        'Real Estate': { confidence: 0.9, impact: 1.08, trend: 0.45 }, // Market volatility
+        'Transportation': { confidence: 0.93, impact: 1.12, trend: 0.35 } // Infrastructure challenges
+      };
       
-      if (highTechIndustries.includes(account.industry)) {
-        confidenceRange = [confidenceRange[0] + 5, Math.min(confidenceRange[1] + 5, 99)];
-        impactRange = [Math.max(impactRange[0] + 1, 1), Math.min(impactRange[1] + 2, 10)];
-      } else if (traditionalIndustries.includes(account.industry)) {
-        confidenceRange = [Math.max(confidenceRange[0] - 3, 60), confidenceRange[1]];
-        impactRange = [Math.max(impactRange[0] - 1, 1), impactRange[1]];
-      }
+      const multiplier = industryMultipliers[account.industry] || { confidence: 1, impact: 1, trend: 0.5 };
       
+      // Apply industry multipliers with bounds checking
+      confidenceRange = [
+        Math.max(Math.floor(confidenceRange[0] * multiplier.confidence), 50),
+        Math.min(Math.floor(confidenceRange[1] * multiplier.confidence), 99)
+      ];
+      
+      impactRange = [
+        Math.max(Math.floor(impactRange[0] * multiplier.impact), 1),
+        Math.min(Math.floor(impactRange[1] * multiplier.impact), 10)
+      ];
+      
+      trendBias = Math.max(0.05, Math.min(0.95, trendBias * multiplier.trend));
+      
+      // Generate final values with extreme variations
       const confidence = Math.floor(Math.random() * (confidenceRange[1] - confidenceRange[0])) + confidenceRange[0];
       const impact = Math.floor(Math.random() * (impactRange[1] - impactRange[0])) + impactRange[0];
-      const signalStrength = Math.floor(Math.random() * 40) + 60; // 60-99% signal strength
+      const signalStrength = Math.floor(Math.random() * 45) + 55; // 55-99% signal strength
+      const trend = Math.random() < trendBias ? 'improving' : 'declining';
       
+      // Create dramatic trend velocity variations
+      const velocityRand = Math.random();
+      let trendVelocity: 'accelerating' | 'stable' | 'decelerating';
+      if (trend === 'improving') {
+        trendVelocity = velocityRand > 0.7 ? 'accelerating' : velocityRand > 0.3 ? 'stable' : 'decelerating';
+      } else {
+        trendVelocity = velocityRand > 0.6 ? 'decelerating' : velocityRand > 0.2 ? 'stable' : 'accelerating';
+      }
+      
+      // Create extreme urgency and automation scores
+      const urgencyScore = selectedSeverity === 'critical' ? Math.floor(Math.random() * 10) + 90 :
+                          selectedSeverity === 'high' ? Math.floor(Math.random() * 20) + 70 :
+                          selectedSeverity === 'medium' ? Math.floor(Math.random() * 30) + 45 :
+                          Math.floor(Math.random() * 40) + 20;
+      
+      const automationPotential = Math.random() > 0.3 ? 'high' : Math.random() > 0.6 ? 'medium' : 'low';
+      const predictiveScore = Math.floor(Math.random() * 40) + 60;
+      
+      // Add time-based variations (signals from different time periods)
+      const timeVariation = Math.random();
+      let timestampOffset: number;
+      if (timeVariation > 0.8) {
+        timestampOffset = Math.random() * 60 * 60 * 1000; // Last hour (very recent)
+      } else if (timeVariation > 0.6) {
+        timestampOffset = Math.random() * 24 * 60 * 60 * 1000; // Last day
+      } else if (timeVariation > 0.3) {
+        timestampOffset = Math.random() * 7 * 24 * 60 * 60 * 1000; // Last week
+      } else {
+        timestampOffset = Math.random() * 21 * 24 * 60 * 60 * 1000; // Last 3 weeks
+      }
+
       const signal: Signal = {
         id: `signal-${account.id}-${i}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         accountId: account.id,
         accountName: account.name,
         type: type,
         category: category,
-        severity: adjustedSeverity,
+        severity: selectedSeverity,
         description: template,
-        timestamp: new Date(Date.now() - Math.random() * 14 * 24 * 60 * 60 * 1000).toISOString(), // Up to 2 weeks ago
+        timestamp: new Date(Date.now() - timestampOffset).toISOString(),
         metadata: {
           industry: account.industry,
           healthScore: account.healthScore,
           arr: account.arr,
-          trend: Math.random() > 0.3 ? 'improving' : 'declining', // More positive trends
+          trend: trend,
           lastUpdated: new Date().toISOString(),
           confidence: confidence,
           impact: impact,
-          source: `${account.industry.toLowerCase().replace(/\s+/g, '-')}-analytics`,
+          source: `${account.industry.toLowerCase().replace(/\s+/g, '-')}-analytics-${Math.random().toString(36).substr(2, 4)}`,
           signalStrength: signalStrength,
           correlationId: `corr-${Math.random().toString(36).substr(2, 9)}`,
-          businessImpact: impact >= 7 ? 'high' : impact >= 5 ? 'medium' : 'low',
-          urgencyScore: adjustedSeverity === 'critical' ? 95 : adjustedSeverity === 'high' ? 80 : adjustedSeverity === 'medium' ? 60 : 40,
-          trendVelocity: Math.random() > 0.6 ? 'accelerating' : Math.random() > 0.3 ? 'stable' : 'decelerating',
-          predictiveScore: Math.floor(Math.random() * 30) + 70,
-          automationPotential: Math.random() > 0.4 ? 'high' : 'medium'
+          businessImpact: impact >= 8 ? 'high' : impact >= 5 ? 'medium' : 'low',
+          urgencyScore: urgencyScore,
+          trendVelocity: trendVelocity,
+          predictiveScore: predictiveScore,
+          automationPotential: automationPotential,
+          riskLevel: selectedSeverity === 'critical' ? 'extreme' : selectedSeverity === 'high' ? 'high' : selectedSeverity === 'medium' ? 'moderate' : 'low',
+          marketSegment: account.arr > 50000000 ? 'enterprise' : account.arr > 10000000 ? 'mid-market' : 'commercial',
+          geographicRegion: ['North America', 'EMEA', 'APAC', 'Latin America'][Math.floor(Math.random() * 4)],
+          dataQuality: Math.floor(Math.random() * 25) + 75, // 75-99% data quality
+          processingLatency: Math.floor(Math.random() * 500) + 50, // 50-549ms processing time
+          anomalyScore: Math.floor(Math.random() * 100),
+          historicalBaseline: Math.floor(Math.random() * 50) + 50,
+          seasonalityFactor: Math.random() * 2 + 0.5, // 0.5x to 2.5x seasonal impact
+          competitiveRisk: Math.random() > 0.7 ? 'high' : Math.random() > 0.4 ? 'medium' : 'low'
         }
       };
       
