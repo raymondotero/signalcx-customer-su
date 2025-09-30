@@ -65,7 +65,8 @@ function App() {
           const enhancedSignals = generateEnhancedSignals(accounts);
           
           // Only set signals if we don't have any or if accounts changed significantly
-          if (!signals || signals.length === 0 || signals.length < accounts.length * 2) {
+          // Avoid interference with data restoration by checking if this is initial load
+          if (!signals || signals.length === 0 || (signals.length < accounts.length * 2 && accounts.length <= 10)) {
             resetSignals(enhancedSignals);
           }
         } catch (error) {
@@ -74,8 +75,10 @@ function App() {
       }
     };
     
-    initializeEnhancedData();
-  }, [accounts.length, signals?.length, setSignals]);
+    // Add a small delay to prevent interference with data restoration
+    const timeoutId = setTimeout(initializeEnhancedData, 100);
+    return () => clearTimeout(timeoutId);
+  }, [accounts.length]);
   
   // Initialize notification service with integrations
   React.useEffect(() => {
@@ -191,8 +194,17 @@ function App() {
       // Import the enhanced signal generation functions and sample data
       const { generateEnhancedSignals, sampleAccounts: fullSampleAccounts } = await import('@/hooks/useData');
       
-      // Reset accounts to the full expanded dataset
-      setAccounts(fullSampleAccounts);
+      // Clear existing data first to ensure clean state
+      setAccounts([]);
+      resetSignals([]);
+      setNBAs([]);
+      setMemory([]);
+      
+      // Small delay to ensure state is cleared
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      // Reset accounts to the full expanded dataset (30 accounts)
+      setAccounts([...fullSampleAccounts]); // Create new array to ensure reactivity
       
       // Generate enhanced signals for all accounts with proper category distribution
       const enhancedSignals = generateEnhancedSignals(fullSampleAccounts);
