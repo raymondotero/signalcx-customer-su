@@ -1964,7 +1964,6 @@ export function generateEnhancedSignals(accounts: Account[]): Signal[] {
       'Remote operations ENHANCED with autonomous mining equipment and real-time monitoring systems'
     ],
     'Fashion & Apparel': [
-      'Fashion trend prediction accuracy REVOLUTIONIZED to 96.8% with global social media AI analysis',
       'Inventory optimization REDUCING waste by 89% with demand sensing and circular economy principles',
       'Customer preference analytics ENABLING hyper-personalization for 8.7M global customers',
       'Supply chain visibility ACHIEVED across 340 suppliers with blockchain transparency and traceability',
@@ -1988,7 +1987,6 @@ export function generateEnhancedSignals(accounts: Account[]): Signal[] {
       'Project timeline accuracy improved 30% with BIM integration',
       'Construction safety incidents reduced 40% with IoT monitoring',
       'Resource utilization optimization showing 15% cost savings',
-      'Quality control automation reducing defects by 28%',
       'Compliance reporting automated across 85% of projects'
     ],
     'Legal Services': [
