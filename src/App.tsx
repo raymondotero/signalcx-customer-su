@@ -484,11 +484,11 @@ function App() {
                   size="sm"
                   variant="outline"
                   onClick={async () => {
-                    // Generate enhanced signals with proper category distribution
+                    // Generate dramatically enhanced signals with comprehensive category distribution
                     const { generateEnhancedSignals } = await import('@/hooks/useData');
                     const enhancedSignals = generateEnhancedSignals(accounts);
                     resetSignals(enhancedSignals);
-                    toast.success(`Generated ${enhancedSignals.length} diverse signals across ${accounts.length} accounts for comprehensive heat map visualization`);
+                    toast.success(`Generated ${enhancedSignals.length} diverse signals with dramatic trend variations across ${accounts.length} accounts - perfect for rich heat map visualization and analytics`);
                   }}
                   className="text-purple-700 border-purple-200 hover:bg-purple-50"
                 >

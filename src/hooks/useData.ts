@@ -1582,92 +1582,157 @@ export function generateEnhancedSignals(accounts: Account[]): Signal[] {
   // Enhanced signal templates for different industries with more variety
   const industrySignalTemplates = {
     'Technology': [
-      'API usage increased by 300% indicating scale-up opportunity',
-      'Development team expanded by 40% suggesting infrastructure needs',
-      'CI/CD pipeline failures increased, indicating DevOps improvement needs',
-      'Open source vulnerability scan results showing security gaps',
-      'Cloud compute costs trending 25% over budget, optimization needed',
-      'Machine learning model training time reduced 45% with GPU acceleration',
-      'Developer productivity metrics showing 30% improvement with automation',
-      'Code repository security scans revealing critical vulnerabilities',
-      'Microservices architecture adoption progressing at 65% completion',
-      'Container orchestration showing 20% resource optimization potential'
+      'API usage surged 450% in Q1 with 2M+ daily requests - immediate scale-up required',
+      'Development velocity increased 78% following DevOps automation deployment',
+      'Critical security vulnerability detected in 23 microservices - patch deployment urgent',
+      'Cloud costs optimized by $180K monthly through AI-powered resource allocation',
+      'Machine learning inference latency reduced 67% with edge computing migration',
+      'Container orchestration efficiency improved 89% across 15 production clusters',
+      'Developer productivity index reached 94% with GitHub Copilot Enterprise adoption',
+      'Open source dependency vulnerabilities decreased 85% with automated scanning',
+      'Kubernetes cluster utilization optimized from 45% to 91% through right-sizing',
+      'Zero-trust security implementation completed across 85% of services',
+      'GraphQL API adoption reducing data transfer by 52% and improving performance',
+      'Serverless architecture migration showing 73% cost reduction for compute workloads',
+      'AI pair programming tools increasing code quality scores by 34%',
+      'Database query performance improved 156% with intelligent caching strategies',
+      'Continuous deployment frequency increased from daily to 47 releases per day'
     ],
     'Manufacturing': [
-      'IoT sensor data quality improved 45% showing analytics readiness',
-      'Equipment downtime reduced by 18% with predictive maintenance',
-      'Production line efficiency metrics showing 12% improvement opportunity',
-      'Energy consumption patterns indicating sustainability optimization potential',
-      'Supply chain visibility gaps identified across 15 facilities',
-      'Quality control automation reducing defects by 22%',
-      'Worker safety incidents decreased 35% with digital monitoring',
-      'Inventory turnover optimized by 28% through demand forecasting',
-      'Environmental compliance automated across all production sites',
-      'Digital twin deployment showing 40% simulation accuracy improvement'
+      'Predictive maintenance preventing $2.3M in unplanned downtime across 12 facilities',
+      'Smart factory deployment achieving 94% OEE (Overall Equipment Effectiveness)',
+      'Energy consumption reduced 31% through AI-optimized production scheduling',
+      'Quality defects decreased from 2.1% to 0.3% with computer vision inspection',
+      'Supply chain disruption risk mitigated through 47 alternative supplier relationships',
+      'Digital twin accuracy reached 97% for critical manufacturing processes',
+      'Worker safety incidents eliminated for 180+ consecutive days with IoT monitoring',
+      'Inventory carrying costs reduced $890K through demand sensing algorithms',
+      'Production line changeover time improved from 4.2 hours to 27 minutes',
+      'Environmental compliance automated across 23 manufacturing sites globally',
+      'Cobots (collaborative robots) increasing production efficiency by 63%',
+      'Real-time quality analytics preventing 89% of potential defective products',
+      'Additive manufacturing reducing prototype costs by 72% and lead times by 85%',
+      'Sustainability tracking showing 28% reduction in carbon footprint year-over-year',
+      'Predictive supply chain analytics preventing stockouts 94% of the time'
     ],
     'Financial Services': [
-      'Regulatory compliance audit findings requiring immediate attention',
-      'Transaction processing latency increased 35% affecting customer experience',
-      'Data governance maturity assessment showing significant gaps',
-      'Fraud detection false positive rates exceeding industry benchmarks',
-      'Customer authentication failures increased by 22%',
-      'Risk assessment models showing 95% accuracy in threat detection',
-      'Digital banking adoption increased 180% year-over-year',
-      'Algorithmic trading performance improved 15% with AI optimization',
-      'Customer onboarding time reduced 50% with automation',
-      'Credit scoring accuracy enhanced 25% with alternative data sources'
+      'Fraud detection accuracy reached 99.2% with $12M in prevented losses this quarter',
+      'Digital transformation ROI exceeded projections by 340% through automation',
+      'Real-time transaction processing latency reduced from 450ms to 23ms',
+      'Customer onboarding time decreased 89% from 5 days to 2.6 hours',
+      'Regulatory compliance costs reduced $4.2M annually through automated reporting',
+      'AI-powered credit scoring improving loan approval accuracy by 67%',
+      'Open banking API adoption increasing customer engagement by 156%',
+      'Algorithmic trading strategies outperforming market by 23.7% consistently',
+      'Customer authentication success rate improved to 98.9% with biometric integration',
+      'Data governance maturity elevated from level 2 to level 4 across all business units',
+      'Anti-money laundering detection reducing false positives by 78%',
+      'Robo-advisory platform managing $1.8B in assets with 94% client satisfaction',
+      'Blockchain settlement reducing transaction costs by 67% for cross-border payments',
+      'Predictive analytics identifying churn risk 14 days earlier with 91% accuracy',
+      'Regulatory stress testing automated reducing compliance burden by 83%'
     ],
     'Healthcare': [
-      'Patient data interoperability score improved to 85%',
-      'Clinical workflow efficiency gains of 20% identified',
-      'HIPAA compliance audit results showing areas for improvement',
-      'Telehealth adoption increased 180% creating scalability needs',
-      'Medical device integration challenges affecting care coordination',
-      'AI-powered diagnostic accuracy improved 32% with image analysis',
-      'Electronic health record adoption reaching 95% across departments',
-      'Patient satisfaction scores increased 25% with digital engagement',
-      'Clinical decision support systems reducing diagnosis time by 40%',
-      'Population health analytics revealing preventive care opportunities'
+      'AI-powered diagnostics achieving 96.8% accuracy surpassing radiologist benchmarks',
+      'Patient outcomes improved 42% through predictive clinical decision support',
+      'Hospital readmission rates reduced 67% with discharge prediction models',
+      'Telehealth adoption scaling to 2.8M patient interactions monthly',
+      'Drug discovery timeline accelerated 58% through machine learning optimization',
+      'Clinical workflow efficiency enhanced 73% with intelligent automation',
+      'Patient satisfaction scores increased to 94.2% with personalized care protocols',
+      'Medical device interoperability achieved across 97% of hospital systems',
+      'Population health analytics identifying preventive interventions 21 days earlier',
+      'Electronic health record optimization reducing physician documentation time by 45%',
+      'Precision medicine matching increasing treatment success rates by 38%',
+      'Remote patient monitoring preventing 234 emergency room visits monthly',
+      'Clinical trial enrollment accelerated 156% through AI-powered patient matching',
+      'Medical imaging analysis reducing diagnosis time from 2.3 hours to 12 minutes',
+      'Healthcare cost per patient reduced $3,400 annually through preventive analytics'
     ],
     'Retail': [
-      'Customer engagement metrics declined 15% over past quarter',
-      'Inventory turnover optimization opportunity worth $2.1M identified',
-      'E-commerce platform performance issues during peak traffic',
-      'Customer data unification project showing 60% completion',
-      'Supply chain disruption impact analysis completed',
-      'Personalization engine increasing conversion rates by 28%',
-      'Omnichannel customer experience showing integration challenges',
-      'Dynamic pricing optimization revealing 12% revenue opportunity',
-      'Social commerce engagement increased 150% with influencer partnerships',
-      'Sustainability initiatives improving brand perception by 35%'
+      'Dynamic pricing optimization generating $7.2M additional revenue quarterly',
+      'Personalization engine increasing conversion rates 187% across all channels',
+      'Inventory turnover improved 145% reducing carrying costs by $3.8M annually',
+      'Omnichannel customer experience achieving 97% satisfaction scores',
+      'Social commerce integration driving 298% increase in Gen Z engagement',
+      'AI-powered demand forecasting accuracy reaching 94.6% for seasonal products',
+      'Supply chain visibility preventing 96% of potential stockouts',
+      'Customer lifetime value increased 73% through predictive analytics',
+      'Sustainable packaging initiatives improving brand perception by 89%',
+      'Voice commerce adoption growing 456% with smart assistant integration',
+      'Augmented reality try-on features reducing return rates by 62%',
+      'Micro-fulfillment centers enabling same-day delivery for 87% of orders',
+      'Customer data unification creating 360-degree view across 12M profiles',
+      'Loyalty program optimization increasing member engagement by 234%',
+      'Real-time inventory synchronization across 340 stores and online channels'
     ],
     'Education': [
-      'Student engagement analytics showing 25% improvement opportunity',
-      'Faculty digital adoption rates below target benchmarks',
-      'Learning management system integration challenges identified',
-      'Campus-wide collaboration tool usage increased 95%',
-      'Data privacy compliance assessment revealing gaps'
+      'AI-powered adaptive learning improving student outcomes by 78% across 50K students',
+      'Virtual reality education modules increasing engagement scores to 96.4%',
+      'Predictive analytics identifying at-risk students 8 weeks earlier with 93% accuracy',
+      'Digital collaboration increasing cross-institutional research by 245%',
+      'Automated grading and feedback reducing educator workload by 67%',
+      'Campus safety enhanced through IoT monitoring preventing 12 incidents monthly',
+      'Learning analytics platform supporting personalized education for 125K students',
+      'Remote learning infrastructure scaling to support 2.1M concurrent sessions',
+      'Student success prediction models improving graduation rates by 34%',
+      'Smart campus initiatives reducing energy consumption by 42% annually',
+      'Blockchain credentialing system eliminating 99.7% of diploma fraud',
+      'AI tutoring systems providing 24/7 personalized support to 89K students',
+      'Digital library access increasing research productivity by 156%',
+      'Campus-wide WiFi optimization supporting 95K simultaneous device connections',
+      'Inclusive education technology improving accessibility scores by 89%'
     ],
     'Energy': [
-      'Renewable energy output optimization showing 15% potential improvement',
-      'Grid stability analytics indicating predictive maintenance needs',
-      'Carbon footprint tracking accuracy improved to 92%',
-      'Smart meter data integration completed across 85% of network',
-      'Sustainability reporting automation showing 70% time savings'
+      'Smart grid optimization increasing renewable energy efficiency by 89% across 200 sites',
+      'Predictive maintenance preventing $8.7M in turbine downtime annually',
+      'Carbon footprint reduced 67% through AI-optimized energy distribution',
+      'Energy storage systems achieving 97.2% efficiency with machine learning controls',
+      'Demand forecasting accuracy reaching 96.8% for peak load management',
+      'Renewable energy output maximized through weather prediction algorithms',
+      'Grid stability enhanced with real-time analytics preventing 45 outages monthly',
+      'Energy trading optimization generating $12.3M additional revenue quarterly',
+      'Sustainability reporting automated across 340 renewable energy facilities',
+      'Smart meter analytics providing insights for 4.7M residential customers',
+      'Microgrid deployment enabling 99.9% uptime for critical infrastructure',
+      'Battery management systems extending energy storage life by 134%',
+      'Power quality monitoring reducing industrial customer complaints by 91%',
+      'Green hydrogen production scaled to 500MW with 87% efficiency ratings',
+      'Transmission line monitoring preventing failures and saving $23M annually'
     ],
     'Media & Entertainment': [
-      'Content delivery network performance optimization needed',
-      'Audience engagement analytics showing demographic shift trends',
-      'Content creation workflow bottlenecks identified',
-      'Digital rights management system showing integration challenges',
-      'Live streaming scalability requirements exceeded capacity'
+      'Content personalization algorithms increasing viewer engagement by 312%',
+      'AI-powered content creation reducing production costs by $4.8M annually',
+      'Real-time streaming optimization supporting 18M concurrent viewers globally',
+      '4K content delivery achieving 99.7% uptime with edge computing infrastructure',
+      'Audience analytics revealing demographic trends 6 months ahead of competition',
+      'Dynamic content monetization increasing ad revenue by 156% year-over-year',
+      'Social media integration driving 445% increase in user-generated content',
+      'Virtual production studios reducing filming costs by 73% while improving quality',
+      'Content rights management preventing $2.1M in revenue leakage monthly',
+      'Interactive streaming features increasing viewer session time by 189%',
+      'AI-powered subtitle generation supporting 47 languages with 98.9% accuracy',
+      'Live event streaming scaling to 25M viewers with zero buffering incidents',
+      'Content recommendation engine achieving 91.4% user satisfaction scores',
+      'Digital asset management streamlining workflows and saving 340 hours weekly',
+      'Predictive content analytics identifying viral trends 72 hours before competitors'
     ],
     'Insurance': [
-      'Claims processing automation showing 40% efficiency improvement',
-      'Risk assessment model accuracy improved by 28%',
-      'Customer onboarding digital transformation 65% complete',
-      'Fraud detection system generating false positives above threshold',
-      'Regulatory reporting automation reducing manual effort by 50%'
+      'AI fraud detection saving $47M annually with 99.1% accuracy across 2.8M claims',
+      'Automated underwriting reducing policy approval time from 14 days to 90 minutes',
+      'Predictive risk modeling improving pricing accuracy by 89% across all product lines',
+      'Customer self-service portal handling 94% of inquiries without human intervention',
+      'Telematics data optimizing auto insurance premiums for 1.2M policyholders',
+      'Claims processing automation reducing costs by 67% while improving customer satisfaction',
+      'Regulatory compliance monitoring preventing $8.3M in potential fines',
+      'Parametric insurance payouts automated using IoT sensors and satellite data',
+      'Customer lifetime value optimization increasing retention rates by 78%',
+      'Real-time risk assessment enabling instant policy adjustments',
+      'Chatbot technology resolving 87% of customer service requests in under 3 minutes',
+      'Blockchain-based policy management eliminating 99.2% of documentation errors',
+      'Predictive analytics identifying cross-sell opportunities worth $23M quarterly',
+      'Digital claims management reducing settlement time by 156% on average',
+      'Catastrophe modeling and response coordination saving $67M in disaster claims'
     ],
     'Government': [
       'Citizen service digital adoption increased 120%',
@@ -1812,8 +1877,8 @@ export function generateEnhancedSignals(accounts: Account[]): Signal[] {
   };
   
   accounts.forEach(account => {
-    // Generate 4-7 signals per account for rich visualization (increased from 3-6)
-    const signalCount = Math.floor(Math.random() * 4) + 4;
+    // Generate 5-8 signals per account for rich visualization (increased from 4-7)
+    const signalCount = Math.floor(Math.random() * 4) + 5;
     const industryTemplates = industrySignalTemplates[account.industry as keyof typeof industrySignalTemplates] || 
                              industrySignalTemplates['Technology'];
     
@@ -1824,18 +1889,43 @@ export function generateEnhancedSignals(accounts: Account[]): Signal[] {
       const type = typeOptions[Math.floor(Math.random() * typeOptions.length)];
       const template = industryTemplates[Math.floor(Math.random() * industryTemplates.length)];
       
-      // Create more realistic signal based on account health score
+      // Create more dramatic signal variations based on account health score and industry
       let adjustedSeverity = severity;
+      let confidenceRange = [70, 99];
+      let impactRange = [3, 10];
+      
       if (account.healthScore < 50) {
-        // At risk accounts get more critical signals
-        adjustedSeverity = Math.random() > 0.3 ? 'critical' : 'high';
+        // At risk accounts get more critical signals with higher impact
+        adjustedSeverity = Math.random() > 0.2 ? 'critical' : 'high';
+        confidenceRange = [85, 99]; // Higher confidence for critical situations
+        impactRange = [7, 10];
       } else if (account.healthScore < 70) {
-        // Watch accounts get more medium/high signals
-        adjustedSeverity = Math.random() > 0.5 ? 'high' : 'medium';
+        // Watch accounts get varied signals with medium-high confidence
+        adjustedSeverity = Math.random() > 0.4 ? 'high' : 'medium';
+        confidenceRange = [75, 95];
+        impactRange = [5, 9];
       } else {
-        // Good accounts get more positive signals with some opportunities
-        adjustedSeverity = Math.random() > 0.6 ? 'medium' : 'low';
+        // Good accounts get more positive signals with opportunities
+        adjustedSeverity = Math.random() > 0.5 ? 'medium' : 'low';
+        confidenceRange = [80, 97]; // High confidence for positive signals
+        impactRange = [4, 8];
       }
+      
+      // Add industry-specific confidence and impact adjustments
+      const highTechIndustries = ['Technology', 'Cybersecurity', 'Space & Satellite'];
+      const traditionalIndustries = ['Manufacturing', 'Energy', 'Mining', 'Construction'];
+      
+      if (highTechIndustries.includes(account.industry)) {
+        confidenceRange = [confidenceRange[0] + 5, Math.min(confidenceRange[1] + 5, 99)];
+        impactRange = [Math.max(impactRange[0] + 1, 1), Math.min(impactRange[1] + 2, 10)];
+      } else if (traditionalIndustries.includes(account.industry)) {
+        confidenceRange = [Math.max(confidenceRange[0] - 3, 60), confidenceRange[1]];
+        impactRange = [Math.max(impactRange[0] - 1, 1), impactRange[1]];
+      }
+      
+      const confidence = Math.floor(Math.random() * (confidenceRange[1] - confidenceRange[0])) + confidenceRange[0];
+      const impact = Math.floor(Math.random() * (impactRange[1] - impactRange[0])) + impactRange[0];
+      const signalStrength = Math.floor(Math.random() * 40) + 60; // 60-99% signal strength
       
       const signal: Signal = {
         id: `signal-${account.id}-${i}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -1845,19 +1935,23 @@ export function generateEnhancedSignals(accounts: Account[]): Signal[] {
         category: category,
         severity: adjustedSeverity,
         description: template,
-        timestamp: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
+        timestamp: new Date(Date.now() - Math.random() * 14 * 24 * 60 * 60 * 1000).toISOString(), // Up to 2 weeks ago
         metadata: {
           industry: account.industry,
           healthScore: account.healthScore,
           arr: account.arr,
-          trend: Math.random() > 0.5 ? 'improving' : 'declining',
+          trend: Math.random() > 0.3 ? 'improving' : 'declining', // More positive trends
           lastUpdated: new Date().toISOString(),
-          confidence: Math.floor(Math.random() * 30) + 70, // 70-99% confidence
-          impact: Math.floor(Math.random() * 8) + 3, // 3-10 impact score
+          confidence: confidence,
+          impact: impact,
           source: `${account.industry.toLowerCase().replace(/\s+/g, '-')}-analytics`,
-          signalStrength: Math.floor(Math.random() * 50) + 50, // 50-99% signal strength
+          signalStrength: signalStrength,
           correlationId: `corr-${Math.random().toString(36).substr(2, 9)}`,
-          businessImpact: Math.random() > 0.5 ? 'high' : 'medium'
+          businessImpact: impact >= 7 ? 'high' : impact >= 5 ? 'medium' : 'low',
+          urgencyScore: adjustedSeverity === 'critical' ? 95 : adjustedSeverity === 'high' ? 80 : adjustedSeverity === 'medium' ? 60 : 40,
+          trendVelocity: Math.random() > 0.6 ? 'accelerating' : Math.random() > 0.3 ? 'stable' : 'decelerating',
+          predictiveScore: Math.floor(Math.random() * 30) + 70,
+          automationPotential: Math.random() > 0.4 ? 'high' : 'medium'
         }
       };
       
@@ -1876,22 +1970,28 @@ export function generateEnhancedSignals(accounts: Account[]): Signal[] {
         accountName: account.name,
         type: 'financial',
         category: 'cost',
-        severity: account.healthScore > 75 ? 'medium' : 'high',
-        description: `Significant expansion opportunity identified worth $${(account.expansionOpportunity / 1000000).toFixed(1)}M based on usage patterns and stakeholder engagement`,
+        severity: account.healthScore > 75 ? 'high' : 'critical', // Higher severity for better visibility
+        description: `Major expansion opportunity identified worth $${(account.expansionOpportunity / 1000000).toFixed(1)}M based on accelerated usage patterns, stakeholder alignment signals, and digital transformation readiness`,
         timestamp: new Date(Date.now() - Math.random() * 3 * 24 * 60 * 60 * 1000).toISOString(),
         metadata: {
           industry: account.industry,
           healthScore: account.healthScore,
           arr: account.arr,
           expansionValue: account.expansionOpportunity,
-          trend: 'improving',
+          trend: 'accelerating',
           lastUpdated: new Date().toISOString(),
-          confidence: Math.floor(Math.random() * 20) + 80, // 80-99% confidence for expansion signals
-          impact: 9, // High impact for expansion opportunities
+          confidence: Math.floor(Math.random() * 15) + 85, // 85-99% confidence for expansion signals
+          impact: 10, // Maximum impact for expansion opportunities
           source: 'expansion-analytics',
-          signalStrength: Math.floor(Math.random() * 20) + 80, // 80-99% for strong signals
+          signalStrength: Math.floor(Math.random() * 15) + 85, // 85-99% for strong signals
           businessImpact: 'high',
-          opportunityType: 'expansion'
+          opportunityType: 'expansion',
+          urgencyScore: 90,
+          trendVelocity: 'accelerating',
+          predictiveScore: Math.floor(Math.random() * 20) + 80,
+          automationPotential: 'high',
+          stakeholderAlignment: Math.random() > 0.7 ? 'excellent' : 'good',
+          technicalReadiness: Math.random() > 0.6 ? 'advanced' : 'ready'
         }
       };
       signals.push(expansionSignal);
@@ -1906,16 +2006,18 @@ export function generateEnhancedSignals(accounts: Account[]): Signal[] {
       accountName: 'Portfolio Analysis',
       type: 'data',
       category: 'data',
-      severity: 'medium',
-      description: `Overall portfolio health score improved by 8% this quarter with ${Math.floor(accounts.length * 0.6)} accounts showing positive momentum across ${accounts.length} total accounts`,
+      severity: 'high',
+      description: `Portfolio health acceleration: Average health score jumped 23% this quarter with ${Math.floor(accounts.length * 0.85)} accounts showing exponential digital transformation momentum`,
       timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
       metadata: {
-        trend: 'improving',
-        accountsAffected: Math.floor(accounts.length * 0.6),
+        trend: 'accelerating',
+        accountsAffected: Math.floor(accounts.length * 0.85),
         portfolioValue: accounts.reduce((sum, a) => sum + a.arr, 0),
         source: 'portfolio-analytics',
-        confidence: 92,
-        impact: 8,
+        confidence: 96,
+        impact: 9,
+        healthScoreIncrease: 23,
+        digitalTransformationVelocity: 'exponential',
         industryBreakdown: accounts.reduce((acc, a) => {
           acc[a.industry] = (acc[a.industry] || 0) + 1;
           return acc;
@@ -1928,39 +2030,45 @@ export function generateEnhancedSignals(accounts: Account[]): Signal[] {
       accountName: 'Portfolio Analysis',
       type: 'financial',
       category: 'cost',
-      severity: 'high',
-      description: `Identified $${(accounts.reduce((sum, a) => sum + a.expansionOpportunity, 0) / 1000000).toFixed(1)}M in expansion opportunities across ${accounts.length} diverse accounts spanning ${new Set(accounts.map(a => a.industry)).size} industries`,
+      severity: 'critical',
+      description: `Massive expansion wave detected: $${(accounts.reduce((sum, a) => sum + a.expansionOpportunity, 0) / 1000000).toFixed(1)}M in qualified opportunities across ${accounts.length} enterprise accounts with 91% AI-readiness confidence`,
       timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
       metadata: {
         expansionValue: accounts.reduce((sum, a) => sum + a.expansionOpportunity, 0),
         accountsWithOpportunities: accounts.filter(a => a.expansionOpportunity > 0).length,
+        aiReadinessScore: 91,
+        qualificationRate: 96,
         industryBreakdown: accounts.reduce((acc, a) => {
           acc[a.industry] = (acc[a.industry] || 0) + a.expansionOpportunity;
           return acc;
         }, {} as Record<string, number>),
         source: 'expansion-analytics',
-        confidence: 88,
-        impact: 9,
-        uniqueIndustries: new Set(accounts.map(a => a.industry)).size
+        confidence: 94,
+        impact: 10,
+        uniqueIndustries: new Set(accounts.map(a => a.industry)).size,
+        expansionVelocity: 'unprecedented'
       }
     },
     {
       id: `portfolio-signal-3-${Date.now()}`,
       accountId: 'portfolio',
       accountName: 'Portfolio Analysis',
-      type: 'digital_transformation',
+      type: 'ai_readiness',
       category: 'agility',
-      severity: 'medium',
-      description: `AI and automation adoption accelerating across portfolio with 78% of accounts showing digital transformation readiness signals`,
+      severity: 'high',
+      description: `AI transformation breakthrough: 94% of portfolio showing advanced AI adoption with $127M in measured productivity gains across ${accounts.length} diverse enterprises`,
       timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
       metadata: {
-        aiReadinessAccounts: Math.floor(accounts.length * 0.78),
+        aiReadinessAccounts: Math.floor(accounts.length * 0.94),
         totalAccounts: accounts.length,
-        digitalizationTrend: 'accelerating',
+        productivityGains: 127000000,
+        digitalizationTrend: 'breakthrough',
         source: 'ai-adoption-analytics',
-        confidence: 85,
-        impact: 7,
-        technologiesInDemand: ['Azure Machine Learning', 'Power Platform', 'Azure Cognitive Services']
+        confidence: 92,
+        impact: 9,
+        aiMaturityLevel: 'advanced',
+        technologiesInDemand: ['Azure OpenAI Service', 'Azure Machine Learning', 'Power Platform AI', 'Azure Cognitive Services'],
+        innovationIndex: 89
       }
     },
     {
@@ -1969,19 +2077,65 @@ export function generateEnhancedSignals(accounts: Account[]): Signal[] {
       accountName: 'Portfolio Analysis',
       type: 'sustainability',
       category: 'risk',
-      severity: 'low',
-      description: `Sustainability and ESG initiatives showing strong adoption across ${Math.floor(accounts.length * 0.65)}% of portfolio with carbon tracking improvements`,
+      severity: 'medium',
+      description: `Sustainability leadership emerging: ${Math.floor(accounts.length * 0.89)}% of portfolio achieving carbon neutrality targets 18 months ahead of schedule with $89M in cost savings`,
       timestamp: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
       metadata: {
-        sustainabilityAccounts: Math.floor(accounts.length * 0.65),
-        carbonTrackingImprovement: 42,
-        esgCompliance: 'improving',
+        sustainabilityAccounts: Math.floor(accounts.length * 0.89),
+        carbonNeutralityProgress: 'ahead-of-schedule',
+        costSavings: 89000000,
+        timelineAcceleration: 18,
+        esgCompliance: 'leading',
         source: 'sustainability-analytics',
-        confidence: 82,
-        impact: 6,
+        confidence: 87,
+        impact: 8,
+        carbonReduction: 67,
         greenTechOpportunities: accounts.filter(a => 
-          ['Energy', 'Clean Technology', 'Manufacturing', 'Transportation'].includes(a.industry)
-        ).length
+          ['Energy', 'Clean Technology', 'Manufacturing', 'Transportation', 'Chemicals'].includes(a.industry)
+        ).length,
+        sustainabilityROI: 245
+      }
+    },
+    {
+      id: `portfolio-signal-5-${Date.now()}`,
+      accountId: 'portfolio',
+      accountName: 'Portfolio Analysis',
+      type: 'innovation',
+      category: 'culture',
+      severity: 'high',
+      description: `Innovation velocity surge: R&D productivity increased 167% across portfolio with 43 breakthrough patents filed and $234M in new product revenue generated`,
+      timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+      metadata: {
+        rdProductivityIncrease: 167,
+        patentsFiled: 43,
+        newProductRevenue: 234000000,
+        innovationAccounts: Math.floor(accounts.length * 0.78),
+        source: 'innovation-analytics',
+        confidence: 88,
+        impact: 9,
+        breakthroughTechnologies: ['Quantum Computing', 'Edge AI', 'Digital Twins', 'Blockchain', '5G/6G'],
+        timeToMarket: 'accelerated-156%'
+      }
+    },
+    {
+      id: `portfolio-signal-6-${Date.now()}`,
+      accountId: 'portfolio',
+      accountName: 'Portfolio Analysis',
+      type: 'collaboration',
+      category: 'culture',
+      severity: 'medium',
+      description: `Collaboration revolution: Cross-functional productivity increased 245% with 97% employee satisfaction in hybrid work environments across all portfolio companies`,
+      timestamp: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
+      metadata: {
+        collaborationProductivity: 245,
+        employeeSatisfaction: 97,
+        hybridWorkAdoption: 100,
+        collaborationTools: ['Microsoft Teams', 'Power Platform', 'Viva Suite'],
+        source: 'collaboration-analytics',
+        confidence: 91,
+        impact: 7,
+        workplaceTransformation: 'revolutionary',
+        culturalTransformationScore: 94
       }
     }
   ];
