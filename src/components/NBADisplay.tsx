@@ -394,11 +394,20 @@ export function NBADisplay({ account, onPlanAndRun, defaultTab = "ai-recommendat
                           size="sm"
                           onClick={async () => {
                             await dynamics365Service.createOpportunity(selectedNBA, account);
+                            toast.success(`Opportunity "${selectedNBA.title}" created in D365 - check Opportunity Tracking tab`);
+                            
+                            // Navigate to opportunity tracking tab after short delay
+                            setTimeout(() => {
+                              const opportunityTab = document.querySelector('[value="opportunity-tracking"]') as HTMLElement;
+                              if (opportunityTab) {
+                                opportunityTab.click();
+                              }
+                            }, 2000);
                           }}
                           className="text-blue-700 border-blue-200 hover:bg-blue-50"
                         >
                           <Buildings className="w-4 h-4 mr-1" />
-                          Create in D365
+                          Create D365 Opportunity
                         </Button>
                         <Button 
                           onClick={handlePlanAndRun}

@@ -26,6 +26,7 @@ import HelpGuide from '@/components/HelpGuide';
 import { SignalVisualizationDialog } from '@/components/SignalVisualizationDialog';
 import { PredictiveHeatMapDialog } from '@/components/PredictiveHeatMapDialog';
 import { Dynamics365ConfigDialog } from '@/components/Dynamics365ConfigDialog';
+import OpportunityTrackingDashboard from '@/components/OpportunityTrackingDashboard';
 import { notificationService } from '@/services/notificationService';
 
 import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
@@ -497,6 +498,28 @@ function App() {
                 <Button 
                   size="sm"
                   variant="outline"
+                  onClick={() => {
+                    // Scroll to tabs section and select opportunity tracking
+                    const tabsSection = document.querySelector('[data-section="right-column"]');
+                    if (tabsSection) {
+                      tabsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                    // Delay to ensure scroll completes before tab selection
+                    setTimeout(() => {
+                      const opportunityTab = document.querySelector('[value="opportunity-tracking"]') as HTMLElement;
+                      if (opportunityTab) {
+                        opportunityTab.click();
+                      }
+                    }, 500);
+                  }}
+                  className="text-blue-700 border-blue-200 hover:bg-blue-50"
+                >
+                  📊 D365 Opportunities
+                </Button>
+                
+                <Button 
+                  size="sm"
+                  variant="outline"
                   onClick={async () => {
                     // Import signal generation functions
                     const { generateBusinessValueSignal } = await import('@/services/signalCatalog');
@@ -686,10 +709,11 @@ function App() {
           </div>
 
           {/* Right Column - AI Systems */}
-          <div className="space-y-6 min-h-0 h-fit">
+          <div className="space-y-6 min-h-0 h-fit" data-section="right-column">
             <Tabs defaultValue="critical-monitor" className="w-full h-fit">
               <TabsList className="flex flex-wrap gap-1 w-full h-auto p-2">
                 <TabsTrigger value="critical-monitor" className="text-sm px-3 py-2 min-w-fit">Critical Monitor</TabsTrigger>
+                <TabsTrigger value="opportunity-tracking" className="text-sm px-3 py-2 min-w-fit">D365 Opportunities</TabsTrigger>
                 <TabsTrigger value="business-value" className="text-sm px-3 py-2 min-w-fit">Business Value</TabsTrigger>
                 <TabsTrigger value="arr-growth" className="text-sm px-3 py-2 min-w-fit">ARR Growth</TabsTrigger>
                 <TabsTrigger value="forecast" className="text-sm px-3 py-2 min-w-fit">Forecast</TabsTrigger>
@@ -703,6 +727,12 @@ function App() {
               <TabsContent value="critical-monitor" className="mt-4 h-fit">
                 <div className="h-fit">
                   <CriticalSignalMonitor />
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="opportunity-tracking" className="mt-4 h-fit">
+                <div className="h-fit">
+                  <OpportunityTrackingDashboard />
                 </div>
               </TabsContent>
               
