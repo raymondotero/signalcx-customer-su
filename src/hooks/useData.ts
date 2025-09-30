@@ -984,6 +984,496 @@ export const sampleAccounts: Account[] = [
         successCriteria: ['20% reduction in food waste', 'Improved demand forecast accuracy', 'Optimized inventory levels and costs']
       }
     ]
+  },
+  {
+    id: 'acc-21',
+    name: 'RealEstate PropTech',
+    industry: 'Real Estate',
+    arr: 27000000,
+    healthScore: 69,
+    status: 'Watch',
+    csam: 'Amanda Foster',
+    ae: 'Marcus Johnson',
+    contractEnd: '2024-07-15',
+    lastActivity: '2024-01-11',
+    expansionOpportunity: 6800000,
+    expansionOpportunities: [
+      {
+        value: 4100000,
+        category: 'feature-upgrade',
+        description: 'Implement AI-powered property valuation and market analytics platform with predictive insights',
+        timeline: '60-90 days',
+        probability: 'high',
+        requiredActivities: [
+          'Property valuation model development and validation',
+          'Market analytics integration with existing CRM systems',
+          'Real estate agent training on AI-powered insights',
+          'Regulatory compliance validation for automated valuations'
+        ],
+        microsoftSolutions: ['Azure Machine Learning', 'Power BI Real Estate Analytics', 'Dynamics 365 Sales'],
+        deliveryMotions: ['PropTech AI transformation', 'Real estate analytics workshop', 'Valuation automation consultation'],
+        stakeholdersRequired: ['Chief Technology Officer', 'VP Sales', 'Market Research Director', 'Compliance Manager'],
+        successCriteria: ['Improved valuation accuracy by 35%', 'Faster property analysis turnaround', 'Enhanced market trend predictions']
+      },
+      {
+        value: 2700000,
+        category: 'user-expansion',
+        description: 'Scale collaboration platform to 3,500 real estate agents and property managers across multiple regions',
+        timeline: '90-180 days',
+        probability: 'medium',
+        requiredActivities: [
+          'Agent workflow analysis and optimization',
+          'Mobile-first platform deployment for field work',
+          'Client communication enhancement and automation',
+          'Regional training and adoption program rollout'
+        ],
+        microsoftSolutions: ['Microsoft Teams Premium', 'Power Platform Real Estate', 'Dynamics 365 Customer Engagement'],
+        deliveryMotions: ['Real estate collaboration transformation', 'Agent productivity workshop', 'Mobile-first adoption program'],
+        stakeholdersRequired: ['Regional Managers', 'Agent Development Director', 'Customer Success Manager', 'Training Coordinators'],
+        successCriteria: ['95% agent platform adoption', 'Improved client satisfaction scores', 'Enhanced regional coordination']
+      }
+    ]
+  },
+  {
+    id: 'acc-22',
+    name: 'Mining Operations Global',
+    industry: 'Mining',
+    arr: 65000000,
+    healthScore: 56,
+    status: 'Watch',
+    csam: 'Diego Santos',
+    ae: 'Rebecca Thompson',
+    contractEnd: '2024-09-20',
+    lastActivity: '2024-01-08',
+    expansionOpportunity: 16200000,
+    expansionOpportunities: [
+      {
+        value: 9500000,
+        category: 'feature-upgrade',
+        description: 'Implement autonomous mining equipment monitoring and predictive maintenance platform with IoT integration',
+        timeline: '90-180 days',
+        probability: 'medium',
+        requiredActivities: [
+          'Mining equipment sensor integration and data collection setup',
+          'Predictive maintenance model development for heavy machinery',
+          'Safety protocol automation and compliance monitoring',
+          'Mining operations team training on predictive analytics'
+        ],
+        microsoftSolutions: ['Azure IoT Central', 'Azure Digital Twins', 'Azure Machine Learning for Industrial'],
+        deliveryMotions: ['Mining digitization transformation', 'Predictive maintenance workshop', 'Industrial IoT consultation'],
+        stakeholdersRequired: ['Chief Operations Officer', 'Mine Site Managers', 'Equipment Maintenance Director', 'Safety Compliance Officer'],
+        successCriteria: ['25% reduction in equipment downtime', 'Improved safety incident reporting', 'Optimized maintenance scheduling']
+      },
+      {
+        value: 6700000,
+        category: 'geographic-expansion',
+        description: 'Deploy environmental monitoring and sustainability tracking across 12 additional mining sites globally',
+        timeline: '6+ months',
+        probability: 'high',
+        requiredActivities: [
+          'Environmental impact assessment and monitoring system design',
+          'Regulatory compliance validation across multiple jurisdictions',
+          'Local team training on environmental data collection',
+          'Automated sustainability reporting implementation'
+        ],
+        microsoftSolutions: ['Microsoft Sustainability Manager', 'Azure Environmental Monitoring', 'Power BI Mining Analytics'],
+        deliveryMotions: ['Mining sustainability program', 'Environmental compliance workshop', 'Multi-site deployment expertise'],
+        stakeholdersRequired: ['Environmental Affairs Director', 'Site Environmental Managers', 'Regulatory Compliance Team', 'Sustainability Officer'],
+        successCriteria: ['Real-time environmental monitoring across all sites', 'Automated regulatory reporting', 'Improved sustainability metrics']
+      }
+    ]
+  },
+  {
+    id: 'acc-23',
+    name: 'Fashion Forward Retail',
+    industry: 'Fashion & Apparel',
+    arr: 19500000,
+    healthScore: 82,
+    status: 'Good',
+    csam: 'Sophia Chen',
+    ae: 'Alexander Rodriguez',
+    contractEnd: '2025-01-20',
+    lastActivity: '2024-01-15',
+    expansionOpportunity: 5400000,
+    expansionOpportunities: [
+      {
+        value: 3200000,
+        category: 'feature-upgrade',
+        description: 'Implement AI-powered fashion trend prediction and inventory optimization with customer preference analytics',
+        timeline: '60-90 days',
+        probability: 'high',
+        requiredActivities: [
+          'Fashion trend analysis model development using social media and sales data',
+          'Customer preference analytics integration with existing e-commerce platform',
+          'Inventory optimization algorithm implementation',
+          'Merchandising team training on AI-driven insights'
+        ],
+        microsoftSolutions: ['Azure Cognitive Services', 'Customer Insights', 'Azure Machine Learning Fashion'],
+        deliveryMotions: ['Fashion AI transformation', 'Trend prediction workshop', 'Retail analytics consultation'],
+        stakeholdersRequired: ['Chief Merchandising Officer', 'VP E-commerce', 'Data Analytics Manager', 'Creative Director'],
+        successCriteria: ['Improved trend prediction accuracy', '20% reduction in inventory waste', 'Enhanced customer personalization']
+      },
+      {
+        value: 2200000,
+        category: 'cross-sell',
+        description: 'Deploy omnichannel customer experience platform with AR fitting and virtual styling capabilities',
+        timeline: '90-180 days',
+        probability: 'high',
+        requiredActivities: [
+          'Virtual fitting room technology integration',
+          'Augmented reality styling application development',
+          'Customer journey mapping across all touchpoints',
+          'Sales associate training on digital styling tools'
+        ],
+        microsoftSolutions: ['Azure Mixed Reality', 'Dynamics 365 Commerce', 'Power Platform Fashion'],
+        deliveryMotions: ['Omnichannel fashion experience', 'AR/VR retail workshop', 'Customer experience transformation'],
+        stakeholdersRequired: ['Customer Experience Director', 'Digital Innovation Manager', 'Store Operations Manager', 'Technology Integration Lead'],
+        successCriteria: ['Unified customer experience across channels', 'Increased online engagement', 'Higher conversion rates']
+      }
+    ]
+  },
+  {
+    id: 'acc-24',
+    name: 'Maritime Logistics Corp',
+    industry: 'Maritime & Shipping',
+    arr: 49000000,
+    healthScore: 64,
+    status: 'Watch',
+    csam: 'Captain James Mitchell',
+    ae: 'Elena Popov',
+    contractEnd: '2024-08-10',
+    lastActivity: '2024-01-10',
+    expansionOpportunity: 12800000,
+    expansionOpportunities: [
+      {
+        value: 7600000,
+        category: 'feature-upgrade',
+        description: 'Implement smart vessel monitoring and autonomous navigation assistance with AI-powered route optimization',
+        timeline: '90-180 days',
+        probability: 'medium',
+        requiredActivities: [
+          'Vessel IoT sensor integration and data collection infrastructure',
+          'Navigation AI model development and testing',
+          'Maritime safety protocol automation and compliance monitoring',
+          'Fleet operations team training on autonomous systems'
+        ],
+        microsoftSolutions: ['Azure IoT Maritime', 'Azure Machine Learning Navigation', 'Azure Maps Maritime'],
+        deliveryMotions: ['Maritime digital transformation', 'Smart shipping consultation', 'Navigation AI workshop'],
+        stakeholdersRequired: ['Fleet Operations Manager', 'Chief Navigation Officer', 'Maritime Safety Director', 'Technology Integration Team'],
+        successCriteria: ['Improved fuel efficiency by 18%', 'Enhanced safety compliance', 'Optimized shipping routes']
+      },
+      {
+        value: 5200000,
+        category: 'cross-sell',
+        description: 'Deploy comprehensive port operations and cargo tracking platform with blockchain-based documentation',
+        timeline: '6+ months',
+        probability: 'high',
+        requiredActivities: [
+          'Port operations workflow analysis and digitization',
+          'Blockchain-based shipping documentation system development',
+          'Cargo tracking and visibility platform integration',
+          'Port authority and customs system integration'
+        ],
+        microsoftSolutions: ['Azure Blockchain Service', 'Dynamics 365 Supply Chain', 'Power Platform Maritime'],
+        deliveryMotions: ['Port digitization program', 'Blockchain shipping workshop', 'Cargo visibility consultation'],
+        stakeholdersRequired: ['Port Operations Director', 'Cargo Management Manager', 'Documentation Systems Lead', 'Customs Liaison'],
+        successCriteria: ['End-to-end cargo visibility', 'Automated documentation processing', 'Improved port efficiency']
+      }
+    ]
+  },
+  {
+    id: 'acc-25',
+    name: 'Gaming Studios Network',
+    industry: 'Gaming & Interactive',
+    arr: 34000000,
+    healthScore: 77,
+    status: 'Good',
+    csam: 'Tyler Wilson',
+    ae: 'Jessica Wang',
+    contractEnd: '2024-12-05',
+    lastActivity: '2024-01-14',
+    expansionOpportunity: 8900000,
+    expansionOpportunities: [
+      {
+        value: 5300000,
+        category: 'feature-upgrade',
+        description: 'Implement cloud gaming infrastructure with AI-powered player analytics and dynamic content delivery',
+        timeline: '90-180 days',
+        probability: 'high',
+        requiredActivities: [
+          'Cloud gaming platform architecture design and implementation',
+          'Player behavior analytics and engagement model development',
+          'Dynamic content delivery network optimization',
+          'Game development team training on cloud-native technologies'
+        ],
+        microsoftSolutions: ['Azure PlayFab', 'Azure Cognitive Services Gaming', 'Azure Content Delivery Network'],
+        deliveryMotions: ['Gaming cloud transformation', 'Player analytics workshop', 'Cloud gaming consultation'],
+        stakeholdersRequired: ['CTO', 'Lead Game Developers', 'Player Experience Manager', 'Infrastructure Director'],
+        successCriteria: ['Seamless cloud gaming experience', 'Improved player engagement metrics', 'Optimized content delivery performance']
+      },
+      {
+        value: 3600000,
+        category: 'user-expansion',
+        description: 'Scale collaborative game development platform to 2,000 developers across multiple studio locations',
+        timeline: '60-90 days',
+        probability: 'high',
+        requiredActivities: [
+          'Game development workflow optimization and collaboration enhancement',
+          'Version control and asset management system scalability improvement',
+          'Cross-studio communication and project management platform deployment',
+          'Developer productivity tools integration and training'
+        ],
+        microsoftSolutions: ['Azure DevOps Gaming', 'Microsoft Teams for Developers', 'GitHub Enterprise Gaming'],
+        deliveryMotions: ['Game development collaboration transformation', 'Developer productivity workshop', 'Multi-studio coordination program'],
+        stakeholdersRequired: ['VP Game Development', 'Studio Managers', 'Lead Technical Artists', 'DevOps Engineering Team'],
+        successCriteria: ['Improved cross-studio collaboration', 'Faster game development cycles', 'Enhanced asset sharing efficiency']
+      }
+    ]
+  },
+  {
+    id: 'acc-26',
+    name: 'Construction Technologies',
+    industry: 'Construction',
+    arr: 41000000,
+    healthScore: 58,
+    status: 'Watch',
+    csam: 'Maria Gonzalez',
+    ae: 'Brian O\'Connor',
+    contractEnd: '2024-06-15',
+    lastActivity: '2024-01-07',
+    expansionOpportunity: 10500000,
+    expansionOpportunities: [
+      {
+        value: 6200000,
+        category: 'feature-upgrade',
+        description: 'Implement Building Information Modeling (BIM) and construction project management platform with IoT site monitoring',
+        timeline: '90-180 days',
+        probability: 'medium',
+        requiredActivities: [
+          'BIM integration with existing project management systems',
+          'Construction site IoT sensor deployment and monitoring setup',
+          'Project timeline optimization using predictive analytics',
+          'Construction team training on digital project management tools'
+        ],
+        microsoftSolutions: ['Azure Digital Twins Construction', 'Power Platform Project Management', 'Azure IoT Construction'],
+        deliveryMotions: ['Construction digitization transformation', 'BIM integration workshop', 'Smart construction consultation'],
+        stakeholdersRequired: ['Chief Project Officer', 'Construction Site Managers', 'BIM Specialists', 'Safety Compliance Director'],
+        successCriteria: ['Improved project timeline accuracy', 'Enhanced safety monitoring', 'Reduced construction waste']
+      },
+      {
+        value: 4300000,
+        category: 'cross-sell',
+        description: 'Deploy comprehensive safety management and compliance platform with real-time incident reporting',
+        timeline: '60-90 days',
+        probability: 'high',
+        requiredActivities: [
+          'Construction safety protocol digitization and automation',
+          'Real-time incident reporting and response system implementation',
+          'Compliance monitoring and regulatory reporting automation',
+          'Safety officer and site supervisor training on digital tools'
+        ],
+        microsoftSolutions: ['Power Platform Safety', 'Microsoft Compliance Manager Construction', 'Azure IoT Safety Monitoring'],
+        deliveryMotions: ['Construction safety transformation', 'Safety compliance workshop', 'Incident management consultation'],
+        stakeholdersRequired: ['Chief Safety Officer', 'Site Safety Managers', 'Compliance Team', 'Emergency Response Coordinators'],
+        successCriteria: ['Reduced safety incidents', 'Automated compliance reporting', 'Improved emergency response times']
+      }
+    ]
+  },
+  {
+    id: 'acc-27',
+    name: 'Legal Services International',
+    industry: 'Legal Services',
+    arr: 23500000,
+    healthScore: 73,
+    status: 'Good',
+    csam: 'Jonathan Davis',
+    ae: 'Sarah Kim',
+    contractEnd: '2024-11-25',
+    lastActivity: '2024-01-13',
+    expansionOpportunity: 6100000,
+    expansionOpportunities: [
+      {
+        value: 3700000,
+        category: 'feature-upgrade',
+        description: 'Implement AI-powered legal research and document analysis platform with contract intelligence',
+        timeline: '60-90 days',
+        probability: 'high',
+        requiredActivities: [
+          'Legal document AI model training and validation',
+          'Contract analysis and risk assessment automation',
+          'Legal research platform integration with existing case management',
+          'Attorney and paralegal training on AI-powered research tools'
+        ],
+        microsoftSolutions: ['Azure Cognitive Services Legal', 'Azure AI Document Intelligence', 'Power Platform Legal'],
+        deliveryMotions: ['Legal AI transformation', 'Document intelligence workshop', 'Legal research automation consultation'],
+        stakeholdersRequired: ['Managing Partner', 'Head of Legal Research', 'Practice Group Leaders', 'Legal Technology Director'],
+        successCriteria: ['50% faster legal research', 'Improved contract risk identification', 'Enhanced document analysis accuracy']
+      },
+      {
+        value: 2400000,
+        category: 'user-expansion',
+        description: 'Scale secure collaboration and client communication platform to 800 attorneys across international offices',
+        timeline: '90-180 days',
+        probability: 'high',
+        requiredActivities: [
+          'Attorney workflow analysis and collaboration optimization',
+          'Client communication security and confidentiality enhancement',
+          'International office integration and compliance validation',
+          'Legal professional training on secure collaboration tools'
+        ],
+        microsoftSolutions: ['Microsoft Teams for Legal', 'Azure Information Protection Legal', 'Dynamics 365 Legal'],
+        deliveryMotions: ['Legal collaboration transformation', 'Attorney productivity workshop', 'International office integration program'],
+        stakeholdersRequired: ['International Office Managing Partners', 'IT Security Director', 'Client Relations Manager', 'Knowledge Management Lead'],
+        successCriteria: ['Enhanced attorney collaboration', 'Improved client communication security', 'Streamlined international case coordination']
+      }
+    ]
+  },
+  {
+    id: 'acc-28',
+    name: 'Hospitality Chain Global',
+    industry: 'Hospitality & Tourism',
+    arr: 36500000,
+    healthScore: 66,
+    status: 'Watch',
+    csam: 'Isabella Martinez',
+    ae: 'Christopher Lee',
+    contractEnd: '2024-07-30',
+    lastActivity: '2024-01-09',
+    expansionOpportunity: 9200000,
+    expansionOpportunities: [
+      {
+        value: 5500000,
+        category: 'feature-upgrade',
+        description: 'Implement guest experience personalization platform with AI-powered recommendations and IoT room automation',
+        timeline: '90-180 days',
+        probability: 'medium',
+        requiredActivities: [
+          'Guest preference analytics and personalization engine development',
+          'IoT room automation system integration and deployment',
+          'Hotel staff training on guest experience management tools',
+          'Integration with existing property management systems'
+        ],
+        microsoftSolutions: ['Customer Insights Hospitality', 'Azure IoT Hotel Automation', 'Power Platform Guest Services'],
+        deliveryMotions: ['Hospitality experience transformation', 'Guest personalization workshop', 'Smart hotel consultation'],
+        stakeholdersRequired: ['VP Guest Experience', 'Hotel General Managers', 'IT Operations Director', 'Revenue Management Team'],
+        successCriteria: ['Improved guest satisfaction scores', 'Enhanced personalization accuracy', 'Increased revenue per guest']
+      },
+      {
+        value: 3700000,
+        category: 'geographic-expansion',
+        description: 'Deploy integrated operations and revenue management platform across 50 additional hotel properties',
+        timeline: '6+ months',
+        probability: 'high',
+        requiredActivities: [
+          'Multi-property operations standardization and integration',
+          'Revenue management optimization across all locations',
+          'Staff training and adoption program for new properties',
+          'Central reservation system integration and synchronization'
+        ],
+        microsoftSolutions: ['Dynamics 365 Hospitality', 'Power BI Hotel Analytics', 'Azure Multi-Property Integration'],
+        deliveryMotions: ['Hotel chain expansion program', 'Revenue optimization workshop', 'Multi-property management consultation'],
+        stakeholdersRequired: ['Regional Operations Managers', 'Revenue Management Director', 'Property Integration Team', 'Training Coordinators'],
+        successCriteria: ['Standardized operations across all properties', 'Optimized revenue management', 'Improved operational efficiency']
+      }
+    ]
+  },
+  {
+    id: 'acc-29',
+    name: 'Chemical Processing Solutions',
+    industry: 'Chemicals',
+    arr: 58000000,
+    healthScore: 62,
+    status: 'Watch',
+    csam: 'Dr. Michael Thompson',
+    ae: 'Rachel Adams',
+    contractEnd: '2024-08-25',
+    lastActivity: '2024-01-08',
+    expansionOpportunity: 14600000,
+    expansionOpportunities: [
+      {
+        value: 8700000,
+        category: 'feature-upgrade',
+        description: 'Implement advanced process optimization and predictive quality control with AI-powered chemical analysis',
+        timeline: '90-180 days',
+        probability: 'medium',
+        requiredActivities: [
+          'Chemical process data integration and analytics platform development',
+          'Predictive quality control model training and validation',
+          'Process optimization algorithm implementation',
+          'Process engineering team training on AI-powered analytics'
+        ],
+        microsoftSolutions: ['Azure Machine Learning Chemical', 'Azure Digital Twins Process', 'Power BI Process Analytics'],
+        deliveryMotions: ['Chemical process AI transformation', 'Predictive quality workshop', 'Process optimization consultation'],
+        stakeholdersRequired: ['Chief Process Engineer', 'Quality Control Director', 'Plant Operations Managers', 'R&D Team Lead'],
+        successCriteria: ['Improved process efficiency by 22%', 'Reduced quality defects', 'Enhanced predictive maintenance']
+      },
+      {
+        value: 5900000,
+        category: 'cross-sell',
+        description: 'Deploy comprehensive environmental compliance and safety management platform with real-time monitoring',
+        timeline: '90-180 days',
+        probability: 'high',
+        requiredActivities: [
+          'Environmental monitoring system integration and automation',
+          'Safety protocol digitization and incident management',
+          'Regulatory compliance reporting automation',
+          'Environmental and safety team training on digital monitoring tools'
+        ],
+        microsoftSolutions: ['Microsoft Sustainability Manager Chemical', 'Azure Environmental Monitoring', 'Power Platform Safety'],
+        deliveryMotions: ['Chemical safety transformation', 'Environmental compliance workshop', 'Safety management consultation'],
+        stakeholdersRequired: ['Environmental Health & Safety Director', 'Compliance Officer', 'Plant Safety Managers', 'Environmental Monitoring Team'],
+        successCriteria: ['Real-time environmental monitoring', 'Automated compliance reporting', 'Improved safety incident management']
+      }
+    ]
+  },
+  {
+    id: 'acc-30',
+    name: 'Space Technology Ventures',
+    industry: 'Space & Satellite',
+    arr: 72000000,
+    healthScore: 84,
+    status: 'Good',
+    csam: 'Dr. Amanda Chen',
+    ae: 'Robert Johnson',
+    contractEnd: '2025-02-15',
+    lastActivity: '2024-01-16',
+    expansionOpportunity: 18500000,
+    expansionOpportunities: [
+      {
+        value: 11200000,
+        category: 'feature-upgrade',
+        description: 'Implement satellite data analytics and space mission control platform with AI-powered anomaly detection',
+        timeline: '90-180 days',
+        probability: 'high',
+        requiredActivities: [
+          'Satellite telemetry data integration and real-time analytics setup',
+          'AI anomaly detection model development for space missions',
+          'Mission control dashboard and alert system implementation',
+          'Flight operations team training on AI-powered mission monitoring'
+        ],
+        microsoftSolutions: ['Azure Space Analytics', 'Azure Machine Learning Aerospace', 'Azure IoT Space'],
+        deliveryMotions: ['Space technology AI transformation', 'Mission control analytics workshop', 'Satellite data consultation'],
+        stakeholdersRequired: ['Mission Control Director', 'Satellite Operations Manager', 'Flight Dynamics Team Lead', 'Ground Systems Engineer'],
+        successCriteria: ['Enhanced satellite health monitoring', 'Improved mission success rates', 'Faster anomaly detection and response']
+      },
+      {
+        value: 7300000,
+        category: 'cross-sell',
+        description: 'Deploy comprehensive space project management and collaboration platform for multi-mission coordination',
+        timeline: '6+ months',
+        probability: 'high',
+        requiredActivities: [
+          'Multi-mission project coordination and resource optimization',
+          'Cross-functional team collaboration enhancement',
+          'Space project lifecycle management automation',
+          'International space partner collaboration platform integration'
+        ],
+        microsoftSolutions: ['Azure DevOps Space', 'Microsoft Teams for Space Projects', 'Power Platform Mission Management'],
+        deliveryMotions: ['Space project management transformation', 'Multi-mission coordination workshop', 'Space collaboration consultation'],
+        stakeholdersRequired: ['VP Space Operations', 'Mission Program Managers', 'International Partnership Director', 'Systems Integration Lead'],
+        successCriteria: ['Improved multi-mission coordination', 'Enhanced international collaboration', 'Optimized resource allocation across projects']
+      }
+    ]
   }
 ];
 
@@ -1083,45 +1573,73 @@ export function generateEnhancedSignals(accounts: Account[]): Signal[] {
   const severityOptions: Array<'low' | 'medium' | 'high' | 'critical'> = ['low', 'medium', 'high', 'critical'];
   const typeOptions = [
     'engagement', 'usage', 'support', 'financial', 'feature_request', 'churn_risk', 
-    'billing', 'feature', 'cost', 'agility', 'data', 'risk', 'culture'
+    'billing', 'feature', 'cost', 'agility', 'data', 'risk', 'culture',
+    'security', 'compliance', 'performance', 'innovation', 'collaboration',
+    'training', 'integration', 'scalability', 'sustainability', 'quality',
+    'efficiency', 'automation', 'analytics', 'ai_readiness', 'digital_transformation'
   ] as const;
 
-  // Enhanced signal templates for different industries
+  // Enhanced signal templates for different industries with more variety
   const industrySignalTemplates = {
     'Technology': [
       'API usage increased by 300% indicating scale-up opportunity',
       'Development team expanded by 40% suggesting infrastructure needs',
       'CI/CD pipeline failures increased, indicating DevOps improvement needs',
       'Open source vulnerability scan results showing security gaps',
-      'Cloud compute costs trending 25% over budget, optimization needed'
+      'Cloud compute costs trending 25% over budget, optimization needed',
+      'Machine learning model training time reduced 45% with GPU acceleration',
+      'Developer productivity metrics showing 30% improvement with automation',
+      'Code repository security scans revealing critical vulnerabilities',
+      'Microservices architecture adoption progressing at 65% completion',
+      'Container orchestration showing 20% resource optimization potential'
     ],
     'Manufacturing': [
       'IoT sensor data quality improved 45% showing analytics readiness',
       'Equipment downtime reduced by 18% with predictive maintenance',
       'Production line efficiency metrics showing 12% improvement opportunity',
       'Energy consumption patterns indicating sustainability optimization potential',
-      'Supply chain visibility gaps identified across 15 facilities'
+      'Supply chain visibility gaps identified across 15 facilities',
+      'Quality control automation reducing defects by 22%',
+      'Worker safety incidents decreased 35% with digital monitoring',
+      'Inventory turnover optimized by 28% through demand forecasting',
+      'Environmental compliance automated across all production sites',
+      'Digital twin deployment showing 40% simulation accuracy improvement'
     ],
     'Financial Services': [
       'Regulatory compliance audit findings requiring immediate attention',
       'Transaction processing latency increased 35% affecting customer experience',
       'Data governance maturity assessment showing significant gaps',
       'Fraud detection false positive rates exceeding industry benchmarks',
-      'Customer authentication failures increased by 22%'
+      'Customer authentication failures increased by 22%',
+      'Risk assessment models showing 95% accuracy in threat detection',
+      'Digital banking adoption increased 180% year-over-year',
+      'Algorithmic trading performance improved 15% with AI optimization',
+      'Customer onboarding time reduced 50% with automation',
+      'Credit scoring accuracy enhanced 25% with alternative data sources'
     ],
     'Healthcare': [
       'Patient data interoperability score improved to 85%',
       'Clinical workflow efficiency gains of 20% identified',
       'HIPAA compliance audit results showing areas for improvement',
       'Telehealth adoption increased 180% creating scalability needs',
-      'Medical device integration challenges affecting care coordination'
+      'Medical device integration challenges affecting care coordination',
+      'AI-powered diagnostic accuracy improved 32% with image analysis',
+      'Electronic health record adoption reaching 95% across departments',
+      'Patient satisfaction scores increased 25% with digital engagement',
+      'Clinical decision support systems reducing diagnosis time by 40%',
+      'Population health analytics revealing preventive care opportunities'
     ],
     'Retail': [
       'Customer engagement metrics declined 15% over past quarter',
       'Inventory turnover optimization opportunity worth $2.1M identified',
       'E-commerce platform performance issues during peak traffic',
       'Customer data unification project showing 60% completion',
-      'Supply chain disruption impact analysis completed'
+      'Supply chain disruption impact analysis completed',
+      'Personalization engine increasing conversion rates by 28%',
+      'Omnichannel customer experience showing integration challenges',
+      'Dynamic pricing optimization revealing 12% revenue opportunity',
+      'Social commerce engagement increased 150% with influencer partnerships',
+      'Sustainability initiatives improving brand perception by 35%'
     ],
     'Education': [
       'Student engagement analytics showing 25% improvement opportunity',
@@ -1220,17 +1738,87 @@ export function generateEnhancedSignals(accounts: Account[]): Signal[] {
       'Weather analytics integration improving farming decisions',
       'Sustainability tracking showing environmental impact improvements',
       'Farm equipment predictive maintenance reducing costs by 25%'
+    ],
+    'Real Estate': [
+      'Property valuation accuracy improved 35% with AI analytics',
+      'Virtual property tour engagement increased 150%',
+      'Market trend prediction model showing 92% accuracy',
+      'Agent productivity analytics revealing workflow optimization opportunities',
+      'Customer relationship management integration showing 25% efficiency gains'
+    ],
+    'Mining': [
+      'Equipment downtime reduced 25% with predictive maintenance',
+      'Environmental compliance monitoring showing 95% accuracy',
+      'Safety incident reporting automated across all sites',
+      'Resource extraction optimization showing 18% efficiency improvement',
+      'Sustainability tracking platform deployment 80% complete'
+    ],
+    'Fashion & Apparel': [
+      'Fashion trend prediction accuracy improved to 87%',
+      'Inventory optimization reducing waste by 22%',
+      'Customer preference analytics showing personalization opportunities',
+      'Supply chain visibility improved across 45 suppliers',
+      'Omnichannel customer experience showing 30% engagement increase'
+    ],
+    'Maritime & Shipping': [
+      'Vessel fuel efficiency optimized by 18% with route analytics',
+      'Cargo tracking accuracy improved to 99.2%',
+      'Port operations efficiency increased 25% with digitization',
+      'Maritime safety compliance automated across fleet',
+      'Blockchain documentation reducing processing time by 40%'
+    ],
+    'Gaming & Interactive': [
+      'Player engagement analytics showing 35% retention improvement',
+      'Cloud gaming infrastructure scaling to support 2M concurrent users',
+      'Developer productivity increased 45% with collaboration tools',
+      'Game performance analytics revealing optimization opportunities',
+      'Content delivery network showing 60% faster load times'
+    ],
+    'Construction': [
+      'Project timeline accuracy improved 30% with BIM integration',
+      'Construction safety incidents reduced 40% with IoT monitoring',
+      'Resource utilization optimization showing 15% cost savings',
+      'Quality control automation reducing defects by 28%',
+      'Compliance reporting automated across 85% of projects'
+    ],
+    'Legal Services': [
+      'Legal research efficiency improved 50% with AI assistance',
+      'Contract analysis accuracy increased to 94%',
+      'Document review time reduced 45% with automation',
+      'Client communication security enhanced with compliance protocols',
+      'Knowledge management system showing 80% attorney adoption'
+    ],
+    'Hospitality & Tourism': [
+      'Guest satisfaction scores improved 25% with personalization',
+      'Revenue optimization showing 18% increase per room',
+      'Operational efficiency enhanced 22% across properties',
+      'Guest preference analytics revealing upselling opportunities',
+      'Multi-property integration reducing management overhead by 30%'
+    ],
+    'Chemicals': [
+      'Process efficiency optimized by 22% with AI analytics',
+      'Quality control defects reduced 35% with predictive monitoring',
+      'Environmental compliance automated across all facilities',
+      'Safety incident management showing 50% faster response times',
+      'Predictive maintenance reducing unplanned downtime by 40%'
+    ],
+    'Space & Satellite': [
+      'Satellite health monitoring accuracy improved to 98%',
+      'Mission success rate increased 15% with AI anomaly detection',
+      'Ground operations efficiency enhanced 35%',
+      'Multi-mission coordination showing 25% resource optimization',
+      'International collaboration platform adoption at 90%'
     ]
   };
   
   accounts.forEach(account => {
-    // Generate 3-6 signals per account for rich visualization
-    const signalCount = Math.floor(Math.random() * 4) + 3;
+    // Generate 4-7 signals per account for rich visualization (increased from 3-6)
+    const signalCount = Math.floor(Math.random() * 4) + 4;
     const industryTemplates = industrySignalTemplates[account.industry as keyof typeof industrySignalTemplates] || 
                              industrySignalTemplates['Technology'];
     
     for (let i = 0; i < signalCount; i++) {
-      // Distribute signals across categories
+      // Distribute signals across categories more evenly
       const category = categories[i % categories.length];
       const severity = severityOptions[Math.floor(Math.random() * severityOptions.length)];
       const type = typeOptions[Math.floor(Math.random() * typeOptions.length)];
@@ -1245,12 +1833,12 @@ export function generateEnhancedSignals(accounts: Account[]): Signal[] {
         // Watch accounts get more medium/high signals
         adjustedSeverity = Math.random() > 0.5 ? 'high' : 'medium';
       } else {
-        // Good accounts get more positive signals
-        adjustedSeverity = Math.random() > 0.7 ? 'low' : 'medium';
+        // Good accounts get more positive signals with some opportunities
+        adjustedSeverity = Math.random() > 0.6 ? 'medium' : 'low';
       }
       
       const signal: Signal = {
-        id: `signal-${account.id}-${i}-${Date.now()}`,
+        id: `signal-${account.id}-${i}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         accountId: account.id,
         accountName: account.name,
         type: type,
@@ -1266,7 +1854,10 @@ export function generateEnhancedSignals(accounts: Account[]): Signal[] {
           lastUpdated: new Date().toISOString(),
           confidence: Math.floor(Math.random() * 30) + 70, // 70-99% confidence
           impact: Math.floor(Math.random() * 8) + 3, // 3-10 impact score
-          source: `${account.industry.toLowerCase()}-analytics`
+          source: `${account.industry.toLowerCase().replace(/\s+/g, '-')}-analytics`,
+          signalStrength: Math.floor(Math.random() * 50) + 50, // 50-99% signal strength
+          correlationId: `corr-${Math.random().toString(36).substr(2, 9)}`,
+          businessImpact: Math.random() > 0.5 ? 'high' : 'medium'
         }
       };
       
@@ -1276,9 +1867,38 @@ export function generateEnhancedSignals(accounts: Account[]): Signal[] {
     // Add one guaranteed industry-specific signal per account
     const industrySignal = generateIndustrySpecificSignal(account.id, account.name, account.industry);
     signals.push(industrySignal);
+    
+    // Add one guaranteed expansion/opportunity signal for accounts with high expansion potential
+    if (account.expansionOpportunity > 5000000) {
+      const expansionSignal: Signal = {
+        id: `expansion-signal-${account.id}-${Date.now()}`,
+        accountId: account.id,
+        accountName: account.name,
+        type: 'financial',
+        category: 'cost',
+        severity: account.healthScore > 75 ? 'medium' : 'high',
+        description: `Significant expansion opportunity identified worth $${(account.expansionOpportunity / 1000000).toFixed(1)}M based on usage patterns and stakeholder engagement`,
+        timestamp: new Date(Date.now() - Math.random() * 3 * 24 * 60 * 60 * 1000).toISOString(),
+        metadata: {
+          industry: account.industry,
+          healthScore: account.healthScore,
+          arr: account.arr,
+          expansionValue: account.expansionOpportunity,
+          trend: 'improving',
+          lastUpdated: new Date().toISOString(),
+          confidence: Math.floor(Math.random() * 20) + 80, // 80-99% confidence for expansion signals
+          impact: 9, // High impact for expansion opportunities
+          source: 'expansion-analytics',
+          signalStrength: Math.floor(Math.random() * 20) + 80, // 80-99% for strong signals
+          businessImpact: 'high',
+          opportunityType: 'expansion'
+        }
+      };
+      signals.push(expansionSignal);
+    }
   });
   
-  // Add some cross-account signals for portfolio-level insights
+  // Add comprehensive cross-account signals for portfolio-level insights
   const portfolioSignals: Signal[] = [
     {
       id: `portfolio-signal-1-${Date.now()}`,
@@ -1287,15 +1907,19 @@ export function generateEnhancedSignals(accounts: Account[]): Signal[] {
       type: 'data',
       category: 'data',
       severity: 'medium',
-      description: 'Overall portfolio health score improved by 8% this quarter with 15 accounts showing positive momentum',
+      description: `Overall portfolio health score improved by 8% this quarter with ${Math.floor(accounts.length * 0.6)} accounts showing positive momentum across ${accounts.length} total accounts`,
       timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
       metadata: {
         trend: 'improving',
-        accountsAffected: 15,
+        accountsAffected: Math.floor(accounts.length * 0.6),
         portfolioValue: accounts.reduce((sum, a) => sum + a.arr, 0),
         source: 'portfolio-analytics',
         confidence: 92,
-        impact: 8
+        impact: 8,
+        industryBreakdown: accounts.reduce((acc, a) => {
+          acc[a.industry] = (acc[a.industry] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>)
       }
     },
     {
@@ -1305,7 +1929,7 @@ export function generateEnhancedSignals(accounts: Account[]): Signal[] {
       type: 'financial',
       category: 'cost',
       severity: 'high',
-      description: `Identified $${(accounts.reduce((sum, a) => sum + a.expansionOpportunity, 0) / 1000000).toFixed(1)}M in expansion opportunities across ${accounts.length} accounts`,
+      description: `Identified $${(accounts.reduce((sum, a) => sum + a.expansionOpportunity, 0) / 1000000).toFixed(1)}M in expansion opportunities across ${accounts.length} diverse accounts spanning ${new Set(accounts.map(a => a.industry)).size} industries`,
       timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
       metadata: {
         expansionValue: accounts.reduce((sum, a) => sum + a.expansionOpportunity, 0),
@@ -1316,7 +1940,48 @@ export function generateEnhancedSignals(accounts: Account[]): Signal[] {
         }, {} as Record<string, number>),
         source: 'expansion-analytics',
         confidence: 88,
-        impact: 9
+        impact: 9,
+        uniqueIndustries: new Set(accounts.map(a => a.industry)).size
+      }
+    },
+    {
+      id: `portfolio-signal-3-${Date.now()}`,
+      accountId: 'portfolio',
+      accountName: 'Portfolio Analysis',
+      type: 'digital_transformation',
+      category: 'agility',
+      severity: 'medium',
+      description: `AI and automation adoption accelerating across portfolio with 78% of accounts showing digital transformation readiness signals`,
+      timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+      metadata: {
+        aiReadinessAccounts: Math.floor(accounts.length * 0.78),
+        totalAccounts: accounts.length,
+        digitalizationTrend: 'accelerating',
+        source: 'ai-adoption-analytics',
+        confidence: 85,
+        impact: 7,
+        technologiesInDemand: ['Azure Machine Learning', 'Power Platform', 'Azure Cognitive Services']
+      }
+    },
+    {
+      id: `portfolio-signal-4-${Date.now()}`,
+      accountId: 'portfolio',
+      accountName: 'Portfolio Analysis',
+      type: 'sustainability',
+      category: 'risk',
+      severity: 'low',
+      description: `Sustainability and ESG initiatives showing strong adoption across ${Math.floor(accounts.length * 0.65)}% of portfolio with carbon tracking improvements`,
+      timestamp: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
+      metadata: {
+        sustainabilityAccounts: Math.floor(accounts.length * 0.65),
+        carbonTrackingImprovement: 42,
+        esgCompliance: 'improving',
+        source: 'sustainability-analytics',
+        confidence: 82,
+        impact: 6,
+        greenTechOpportunities: accounts.filter(a => 
+          ['Energy', 'Clean Technology', 'Manufacturing', 'Transportation'].includes(a.industry)
+        ).length
       }
     }
   ];

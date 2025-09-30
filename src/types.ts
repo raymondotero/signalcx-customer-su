@@ -72,7 +72,7 @@ export interface Signal {
   timestamp: string;
   accountId: string;
   accountName: string;
-  type: 'engagement' | 'usage' | 'support' | 'financial' | 'feature_request' | 'churn_risk' | 'billing' | 'feature' | 'cost' | 'agility' | 'data' | 'risk' | 'culture';
+  type: 'engagement' | 'usage' | 'support' | 'financial' | 'feature_request' | 'churn_risk' | 'billing' | 'feature' | 'cost' | 'agility' | 'data' | 'risk' | 'culture' | 'security' | 'compliance' | 'performance' | 'innovation' | 'collaboration' | 'training' | 'integration' | 'scalability' | 'sustainability' | 'quality' | 'efficiency' | 'automation' | 'analytics' | 'ai_readiness' | 'digital_transformation';
   signalName?: string;
   description: string;
   value?: number;
