@@ -1001,7 +1001,7 @@ export function useAccounts() {
   };
 
   const resetAccounts = () => {
-    setAccounts(sampleAccounts);
+    setAccounts([...sampleAccounts]); // Create a new array to ensure reactivity
   };
 
   return {
@@ -1043,11 +1043,17 @@ export function useSignals() {
     setSignals((prev) => (prev || []).filter(signal => signal.id !== signalId));
   };
 
+  // Helper function to clear and reset signals
+  const resetSignals = (newSignals: Signal[]) => {
+    setSignals([...newSignals]); // Create a new array to ensure reactivity
+  };
+
   return {
     signals: signals || [],
     setSignals,
     addSignal,
-    removeSignal
+    removeSignal,
+    resetSignals
   };
 }
 

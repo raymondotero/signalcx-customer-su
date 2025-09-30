@@ -44,10 +44,10 @@ function App() {
   const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
   const [selectedNBA, setSelectedNBA] = useState<NextBestAction | null>(null);
   const [signalVisualizationOpen, setSignalVisualizationOpen] = useState(false);
-  const { accounts, resetAccounts } = useAccounts();
+  const { accounts, resetAccounts, setAccounts } = useAccounts();
   const { setNBAs } = useNBAs();
   const { clearMemory, addMemoryEntry, setMemory } = useAgentMemory();
-  const { setSignals, addSignal } = useSignals();
+  const { setSignals, addSignal, signals, resetSignals } = useSignals();
   const { isProcessing } = useSignalProcessor();
   const realTimeAI = useRealTimeAI();
   const aiMetrics = useAIMetrics();
@@ -56,14 +56,18 @@ function App() {
   const safeTargets = Array.isArray(targets) ? targets : [];
   const safeIntegrations = Array.isArray(integrations) ? integrations : [];
   
-  // Auto-generate enhanced signals on first load
+  // Auto-generate enhanced signals on first load and when accounts change
   React.useEffect(() => {
     const initializeEnhancedData = async () => {
       if (accounts.length > 0) {
         try {
           const { generateEnhancedSignals } = await import('@/hooks/useData');
           const enhancedSignals = generateEnhancedSignals(accounts);
-          setSignals(enhancedSignals);
+          
+          // Only set signals if we don't have any or if accounts changed significantly
+          if (!signals || signals.length === 0 || signals.length < accounts.length * 2) {
+            resetSignals(enhancedSignals);
+          }
         } catch (error) {
           console.error('Error generating enhanced signals:', error);
         }
@@ -71,7 +75,7 @@ function App() {
     };
     
     initializeEnhancedData();
-  }, [accounts.length, setSignals]);
+  }, [accounts.length, signals?.length, setSignals]);
   
   // Initialize notification service with integrations
   React.useEffect(() => {
@@ -159,7 +163,7 @@ function App() {
     setSelectedNBA(null);
   };
 
-  const handleResetDemo = () => {
+  const handleResetDemo = async () => {
     // Reset to sample data with enhanced signals
     resetAccounts();
     setNBAs([]);
@@ -170,22 +174,31 @@ function App() {
     realTimeAI.clearResults();
     aiMetrics.resetMetrics();
     
-    toast.success('Demo data reset successfully - enhanced signals will regenerate');
+    // Generate fresh enhanced signals for the reset accounts
+    try {
+      const { generateEnhancedSignals } = await import('@/hooks/useData');
+      const enhancedSignals = generateEnhancedSignals(sampleAccounts);
+      resetSignals(enhancedSignals);
+      toast.success(`Demo reset: ${sampleAccounts.length} accounts restored with ${enhancedSignals.length} fresh signals`);
+    } catch (error) {
+      console.error('Error generating enhanced signals on reset:', error);
+      toast.success('Demo data reset successfully');
+    }
   };
 
   const handleRestoreFullData = async () => {
     try {
-      // Import the enhanced signal generation functions
-      const { generateEnhancedSignals } = await import('@/hooks/useData');
+      // Import the enhanced signal generation functions and sample data
+      const { generateEnhancedSignals, sampleAccounts: fullSampleAccounts } = await import('@/hooks/useData');
       
-      // Reset accounts first
-      resetAccounts();
+      // Reset accounts to the full expanded dataset
+      setAccounts(fullSampleAccounts);
       
       // Generate enhanced signals for all accounts with proper category distribution
-      const enhancedSignals = generateEnhancedSignals(sampleAccounts);
+      const enhancedSignals = generateEnhancedSignals(fullSampleAccounts);
       
-      // Set the signals using the hook
-      setSignals(enhancedSignals);
+      // Set the signals using the hook with reset function for better reactivity
+      resetSignals(enhancedSignals);
       
       // Generate sample NBA recommendations with correct type for expanded account base
       const enhancedNBAs: NextBestAction[] = [
@@ -361,7 +374,7 @@ function App() {
         recommendation: true
       });
       
-      toast.success(`Full data restored: ${sampleAccounts.length} diverse accounts, ${enhancedSignals.length} signals, and ${enhancedNBAs.length} NBA recommendations loaded!`);
+      toast.success(`Full data restored: ${fullSampleAccounts.length} diverse accounts, ${enhancedSignals.length} signals, and ${enhancedNBAs.length} NBA recommendations loaded!`);
       
     } catch (error) {
       console.error('Error restoring data:', error);
@@ -460,7 +473,7 @@ function App() {
                     // Generate enhanced signals with proper category distribution
                     const { generateEnhancedSignals } = await import('@/hooks/useData');
                     const enhancedSignals = generateEnhancedSignals(accounts);
-                    setSignals(enhancedSignals);
+                    resetSignals(enhancedSignals);
                     toast.success(`Generated ${enhancedSignals.length} diverse signals across ${accounts.length} accounts for comprehensive heat map visualization`);
                   }}
                   className="text-purple-700 border-purple-200 hover:bg-purple-50"
