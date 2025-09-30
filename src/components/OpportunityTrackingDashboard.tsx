@@ -23,7 +23,9 @@ import {
   ArrowSquareOut,
   Buildings
 } from '@phosphor-icons/react';
+import { FieldMappingManager } from '@/components/FieldMappingManager';
 import { useKV } from '@github/spark/hooks';
+import { useAccounts } from '@/hooks/useData';
 import { toast } from 'sonner';
 
 interface Opportunity {
@@ -61,11 +63,15 @@ interface ConversionMetrics {
 }
 
 const OpportunityTrackingDashboard: React.FC = () => {
+  const { accounts } = useAccounts();
   const [opportunities, setOpportunities] = useKV<Opportunity[]>('d365-opportunities', []);
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>('current_quarter');
   const [selectedStage, setSelectedStage] = useState<string>('all');
   const [selectedSource, setSelectedSource] = useState<string>('all');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  
+  // Get selected account from the accounts list (if any account is selected)
+  const selectedAccount = accounts.find(acc => acc.id === 'acc-1') || accounts[0]; // Default to first account or selected one
 
   // Initialize sample opportunity data
   useEffect(() => {
@@ -517,6 +523,7 @@ const OpportunityTrackingDashboard: React.FC = () => {
         <TabsList>
           <TabsTrigger value="pipeline">Pipeline View</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="field-mapping">Field Mapping</TabsTrigger>
           <TabsTrigger value="d365-sync">D365 Sync Status</TabsTrigger>
         </TabsList>
 
@@ -697,6 +704,10 @@ const OpportunityTrackingDashboard: React.FC = () => {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        <TabsContent value="field-mapping" className="space-y-4">
+          <FieldMappingManager selectedAccount={selectedAccount} />
         </TabsContent>
 
         <TabsContent value="d365-sync" className="space-y-4">
