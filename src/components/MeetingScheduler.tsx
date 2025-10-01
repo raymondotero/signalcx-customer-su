@@ -106,19 +106,88 @@ export function MeetingScheduler({ opportunity, account, children }: MeetingSche
   };
 
   const scheduleMeeting = () => {
-    // In a real app, this would integrate with calendar systems
-    const meetingData = {
-      ...meetingDetails,
-      accountId: account.id,
-      opportunityId: `${opportunity.category}-${Date.now()}`,
-      estimatedValue: opportunity.value,
-      createdAt: new Date().toISOString()
+    // Generate mailto link to open default email application
+    const startDate = new Date(`${meetingDetails.date} ${meetingDetails.time}`);
+    const endDate = new Date(startDate.getTime() + parseInt(meetingDetails.duration) * 60000);
+    
+    const formatDateTime = (date: Date) => {
+      return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
     };
+
+    // Create email content
+    const subject = encodeURIComponent(meetingDetails.title);
+    const recipients = encodeURIComponent(meetingDetails.attendees.join(';'));
     
-    console.log('Meeting scheduled:', meetingData);
+    const bodyContent = `
+Meeting Details:
+${meetingDetails.title}
+
+Date: ${new Date(meetingDetails.date).toLocaleDateString()}
+Time: ${meetingDetails.time}
+Duration: ${meetingDetails.duration} minutes
+Type: ${meetingDetails.meetingType === 'teams' ? 'Microsoft Teams' : meetingDetails.meetingType === 'onsite' ? 'In-Person' : 'Phone Call'}
+${meetingDetails.location ? `Location: ${meetingDetails.location}` : ''}
+
+Account: ${account.name}
+Opportunity: ${opportunity.description}
+Estimated Value: $${(opportunity.value / 1000000).toFixed(1)}M
+
+Description:
+${meetingDetails.description}
+
+Agenda:
+${meetingDetails.agenda.map((item, index) => `${index + 1}. ${item}`).join('\n')}
+
+${meetingDetails.meetingType === 'teams' ? 'Microsoft Teams meeting link will be added upon confirmation.' : ''}
+
+Please confirm your attendance.
+
+Best regards,
+Customer Success Team
+    `.trim();
+
+    const body = encodeURIComponent(bodyContent);
     
-    toast.success('Meeting scheduled successfully! Calendar invite will be sent.');
-    setIsOpen(false);
+    // Create calendar event data (ICS format snippet for reference)
+    const calendarEvent = `
+BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+DTSTART:${formatDateTime(startDate)}
+DTEND:${formatDateTime(endDate)}
+SUMMARY:${meetingDetails.title}
+DESCRIPTION:${meetingDetails.description}
+ATTENDEE:${meetingDetails.attendees.map(attendee => `mailto:${attendee}`).join(',')}
+END:VEVENT
+END:VCALENDAR
+    `.trim();
+
+    // Generate mailto URL
+    const mailtoUrl = `mailto:${recipients}?subject=${subject}&body=${body}`;
+    
+    // Open default email application
+    try {
+      window.open(mailtoUrl, '_self');
+      
+      // Store meeting data for reference
+      const meetingData = {
+        ...meetingDetails,
+        accountId: account.id,
+        opportunityId: `${opportunity.category}-${Date.now()}`,
+        estimatedValue: opportunity.value,
+        createdAt: new Date().toISOString(),
+        calendarEvent
+      };
+      
+      console.log('Meeting data prepared:', meetingData);
+      
+      toast.success('Opening email application with meeting invite details!');
+      setIsOpen(false);
+      
+    } catch (error) {
+      console.error('Error opening email application:', error);
+      toast.error('Could not open email application. Please check your default email settings.');
+    }
   };
 
   const canSchedule = meetingDetails.date && meetingDetails.time && meetingDetails.attendees.length > 0;
@@ -395,9 +464,10 @@ export function MeetingScheduler({ opportunity, account, children }: MeetingSche
                       onClick={scheduleMeeting}
                       disabled={!canSchedule}
                       className="bg-primary hover:bg-primary/90"
+                      title="Open email application with meeting invite"
                     >
                       <Envelope className="w-4 h-4 mr-2" />
-                      Send Invite
+                      Open Email Invite
                     </Button>
                   </div>
                 </div>
