@@ -10,6 +10,7 @@ import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
+import { exportRechartsAsImage, exportSVGAsImage } from '@/lib/chartExport';
 import { 
   TrendUp, 
   TrendDown, 
@@ -44,7 +45,8 @@ import {
   Activity,
   Gear,
   MagnifyingGlass,
-  Star
+  Star,
+  Download
 } from '@phosphor-icons/react';
 import { useSignals, useAccounts, useNBAs } from '@/hooks/useData';
 import { Signal, Account, NextBestAction } from '@/types';
@@ -166,6 +168,40 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
   const [impactThreshold, setImpactThreshold] = useState<number[]>([0]);
   const [viewMode, setViewMode] = useState<'grid' | 'heatmap' | 'network'>('grid');
   const [selectedExpansion, setSelectedExpansion] = useState<ExpansionOpportunity | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
+
+  // Export analytics dashboard
+  const exportDashboard = async () => {
+    setIsExporting(true);
+    
+    try {
+      // Try to export the main chart container (Recharts)
+      const chartContainer = document.querySelector('.recharts-wrapper');
+      if (chartContainer) {
+        await exportRechartsAsImage('.recharts-wrapper', {
+          title: `Signal Analytics Dashboard${selectedAccount ? ` - ${selectedAccount.name}` : ''}`,
+          width: 1200,
+          height: 800
+        });
+      } else {
+        // Fallback to SVG export if available
+        const svg = document.querySelector('[data-testid="signal-dashboard"] svg') as SVGElement;
+        if (svg) {
+          await exportSVGAsImage(svg, {
+            title: `Signal Analytics Dashboard${selectedAccount ? ` - ${selectedAccount.name}` : ''}`,
+            width: 1200,
+            height: 800
+          });
+        } else {
+          throw new Error('No exportable chart found');
+        }
+      }
+    } catch (error) {
+      console.error('Dashboard export failed:', error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   // Filter signals based on all criteria
   const filteredSignals = useMemo(() => {
@@ -344,17 +380,29 @@ export function SignalVisualizationDialog({ open, onOpenChange, selectedAccount 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-7xl max-h-[95vh] overflow-hidden">
+      <DialogContent className="max-w-7xl max-h-[95vh] overflow-hidden" data-testid="signal-dashboard">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <ChartBar className="w-5 h-5" />
-            Interactive Signal Analytics Dashboard
-            {selectedAccount && (
-              <Badge variant="outline" className="ml-2">
-                {selectedAccount.name}
-              </Badge>
-            )}
-          </DialogTitle>
+          <div className="flex items-center justify-between">
+            <DialogTitle className="flex items-center gap-2">
+              <ChartBar className="w-5 h-5" />
+              Interactive Signal Analytics Dashboard
+              {selectedAccount && (
+                <Badge variant="outline" className="ml-2">
+                  {selectedAccount.name}
+                </Badge>
+              )}
+            </DialogTitle>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={exportDashboard}
+              disabled={isExporting}
+              className="flex items-center gap-2"
+            >
+              <Download className="w-4 h-4" />
+              {isExporting ? 'Exporting...' : 'Export'}
+            </Button>
+          </div>
           <DialogDescription>
             Comprehensive visualization of business value signals with heat maps, trends, and expansion opportunities
           </DialogDescription>

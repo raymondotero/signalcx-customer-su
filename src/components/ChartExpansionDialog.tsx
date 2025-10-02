@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { exportSVGAsImage } from '@/lib/chartExport';
 import { 
   TrendUp, 
   TrendDown, 
@@ -57,6 +58,7 @@ export const ChartExpansionDialog: React.FC<ChartExpansionDialogProps> = ({
   const [open, setOpen] = useState(false);
   const [chartType, setChartType] = useState<'line' | 'area' | 'bar'>('line');
   const [timeRange, setTimeRange] = useState<'all' | 'recent' | 'forecast'>('all');
+  const [isExporting, setIsExporting] = useState(false);
 
   // Enhanced chart dimensions for expanded view
   const chartWidth = 800;
@@ -171,6 +173,28 @@ export const ChartExpansionDialog: React.FC<ChartExpansionDialogProps> = ({
     }
   };
 
+  // Export chart as image
+  const exportChartAsImage = async () => {
+    setIsExporting(true);
+    
+    try {
+      const svgElement = document.querySelector('.chart-svg') as SVGElement;
+      if (!svgElement) {
+        throw new Error('Chart not found');
+      }
+
+      await exportSVGAsImage(svgElement, {
+        title,
+        width: chartWidth,
+        height: chartHeight,
+        filename: `${title.replace(/[^a-zA-Z0-9]/g, '_')}_chart_${Date.now()}.png`
+      });
+    } catch (error) {
+      console.error('Export failed:', error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
   const getChartIcon = () => {
     switch (chartType) {
       case 'line': return <ChartLine className="w-4 h-4" />;
@@ -178,8 +202,6 @@ export const ChartExpansionDialog: React.FC<ChartExpansionDialogProps> = ({
       case 'bar': return <ChartBar className="w-4 h-4" />;
     }
   };
-
-  // Create Y-axis labels
   const yAxisLabels: Array<{ value: number; y: number }> = [];
   const labelCount = 5;
   for (let i = 0; i <= labelCount; i++) {
@@ -210,7 +232,7 @@ export const ChartExpansionDialog: React.FC<ChartExpansionDialogProps> = ({
         <svg 
           width={chartWidth} 
           height={chartHeight}
-          className="border rounded bg-gradient-to-br from-gray-50 to-white shadow-sm"
+          className="border rounded bg-gradient-to-br from-gray-50 to-white shadow-sm chart-svg"
         >
           {/* Enhanced grid */}
           <defs>
@@ -534,9 +556,14 @@ export const ChartExpansionDialog: React.FC<ChartExpansionDialogProps> = ({
               </div>
             </div>
             
-            <Button variant="outline" size="sm">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => exportChartAsImage().catch(console.error)}
+              disabled={isExporting}
+            >
               <Download className="w-4 h-4 mr-2" />
-              Export
+              {isExporting ? 'Exporting...' : 'Export PNG'}
             </Button>
           </div>
           
