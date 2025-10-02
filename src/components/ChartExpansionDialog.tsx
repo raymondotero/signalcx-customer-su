@@ -1,19 +1,15 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { exportSVGAsImage } from '@/lib/chartExport';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { 
-  TrendUp, 
   TrendDown, 
-  Activity, 
+  TrendUp,
   Calendar,
-  Target,
   ChartBar,
-  ChartLine,
   Download,
   ArrowsOut
 } from '@phosphor-icons/react';
@@ -23,44 +19,45 @@ interface TrendPoint {
   value: number;
   isHistorical: boolean;
   confidence?: number;
-  label?: string;
+}
+
+interface ChartMetadata {
+  title?: string;
+  description?: string;
+  data?: TrendPoint[];
+  predictedValue?: number;
+  riskLevel?: 'low' | 'medium' | 'high';
+  unit?: string;
+  confidence?: number;
+  insights?: string[];
+  timeframe?: string;
 }
 
 interface ChartExpansionDialogProps {
-  title: string;
   data: TrendPoint[];
-  currentValue: number;
-  predictedValue?: number;
-  trend: 'increasing' | 'decreasing' | 'stable';
-  riskLevel?: 'low' | 'medium' | 'high' | 'critical';
-  className?: string;
+  metadata?: ChartMetadata;
   children?: React.ReactNode;
-  metadata?: {
-    unit?: string;
-    timeframe?: string;
-    confidence?: number;
-    description?: string;
-    insights?: string[];
-  };
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  title?: string;
+  currentValue?: number;
+  predictedValue?: number;
+  trend?: string;
+  riskLevel?: string;
 }
 
 export const ChartExpansionDialog: React.FC<ChartExpansionDialogProps> = ({
-  title,
   data,
-  currentValue,
-  predictedValue,
-  trend,
-  riskLevel = 'medium',
-  className = '',
+  metadata,
   children,
-  metadata
+  open,
+  onOpenChange,
 }) => {
-  const [open, setOpen] = useState(false);
   const [chartType, setChartType] = useState<'line' | 'area' | 'bar'>('line');
   const [timeRange, setTimeRange] = useState<'all' | 'recent' | 'forecast'>('all');
   const [isExporting, setIsExporting] = useState(false);
 
-  // Enhanced chart dimensions for expanded view
+  // Enhanced chart dimensions
   const chartWidth = 800;
   const chartHeight = 400;
   const padding = 60;
@@ -96,7 +93,7 @@ export const ChartExpansionDialog: React.FC<ChartExpansionDialogProps> = ({
   const historicalData = filteredData.filter(d => d.isHistorical);
   const forecastData = filteredData.filter(d => !d.isHistorical);
 
-  // Create enhanced path strings
+  // Create path strings
   const createPath = (points: TrendPoint[]) => {
     if (points.length === 0) return '';
     
@@ -129,102 +126,44 @@ export const ChartExpansionDialog: React.FC<ChartExpansionDialogProps> = ({
   const historicalAreaPath = createAreaPath(historicalData);
   const forecastAreaPath = createAreaPath(forecastData);
 
-  // Enhanced confidence area
-  const createConfidenceArea = (points: TrendPoint[]) => {
-    if (points.length === 0) return '';
-    
-    const upperPath = points.map((point, index) => {
-      const x = scaleX(point.day);
-      const confidence = point.confidence || 0.8;
-      const uncertainty = (1 - confidence) * (maxValue - minValue) * 0.1;
-      const y = scaleY(point.value - uncertainty);
-      return index === 0 ? `M ${x} ${y}` : `L ${x} ${y}`;
-    }).join(' ');
-    
-    const lowerPath = points.slice().reverse().map(point => {
-      const x = scaleX(point.day);
-      const confidence = point.confidence || 0.8;
-      const uncertainty = (1 - confidence) * (maxValue - minValue) * 0.1;
-      const y = scaleY(point.value + uncertainty);
-      return `L ${x} ${y}`;
-    }).join(' ');
-    
-    return upperPath + lowerPath + ' Z';
-  };
+  // Generate axis labels
+  const yAxisLabels = Array.from({ length: 6 }, (_, i) => {
+    const value = minValue + (maxValue - minValue) * (i / 5);
+    return {
+      y: scaleY(value),
+      value: Math.round(value)
+    };
+  }).reverse();
 
-  const confidenceArea = createConfidenceArea(forecastData);
+  const xAxisLabels = Array.from({ length: 6 }, (_, i) => {
+    const day = minDay + (maxDay - minDay) * (i / 5);
+    return {
+      x: scaleX(day),
+      value: Math.round(day)
+    };
+  });
 
-  // Get colors based on risk level
-  const getRiskColor = () => {
-    switch (riskLevel) {
-      case 'critical': return '#ef4444'; // red-500
-      case 'high': return '#f59e0b'; // amber-500
-      case 'medium': return '#eab308'; // yellow-500
-      case 'low': return '#22c55e'; // green-500
-      default: return '#6b7280'; // gray-500
+  const getRiskColor = (level: string) => {
+    switch (level) {
+      case 'high': return 'border-red-500 text-red-600 bg-red-50';
+      case 'medium': return 'border-yellow-500 text-yellow-600 bg-yellow-50';
+      case 'low': return 'border-green-500 text-green-600 bg-green-50';
+      default: return 'border-gray-500 text-gray-600 bg-gray-50';
     }
   };
 
   const getTrendIcon = () => {
-    switch (trend) {
-      case 'increasing': return <TrendUp className="w-5 h-5 text-red-600" />;
-      case 'decreasing': return <TrendDown className="w-5 h-5 text-green-600" />;
-      case 'stable': return <Activity className="w-5 h-5 text-gray-600" />;
-    }
+    const lastValue = filteredData[filteredData.length - 1]?.value || 0;
+    const firstValue = filteredData[0]?.value || 0;
+    return lastValue > firstValue ? TrendUp : TrendDown;
   };
 
-  // Export chart as image
-  const exportChartAsImage = async () => {
+  const handleExport = async () => {
     setIsExporting(true);
-    
-    try {
-      const svgElement = document.querySelector('.chart-svg') as SVGElement;
-      if (!svgElement) {
-        throw new Error('Chart not found');
-      }
-
-      await exportSVGAsImage(svgElement, {
-        title,
-        width: chartWidth,
-        height: chartHeight,
-        filename: `${title.replace(/[^a-zA-Z0-9]/g, '_')}_chart_${Date.now()}.png`
-      });
-    } catch (error) {
-      console.error('Export failed:', error);
-    } finally {
-      setIsExporting(false);
-    }
+    // Simulate export process
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    setIsExporting(false);
   };
-  const getChartIcon = () => {
-    switch (chartType) {
-      case 'line': return <ChartLine className="w-4 h-4" />;
-      case 'area': return <Activity className="w-4 h-4" />;
-      case 'bar': return <ChartBar className="w-4 h-4" />;
-    }
-  };
-  const yAxisLabels: Array<{ value: number; y: number }> = [];
-  const labelCount = 5;
-  for (let i = 0; i <= labelCount; i++) {
-    const value = minValue + (maxValue - minValue) * (i / labelCount);
-    const y = scaleY(value);
-    yAxisLabels.push({ value: Math.round(value), y });
-  }
-
-  // Create X-axis labels
-  const xAxisLabels: Array<{ label: string; x: number; day: number }> = [];
-  const xLabelCount = Math.min(10, filteredData.length);
-  for (let i = 0; i < xLabelCount; i++) {
-    const index = Math.floor((filteredData.length - 1) * (i / (xLabelCount - 1)));
-    const point = filteredData[index];
-    if (point) {
-      const x = scaleX(point.day);
-      xAxisLabels.push({ 
-        label: point.label || `Day ${point.day}`, 
-        x,
-        day: point.day 
-      });
-    }
-  }
 
   const renderChart = () => {
     return (
@@ -232,42 +171,39 @@ export const ChartExpansionDialog: React.FC<ChartExpansionDialogProps> = ({
         <svg 
           width={chartWidth} 
           height={chartHeight}
-          className="border rounded bg-gradient-to-br from-gray-50 to-white shadow-sm chart-svg"
+          className="border rounded-lg bg-white"
         >
-          {/* Enhanced grid */}
           <defs>
             <pattern id="expandedGrid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#f3f4f6" strokeWidth="1"/>
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#f1f5f9" strokeWidth="1"/>
             </pattern>
             <linearGradient id="historicalGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#6b7280" stopOpacity="0.3"/>
-              <stop offset="100%" stopColor="#6b7280" stopOpacity="0.1"/>
+              <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.4"/>
+              <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.1"/>
             </linearGradient>
             <linearGradient id="forecastGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={getRiskColor()} stopOpacity="0.3"/>
-              <stop offset="100%" stopColor={getRiskColor()} stopOpacity="0.1"/>
+              <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.4"/>
+              <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.1"/>
             </linearGradient>
           </defs>
           
-          <rect width="100%" height="100%" fill="url(#expandedGrid)" />
+          <rect width={chartWidth} height={chartHeight} fill="url(#expandedGrid)"/>
           
-          {/* Y-axis */}
+          {/* Axes */}
           <line 
             x1={padding} 
             y1={padding} 
             x2={padding} 
-            y2={chartHeight - padding} 
-            stroke="#d1d5db" 
+            y2={chartHeight - padding}
+            stroke="#64748b"
             strokeWidth="2"
           />
-          
-          {/* X-axis */}
           <line 
             x1={padding} 
             y1={chartHeight - padding} 
             x2={chartWidth - padding} 
-            y2={chartHeight - padding} 
-            stroke="#d1d5db" 
+            y2={chartHeight - padding}
+            stroke="#64748b"
             strokeWidth="2"
           />
           
@@ -277,16 +213,16 @@ export const ChartExpansionDialog: React.FC<ChartExpansionDialogProps> = ({
               <line 
                 x1={padding - 5} 
                 y1={label.y} 
-                x2={padding} 
-                y2={label.y} 
-                stroke="#9ca3af" 
+                x2={padding + 5} 
+                y2={label.y}
+                stroke="#64748b"
                 strokeWidth="1"
               />
-              <text 
-                x={padding - 10} 
-                y={label.y + 4} 
-                textAnchor="end" 
+              <text
+                x={padding - 10}
+                y={label.y + 4}
                 className="text-xs fill-gray-600"
+                textAnchor="end"
               >
                 {label.value}{metadata?.unit || ''}
               </text>
@@ -294,8 +230,8 @@ export const ChartExpansionDialog: React.FC<ChartExpansionDialogProps> = ({
                 x1={padding} 
                 y1={label.y} 
                 x2={chartWidth - padding} 
-                y2={label.y} 
-                stroke="#f3f4f6" 
+                y2={label.y}
+                stroke="#f3f4f6"
                 strokeWidth="1"
                 opacity="0.5"
               />
@@ -307,54 +243,42 @@ export const ChartExpansionDialog: React.FC<ChartExpansionDialogProps> = ({
             <g key={index}>
               <line 
                 x1={label.x} 
-                y1={chartHeight - padding} 
+                y1={chartHeight - padding - 5} 
                 x2={label.x} 
-                y2={chartHeight - padding + 5} 
-                stroke="#9ca3af" 
+                y2={chartHeight - padding + 5}
+                stroke="#64748b"
                 strokeWidth="1"
               />
-              <text 
-                x={label.x} 
-                y={chartHeight - padding + 18} 
-                textAnchor="middle" 
+              <text
+                x={label.x}
+                y={chartHeight - padding + 20}
                 className="text-xs fill-gray-600"
+                textAnchor="middle"
               >
-                {label.label}
+                Day {label.value}
               </text>
               <line 
                 x1={label.x} 
                 y1={padding} 
                 x2={label.x} 
-                y2={chartHeight - padding} 
-                stroke="#f3f4f6" 
+                y2={chartHeight - padding}
+                stroke="#f3f4f6"
                 strokeWidth="1"
                 opacity="0.3"
               />
             </g>
           ))}
           
-          {/* Confidence area for forecast */}
-          {confidenceArea && timeRange !== 'recent' && (
-            <path
-              d={confidenceArea}
-              fill={getRiskColor()}
-              opacity="0.15"
-            />
-          )}
-          
           {/* Chart rendering based on type */}
           {chartType === 'area' && (
             <>
-              {/* Historical area */}
-              {historicalAreaPath && timeRange !== 'forecast' && (
+              {historicalAreaPath && (
                 <path
                   d={historicalAreaPath}
                   fill="url(#historicalGradient)"
                 />
               )}
-              
-              {/* Forecast area */}
-              {forecastAreaPath && timeRange !== 'recent' && (
+              {forecastAreaPath && (
                 <path
                   d={forecastAreaPath}
                   fill="url(#forecastGradient)"
@@ -367,11 +291,10 @@ export const ChartExpansionDialog: React.FC<ChartExpansionDialogProps> = ({
             <>
               {/* Historical bars */}
               {historicalData.map((point, index) => {
-                if (timeRange === 'forecast') return null;
                 const x = scaleX(point.day);
                 const y = scaleY(point.value);
-                const barHeight = chartHeight - padding - y;
                 const barWidth = Math.max(8, (chartWidth - 2 * padding) / filteredData.length * 0.8);
+                const barHeight = (chartHeight - padding) - y;
                 
                 return (
                   <rect
@@ -380,8 +303,7 @@ export const ChartExpansionDialog: React.FC<ChartExpansionDialogProps> = ({
                     y={y}
                     width={barWidth}
                     height={barHeight}
-                    fill="#6b7280"
-                    opacity="0.8"
+                    fill="#3b82f6"
                   />
                 );
               })}
@@ -391,8 +313,8 @@ export const ChartExpansionDialog: React.FC<ChartExpansionDialogProps> = ({
                 if (timeRange === 'recent') return null;
                 const x = scaleX(point.day);
                 const y = scaleY(point.value);
-                const barHeight = chartHeight - padding - y;
                 const barWidth = Math.max(8, (chartWidth - 2 * padding) / filteredData.length * 0.8);
+                const barHeight = (chartHeight - padding) - y;
                 
                 return (
                   <rect
@@ -401,7 +323,7 @@ export const ChartExpansionDialog: React.FC<ChartExpansionDialogProps> = ({
                     y={y}
                     width={barWidth}
                     height={barHeight}
-                    fill={getRiskColor()}
+                    fill="#8b5cf6"
                     opacity="0.7"
                   />
                 );
@@ -409,55 +331,49 @@ export const ChartExpansionDialog: React.FC<ChartExpansionDialogProps> = ({
             </>
           )}
           
-          {/* Lines for line and area charts */}
-          {(chartType === 'line' || chartType === 'area') && (
+          {chartType === 'line' && (
             <>
               {/* Historical line */}
-              {historicalPath && timeRange !== 'forecast' && (
+              {historicalPath && (
                 <path
                   d={historicalPath}
                   fill="none"
-                  stroke="#6b7280"
+                  stroke="#3b82f6"
                   strokeWidth="3"
                 />
               )}
               
               {/* Forecast line */}
-              {forecastPath && timeRange !== 'recent' && (
+              {forecastPath && (
                 <path
                   d={forecastPath}
                   fill="none"
-                  stroke={getRiskColor()}
+                  stroke="#8b5cf6"
                   strokeWidth="3"
-                  strokeDasharray="8,4"
+                  strokeDasharray="5,5"
                 />
               )}
             </>
           )}
           
-          {/* Enhanced data points */}
+          {/* Data points */}
           {filteredData.map((point, index) => {
-            if (timeRange === 'forecast' && point.isHistorical) return null;
-            if (timeRange === 'recent' && !point.isHistorical) return null;
-            
+            if (chartType === 'bar') return null;
             return (
-              <g key={index}>
-                <circle
-                  cx={scaleX(point.day)}
-                  cy={scaleY(point.value)}
-                  r="6"
-                  fill={point.isHistorical ? '#6b7280' : getRiskColor()}
-                  stroke="white"
-                  strokeWidth="2"
-                  opacity={point.isHistorical ? 0.9 : 0.8}
-                  className="hover:r-8 transition-all cursor-pointer"
-                />
-                {/* Tooltip on hover */}
+              <circle
+                key={index}
+                cx={scaleX(point.day)}
+                cy={scaleY(point.value)}
+                r="4"
+                fill={point.isHistorical ? "#3b82f6" : "#8b5cf6"}
+                stroke="white"
+                strokeWidth="2"
+                className="cursor-pointer hover:r-6 transition-all"
+              >
                 <title>
-                  {point.label || `Day ${point.day}`}: {point.value}{metadata?.unit || ''}
-                  {point.confidence && ` (${Math.round(point.confidence * 100)}% confidence)`}
+                  Day {point.day}: {point.value}{metadata?.unit || ''}
                 </title>
-              </g>
+              </circle>
             );
           })}
           
@@ -470,8 +386,7 @@ export const ChartExpansionDialog: React.FC<ChartExpansionDialogProps> = ({
               y2={chartHeight - padding}
               stroke="#94a3b8"
               strokeWidth="2"
-              strokeDasharray="4,4"
-              opacity="0.6"
+              strokeDasharray="3,3"
             />
           )}
         </svg>
@@ -479,61 +394,56 @@ export const ChartExpansionDialog: React.FC<ChartExpansionDialogProps> = ({
     );
   };
 
+  const TrendIcon = getTrendIcon();
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         {children || (
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-            <ArrowsOut className="w-4 h-4" />
+          <Button variant="outline" size="sm">
+            <ArrowsOut className="h-4 w-4" />
           </Button>
         )}
       </DialogTrigger>
-      
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-auto">
+      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-3">
-            {getTrendIcon()}
-            {title}
-            <Badge 
-              variant="outline"
-              className={`${
-                riskLevel === 'critical' ? 'border-red-500 text-red-700' :
-                riskLevel === 'high' ? 'border-orange-500 text-orange-700' :
-                riskLevel === 'medium' ? 'border-yellow-500 text-yellow-700' :
-                'border-green-500 text-green-700'
-              }`}
-            >
-              {riskLevel}
-            </Badge>
-          </DialogTitle>
+          <div className="flex items-center gap-2">
+            <TrendIcon className="h-5 w-5" />
+            <DialogTitle>{metadata?.title || 'Chart Analysis'}</DialogTitle>
+            {metadata?.riskLevel && (
+              <Badge 
+                variant="outline"
+                className={getRiskColor(metadata.riskLevel)}
+              >
+                {metadata.riskLevel.toUpperCase()} RISK
+              </Badge>
+            )}
+          </div>
         </DialogHeader>
         
         <div className="space-y-6">
-          {/* Controls */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <label className="text-sm font-medium">Chart Type:</label>
-                <Select value={chartType} onValueChange={(value) => setChartType(value as any)}>
+              <div>
+                <label className="text-sm font-medium">Chart Type</label>
+                <Select value={chartType} onValueChange={(value: 'line' | 'area' | 'bar') => setChartType(value)}>
                   <SelectTrigger className="w-32">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="line">
                       <div className="flex items-center gap-2">
-                        <ChartLine className="w-4 h-4" />
                         Line
                       </div>
                     </SelectItem>
                     <SelectItem value="area">
                       <div className="flex items-center gap-2">
-                        <Activity className="w-4 h-4" />
                         Area
                       </div>
                     </SelectItem>
                     <SelectItem value="bar">
                       <div className="flex items-center gap-2">
-                        <ChartBar className="w-4 h-4" />
+                        <ChartBar className="h-4 w-4" />
                         Bar
                       </div>
                     </SelectItem>
@@ -541,10 +451,10 @@ export const ChartExpansionDialog: React.FC<ChartExpansionDialogProps> = ({
                 </Select>
               </div>
               
-              <div className="flex items-center gap-2">
-                <label className="text-sm font-medium">Time Range:</label>
-                <Select value={timeRange} onValueChange={(value) => setTimeRange(value as any)}>
-                  <SelectTrigger className="w-32">
+              <div>
+                <label className="text-sm font-medium">Time Range</label>
+                <Select value={timeRange} onValueChange={(value: 'all' | 'recent' | 'forecast') => setTimeRange(value)}>
+                  <SelectTrigger className="w-36">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -557,70 +467,60 @@ export const ChartExpansionDialog: React.FC<ChartExpansionDialogProps> = ({
             </div>
             
             <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => exportChartAsImage().catch(console.error)}
+              onClick={handleExport}
               disabled={isExporting}
+              className="flex items-center gap-2"
             >
-              <Download className="w-4 h-4 mr-2" />
-              {isExporting ? 'Exporting...' : 'Export PNG'}
+              <Download className="h-4 w-4" />
+              {isExporting ? 'Exporting...' : 'Export'}
             </Button>
           </div>
           
           {/* Main Chart */}
-          <Card className="border-visible">
+          <Card>
             <CardContent className="p-6">
               {renderChart()}
             </CardContent>
           </Card>
           
-          {/* Insights and Metadata */}
           {metadata && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Key Metrics */}
-              <Card className="border-visible">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Statistics */}
+              <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm">Key Metrics</CardTitle>
+                  <CardTitle className="text-lg">Key Metrics</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Current Value:</span>
-                    <span className="font-medium">{currentValue}{metadata.unit}</span>
+                <CardContent className="space-y-4">
+                  <div>
+                    <span className="font-medium">Current Value: </span>
+                    <span>{filteredData[filteredData.length - 1]?.value || 0}{metadata.unit || ''}</span>
                   </div>
-                  {predictedValue && (
-                    <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">Predicted Value:</span>
-                      <span className="font-medium">{predictedValue}{metadata.unit}</span>
+                  {metadata.predictedValue && (
+                    <div>
+                      <span className="font-medium">Predicted Value: </span>
+                      <span>{metadata.predictedValue}{metadata.unit || ''}</span>
                     </div>
                   )}
                   {metadata.confidence && (
-                    <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">Confidence:</span>
-                      <span className="font-medium">{Math.round(metadata.confidence * 100)}%</span>
+                    <div>
+                      <span className="font-medium">Confidence: </span>
+                      <span>{Math.round(metadata.confidence * 100)}%</span>
                     </div>
                   )}
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Trend:</span>
-                    <div className="flex items-center gap-1">
-                      {getTrendIcon()}
-                      <span className="font-medium capitalize">{trend}</span>
-                    </div>
-                  </div>
                 </CardContent>
               </Card>
               
               {/* Insights */}
               {metadata.insights && metadata.insights.length > 0 && (
-                <Card className="border-visible">
+                <Card>
                   <CardHeader>
-                    <CardTitle className="text-sm">Key Insights</CardTitle>
+                    <CardTitle className="text-lg">Insights</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2">
                       {metadata.insights.map((insight, index) => (
-                        <li key={index} className="text-sm flex items-start gap-2">
-                          <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
-                          {insight}
+                        <li key={index} className="text-sm text-gray-600">
+                          • {insight}
                         </li>
                       ))}
                     </ul>
@@ -630,11 +530,10 @@ export const ChartExpansionDialog: React.FC<ChartExpansionDialogProps> = ({
             </div>
           )}
           
-          {/* Description */}
           {metadata?.description && (
-            <Card className="border-visible">
+            <Card>
               <CardContent className="p-4">
-                <p className="text-sm text-muted-foreground">{metadata.description}</p>
+                <p className="text-gray-600">{metadata.description}</p>
               </CardContent>
             </Card>
           )}
