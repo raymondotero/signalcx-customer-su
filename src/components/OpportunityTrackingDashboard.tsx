@@ -24,6 +24,7 @@ import {
   Buildings
 } from '@phosphor-icons/react';
 import { FieldMappingManager } from '@/components/FieldMappingManager';
+import { D365OpportunityDialog } from '@/components/D365OpportunityDialog';
 import { useKV } from '@github/spark/hooks';
 import { useAccounts } from '@/hooks/useData';
 import { toast } from 'sonner';
@@ -69,6 +70,8 @@ const OpportunityTrackingDashboard: React.FC = () => {
   const [selectedStage, setSelectedStage] = useState<string>('all');
   const [selectedSource, setSelectedSource] = useState<string>('all');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [selectedOpportunity, setSelectedOpportunity] = useState<Opportunity | null>(null);
+  const [d365DialogOpen, setD365DialogOpen] = useState(false);
   
   // Get selected account from the accounts list (if any account is selected)
   const selectedAccount = accounts.find(acc => acc.id === 'acc-1') || accounts[0]; // Default to first account or selected one
@@ -369,6 +372,21 @@ const OpportunityTrackingDashboard: React.FC = () => {
     }, 1500);
   };
 
+  const handleViewInD365 = (opportunity: Opportunity) => {
+    setSelectedOpportunity(opportunity);
+    setD365DialogOpen(true);
+  };
+
+  const handleSaveOpportunity = (updatedOpportunity: Opportunity) => {
+    if (opportunities) {
+      const updatedOpportunities = opportunities.map(opp =>
+        opp.id === updatedOpportunity.id ? updatedOpportunity : opp
+      );
+      setOpportunities(updatedOpportunities);
+      toast.success('Opportunity updated successfully');
+    }
+  };
+
   const handleCreateInD365 = async (opportunity: Opportunity) => {
     if (!opportunity.d365RecordId) {
       const newD365Id = `D365-OPP-${Math.random().toString(36).substr(2, 8).toUpperCase()}`;
@@ -621,7 +639,11 @@ const OpportunityTrackingDashboard: React.FC = () => {
                         Sync
                       </Button>
                       {opportunity.d365RecordId && (
-                        <Button size="sm" variant="outline">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleViewInD365(opportunity)}
+                        >
                           <ArrowSquareOut className="w-3 h-3 mr-1" />
                           View in D365
                         </Button>
@@ -771,6 +793,14 @@ const OpportunityTrackingDashboard: React.FC = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* D365 Opportunity Dialog */}
+      <D365OpportunityDialog
+        open={d365DialogOpen}
+        onOpenChange={setD365DialogOpen}
+        opportunity={selectedOpportunity}
+        onSave={handleSaveOpportunity}
+      />
     </div>
   );
 };

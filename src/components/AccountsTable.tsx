@@ -14,12 +14,14 @@ import {
   SortDescending,
   MagnifyingGlass,
   X,
-  Calendar
+  Calendar,
+  Buildings
 } from '@phosphor-icons/react';
 import { Account } from '@/types';
 import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
 import { ExpansionOpportunitiesDialog } from '@/components/ExpansionOpportunitiesDialog';
 import { QuickMeetingScheduler } from '@/components/QuickMeetingScheduler';
+import { D365OpportunityDialog } from '@/components/D365OpportunityDialog';
 import { scrollToNBASection } from '@/utils/scrollToSection';
 import { toast } from 'sonner';
 
@@ -40,6 +42,8 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
   const [arrFilter, setArrFilter] = useState<string>('all');
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+  const [d365DialogOpen, setD365DialogOpen] = useState(false);
+  const [selectedOpportunity, setSelectedOpportunity] = useState<any>(null);
   
   const tableWrapperRef = useRef<HTMLDivElement>(null);
   const topScrollRef = useRef<HTMLDivElement>(null);
@@ -200,6 +204,44 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
     return sortDirection === 'asc' ? 
       <SortAscending className="w-4 h-4 ml-1" /> : 
       <SortDescending className="w-4 h-4 ml-1" />;
+  };
+
+  const handleViewD365Opportunity = (account: Account, e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    // Create a simulated D365 opportunity for this account
+    const simulatedOpportunity = {
+      id: `opp-${account.id}`,
+      accountId: account.id,
+      accountName: account.name,
+      title: `${account.name} - Strategic Expansion Initiative`,
+      value: account.expansionOpportunity || Math.floor(account.arr * 0.3),
+      stage: 'qualification' as const,
+      probability: account.status === 'Good' ? 75 : account.status === 'Watch' ? 50 : 25,
+      closeDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      owner: account.csam,
+      source: 'signal_expansion' as const,
+      d365RecordId: `D365-OPP-${account.id.toUpperCase()}`,
+      created: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+      lastModified: new Date().toISOString(),
+      notes: [
+        `Account showing strong growth indicators`,
+        `Health score: ${account.healthScore}`,
+        `Current ARR: $${(account.arr / 1000000).toFixed(1)}M`
+      ],
+      signals: [
+        `Health score: ${account.healthScore}/100`,
+        `${account.status} status - proactive engagement opportunity`,
+        `Industry: ${account.industry} sector trends positive`
+      ],
+      nextAction: `Schedule strategic review with ${account.csam} and ${account.ae}`,
+      budgetConfirmed: account.status === 'Good',
+      decisionMaker: 'Executive Leadership Team',
+      timeline: account.status === 'At Risk' ? '30 days (urgent)' : '90 days'
+    };
+    
+    setSelectedOpportunity(simulatedOpportunity);
+    setD365DialogOpen(true);
   };
 
   const getStatusColor = (status: Account['status']) => {
@@ -506,6 +548,14 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
                         </div>
                         <div className="action-button-group">
                           <AccountDetailsDialog account={account} />
+                          <Button 
+                            variant="outline" 
+                            className="text-xs px-2 py-1 bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 min-w-fit"
+                            onClick={(e) => handleViewD365Opportunity(account, e)}
+                          >
+                            <Buildings className="w-3 h-3 mr-1" />
+                            D365
+                          </Button>
                           {account.expansionOpportunity && account.expansionOpportunity > 0 && (
                             <ExpansionOpportunitiesDialog account={account}>
                               <Button 
@@ -528,6 +578,17 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
           </div>
         </div>
       </CardContent>
+
+      {/* D365 Opportunity Dialog */}
+      <D365OpportunityDialog
+        open={d365DialogOpen}
+        onOpenChange={setD365DialogOpen}
+        opportunity={selectedOpportunity}
+        onSave={(updatedOpportunity) => {
+          toast.success('Opportunity updated in Dynamics 365');
+          setD365DialogOpen(false);
+        }}
+      />
     </Card>
   );
 }
