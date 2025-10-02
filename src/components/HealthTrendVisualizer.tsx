@@ -2,7 +2,9 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { TrendUp, TrendDown, Activity } from '@phosphor-icons/react';
+import { Button } from '@/components/ui/button';
+import { TrendUp, TrendDown, Activity, ArrowsOut } from '@phosphor-icons/react';
+import { ChartExpansionDialog } from '@/components/ChartExpansionDialog';
 
 interface HealthTrendVisualizerProps {
   currentScore: number;
@@ -31,6 +33,15 @@ export function HealthTrendVisualizer({
     { label: '90d', value: forecast.days90, days: 90 },
     { label: '180d', value: forecast.days180, days: 180 }
   ];
+
+  // Convert to ChartExpansionDialog data format
+  const chartData = timepoints.map(point => ({
+    day: point.days,
+    value: point.value,
+    isHistorical: point.days === 0,
+    confidence: point.days === 0 ? 1 : confidence / 100,
+    label: point.label
+  }));
 
   const getTrendIcon = () => {
     switch (trend) {
@@ -62,6 +73,33 @@ export function HealthTrendVisualizer({
             <Badge variant="outline" className="text-xs">
               {confidence}% confidence
             </Badge>
+            <ChartExpansionDialog
+              title="Health Score Trajectory"
+              data={chartData}
+              currentValue={currentScore}
+              predictedValue={forecast.days180}
+              trend={trend === 'improving' ? 'increasing' : trend === 'declining' ? 'decreasing' : 'stable'}
+              riskLevel={currentScore >= 80 ? 'low' : currentScore >= 65 ? 'medium' : 'high'}
+              metadata={{
+                unit: ' pts',
+                timeframe: '180 days',
+                confidence: confidence / 100,
+                description: 'Health score forecast showing predicted account health trajectory over the next 6 months.',
+                insights: [
+                  `Current score: ${currentScore} points`,
+                  `180-day forecast: ${forecast.days180} points`,
+                  `Confidence level: ${confidence}%`,
+                  `Overall trend: ${trend}`,
+                  currentScore >= 80 ? 'Account is in good health' : 
+                  currentScore >= 65 ? 'Account requires monitoring' : 
+                  'Account needs immediate attention'
+                ]
+              }}
+            >
+              <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                <ArrowsOut className="w-3 h-3" />
+              </Button>
+            </ChartExpansionDialog>
           </div>
         </div>
       </CardHeader>

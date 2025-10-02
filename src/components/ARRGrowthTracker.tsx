@@ -12,10 +12,12 @@ import {
   Calendar,
   Target,
   CurrencyDollar,
-  ArrowRight
+  ArrowRight,
+  ArrowsOut
 } from '@phosphor-icons/react';
 import { Account, QuarterlyARR, ARRTrend } from '@/types';
 import { ExpansionOpportunitiesDialog } from './ExpansionOpportunitiesDialog';
+import { ChartExpansionDialog } from '@/components/ChartExpansionDialog';
 
 interface ARRGrowthTrackerProps {
   accounts: Account[];
@@ -434,7 +436,43 @@ export function ARRGrowthTracker({ accounts, selectedAccount }: ARRGrowthTracker
                 {/* Quarterly History */}
                 <Card className="border-visible">
                   <CardHeader>
-                    <CardTitle className="text-lg">Quarterly History ({timeRange.toUpperCase()})</CardTitle>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-lg">Quarterly History ({timeRange.toUpperCase()})</CardTitle>
+                      {selectedAccountWithHistory.timeRangeHistory && selectedAccountWithHistory.timeRangeHistory.length > 0 && (
+                        <ChartExpansionDialog
+                          title={`${selectedAccountWithHistory.name} - ARR Growth History`}
+                          data={selectedAccountWithHistory.timeRangeHistory.map((quarter, index) => ({
+                            day: index,
+                            value: quarter.arr,
+                            isHistorical: true,
+                            confidence: 1,
+                            label: quarter.quarter
+                          }))}
+                          currentValue={selectedAccountWithHistory.arr}
+                          trend={selectedAccountWithHistory.timeRangeAvgGrowth > 0 ? 'increasing' : 
+                                selectedAccountWithHistory.timeRangeAvgGrowth < 0 ? 'decreasing' : 'stable'}
+                          riskLevel={selectedAccountWithHistory.status === 'Good' ? 'low' : 
+                                   selectedAccountWithHistory.status === 'Watch' ? 'medium' : 'high'}
+                          metadata={{
+                            unit: '',
+                            timeframe: `${timeRange.toUpperCase()} period`,
+                            confidence: 1,
+                            description: `Quarterly ARR growth history for ${selectedAccountWithHistory.name} showing ${timeRange.toUpperCase()} performance.`,
+                            insights: [
+                              `Current ARR: ${formatCurrency(selectedAccountWithHistory.arr)}`,
+                              `Average quarterly growth: ${formatGrowth(selectedAccountWithHistory.timeRangeAvgGrowth || 0)}`,
+                              `Total growth: ${formatGrowth(selectedAccountWithHistory.timeRangeTotalGrowth || 0)}`,
+                              `Account status: ${selectedAccountWithHistory.status}`,
+                              `Trend: ${selectedAccountWithHistory.arrTrend?.trend || 'steady'}`
+                            ]
+                          }}
+                        >
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <ArrowsOut className="w-4 h-4" />
+                          </Button>
+                        </ChartExpansionDialog>
+                      )}
+                    </div>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">

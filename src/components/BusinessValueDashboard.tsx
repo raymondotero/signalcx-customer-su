@@ -5,13 +5,14 @@ import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { CurrencyDollar, Rocket, Database, Shield, Users, TrendUp, TrendDown, Minus, Target, CheckCircle, Warning, Brain, CaretDown, CaretUp, Lightbulb, ArrowRight, ChartBar } from '@phosphor-icons/react';
+import { CurrencyDollar, Rocket, Database, Shield, Users, TrendUp, TrendDown, Minus, Target, CheckCircle, Warning, Brain, CaretDown, CaretUp, Lightbulb, ArrowRight, ChartBar, ArrowsOut } from '@phosphor-icons/react';
 import { useSignals, useNBAs, useAccounts, useAgentMemory } from '@/hooks/useData';
 import { useKV } from '@github/spark/hooks';
 import { Signal, NextBestAction, Account, AIRecommendation, SignalAnalysis } from '@/types';
 import { TargetSettingsDialog, SignalTarget } from '@/components/TargetSettingsDialog';
 import { AIRecommendationsDialog } from '@/components/AIRecommendationsDialog';
 import { SignalVisualizationDialog } from '@/components/SignalVisualizationDialog';
+import { ChartExpansionDialog } from '@/components/ChartExpansionDialog';
 import { getSparkAIStatus, createAIPrompt, callSparkAI, formatSparkError, SparkAIError } from '@/lib/sparkAI';
 import { toast } from 'sonner';
 
@@ -684,6 +685,37 @@ Return JSON with this structure:
                             </Badge>
                           )}
                           {getTrendIcon(stats.trending)}
+                          <ChartExpansionDialog
+                            title={`${stats.category.charAt(0).toUpperCase() + stats.category.slice(1)} Signal Analytics`}
+                            data={stats.signals.map((signal, index) => ({
+                              day: index,
+                              value: signal.value || (signal.severity === 'critical' ? 90 : signal.severity === 'high' ? 70 : signal.severity === 'medium' ? 50 : 30),
+                              isHistorical: index < stats.signals.length - 3,
+                              confidence: 0.8,
+                              label: signal.signalName
+                            }))}
+                            currentValue={stats.averageValue || 0}
+                            trend={stats.trending === 'up' ? 'increasing' : stats.trending === 'down' ? 'decreasing' : 'stable'}
+                            riskLevel={stats.critical > 0 ? 'critical' : stats.high > 0 ? 'high' : stats.medium > 0 ? 'medium' : 'low'}
+                            metadata={{
+                              unit: stats.unit || ' pts',
+                              timeframe: 'Current period',
+                              confidence: 0.85,
+                              description: `Analysis of ${stats.category} signals showing trend patterns and severity distribution across your account portfolio.`,
+                              insights: [
+                                `Total signals: ${stats.count}`,
+                                `Critical alerts: ${stats.critical}`,
+                                `High priority: ${stats.high}`,
+                                `Average value: ${stats.averageValue?.toFixed(1) || 'N/A'}${stats.unit || ''}`,
+                                `Trend direction: ${stats.trending}`,
+                                `Target compliance: ${stats.targetsOnTrack}/${stats.targetsConfigured}`
+                              ]
+                            }}
+                          >
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              <ArrowsOut className="w-3 h-3" />
+                            </Button>
+                          </ChartExpansionDialog>
                           {expandedCategories.has(stats.category) ? (
                             <CaretUp className="w-4 h-4" />
                           ) : (

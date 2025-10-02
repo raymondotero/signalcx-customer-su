@@ -1,7 +1,9 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TrendUp, TrendDown, Activity } from '@phosphor-icons/react';
+import { Button } from '@/components/ui/button';
+import { TrendUp, TrendDown, Activity, ArrowsOut } from '@phosphor-icons/react';
+import { ChartExpansionDialog } from '@/components/ChartExpansionDialog';
 
 interface TrendPoint {
   day: number;
@@ -138,6 +140,30 @@ export const TrendForecastChart: React.FC<TrendForecastChartProps> = ({
             >
               {riskLevel}
             </Badge>
+            <ChartExpansionDialog
+              title={title}
+              data={data}
+              currentValue={currentValue}
+              predictedValue={predictedValue}
+              trend={trend}
+              riskLevel={riskLevel}
+              metadata={{
+                unit: ' pts',
+                timeframe: '180 days',
+                confidence: data.find(d => !d.isHistorical)?.confidence || 0.8,
+                description: `Forecast analysis for ${title} showing ${trend} trend with ${riskLevel} risk level.`,
+                insights: [
+                  `Current value: ${currentValue} points`,
+                  `Predicted value: ${predictedValue} points`,
+                  `Trend direction: ${trend}`,
+                  `Risk assessment: ${riskLevel} level`
+                ]
+              }}
+            >
+              <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                <ArrowsOut className="w-3 h-3" />
+              </Button>
+            </ChartExpansionDialog>
           </div>
         </div>
       </CardHeader>
