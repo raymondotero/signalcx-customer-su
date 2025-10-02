@@ -21,7 +21,7 @@ import { Account } from '@/types';
 import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
 import { ExpansionOpportunitiesDialog } from '@/components/ExpansionOpportunitiesDialog';
 import { QuickMeetingScheduler } from '@/components/QuickMeetingScheduler';
-import { D365OpportunityDialog } from '@/components/D365OpportunityDialog';
+import D365OpportunityDialog from '@/components/D365OpportunityDialog';
 import { scrollToNBASection } from '@/utils/scrollToSection';
 import { toast } from 'sonner';
 
@@ -584,10 +584,6 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
         open={d365DialogOpen}
         onOpenChange={setD365DialogOpen}
         opportunity={selectedOpportunity}
-        onSave={(updatedOpportunity) => {
-          toast.success('Opportunity updated in Dynamics 365');
-          setD365DialogOpen(false);
-        }}
       />
     </Card>
   );

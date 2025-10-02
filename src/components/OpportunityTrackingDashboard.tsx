@@ -24,7 +24,7 @@ import {
   Buildings
 } from '@phosphor-icons/react';
 import { FieldMappingManager } from '@/components/FieldMappingManager';
-import { D365OpportunityDialog } from '@/components/D365OpportunityDialog';
+import D365OpportunityDialog from '@/components/D365OpportunityDialog';
 import { useKV } from '@github/spark/hooks';
 import { useAccounts } from '@/hooks/useData';
 import { toast } from 'sonner';
@@ -799,7 +799,6 @@ const OpportunityTrackingDashboard: React.FC = () => {
         open={d365DialogOpen}
         onOpenChange={setD365DialogOpen}
         opportunity={selectedOpportunity}
-        onSave={handleSaveOpportunity}
       />
     </div>
   );
