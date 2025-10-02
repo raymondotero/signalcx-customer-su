@@ -435,8 +435,8 @@ function App() {
                     <Brain className="w-5 h-5 text-accent animate-pulse-ai" />
                   )}
                   {realTimeAI.queueSize > 0 && (
-                    <Badge variant="outline" className="animate-pulse">
-                      AI Queue: {String(realTimeAI.queueSize)}
+                    <Badge variant="outline" className="animate-pulse text-xs">
+                      Queue: {String(realTimeAI.queueSize)}
                     </Badge>
                   )}
                 </h1>
@@ -444,20 +444,74 @@ function App() {
               </div>
             </div>
             
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-3 flex-wrap">
+              {/* AI Status Indicators */}
               <div className="flex items-center gap-2">
                 <div className="text-right text-xs text-muted-foreground">
                   <div>AI Approval: {String(aiMetrics.getApprovalRate().toFixed(1))}%</div>
-                  <div>Avg Processing: {String(Math.round(aiMetrics.getAverageProcessingTime()))}ms</div>
+                  <div>Processing: {String(Math.round(aiMetrics.getAverageProcessingTime()))}ms</div>
                 </div>
                 
                 {Array.isArray(safeTargets) && safeTargets.length > 0 && (
                   <Badge variant="outline" className="bg-gradient-to-r from-green-50 to-blue-50 border-green-200 text-green-700">
                     <Target className="w-3 h-3 mr-1" />
-                    {String(safeTargets.length)} Targets Active
+                    {String(safeTargets.length)} Active
                   </Badge>
                 )}
+              </div>
+
+              <Separator orientation="vertical" className="h-6" />
+
+              {/* Primary Dashboard Actions */}
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setSignalVisualizationOpen(true)}
+                  className="flex items-center gap-2 text-purple-700 border-purple-200 hover:bg-purple-50"
+                >
+                  <ChartBar className="w-4 h-4" />
+                  Analytics
+                </Button>
                 
+                <Button 
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    const tabsSection = document.querySelector('[data-section="right-column"]');
+                    if (tabsSection) {
+                      tabsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                    setTimeout(() => {
+                      const opportunityTab = document.querySelector('[value="opportunity-tracking"]') as HTMLElement;
+                      if (opportunityTab) {
+                        opportunityTab.click();
+                      }
+                    }, 500);
+                  }}
+                  className="text-blue-700 border-blue-200 hover:bg-blue-50"
+                >
+                  📊 D365
+                </Button>
+
+                <ROIDashboard />
+                <PredictiveHeatMapDialog />
+              </div>
+
+              <Separator orientation="vertical" className="h-6" />
+
+              {/* Tools & Configuration */}
+              <div className="flex items-center gap-2">
+                <PortfolioAnalysisExport accounts={accounts} />
+                <IntegrationWizard />
+                <DataSyncScheduler />
+                <Dynamics365ConfigDialog />
+              </div>
+
+              <Separator orientation="vertical" className="h-6" />
+
+              {/* Quick Actions */}
+              <div className="flex items-center gap-2">
                 {(safeIntegrations.filter(i => i.id === 'microsoft-teams' && i.status === 'connected').length > 0 ||
                   safeIntegrations.filter(i => i.id === 'microsoft-outlook' && i.status === 'connected').length > 0) && (
                   <Button 
@@ -471,113 +525,77 @@ function App() {
                           testAccount.healthScore + 15,
                           testAccount.healthScore - 8
                         );
-                        toast.success('Test notification sent to connected integrations');
+                        toast.success('Test notification sent');
                       }
                     }}
                     className="text-blue-700 border-blue-200 hover:bg-blue-50"
                   >
-                    🔔 Test Integrations
+                    🔔 Test
                   </Button>
                 )}
-                
+
                 <Button
                   size="sm"
                   variant="outline"
                   onClick={async () => {
-                    // Generate dramatically enhanced signals with comprehensive category distribution
                     const { generateEnhancedSignals } = await import('@/hooks/useData');
                     const enhancedSignals = generateEnhancedSignals(accounts);
                     resetSignals(enhancedSignals);
-                    toast.success(`🔥 MASSIVE DATA REFRESH: Generated ${enhancedSignals.length} EXTREMELY DIVERSE signals with dramatic variations across ${accounts.length} accounts! 
-
-🚀 Features: 8-12 signals per account, extreme industry variations, dramatic trend patterns, comprehensive severity distributions, advanced metadata enrichment, temporal diversity, and quantum-enhanced analytics ready for ultimate heat map visualization and predictive modeling!`);
+                    toast.success(`Generated ${enhancedSignals.length} enhanced signals for ${accounts.length} accounts`);
                   }}
                   className="text-purple-700 border-purple-200 hover:bg-purple-50"
                 >
-                  🔥 Generate VAST Signal Data
-                </Button>
-                
-                <Button 
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    // Scroll to tabs section and select opportunity tracking
-                    const tabsSection = document.querySelector('[data-section="right-column"]');
-                    if (tabsSection) {
-                      tabsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                    // Delay to ensure scroll completes before tab selection
-                    setTimeout(() => {
-                      const opportunityTab = document.querySelector('[value="opportunity-tracking"]') as HTMLElement;
-                      if (opportunityTab) {
-                        opportunityTab.click();
-                      }
-                    }, 500);
-                  }}
-                  className="text-blue-700 border-blue-200 hover:bg-blue-50"
-                >
-                  📊 D365 Opportunities
+                  🔥 Refresh
                 </Button>
                 
                 <Button 
                   size="sm"
                   variant="outline"
                   onClick={async () => {
-                    // Import signal generation functions
                     const { generateBusinessValueSignal } = await import('@/services/signalCatalog');
                     const testAccount = accounts[0];
                     if (testAccount) {
-                      // Generate a critical signal
                       const criticalSignal = {
                         ...generateBusinessValueSignal(testAccount.id, testAccount.name),
                         severity: 'critical' as const,
                         type: 'churn_risk' as const,
-                        description: `Critical: ${testAccount.name} showing severe churn risk indicators - immediate intervention required`,
+                        description: `Critical: ${testAccount.name} showing severe churn risk indicators`,
                       };
-                      
-                      // Add the signal using the hook method
                       addSignal(criticalSignal);
-                      toast.warning('Critical signal generated - check Critical Monitor tab');
+                      toast.warning('Critical signal generated');
                     }
                   }}
                   className="text-red-700 border-red-200 hover:bg-red-50"
                 >
-                  🚨 Test Critical Signal
+                  🚨 Alert
                 </Button>
               </div>
-              
-              <ROIDashboard />
-              <PortfolioAnalysisExport accounts={accounts} />
-              <DataSyncScheduler />
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => setSignalVisualizationOpen(true)}
-                className="flex items-center gap-2 text-purple-700 border-purple-200 hover:bg-purple-50"
-              >
-                <ChartBar className="w-4 h-4" />
-                Signal Analytics
-              </Button>
-              <PredictiveHeatMapDialog />
-              <Dynamics365ConfigDialog />
-              <IntegrationWizard />
-              <HelpGuide />
-              <CSVUpload />
-              <SystemHealthDialog />
-              <Button 
-                className="border text-xs px-3 py-1 bg-accent text-accent-foreground hover:bg-accent/90"
-                onClick={handleRestoreFullData}
-              >
-                <Database className="w-4 h-4 mr-2" />
-                Restore Data
-              </Button>
-              <Button 
-                className="border text-xs px-3 py-1"
-                onClick={handleResetDemo}
-              >
-                <ArrowClockwise className="w-4 h-4 mr-2" />
-                Reset Demo
-              </Button>
+
+              <Separator orientation="vertical" className="h-6" />
+
+              {/* System Controls */}
+              <div className="flex items-center gap-2">
+                <HelpGuide />
+                <CSVUpload />
+                <SystemHealthDialog />
+                <Button 
+                  size="sm"
+                  variant="outline"
+                  className="bg-accent text-accent-foreground hover:bg-accent/90"
+                  onClick={handleRestoreFullData}
+                >
+                  <Database className="w-4 h-4 mr-1" />
+                  Restore
+                </Button>
+                <Button 
+                  size="sm"
+                  variant="outline"
+                  onClick={handleResetDemo}
+                >
+                  <ArrowClockwise className="w-4 h-4 mr-1" />
+                  Reset
+                </Button>
+              </div>
             </div>
           </div>
         </div>
