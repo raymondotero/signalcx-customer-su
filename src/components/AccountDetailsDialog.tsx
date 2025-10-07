@@ -71,7 +71,7 @@ export function AccountDetailsDialog({ account, trigger }: AccountDetailsDialogP
     <Dialog>
       <DialogTrigger asChild>
         {trigger || (
-          <Button className="outline">
+          <Button variant="outline" className="text-xs px-2 py-1 hover:bg-gray-50 min-w-fit">
             <Eye className="w-4 h-4 mr-2" />
             View Details
           </Button>

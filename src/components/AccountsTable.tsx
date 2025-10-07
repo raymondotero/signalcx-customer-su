@@ -15,7 +15,8 @@ import {
   MagnifyingGlass,
   X,
   Calendar,
-  Buildings
+  Buildings,
+  Eye
 } from '@phosphor-icons/react';
 import { Account } from '@/types';
 import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
@@ -547,7 +548,19 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
                           </QuickMeetingScheduler>
                         </div>
                         <div className="action-button-group">
-                          <AccountDetailsDialog account={account} />
+                          <AccountDetailsDialog 
+                            account={account}
+                            trigger={
+                              <Button 
+                                variant="outline" 
+                                className="text-xs px-2 py-1 hover:bg-gray-50 min-w-fit"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <Eye className="w-3 h-3 mr-1" />
+                                Details
+                              </Button>
+                            }
+                          />
                           <Button 
                             variant="outline" 
                             className="text-xs px-2 py-1 bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 min-w-fit"

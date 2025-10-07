@@ -32,16 +32,62 @@ interface ExpansionOpportunitiesDialogProps {
 export function ExpansionOpportunitiesDialog({ account, children }: ExpansionOpportunitiesDialogProps) {
   const [selectedOpportunity, setSelectedOpportunity] = useState<ExpansionOpportunity | null>(null);
 
-  if (!account.expansionOpportunities || account.expansionOpportunities.length === 0) {
-    return null;
-  }
-
   const formatCurrency = (amount: number) => {
     if (amount >= 1000000) {
       return `$${(amount / 1000000).toFixed(1)}M`;
     }
     return `$${(amount / 1000).toFixed(0)}K`;
   };
+
+  // Handle both legacy expansionOpportunity (number) and new expansionOpportunities (array)
+  const hasExpansionOpportunities = (account.expansionOpportunities && account.expansionOpportunities.length > 0) || 
+    (account.expansionOpportunity && account.expansionOpportunity > 0);
+  
+  if (!hasExpansionOpportunities) {
+    return null;
+  }
+
+  // Create default opportunities from legacy field if needed
+  const opportunities = account.expansionOpportunities && account.expansionOpportunities.length > 0 
+    ? account.expansionOpportunities 
+    : account.expansionOpportunity && account.expansionOpportunity > 0 
+      ? [{
+          value: account.expansionOpportunity,
+          category: 'upsell' as const,
+          description: `Identified expansion opportunity worth ${formatCurrency(account.expansionOpportunity)} based on current usage patterns and growth indicators.`,
+          timeline: '60-90 days' as const,
+          probability: account.status === 'Good' ? 'high' as const : account.status === 'Watch' ? 'medium' as const : 'low' as const,
+          requiredActivities: [
+            'Conduct usage analysis and ROI assessment',
+            'Schedule executive alignment meeting',
+            'Present expansion business case',
+            'Negotiate terms and implementation timeline'
+          ],
+          microsoftSolutions: [
+            'Microsoft 365 Enterprise',
+            'Azure Cloud Services',
+            'Microsoft Teams Premium',
+            'Power Platform Suite'
+          ],
+          deliveryMotions: [
+            'Customer Success Management',
+            'Solution Architecture',
+            'Technical Implementation Support'
+          ],
+          stakeholdersRequired: [
+            'Customer Success Manager',
+            'Account Executive', 
+            'Solution Architect',
+            'Customer Decision Maker'
+          ],
+          successCriteria: [
+            'Signed contract amendment',
+            'Implementation milestone completion',
+            'User adoption target achievement',
+            'Business value realization'
+          ]
+        }] 
+      : [];
 
   const getPriorityColor = (probability: string) => {
     switch (probability) {
@@ -82,11 +128,11 @@ export function ExpansionOpportunitiesDialog({ account, children }: ExpansionOpp
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Available Opportunities</h3>
               <Badge className="bg-green-50 text-green-700 border-green-200">
-                Total: {formatCurrency(account.expansionOpportunity)}
+                Total: {formatCurrency(opportunities.reduce((sum, opp) => sum + opp.value, 0))}
               </Badge>
             </div>
 
-            {account.expansionOpportunities.map((opportunity, index) => (
+            {opportunities.map((opportunity, index) => (
               <Card 
                 key={index}
                 className={`cursor-pointer transition-all ${
