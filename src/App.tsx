@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { ArrowClockwise, Database, Shield, Activity, Brain, Target, ChartBar } from '@phosphor-icons/react';
+import { ArrowClockwise, Database, Shield, Activity, Brain, Target, ChartBar, GraduationCap } from '@phosphor-icons/react';
 import { AccountsTable } from '@/components/AccountsTable';
 import { NBADisplay } from '@/components/NBADisplay';
 import { LiveSignals } from '@/components/LiveSignals';
@@ -26,6 +26,7 @@ import HelpGuide from '@/components/HelpGuide';
 import { SignalVisualizationDialog } from '@/components/SignalVisualizationDialog';
 import { PredictiveHeatMapDialog } from '@/components/PredictiveHeatMapDialog';
 import { Dynamics365ConfigDialog } from '@/components/Dynamics365ConfigDialog';
+import { SignalCXAcademy } from '@/components/SignalCXAcademy';
 import OpportunityTrackingDashboard from '@/components/OpportunityTrackingDashboard';
 import { notificationService } from '@/services/notificationService';
 
@@ -467,6 +468,27 @@ function App() {
                 <Button
                   size="sm"
                   variant="outline"
+                  onClick={() => {
+                    const tabsSection = document.querySelector('[data-section=\"right-column\"]');
+                    if (tabsSection) {
+                      tabsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                    setTimeout(() => {
+                      const academyTab = document.querySelector('[value=\"academy\"]') as HTMLElement;
+                      if (academyTab) {
+                        academyTab.click();
+                      }
+                    }, 500);
+                  }}
+                  className="flex items-center gap-2 text-purple-700 border-purple-200 hover:bg-purple-50"
+                >
+                  <GraduationCap className="w-4 h-4" />
+                  Academy
+                </Button>
+                
+                <Button
+                  size="sm"
+                  variant="outline"
                   onClick={() => setSignalVisualizationOpen(true)}
                   className="flex items-center gap-2 text-purple-700 border-purple-200 hover:bg-purple-50"
                 >
@@ -733,6 +755,7 @@ function App() {
             <Tabs defaultValue="critical-monitor" className="w-full h-fit">
               <TabsList className="flex flex-wrap gap-1 w-full h-auto p-2">
                 <TabsTrigger value="critical-monitor" className="text-sm px-3 py-2 min-w-fit">Critical Monitor</TabsTrigger>
+                <TabsTrigger value="academy" className="text-sm px-3 py-2 min-w-fit">🎓 Academy</TabsTrigger>
                 <TabsTrigger value="opportunity-tracking" className="text-sm px-3 py-2 min-w-fit">D365 Opportunities</TabsTrigger>
                 <TabsTrigger value="business-value" className="text-sm px-3 py-2 min-w-fit">Business Value</TabsTrigger>
                 <TabsTrigger value="arr-growth" className="text-sm px-3 py-2 min-w-fit">ARR Growth</TabsTrigger>
@@ -747,6 +770,12 @@ function App() {
               <TabsContent value="critical-monitor" className="mt-4 h-fit">
                 <div className="h-fit">
                   <CriticalSignalMonitor />
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="academy" className="mt-4 h-fit">
+                <div className="h-fit">
+                  <SignalCXAcademy />
                 </div>
               </TabsContent>
               
