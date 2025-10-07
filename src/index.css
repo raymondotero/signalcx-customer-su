@@ -205,20 +205,37 @@ html {
 table {
   border-collapse: separate;
   border-spacing: 0;
-  table-layout: auto; /* Changed from fixed to auto for flexible column sizing */
+  table-layout: auto; /* Auto layout for flexible column sizing */
   width: 100%;
-  min-width: 1400px; /* Increased minimum table width to ensure full visibility */
+  /* Remove min-width to allow responsive behavior */
 }
 
 table th,
 table td {
   border-bottom: 1px solid var(--border);
   min-height: 48px; /* Ensure minimum row height */
-  white-space: nowrap; /* Prevent text wrapping */
-  overflow: visible; /* Changed from hidden to visible to show all content */
+  overflow: hidden; /* Hide overflow content */
   text-overflow: ellipsis; /* Show ellipsis for truncated text */
-  max-width: none; /* Remove max-width constraint */
   padding: 8px 12px; /* Consistent padding */
+}
+
+/* Allow text wrapping in specific columns for better space utilization */
+[data-slot="table-cell"]:nth-child(1),
+[data-slot="table-cell"]:nth-child(2),
+[data-slot="table-cell"]:nth-child(7),
+[data-slot="table-cell"]:nth-child(8) {
+  white-space: normal; /* Allow wrapping for Account, Industry, CSAM, AE columns */
+  word-break: break-word;
+  hyphens: auto;
+}
+
+/* Keep numeric columns compact */
+[data-slot="table-cell"]:nth-child(3),
+[data-slot="table-cell"]:nth-child(4),
+[data-slot="table-cell"]:nth-child(5),
+[data-slot="table-cell"]:nth-child(6),
+[data-slot="table-cell"]:nth-child(9) {
+  white-space: nowrap; /* Keep ARR, Growth, Health Score, Status, Contract End compact */
 }
 
 table thead th {
@@ -240,37 +257,16 @@ table thead th {
   overflow: hidden;
 }
 
-/* Top scrollbar styling */
+/* Remove top scrollbar - not needed for responsive table */
 .top-scrollbar {
-  position: sticky;
-  top: 0;
-  z-index: 15;
-  background: var(--background);
+  display: none !important;
 }
 
-.top-scrollbar::-webkit-scrollbar {
-  height: 8px;
-}
-
-.top-scrollbar::-webkit-scrollbar-track {
-  background: var(--muted);
-  border-radius: 4px;
-}
-
-.top-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 4px;
-}
-
-.top-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
-}
-
-/* Table wrapper with synchronized scrolling */
+/* Table wrapper with responsive behavior */
 .table-wrapper {
   overflow: auto;
   max-height: calc(70vh - 17px);
-  padding-right: 20px; /* Add padding to ensure actions column is fully visible */
+  /* Remove padding-right to eliminate horizontal scrolling */
 }
 
 .table-wrapper::-webkit-scrollbar {
@@ -293,7 +289,7 @@ table thead th {
 
 /* Row height and spacing improvements */
 [data-slot="table-row"] {
-  min-height: 70px; /* Increased height for layered buttons */
+  min-height: 60px; /* Reduced height but still accommodating layered buttons */
   transition: all 0.2s ease;
 }
 
@@ -311,9 +307,7 @@ table thead th {
 
 /* Specific styling for actions column */
 [data-slot="table-cell"]:last-child {
-  width: 180px; /* Increased width for buttons */
-  min-width: 180px;
-  max-width: 180px;
+  min-width: 160px; /* Minimum width for buttons */
   padding: 6px 8px;
   vertical-align: top;
 }
@@ -322,91 +316,88 @@ table thead th {
 .action-button-row {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px; /* Reduced gap */
   width: 100%;
-  min-width: 160px; /* Ensure minimum width for buttons */
+  min-width: 140px; /* Reduced minimum width */
 }
 
 .action-button-group {
   display: flex;
-  gap: 4px;
-  flex-wrap: nowrap;
+  gap: 3px; /* Reduced gap */
+  flex-wrap: wrap; /* Allow wrapping */
   align-items: flex-start;
   justify-content: flex-start;
 }
 
 .action-button-group button {
-  font-size: 11px;
-  padding: 4px 8px;
-  height: 26px; /* Slightly increased height */
+  font-size: 10px; /* Smaller font */
+  padding: 3px 6px; /* Reduced padding */
+  height: 24px; /* Reduced height */
   min-width: fit-content;
   white-space: nowrap;
   flex-shrink: 0;
-  border-radius: 4px;
+  border-radius: 3px; /* Smaller radius */
 }
 
-/* Specific column width constraints */
+/* Flexible column width constraints for responsive behavior */
 [data-slot="table-head"]:nth-child(1),
 [data-slot="table-cell"]:nth-child(1) {
-  width: 200px;
-  min-width: 200px;
-  max-width: 250px;
+  min-width: 150px;
+  max-width: 200px;
 }
 
 [data-slot="table-head"]:nth-child(2),
 [data-slot="table-cell"]:nth-child(2) {
-  width: 150px;
-  min-width: 150px;
-  max-width: 180px;
+  min-width: 120px;
+  max-width: 150px;
 }
 
 [data-slot="table-head"]:nth-child(3),
 [data-slot="table-cell"]:nth-child(3) {
-  width: 100px;
-  min-width: 100px;
+  min-width: 80px;
+  max-width: 100px;
 }
 
 [data-slot="table-head"]:nth-child(4),
 [data-slot="table-cell"]:nth-child(4) {
-  width: 110px;
-  min-width: 110px;
+  min-width: 90px;
+  max-width: 120px;
 }
 
 [data-slot="table-head"]:nth-child(5),
 [data-slot="table-cell"]:nth-child(5) {
-  width: 130px;
-  min-width: 130px;
+  min-width: 100px;
+  max-width: 140px;
 }
 
 [data-slot="table-head"]:nth-child(6),
 [data-slot="table-cell"]:nth-child(6) {
-  width: 90px;
-  min-width: 90px;
+  min-width: 70px;
+  max-width: 90px;
 }
 
 [data-slot="table-head"]:nth-child(7),
 [data-slot="table-cell"]:nth-child(7) {
-  width: 120px;
-  min-width: 120px;
+  min-width: 80px;
+  max-width: 120px;
 }
 
 [data-slot="table-head"]:nth-child(8),
 [data-slot="table-cell"]:nth-child(8) {
-  width: 120px;
-  min-width: 120px;
+  min-width: 60px;
+  max-width: 100px;
 }
 
 [data-slot="table-head"]:nth-child(9),
 [data-slot="table-cell"]:nth-child(9) {
-  width: 120px;
-  min-width: 120px;
+  min-width: 100px;
+  max-width: 120px;
 }
 
 [data-slot="table-head"]:nth-child(10),
 [data-slot="table-cell"]:nth-child(10) {
-  width: 180px;
-  min-width: 180px;
-  max-width: 180px;
+  min-width: 160px;
+  max-width: 200px;
 }
 
 [data-slot="table-head"] {
@@ -778,7 +769,7 @@ table thead th {
   font-family: var(--font-sans);
 }
 
-/* Responsive chart adjustments */
+/* Responsive table adjustments */
 @media (max-width: 768px) {
   .chart-expansion-dialog {
     max-width: 95vw !important;
@@ -797,6 +788,29 @@ table thead th {
   .expanded-chart-container svg {
     width: 100% !important;
     height: auto !important;
+  }
+  
+  /* Mobile table improvements */
+  table th,
+  table td {
+    padding: 4px 8px; /* Reduced padding on mobile */
+    font-size: 0.75rem; /* Smaller font on mobile */
+  }
+  
+  .action-button-group button {
+    font-size: 9px; /* Even smaller buttons on mobile */
+    padding: 2px 4px;
+    height: 20px;
+  }
+  
+  /* Hide less critical columns on small screens */
+  [data-slot="table-head"]:nth-child(4),
+  [data-slot="table-cell"]:nth-child(4),
+  [data-slot="table-head"]:nth-child(8),
+  [data-slot="table-cell"]:nth-child(8),
+  [data-slot="table-head"]:nth-child(9),
+  [data-slot="table-cell"]:nth-child(9) {
+    display: none; /* Hide QoQ Growth, AE, and Contract End on small screens */
   }
 }
 

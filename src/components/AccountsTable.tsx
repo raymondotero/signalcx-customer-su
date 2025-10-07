@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -45,9 +45,6 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [d365DialogOpen, setD365DialogOpen] = useState(false);
   const [selectedOpportunity, setSelectedOpportunity] = useState<any>(null);
-  
-  const tableWrapperRef = useRef<HTMLDivElement>(null);
-  const topScrollRef = useRef<HTMLDivElement>(null);
 
   // Get unique industries for filter dropdown
   const uniqueIndustries = useMemo(() => {
@@ -123,61 +120,6 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
 
     return filtered;
   }, [accounts, searchTerm, statusFilter, industryFilter, healthScoreFilter, arrFilter, sortField, sortDirection]);
-
-  // Synchronize scrollbars
-  useEffect(() => {
-    const tableWrapper = tableWrapperRef.current;
-    const topScroll = topScrollRef.current;
-    
-    if (!tableWrapper || !topScroll) return;
-
-    const handleTableScroll = () => {
-      if (topScroll) {
-        topScroll.scrollLeft = tableWrapper.scrollLeft;
-      }
-    };
-
-    const handleTopScroll = () => {
-      if (tableWrapper) {
-        tableWrapper.scrollLeft = topScroll.scrollLeft;
-      }
-    };
-
-    tableWrapper.addEventListener('scroll', handleTableScroll);
-    topScroll.addEventListener('scroll', handleTopScroll);
-
-    return () => {
-      tableWrapper.removeEventListener('scroll', handleTableScroll);
-      topScroll.removeEventListener('scroll', handleTopScroll);
-    };
-  }, []);
-
-  // Update top scrollbar width to match table width
-  useEffect(() => {
-    const tableWrapper = tableWrapperRef.current;
-    const topScroll = topScrollRef.current;
-    
-    if (tableWrapper && topScroll) {
-      const updateScrollbarWidth = () => {
-        const tableWidth = tableWrapper.scrollWidth;
-        const containerWidth = tableWrapper.clientWidth;
-        
-        if (tableWidth > containerWidth) {
-          topScroll.style.display = 'block';
-          topScroll.innerHTML = `<div style="width: ${tableWidth}px; height: 1px;"></div>`;
-        } else {
-          topScroll.style.display = 'none';
-        }
-      };
-
-      updateScrollbarWidth();
-      
-      const resizeObserver = new ResizeObserver(updateScrollbarWidth);
-      resizeObserver.observe(tableWrapper);
-      
-      return () => resizeObserver.disconnect();
-    }
-  }, [filteredAndSortedAccounts]);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -356,14 +298,7 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
       </CardHeader>
       <CardContent>
         <div className="table-container">
-          <div 
-            ref={topScrollRef}
-            className="top-scrollbar overflow-x-auto overflow-y-hidden h-[17px] bg-background border-b border-border"
-            style={{ display: 'none' }}
-          >
-            <div style={{ width: '1424px', height: '1px' }}></div>
-          </div>
-          <div ref={tableWrapperRef} className="table-wrapper">
+          <div className="table-wrapper">
             <Table>
             <TableHeader>
               <TableRow>
@@ -522,7 +457,8 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
                       <div className="action-button-row">
                         <div className="action-button-group">
                           <Button 
-                            className="text-xs px-2 py-1 border hover:bg-primary/10 min-w-fit"
+                            size="sm"
+                            className="text-xs px-2 py-1 border hover:bg-primary/10 min-w-fit h-6"
                             onClick={(e) => {
                               e.stopPropagation();
                               onSelectAccount(account);
@@ -533,13 +469,14 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
                               scrollToNBASection();
                             }}
                           >
-                            <Brain className="w-4 h-4 mr-1" />
+                            <Brain className="w-3 h-3 mr-1" />
                             Select
                           </Button>
                           <QuickMeetingScheduler account={account}>
                             <Button 
                               variant="outline" 
-                              className="text-xs px-2 py-1 hover:bg-blue-50 min-w-fit"
+                              size="sm"
+                              className="text-xs px-2 py-1 hover:bg-blue-50 min-w-fit h-6"
                               onClick={(e) => e.stopPropagation()}
                             >
                               <Calendar className="w-3 h-3 mr-1" />
@@ -553,7 +490,8 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
                             trigger={
                               <Button 
                                 variant="outline" 
-                                className="text-xs px-2 py-1 hover:bg-gray-50 min-w-fit"
+                                size="sm"
+                                className="text-xs px-2 py-1 hover:bg-gray-50 min-w-fit h-6"
                                 onClick={(e) => e.stopPropagation()}
                               >
                                 <Eye className="w-3 h-3 mr-1" />
@@ -563,7 +501,8 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
                           />
                           <Button 
                             variant="outline" 
-                            className="text-xs px-2 py-1 bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 min-w-fit"
+                            size="sm"
+                            className="text-xs px-2 py-1 bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 min-w-fit h-6"
                             onClick={(e) => handleViewD365Opportunity(account, e)}
                           >
                             <Buildings className="w-3 h-3 mr-1" />
@@ -573,7 +512,8 @@ export function AccountsTable({ accounts, onSelectAccount, selectedAccount }: Ac
                             <ExpansionOpportunitiesDialog account={account}>
                               <Button 
                                 variant="outline" 
-                                className="text-xs px-2 py-1 bg-green-50 text-green-700 border-green-200 hover:bg-green-100 min-w-fit"
+                                size="sm"
+                                className="text-xs px-2 py-1 bg-green-50 text-green-700 border-green-200 hover:bg-green-100 min-w-fit h-6"
                               >
                                 <CurrencyDollar className="w-3 h-3 mr-1" />
                                 ${(account.expansionOpportunity / 1000000).toFixed(1)}M
