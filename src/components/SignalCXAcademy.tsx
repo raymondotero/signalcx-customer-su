@@ -16,9 +16,103 @@ import {
   FileText,
   BookOpen,
   CheckCircle,
-  Star
+  Star,
+  ChartBar
 } from '@phosphor-icons/react';
 import { useKV } from '@github/spark/hooks';
+import { toast } from 'sonner';
+
+interface Assessment {
+  id: string;
+  moduleId: string;
+  title: string;
+  questions: {
+    question: string;
+    options: string[];
+    correctAnswer: number;
+    explanation: string;
+  }[];
+  passingScore: number;
+}
+
+interface Certification {
+  id: string;
+  title: string;
+  description: string;
+  requiredModules: string[];
+  badgeColor: string;
+  completedAt?: string;
+}
+
+const assessments: Assessment[] = [
+  {
+    id: 'fundamentals-assessment',
+    moduleId: 'fundamentals-intro',
+    title: 'SignalCX Platform Fundamentals Assessment',
+    passingScore: 80,
+    questions: [
+      {
+        question: 'What are the four foundational pillars of SignalCX?',
+        options: [
+          'Monitoring, Analysis, Reporting, Integration',
+          'Signal Detection, AI-Powered Analysis, Automated Workflows, Predictive Intelligence',
+          'Health Scoring, Risk Assessment, Recommendations, Automation',
+          'Data Collection, Processing, Insights, Actions'
+        ],
+        correctAnswer: 1,
+        explanation: 'SignalCX is built on four foundational pillars that work together to provide comprehensive customer success management.'
+      },
+      {
+        question: 'How many data points does SignalCX analyze per customer?',
+        options: ['50+', '200+', '500+', '1000+'],
+        correctAnswer: 2,
+        explanation: 'SignalCX processes over 500 data points per customer to create comprehensive success profiles.'
+      },
+      {
+        question: 'What is the primary benefit of SignalCX\'s proactive approach?',
+        options: [
+          'Faster response to customer issues',
+          'Better reporting capabilities',
+          'Preventing issues before they become critical',
+          'More integrations with other tools'
+        ],
+        correctAnswer: 2,
+        explanation: 'SignalCX\'s proactive approach focuses on preventing issues before they become critical, rather than just responding to them.'
+      }
+    ]
+  }
+];
+
+const certifications: Certification[] = [
+  {
+    id: 'signalcx-foundation',
+    title: 'SignalCX Foundation Certified',
+    description: 'Demonstrates mastery of core SignalCX concepts and basic workflows',
+    requiredModules: ['fundamentals-intro', 'account-health-monitoring', 'signal-interpretation'],
+    badgeColor: 'bg-green-500'
+  },
+  {
+    id: 'ai-workflows-expert',
+    title: 'AI Workflows Expert',
+    description: 'Advanced certification in AI-powered customer success automation',
+    requiredModules: ['ai-nba-generation', 'predictive-analytics', 'workflow-automation'],
+    badgeColor: 'bg-blue-500'
+  },
+  {
+    id: 'signalcx-master',
+    title: 'SignalCX Master Practitioner',
+    description: 'Highest level certification covering all advanced features and customization',
+    requiredModules: ['custom-segmentation', 'custom-signals'],
+    badgeColor: 'bg-purple-500'
+  },
+  {
+    id: 'integration-specialist',
+    title: 'Integration Specialist',
+    description: 'Expert-level knowledge of all SignalCX integrations and technical implementation',
+    requiredModules: ['dynamics-integration', 'teams-collaboration'],
+    badgeColor: 'bg-orange-500'
+  }
+];
 
 interface LearningModule {
   id: string;
@@ -64,183 +158,302 @@ interface TrainingContent {
 
 const trainingContent: Record<string, TrainingContent> = {
   'fundamentals-intro': {
-    introduction: 'Welcome to SignalCX! This comprehensive overview will introduce you to the core concepts and capabilities that make our platform the leading solution for AI-powered customer success management.',
+    introduction: 'Welcome to SignalCX! This comprehensive overview will introduce you to the core concepts and capabilities that make our platform the leading solution for AI-powered customer success management. You\'ll learn how our AI-first approach transforms traditional customer success into a predictive, data-driven discipline.',
     sections: [
       {
-        title: 'Platform Architecture',
-        content: 'SignalCX operates on four foundational pillars: Signal Detection, AI-Powered Analysis, Automated Workflows, and Predictive Intelligence. Each component works together to provide a 360-degree view of your customer relationships and drive proactive success outcomes.',
+        title: 'Platform Architecture & Core Philosophy',
+        content: 'SignalCX operates on four foundational pillars: Signal Detection (real-time customer behavior analysis), AI-Powered Analysis (machine learning insights), Automated Workflows (intelligent response systems), and Predictive Intelligence (future outcome modeling). Our architecture processes over 500+ data points per customer to create a comprehensive success profile. The platform integrates seamlessly with your existing tech stack including Dynamics 365, Teams, Outlook, and major CRMs.',
+        interactiveElements: {
+          type: 'exercise',
+          items: [
+            'Navigate to the main dashboard and identify the four core pillars in action',
+            'Locate the System Health dialog and review current integrations',
+            'Use the ROI Dashboard to understand platform value metrics',
+            'Access the Help Guide to explore additional resources'
+          ]
+        }
       },
       {
-        title: 'Key Features Overview',
-        content: 'Navigate through the main dashboard to access Account Health Monitoring, Real-time Signal Processing, NBA Generation, Predictive Analytics, and Integration Management. Each feature is designed with customer success professionals in mind.',
+        title: 'Key Features Deep Dive',
+        content: 'Navigate through the main dashboard to access Account Health Monitoring (real-time customer health scoring), Real-time Signal Processing (automated behavior analysis), NBA Generation (AI-powered recommendations), Predictive Analytics (churn and expansion forecasting), and Integration Management (seamless data flow). Each feature leverages proprietary machine learning algorithms trained on thousands of customer success patterns.',
         interactiveElements: {
           type: 'checklist',
           items: [
-            'Explore the Accounts Table and filter by health score',
-            'Review the NBA Display for recommended actions',
-            'Check the Live Signals feed for recent activity',
-            'Access the AI Recommendation Engine'
+            'Explore the Accounts Table and filter by health score ranges',
+            'Review the NBA Display for AI-generated recommended actions',
+            'Check the Live Signals feed for recent customer activity patterns',
+            'Access the AI Recommendation Engine and review confidence scores',
+            'Open the Predictive Heat Map to view risk/opportunity forecasting',
+            'Test the notification system with sample alerts'
           ]
         }
       },
       {
-        title: 'User Interface Navigation',
-        content: 'The SignalCX interface is organized into three main areas: Account Management (left), AI Insights (center), and System Controls (right). The tabbed interface allows you to focus on specific workflows while maintaining context across your customer portfolio.'
+        title: 'User Interface Navigation & Workflow Optimization',
+        content: 'The SignalCX interface is strategically organized into three main areas: Account Management (left - your customer portfolio), AI Insights (center - intelligent recommendations), and System Controls (right - configuration and analytics). The tabbed interface allows you to maintain context while diving deep into specific workflows. Master keyboard shortcuts and quick navigation to maximize efficiency.',
+        interactiveElements: {
+          type: 'exercise',
+          items: [
+            'Practice switching between tabs using keyboard shortcuts',
+            'Use the search functionality to quickly locate specific accounts',
+            'Configure your dashboard layout for optimal workflow',
+            'Set up personalized notification preferences'
+          ]
+        }
       }
     ],
     keyTakeaways: [
-      'SignalCX combines AI-powered insights with automated workflows',
+      'SignalCX combines AI-powered insights with automated workflows for 10x efficiency gains',
       'The platform provides proactive rather than reactive customer success management',
-      'All features are designed to work together for comprehensive account oversight'
+      'All features are designed to work together for comprehensive account oversight and predictive insights',
+      'Integration capabilities ensure SignalCX enhances your existing workflows rather than replacing them'
     ],
     nextSteps: [
-      'Complete the Account Health Monitoring module',
-      'Practice navigating between different sections',
-      'Familiarize yourself with the notification system'
+      'Complete the Account Health Monitoring module to master health scoring',
+      'Practice navigating between different sections to build muscle memory',
+      'Familiarize yourself with the notification system and alert configurations',
+      'Set up your first automated workflow using the Workflow Demo'
     ]
   },
   'account-health-monitoring': {
-    introduction: 'Master the art of interpreting customer health metrics with SignalCX\'s comprehensive health scoring system. Learn to identify at-risk accounts before issues escalate and recognize expansion opportunities.',
+    introduction: 'Master the art of interpreting customer health metrics with SignalCX\'s comprehensive health scoring system. Our proprietary algorithm analyzes 100+ data points to create predictive health scores. Learn to identify at-risk accounts before issues escalate and recognize expansion opportunities through advanced pattern recognition.',
     sections: [
       {
-        title: 'Health Score Methodology',
-        content: 'SignalCX calculates health scores using multiple data points including product usage, engagement metrics, support interactions, contract status, and relationship strength. Scores range from 0-100 with automated categorization into Good (80+), Watch (60-79), and At Risk (<60).'
-      },
-      {
-        title: 'Risk Assessment Framework',
-        content: 'Our AI analyzes patterns across hundreds of customer attributes to identify early warning signs. Key indicators include declining usage trends, reduced stakeholder engagement, increased support tickets, and approaching contract renewals without renewal signals.',
+        title: 'Health Score Methodology & Advanced Metrics',
+        content: 'SignalCX calculates health scores using a sophisticated ensemble model that analyzes multiple data dimensions: Product Usage Patterns (40% weight), Engagement Metrics (25% weight), Support Interactions (15% weight), Contract Status (10% weight), and Relationship Strength (10% weight). Scores range from 0-100 with automated categorization into Good (80-100), Watch (60-79), and At Risk (0-59). The algorithm also considers industry benchmarks, seasonal patterns, and account-specific baselines for maximum accuracy.',
         interactiveElements: {
           type: 'exercise',
           items: [
-            'Identify the top 3 at-risk accounts in your portfolio',
-            'Analyze the factors contributing to declining health scores',
-            'Create action plans for immediate intervention',
-            'Set up monitoring alerts for key health indicators'
+            'Analyze health score components for 5 different account types',
+            'Compare health scores against industry benchmarks',
+            'Identify which metrics contribute most to score changes',
+            'Practice interpreting health score trends over time'
           ]
         }
       },
       {
-        title: 'Proactive Intervention Strategies',
-        content: 'Learn to act on health score changes before they become critical. Establish escalation protocols, create targeted engagement campaigns, and leverage automated workflows to maintain customer relationships.'
+        title: 'Advanced Risk Assessment Framework',
+        content: 'Our AI analyzes patterns across thousands of customer attributes to identify early warning signs with 94% accuracy. Key predictive indicators include: Declining Usage Velocity (rate of change in feature adoption), Reduced Stakeholder Engagement (meeting attendance, email response rates), Increased Support Complexity (escalation patterns, resolution time), Approaching Contract Events (renewal timing, negotiation signals), and Ecosystem Health (integration usage, data flow quality). The system provides risk probability scores and recommended intervention timing.',
+        interactiveElements: {
+          type: 'exercise',
+          items: [
+            'Identify the top 3 at-risk accounts in your portfolio using multiple risk factors',
+            'Analyze the primary and secondary risk factors for each at-risk account',
+            'Create targeted action plans for immediate intervention based on risk type',
+            'Set up automated monitoring alerts for key health indicators and thresholds',
+            'Practice using the Predictive Heat Map to visualize portfolio risk'
+          ]
+        }
+      },
+      {
+        title: 'Proactive Intervention Strategies & Playbook Development',
+        content: 'Learn to act on health score changes before they become critical using our proven intervention framework. Establish risk-based escalation protocols: Health Score 60-79 (increased touchpoints, usage optimization), Health Score 40-59 (executive engagement, success plan revision), Health Score <40 (crisis management, retention campaign). Create targeted engagement campaigns using automated workflows and maintain detailed intervention tracking for continuous improvement.',
+        interactiveElements: {
+          type: 'checklist',
+          items: [
+            'Define intervention triggers for each health score range',
+            'Create escalation workflows for different risk levels',
+            'Design targeted outreach templates for various scenarios',
+            'Set up success metrics tracking for intervention outcomes',
+            'Establish executive escalation procedures for critical accounts'
+          ]
+        }
       }
     ],
     keyTakeaways: [
-      'Health scores are predictive, not just descriptive',
-      'Early intervention is exponentially more effective than crisis management',
-      'Multiple data sources provide more accurate health assessments'
+      'Health scores are predictive indicators, not just descriptive snapshots - they forecast future outcomes',
+      'Early intervention is exponentially more effective than crisis management - act on trends, not events',
+      'Multiple data sources provide more accurate health assessments than single metrics',
+      'Continuous monitoring and automated alerts enable proactive rather than reactive customer success'
     ],
     nextSteps: [
-      'Set up health score monitoring alerts',
-      'Practice identifying risk patterns in your accounts',
-      'Develop standard intervention playbooks'
+      'Set up health score monitoring alerts for your key accounts',
+      'Practice identifying risk patterns using the advanced analytics dashboard',
+      'Develop standard intervention playbooks for each risk category',
+      'Begin tracking intervention success rates to optimize your approach'
     ]
   },
   'signal-interpretation': {
-    introduction: 'Develop expertise in identifying, prioritizing, and responding to customer signals effectively. Learn to distinguish between noise and meaningful patterns that drive customer success outcomes.',
+    introduction: 'Develop expertise in identifying, prioritizing, and responding to customer signals effectively. Master SignalCX\'s advanced signal processing engine that analyzes 500+ signal types in real-time. Learn to distinguish between noise and meaningful patterns that drive customer success outcomes, and understand how our AI correlates signals across multiple dimensions to predict customer behavior.',
     sections: [
       {
-        title: 'Signal Categories and Types',
-        content: 'SignalCX processes five primary signal categories: Usage Patterns (login frequency, feature adoption), Engagement Signals (meeting attendance, response rates), Business Health (contract renewals, expansion indicators), Risk Indicators (support escalations, stakeholder changes), and Opportunity Signals (new use cases, team growth).'
+        title: 'Signal Categories, Types & Advanced Classification',
+        content: 'SignalCX processes five primary signal categories with advanced sub-classification: 1) Usage Patterns (login frequency, feature adoption velocity, data volume trends, session duration analysis), 2) Engagement Signals (meeting attendance rates, email response times, portal activity, content consumption), 3) Business Health (contract renewals, expansion indicators, procurement cycles, budget allocation signals), 4) Risk Indicators (support ticket escalations, stakeholder turnover, competitive activity, performance degradation), and 5) Opportunity Signals (new use cases discovery, team growth patterns, technology adoption, integration expansion). Each signal is weighted based on historical correlation with success outcomes.',
+        interactiveElements: {
+          type: 'exercise',
+          items: [
+            'Categorize 20 different signals from your current customer base',
+            'Identify the highest-impact signals for your specific industry',
+            'Practice distinguishing between leading and lagging indicators',
+            'Map signals to customer journey stages for better context'
+          ]
+        }
       },
       {
-        title: 'Pattern Recognition Techniques',
-        content: 'Learn to identify meaningful trends across different signal types. Understand how seasonal variations, product updates, and external factors influence signal interpretation. Develop skills to correlate signals across multiple accounts to identify broader patterns.',
+        title: 'Advanced Pattern Recognition & Correlation Analysis',
+        content: 'Learn to identify meaningful trends across different signal types using statistical analysis and machine learning insights. Understand how seasonal variations (quarterly budget cycles, holiday periods), product updates (feature releases, API changes), and external factors (market conditions, regulatory changes) influence signal interpretation. Master the art of signal correlation - how combining multiple weak signals can create strong predictive indicators. Our platform provides correlation matrices and trend analysis tools to support advanced pattern recognition.',
         interactiveElements: {
           type: 'quiz',
           items: [
-            'What signal combination most strongly indicates expansion readiness?',
-            'How do you differentiate between temporary usage dips and concerning trends?',
-            'Which signals require immediate attention vs. monitoring?',
-            'How do industry factors influence signal interpretation?'
+            'What signal combination most strongly indicates expansion readiness in SaaS accounts?',
+            'How do you differentiate between temporary usage dips and concerning long-term trends?',
+            'Which signals require immediate attention vs. monitoring and why?',
+            'How do industry factors and seasonal patterns influence signal interpretation accuracy?',
+            'What correlation threshold indicates a reliable predictive signal combination?'
           ]
         }
       },
       {
-        title: 'Data-Driven Decision Making',
-        content: 'Transform signals into actionable insights by establishing baseline metrics, tracking signal velocity (rate of change), and correlating multiple data points. Learn to validate signal accuracy and adjust thresholds based on historical outcomes.'
+        title: 'Data-Driven Decision Making & Signal Validation',
+        content: 'Transform signals into actionable insights by establishing baseline metrics, tracking signal velocity (rate of change), and correlating multiple data points using advanced analytics. Learn to validate signal accuracy through backtesting, adjust detection thresholds based on historical outcomes, and create signal-specific response playbooks. Master the use of confidence intervals, statistical significance testing, and A/B testing for signal optimization. Understand how to balance signal sensitivity (catching all important events) with specificity (avoiding false positives).',
+        interactiveElements: {
+          type: 'exercise',
+          items: [
+            'Set up baseline metrics for your top 10 accounts across all signal categories',
+            'Create signal velocity dashboards to track rate of change',
+            'Implement signal correlation analysis to identify pattern combinations',
+            'Design and execute A/B tests for signal threshold optimization',
+            'Build custom signal validation workflows using historical data'
+          ]
+        }
       }
     ],
     keyTakeaways: [
-      'Not all signals have equal importance or urgency',
-      'Context is crucial for accurate signal interpretation',
-      'Historical correlation improves future signal accuracy'
+      'Not all signals have equal importance or urgency - prioritization is critical for effective customer success',
+      'Context is crucial for accurate signal interpretation - same signal can mean different things for different customers',
+      'Historical correlation analysis improves future signal accuracy and reduces false positives',
+      'Signal velocity often matters more than absolute values - rate of change predicts outcomes',
+      'Combining multiple weak signals often creates stronger predictive indicators than single strong signals'
     ],
     nextSteps: [
-      'Practice signal analysis on current accounts',
-      'Establish signal monitoring protocols',
-      'Develop signal-specific response playbooks'
+      'Practice advanced signal analysis on your current account portfolio',
+      'Establish comprehensive signal monitoring protocols with proper thresholds',
+      'Develop signal-specific response playbooks for different scenarios',
+      'Begin tracking signal prediction accuracy to continuously improve your interpretation skills'
     ]
   },
   'ai-nba-generation': {
-    introduction: 'Understand how SignalCX\'s AI engine generates and prioritizes next best actions. Learn to work effectively with AI recommendations while applying your customer success expertise.',
+    introduction: 'Understand how SignalCX\'s advanced AI engine generates and prioritizes next best actions using proprietary machine learning algorithms. Our NBA system combines deep learning, reinforcement learning, and expert business rules to provide contextually relevant recommendations with measurable confidence scores. Learn to work effectively with AI recommendations while applying your customer success expertise to achieve optimal outcomes.',
     sections: [
       {
-        title: 'AI Recommendation Engine',
-        content: 'The NBA engine combines machine learning algorithms with business rules to generate personalized recommendations. It considers account history, industry benchmarks, stakeholder preferences, and timing factors to suggest optimal actions with confidence scores.'
-      },
-      {
-        title: 'Decision Making Process',
-        content: 'Learn to evaluate AI recommendations by reviewing supporting data, understanding confidence levels, and applying contextual knowledge. Develop skills to modify, combine, or reject recommendations based on customer-specific circumstances.',
+        title: 'AI Recommendation Engine Architecture & Machine Learning Models',
+        content: 'The NBA engine employs a sophisticated ensemble approach combining multiple machine learning algorithms: Gradient Boosting Models (for pattern recognition), Neural Networks (for complex relationship modeling), Reinforcement Learning (for outcome optimization), and Rule-Based Systems (for business logic enforcement). The system considers 200+ variables including account history, industry benchmarks, stakeholder preferences, timing factors, resource availability, and success probability. Each recommendation comes with confidence scores (0-100%), expected outcome metrics, effort estimation, and risk assessment.',
         interactiveElements: {
           type: 'exercise',
           items: [
-            'Review 5 AI-generated NBAs for different account types',
-            'Analyze the supporting data for each recommendation',
-            'Practice modifying recommendations based on additional context',
-            'Track outcomes of implemented vs. modified recommendations'
+            'Review 10 AI-generated NBAs and analyze their confidence scores and reasoning',
+            'Compare NBA recommendations across different account types and industries',
+            'Examine the data points that contribute to high vs. low confidence recommendations',
+            'Practice interpreting NBA effort estimation and resource requirements',
+            'Use the AI metrics dashboard to track recommendation performance over time'
           ]
         }
       },
       {
-        title: 'Automation and Human Oversight',
-        content: 'Establish workflows that combine AI efficiency with human judgment. Learn to configure approval processes, set automation thresholds, and maintain quality control while scaling your customer success operations.'
+        title: 'Advanced Decision Making Process & Human-AI Collaboration',
+        content: 'Learn to evaluate AI recommendations through a structured decision framework: 1) Confidence Score Analysis (>90% high confidence, 70-90% medium, <70% requires human judgment), 2) Supporting Data Review (signal strength, historical patterns, peer comparisons), 3) Contextual Knowledge Application (relationship dynamics, timing considerations, strategic priorities), 4) Risk-Benefit Assessment (potential upside vs. implementation risk), and 5) Resource Allocation (effort required vs. available capacity). Master the art of human-AI collaboration by knowing when to trust, modify, or override AI recommendations.',
+        interactiveElements: {
+          type: 'exercise',
+          items: [
+            'Review 5 high-confidence AI-generated NBAs for different account scenarios',
+            'Analyze and document the supporting data and reasoning for each recommendation',
+            'Practice modifying recommendations based on additional contextual knowledge',
+            'Track outcomes of implemented vs. modified vs. rejected recommendations',
+            'Develop personal criteria for when to trust AI recommendations vs. apply human judgment',
+            'Create feedback loops to improve AI recommendation accuracy over time'
+          ]
+        }
+      },
+      {
+        title: 'Automation Strategies & Quality Control Framework',
+        content: 'Establish sophisticated workflows that combine AI efficiency with human oversight and judgment. Learn to configure multi-tier approval processes: Automatic Execution (high-confidence, low-risk actions), Manager Approval (medium-confidence or high-impact actions), Executive Review (low-confidence or strategic actions). Set up automation thresholds based on account value, risk level, and action type. Implement quality control mechanisms including A/B testing, outcome tracking, and continuous model improvement. Master the balance between operational efficiency and relationship quality.',
+        interactiveElements: {
+          type: 'checklist',
+          items: [
+            'Configure NBA approval workflows based on confidence scores and impact levels',
+            'Set up automated actions for high-confidence, low-risk recommendations',
+            'Create escalation paths for different types of NBA recommendations',
+            'Establish quality control metrics and monitoring dashboards',
+            'Design feedback mechanisms to continuously improve AI accuracy',
+            'Implement A/B testing for NBA recommendation optimization'
+          ]
+        }
       }
     ],
     keyTakeaways: [
-      'AI recommendations are starting points, not final decisions',
-      'Human context and relationship knowledge remain crucial',
-      'Feedback loops improve AI accuracy over time'
+      'AI NBA recommendations are powerful starting points that require human insight and contextual knowledge',
+      'Confidence scores and supporting data help determine the level of human oversight required',
+      'Human-AI collaboration produces better outcomes than either purely automated or purely manual approaches',
+      'Continuous feedback loops and outcome tracking improve AI accuracy over time',
+      'Proper automation balance maximizes efficiency while maintaining relationship quality and trust'
     ],
     nextSteps: [
-      'Configure NBA approval workflows',
-      'Practice evaluating and modifying AI recommendations',
-      'Establish outcome tracking for AI-generated actions'
+      'Configure NBA approval workflows tailored to your organization\'s risk tolerance',
+      'Practice evaluating and modifying AI recommendations using the structured decision framework',
+      'Establish comprehensive outcome tracking for AI-generated actions to measure effectiveness',
+      'Begin implementing automated actions for high-confidence, low-risk scenarios',
+      'Set up continuous improvement processes to enhance AI recommendation accuracy'
     ]
   },
   'predictive-analytics': {
-    introduction: 'Leverage machine learning for proactive customer success management. Learn to interpret predictive models, understand forecast confidence levels, and act on predictive insights.',
+    introduction: 'Leverage machine learning for proactive customer success management using SignalCX\'s advanced predictive modeling suite. Our ensemble AI approach combines multiple algorithms to forecast customer behavior with 94% accuracy. Learn to interpret predictive models, understand forecast confidence levels, and act on predictive insights to drive measurable business outcomes.',
     sections: [
       {
-        title: 'Predictive Modeling Fundamentals',
-        content: 'SignalCX uses ensemble methods combining multiple algorithms to predict customer behavior. Models analyze historical patterns, current signals, and external factors to forecast outcomes with confidence intervals. Key predictions include churn risk, expansion probability, and engagement trends.'
-      },
-      {
-        title: 'Risk Forecasting Techniques',
-        content: 'Master the interpretation of churn probability models, renewal likelihood forecasts, and expansion opportunity predictions. Learn to understand model confidence levels, identify key contributing factors, and translate predictions into actionable strategies.',
+        title: 'Advanced Predictive Modeling Fundamentals',
+        content: 'SignalCX uses sophisticated ensemble methods combining Gradient Boosting, Random Forest, Neural Networks, and Time Series Analysis to predict customer behavior. Models analyze 12 months of historical patterns, current signal trends, market conditions, and peer benchmarks to forecast outcomes with precise confidence intervals. Key predictions include churn risk probability (30, 60, 90-day horizons), expansion opportunity likelihood, engagement trajectory forecasting, and renewal probability scoring. Each model undergoes continuous validation and retraining to maintain accuracy.',
         interactiveElements: {
           type: 'exercise',
           items: [
-            'Interpret churn risk scores for your top 10 accounts',
-            'Identify the primary risk factors for each at-risk account',
-            'Develop intervention strategies based on risk categories',
-            'Create monitoring dashboards for predictive metrics'
+            'Examine predictive model outputs for 10 different customer scenarios',
+            'Compare short-term vs. long-term prediction accuracy across model types',
+            'Analyze how different input variables affect prediction confidence levels',
+            'Practice interpreting confidence intervals and statistical significance markers'
           ]
         }
       },
       {
-        title: 'Churn Prevention Strategies',
-        content: 'Develop systematic approaches to address different types of churn risk. Learn to create targeted retention campaigns, design stakeholder engagement programs, and implement predictive intervention workflows.'
+        title: 'Risk Forecasting Techniques & Advanced Analytics',
+        content: 'Master the interpretation of sophisticated churn probability models that consider multiple risk dimensions: Behavioral Risk (usage patterns, engagement trends), Relationship Risk (stakeholder changes, satisfaction scores), Commercial Risk (contract terms, payment history), and Technical Risk (integration health, performance issues). Learn to understand model confidence levels (>95% high confidence, 85-95% medium, <85% requires validation), identify primary contributing factors using SHAP analysis, and translate predictions into actionable retention strategies. Our advanced analytics include cohort analysis, survival curves, and risk factor attribution.',
+        interactiveElements: {
+          type: 'exercise',
+          items: [
+            'Interpret churn risk scores for your top 20 accounts using multi-dimensional analysis',
+            'Identify and analyze the primary and secondary risk factors for each at-risk account',
+            'Develop targeted intervention strategies based on specific risk categories and timing',
+            'Create comprehensive monitoring dashboards for predictive metrics and early warning systems',
+            'Practice using survival analysis to understand customer lifecycle patterns'
+          ]
+        }
+      },
+      {
+        title: 'Advanced Churn Prevention Strategies & Predictive Interventions',
+        content: 'Develop systematic approaches to address different types of churn risk using predictive insights and automated intervention frameworks. Learn to create targeted retention campaigns based on risk profiles: High Usage, Low Engagement (focus on value demonstration), High Engagement, Low Usage (feature adoption programs), Low Overall Activity (relationship rehabilitation), Contract-Related Risk (renewal preparation), and Technical Issues (support escalation). Implement predictive intervention workflows that trigger automatically based on risk score changes, confidence levels, and timing optimization.',
+        interactiveElements: {
+          type: 'checklist',
+          items: [
+            'Design risk-specific intervention playbooks for each churn category',
+            'Set up automated early warning systems with appropriate trigger thresholds',
+            'Create predictive retention campaigns with personalized messaging',
+            'Establish success metrics and ROI tracking for predictive interventions',
+            'Implement predictive workflow automation for different risk scenarios',
+            'Design executive escalation procedures for high-value at-risk accounts'
+          ]
+        }
       }
     ],
     keyTakeaways: [
-      'Predictive analytics enable proactive rather than reactive strategies',
-      'Model confidence levels guide intervention priorities',
-      'Regular model validation ensures continued accuracy'
+      'Predictive analytics enable proactive rather than reactive customer success strategies with measurable ROI',
+      'Model confidence levels and statistical significance guide intervention priorities and resource allocation',
+      'Regular model validation and retraining ensure continued accuracy and relevance in changing markets',
+      'Combining multiple predictive signals creates more accurate forecasts than single-model approaches',
+      'Predictive interventions show 3-5x better outcomes compared to reactive approaches'
     ],
     nextSteps: [
-      'Set up predictive monitoring dashboards',
-      'Develop churn prevention playbooks',
-      'Practice interpreting model outputs and confidence levels'
+      'Set up comprehensive predictive monitoring dashboards for your entire portfolio',
+      'Develop and test advanced churn prevention playbooks for different risk categories',
+      'Practice interpreting complex model outputs and confidence levels in real scenarios',
+      'Implement automated predictive intervention workflows for high-confidence scenarios',
+      'Begin tracking predictive intervention success rates to optimize your approach continuously'
     ]
   },
   'workflow-automation': {
@@ -584,12 +797,143 @@ const learningPaths: LearningPath[] = [
   }
 ];
 
+function AssessmentComponent({ assessment, onComplete }: { 
+  assessment: Assessment, 
+  onComplete: (assessment: Assessment, score: number, passed: boolean) => void 
+}) {
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [answers, setAnswers] = useState<number[]>([]);
+  const [showResults, setShowResults] = useState(false);
+
+  const handleAnswer = (answerIndex: number) => {
+    const newAnswers = [...answers];
+    newAnswers[currentQuestion] = answerIndex;
+    setAnswers(newAnswers);
+  };
+
+  const nextQuestion = () => {
+    if (currentQuestion < assessment.questions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      calculateResults();
+    }
+  };
+
+  const calculateResults = () => {
+    const correctAnswers = assessment.questions.filter((q, index) => 
+      q.correctAnswer === answers[index]
+    ).length;
+    const score = Math.round((correctAnswers / assessment.questions.length) * 100);
+    const passed = score >= assessment.passingScore;
+    
+    setShowResults(true);
+    setTimeout(() => {
+      onComplete(assessment, score, passed);
+    }, 3000);
+  };
+
+  if (showResults) {
+    const correctAnswers = assessment.questions.filter((q, index) => 
+      q.correctAnswer === answers[index]
+    ).length;
+    const score = Math.round((correctAnswers / assessment.questions.length) * 100);
+    const passed = score >= assessment.passingScore;
+
+    return (
+      <div className="text-center py-8">
+        <div className={`w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center ${
+          passed ? 'bg-green-100' : 'bg-red-100'
+        }`}>
+          {passed ? (
+            <CheckCircle className="w-10 h-10 text-green-600" />
+          ) : (
+            <div className="w-10 h-10 rounded-full border-4 border-red-600" />
+          )}
+        </div>
+        <h3 className="text-xl font-bold mb-2">
+          {passed ? 'Congratulations!' : 'Keep Learning!'}
+        </h3>
+        <p className="text-lg mb-4">Your Score: {score}%</p>
+        <p className="text-sm text-muted-foreground mb-4">
+          Passing Score: {assessment.passingScore}%
+        </p>
+        <p className="text-sm text-muted-foreground">
+          {passed ? 'You have successfully completed this assessment!' : 'Review the material and try again.'}
+        </p>
+      </div>
+    );
+  }
+
+  const question = assessment.questions[currentQuestion];
+  const progress = ((currentQuestion + 1) / assessment.questions.length) * 100;
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-medium">
+            Question {currentQuestion + 1} of {assessment.questions.length}
+          </span>
+          <span className="text-sm text-muted-foreground">{Math.round(progress)}% Complete</span>
+        </div>
+        <Progress value={progress} />
+      </div>
+
+      <div>
+        <h3 className="text-lg font-semibold mb-4">{question.question}</h3>
+        <div className="space-y-3">
+          {question.options.map((option, index) => (
+            <Button
+              key={index}
+              variant={answers[currentQuestion] === index ? "default" : "outline"}
+              onClick={() => handleAnswer(index)}
+              className="w-full text-left justify-start h-auto p-4"
+            >
+              <div className="flex items-start gap-3">
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 ${
+                  answers[currentQuestion] === index ? 'border-primary bg-primary' : 'border-gray-300'
+                }`}>
+                  {answers[currentQuestion] === index && (
+                    <div className="w-2 h-2 bg-white rounded-full" />
+                  )}
+                </div>
+                <span className="text-sm">{option}</span>
+              </div>
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <Button
+          variant="outline"
+          onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}
+          disabled={currentQuestion === 0}
+        >
+          Previous
+        </Button>
+        <Button
+          onClick={nextQuestion}
+          disabled={answers[currentQuestion] === undefined}
+        >
+          {currentQuestion === assessment.questions.length - 1 ? 'Complete Assessment' : 'Next Question'}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 export function SignalCXAcademy() {
   const [moduleProgress, setModuleProgress] = useKV<Record<string, ModuleProgress>>('academy-progress', {});
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
   const [activeModule, setActiveModule] = useState<LearningModule | null>(null);
+  const [activeAssessment, setActiveAssessment] = useState<Assessment | null>(null);
+  const [completedCertifications, setCompletedCertifications] = useKV<string[]>('completed-certifications', []);
+  const [assessmentResults, setAssessmentResults] = useKV<Record<string, {score: number, passed: boolean, completedAt: string}>>('assessment-results', {});
 
   const safeModuleProgress = moduleProgress || {};
+  const safeCompletedCertifications = completedCertifications || [];
+  const safeAssessmentResults = assessmentResults || {};
 
   const updateModuleProgress = (moduleId: string, progress: number, completed = false) => {
     setModuleProgress(prev => ({
@@ -601,11 +945,60 @@ export function SignalCXAcademy() {
   const startModule = (module: LearningModule) => {
     updateModuleProgress(module.id, 10);
     setActiveModule(module);
+    setActiveAssessment(null);
   };
 
   const completeModule = (module: LearningModule) => {
     updateModuleProgress(module.id, 100, true);
+    // Check if there's an assessment for this module
+    const assessment = assessments.find(a => a.moduleId === module.id);
+    if (assessment) {
+      setActiveAssessment(assessment);
+    } else {
+      setActiveModule(null);
+      checkForCertification(module.id);
+    }
+  };
+
+  const completeAssessment = (assessment: Assessment, score: number, passed: boolean) => {
+    setAssessmentResults(prev => ({
+      ...prev,
+      [assessment.id]: {
+        score,
+        passed,
+        completedAt: new Date().toISOString()
+      }
+    }));
+    setActiveAssessment(null);
     setActiveModule(null);
+    
+    if (passed) {
+      checkForCertification(assessment.moduleId);
+    }
+  };
+
+  const checkForCertification = (completedModuleId: string) => {
+    // Check if any certifications can be awarded
+    certifications.forEach(cert => {
+      if (!safeCompletedCertifications.includes(cert.id)) {
+        const allModulesCompleted = cert.requiredModules.every(moduleId => 
+          safeModuleProgress[moduleId]?.completed
+        );
+        
+        if (allModulesCompleted) {
+          setCompletedCertifications(prev => {
+            const currentCerts = prev || [];
+            return [...currentCerts, cert.id];
+          });
+          
+          // Show celebration toast
+          toast.success(`🎉 Congratulations! You've earned the ${cert.title} certification!`, {
+            duration: 5000,
+            description: cert.description
+          });
+        }
+      }
+    });
   };
 
   const getModuleWithProgress = (module: LearningModule) => {
@@ -670,6 +1063,56 @@ export function SignalCXAcademy() {
             </div>
           </div>
         </CardHeader>
+      </Card>
+
+      {/* Certifications */}
+      <Card className="border-visible">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Medal className="w-5 h-5 text-purple-600" />
+            Your Certifications
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Earn certifications by completing learning paths and passing assessments
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {certifications.map((cert) => {
+              const isEarned = safeCompletedCertifications.includes(cert.id);
+              const allModulesCompleted = cert.requiredModules.every(moduleId => 
+                safeModuleProgress[moduleId]?.completed
+              );
+              const progress = cert.requiredModules.length > 0 ? 
+                (cert.requiredModules.filter(moduleId => safeModuleProgress[moduleId]?.completed).length / cert.requiredModules.length) * 100 : 0;
+              
+              return (
+                <Card key={cert.id} className={`border-visible ${isEarned ? 'border-gold bg-gradient-to-br from-yellow-50 to-orange-50' : ''}`}>
+                  <CardContent className="p-4 text-center">
+                    <div className={`w-16 h-16 mx-auto mb-3 rounded-full flex items-center justify-center ${isEarned ? cert.badgeColor : 'bg-gray-200'}`}>
+                      <Medal className={`w-8 h-8 ${isEarned ? 'text-white' : 'text-gray-400'}`} />
+                    </div>
+                    <h3 className="font-semibold text-sm mb-2">{cert.title}</h3>
+                    <p className="text-xs text-muted-foreground mb-3">{cert.description}</p>
+                    {isEarned ? (
+                      <Badge variant="default" className="bg-green-500 text-white">
+                        <CheckCircle className="w-3 h-3 mr-1" />
+                        Earned
+                      </Badge>
+                    ) : (
+                      <div>
+                        <Progress value={progress} className="mb-2" />
+                        <p className="text-xs text-muted-foreground">
+                          {cert.requiredModules.filter(moduleId => safeModuleProgress[moduleId]?.completed).length} of {cert.requiredModules.length} modules completed
+                        </p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </CardContent>
       </Card>
 
       {/* Learning Paths */}
@@ -888,6 +1331,33 @@ export function SignalCXAcademy() {
         </CardContent>
       </Card>
 
+      {/* Assessment */}
+      {activeAssessment && (
+        <Card className="border-visible border-blue-500">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <Target className="w-5 h-5 text-blue-500" />
+                Assessment: {activeAssessment.title}
+              </CardTitle>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setActiveAssessment(null)}
+              >
+                Skip Assessment
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <AssessmentComponent 
+              assessment={activeAssessment}
+              onComplete={completeAssessment}
+            />
+          </CardContent>
+        </Card>
+      )}
+
       {/* Active Module */}
       {activeModule && (
         <Card className="border-visible border-primary">
@@ -1056,7 +1526,7 @@ export function SignalCXAcademy() {
                     className="bg-primary hover:bg-primary/90"
                   >
                     <CheckCircle className="w-4 h-4 mr-1" />
-                    Complete Module
+                    {assessments.find(a => a.moduleId === activeModule.id) ? 'Take Assessment' : 'Complete Module'}
                   </Button>
                 </div>
               </div>
@@ -1065,8 +1535,8 @@ export function SignalCXAcademy() {
         </Card>
       )}
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Enhanced Learning Analytics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="border-visible">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -1076,10 +1546,14 @@ export function SignalCXAcademy() {
                   {Object.values(safeModuleProgress).filter(p => p.completed).length}
                 </div>
                 <p className="text-xs text-muted-foreground">Modules Completed</p>
+                <p className="text-xs text-green-600 font-medium">
+                  {Math.round((Object.values(safeModuleProgress).filter(p => p.completed).length / learningModules.length) * 100)}% Complete
+                </p>
               </div>
             </div>
           </CardContent>
         </Card>
+        
         <Card className="border-visible">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -1089,10 +1563,14 @@ export function SignalCXAcademy() {
                   {Object.values(safeModuleProgress).filter(p => p.progress > 0 && !p.completed).length}
                 </div>
                 <p className="text-xs text-muted-foreground">In Progress</p>
+                <p className="text-xs text-blue-600 font-medium">
+                  {learningModules.length - Object.values(safeModuleProgress).filter(p => p.completed).length} remaining
+                </p>
               </div>
             </div>
           </CardContent>
         </Card>
+        
         <Card className="border-visible">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -1102,11 +1580,66 @@ export function SignalCXAcademy() {
                   {learningPaths.filter(path => getPathProgress(path) === 100).length}
                 </div>
                 <p className="text-xs text-muted-foreground">Paths Completed</p>
+                <p className="text-xs text-purple-600 font-medium">
+                  {learningPaths.length - learningPaths.filter(path => getPathProgress(path) === 100).length} in progress
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="border-visible">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <Medal className="w-5 h-5 text-orange-600" />
+              <div>
+                <div className="text-xl font-bold">
+                  {safeCompletedCertifications.length}
+                </div>
+                <p className="text-xs text-muted-foreground">Certifications Earned</p>
+                <p className="text-xs text-orange-600 font-medium">
+                  {Math.round((safeCompletedCertifications.length / certifications.length) * 100)}% achievement rate
+                </p>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Learning Progress Summary */}
+      <Card className="border-visible">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <ChartBar className="w-5 h-5 text-primary" />
+            Learning Progress Summary
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {Object.entries(categoryModules).map(([category, modules]) => {
+              const completed = modules.filter(m => safeModuleProgress[m.id]?.completed).length;
+              const progress = modules.length > 0 ? (completed / modules.length) * 100 : 0;
+              
+              return (
+                <div key={category} className="flex items-center gap-4">
+                  <div className="w-24 text-sm font-medium capitalize">
+                    {category.replace('-', ' ')}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm text-muted-foreground">
+                        {completed} of {modules.length} completed
+                      </span>
+                      <span className="text-sm font-medium">{Math.round(progress)}%</span>
+                    </div>
+                    <Progress value={progress} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
