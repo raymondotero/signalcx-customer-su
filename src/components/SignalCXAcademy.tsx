@@ -175,118 +175,117 @@ const trainingContent: Record<string, TrainingContent> = {
       },
       {
         title: 'Key Features Deep Dive',
-        content: 'Navigate through the main dashboard to access Account Health Monitoring (real-time customer health scoring), Real-time Signal Processing (automated behavior analysis), NBA Generation (AI-powered recommendations), Predictive Analytics (churn and expansion forecasting), and Integration Management (seamless data flow). Each feature leverages proprietary machine learning algorithms trained on thousands of customer success patterns. \n\n**Case Study - FinanceFirst Bank**: When their health score dropped from 85 to 45 over 3 weeks, SignalCX automatically generated 4 specific NBAs: \n• Executive escalation (94% confidence) \n• Dedicated technical review (87% confidence) \n• Service improvement plan (91% confidence) \n• Quarterly business review reset (89% confidence) \n\nThe CSM implemented all recommendations, resulting in health score recovery to 78 within 6 weeks and successful $89M renewal. Traditional reactive approaches would have discovered the issue too late for effective intervention.',
+        content: 'Navigate through the main dashboard to access Account Health Monitoring (real-time customer health scoring), Real-time Signal Processing (automated behavior analysis), NBA Generation (AI-powered recommendations), Predictive Analytics (churn and expansion forecasting), and Integration Management (seamless data flow). Each feature leverages proprietary machine learning algorithms trained on thousands of customer success patterns.',
         interactiveElements: {
           type: 'checklist',
           items: [
-            'Explore the Accounts Table and filter by health score ranges - find accounts similar to FinanceFirst\'s pattern',
-            'Review the NBA Display for AI-generated recommended actions - compare confidence scores across different scenarios',
-            'Check the Live Signals feed for recent customer activity patterns - identify early warning signals',
-            'Access the AI Recommendation Engine and review confidence scores - understand what drives high vs low confidence',
-            'Open the Predictive Heat Map to view risk/opportunity forecasting - see visual patterns across your portfolio',
-            'Test the notification system with sample alerts - experience how Teams integration works in practice'
+            'Explore the Accounts Table and filter by health score ranges',
+            'Review the NBA Display for AI-generated recommended actions',
+            'Check the Live Signals feed for recent customer activity patterns',
+            'Access the AI Recommendation Engine and review confidence scores',
+            'Open the Predictive Heat Map to view risk/opportunity forecasting',
+            'Test the notification system with sample alerts'
           ]
         }
       },
       {
         title: 'User Interface Navigation & Workflow Optimization',
-        content: 'The SignalCX interface is strategically organized into three main areas: Account Management (left - your customer portfolio), AI Insights (center - intelligent recommendations), and System Controls (right - configuration and analytics). The tabbed interface allows you to maintain context while diving deep into specific workflows. Master keyboard shortcuts and quick navigation to maximize efficiency. \n\n**Efficiency Example**: Sarah, a CSM managing 150 accounts, reduced her daily workflow time from 3 hours to 45 minutes using these optimization techniques: \n• Using Ctrl+F to quickly find specific accounts \n• Setting up custom notification filters to focus only on high-impact alerts \n• Creating keyboard shortcuts for common NBA approval workflows \n• Configuring dashboard layout with her most-used tabs in primary position \n\nThis 4x efficiency gain allowed her to manage 50% more accounts while improving customer satisfaction scores by 23%.',
+        content: 'The SignalCX interface is strategically organized into three main areas: Account Management (left - your customer portfolio), AI Insights (center - intelligent recommendations), and System Controls (right - configuration and analytics). The tabbed interface allows you to maintain context while diving deep into specific workflows. Master keyboard shortcuts and quick navigation to maximize efficiency.',
         interactiveElements: {
           type: 'exercise',
           items: [
-            'Practice switching between tabs using keyboard shortcuts (Ctrl+1, Ctrl+2, etc.) - time yourself navigating between accounts',
-            'Use the search functionality to quickly locate specific accounts - practice finding accounts by name, industry, or status',
-            'Configure your dashboard layout for optimal workflow - move your most-used tabs to primary positions',
-            'Set up personalized notification preferences - create filters that match your account priorities and workload capacity'
+            'Practice switching between tabs using keyboard shortcuts',
+            'Use the search functionality to quickly locate specific accounts',
+            'Configure your dashboard layout for optimal workflow',
+            'Set up personalized notification preferences'
           ]
         }
       }
     ],
     keyTakeaways: [
-      'SignalCX combines AI-powered insights with automated workflows for 10x efficiency gains - real customers report 300-500% productivity improvements',
-      'The platform provides proactive rather than reactive customer success management - early detection prevents 85% of potential churn scenarios',
-      'All features are designed to work together for comprehensive account oversight and predictive insights - no feature works in isolation',
-      'Integration capabilities ensure SignalCX enhances your existing workflows rather than replacing them - 95% customer retention through seamless adoption'
+      'SignalCX combines AI-powered insights with automated workflows for 10x efficiency gains',
+      'The platform provides proactive rather than reactive customer success management',
+      'All features are designed to work together for comprehensive account oversight and predictive insights',
+      'Integration capabilities ensure SignalCX enhances your existing workflows rather than replacing them'
     ],
     nextSteps: [
-      'Complete the Account Health Monitoring module to master health scoring using real customer scenarios like FinanceFirst',
-      'Practice navigating between different sections to build muscle memory - aim for <10 second navigation between any two features',
-      'Familiarize yourself with the notification system and alert configurations - set up at least 3 custom alert types',
-      'Set up your first automated workflow using the Workflow Demo - start with a simple health score change trigger'
+      'Complete the Account Health Monitoring module to master health scoring',
+      'Practice navigating between different sections to build muscle memory',
+      'Familiarize yourself with the notification system and alert configurations',
+      'Set up your first automated workflow using the Workflow Demo'
     ]
   },
   'account-health-monitoring': {
-    introduction: 'Master the art of interpreting customer health metrics with SignalCX\'s comprehensive health scoring system. Our proprietary algorithm analyzes 100+ data points to create predictive health scores. Learn to identify at-risk accounts before issues escalate and recognize expansion opportunities through advanced pattern recognition, using real customer success stories and proven intervention strategies.',
+    introduction: 'Master the art of interpreting customer health metrics with SignalCX\'s comprehensive health scoring system. Our proprietary algorithm analyzes 100+ data points to create predictive health scores. Learn to identify at-risk accounts before issues escalate and recognize expansion opportunities through advanced pattern recognition.',
     sections: [
       {
         title: 'Health Score Methodology & Advanced Metrics',
-        content: 'SignalCX calculates health scores using a sophisticated ensemble model that analyzes multiple data dimensions: Product Usage Patterns (40% weight), Engagement Metrics (25% weight), Support Interactions (15% weight), Contract Status (10% weight), and Relationship Strength (10% weight). Scores range from 0-100 with automated categorization into Good (80-100), Watch (60-79), and At Risk (0-59). \n\n**Success Story - MediaStreams Inc**: Initial health score was 72 (Watch category). Deep analysis revealed: \n• Feature adoption velocity decreasing 15% month-over-month \n• Stakeholder meeting attendance down 40% \n• Support ticket complexity increasing (average resolution time up 60%) \n• API usage patterns showing integration challenges \n\nSignalCX\'s algorithm weighted these signals and predicted a drop to 45 within 60 days. Early intervention included dedicated technical support, feature training sessions, and executive check-ins. Result: Health score recovered to 89, leading to $3.2M expansion deal. \n\nThe algorithm also considers industry benchmarks, seasonal patterns, and account-specific baselines for maximum accuracy.',
+        content: 'SignalCX calculates health scores using a sophisticated ensemble model that analyzes multiple data dimensions: Product Usage Patterns (40% weight), Engagement Metrics (25% weight), Support Interactions (15% weight), Contract Status (10% weight), and Relationship Strength (10% weight). Scores range from 0-100 with automated categorization into Good (80-100), Watch (60-79), and At Risk (0-59). The algorithm also considers industry benchmarks, seasonal patterns, and account-specific baselines for maximum accuracy.',
         interactiveElements: {
           type: 'exercise',
           items: [
-            'Analyze health score components for 5 different account types - compare SaaS vs Enterprise vs SMB patterns',
-            'Compare health scores against industry benchmarks - identify where your accounts rank in their verticals',
-            'Identify which metrics contribute most to score changes - understand the weight of different signals',
-            'Practice interpreting health score trends over time - distinguish between seasonal dips and concerning patterns'
+            'Analyze health score components for 5 different account types',
+            'Compare health scores against industry benchmarks',
+            'Identify which metrics contribute most to score changes',
+            'Practice interpreting health score trends over time'
           ]
         }
       },
       {
         title: 'Advanced Risk Assessment Framework',
-        content: 'Our AI analyzes patterns across thousands of customer attributes to identify early warning signs with 94% accuracy. Key predictive indicators include: Declining Usage Velocity (rate of change in feature adoption), Reduced Stakeholder Engagement (meeting attendance, email response rates), Increased Support Complexity (escalation patterns, resolution time), Approaching Contract Events (renewal timing, negotiation signals), and Ecosystem Health (integration usage, data flow quality). \n\n**Case Study - RetailTech Global**: A $12M ARR customer showing seemingly stable health score of 75. However, SignalCX\'s risk assessment detected: \n• Primary stakeholder (CTO) reducing email responsiveness from 2-hour to 24-hour average \n• Developer team decreasing API calls by 8% week-over-week \n• Support tickets shifting from "how-to" to "troubleshooting" (indicator of frustration) \n• Integration health showing 15% more error rates \n\nRisk probability jumped to 68% despite stable health score. Immediate intervention prevented churn through: technical architecture review, dedicated developer support, and CTO executive briefing. Account health improved to 87 and resulted in $4.5M expansion within 6 months. \n\nThe system provides risk probability scores and recommended intervention timing based on similar historical patterns.',
+        content: 'Our AI analyzes patterns across thousands of customer attributes to identify early warning signs with 94% accuracy. Key predictive indicators include: Declining Usage Velocity (rate of change in feature adoption), Reduced Stakeholder Engagement (meeting attendance, email response rates), Increased Support Complexity (escalation patterns, resolution time), Approaching Contract Events (renewal timing, negotiation signals), and Ecosystem Health (integration usage, data flow quality). The system provides risk probability scores and recommended intervention timing.',
         interactiveElements: {
           type: 'exercise',
           items: [
-            'Identify the top 3 at-risk accounts in your portfolio using multiple risk factors - go beyond just health scores',
-            'Analyze the primary and secondary risk factors for each at-risk account - understand the root causes',
-            'Create targeted action plans for immediate intervention based on risk type - develop specific playbooks',
-            'Set up automated monitoring alerts for key health indicators and thresholds - prevent missing early signals',
-            'Practice using the Predictive Heat Map to visualize portfolio risk - identify patterns across account segments'
+            'Identify the top 3 at-risk accounts in your portfolio using multiple risk factors',
+            'Analyze the primary and secondary risk factors for each at-risk account',
+            'Create targeted action plans for immediate intervention based on risk type',
+            'Set up automated monitoring alerts for key health indicators and thresholds',
+            'Practice using the Predictive Heat Map to visualize portfolio risk'
           ]
         }
       },
       {
         title: 'Proactive Intervention Strategies & Playbook Development',
-        content: 'Learn to act on health score changes before they become critical using our proven intervention framework. Establish risk-based escalation protocols: Health Score 60-79 (increased touchpoints, usage optimization), Health Score 40-59 (executive engagement, success plan revision), Health Score <40 (crisis management, retention campaign). \n\n**Intervention Success Story - CloudTech Innovations**: When their health score dropped from 78 to 62 over 2 weeks, the established playbook triggered: \n• **Week 1**: Automated email sequence with usage optimization tips \n• **Week 2**: CSM outreach with personalized feature recommendations \n• **Week 3**: Technical account manager engagement for integration review \n• **Week 4**: Executive business review with ROI analysis \n\nEach intervention was tracked and measured. Usage increased 45%, stakeholder engagement improved 60%, and health score recovered to 84. The systematic approach prevented what could have been a $7.8M churn and led to a $2.1M expansion deal. \n\nCreate targeted engagement campaigns using automated workflows and maintain detailed intervention tracking for continuous improvement.',
+        content: 'Learn to act on health score changes before they become critical using our proven intervention framework. Establish risk-based escalation protocols: Health Score 60-79 (increased touchpoints, usage optimization), Health Score 40-59 (executive engagement, success plan revision), Health Score <40 (crisis management, retention campaign). Create targeted engagement campaigns using automated workflows and maintain detailed intervention tracking for continuous improvement.',
         interactiveElements: {
           type: 'checklist',
           items: [
-            'Define intervention triggers for each health score range - create specific thresholds and actions',
-            'Create escalation workflows for different risk levels - map out who gets involved when',
-            'Design targeted outreach templates for various scenarios - personalize for different risk types',
-            'Set up success metrics tracking for intervention outcomes - measure what works',
-            'Establish executive escalation procedures for critical accounts - know when to involve leadership',
-            'Build automated follow-up sequences that adapt based on customer response - create dynamic workflows'
+            'Define intervention triggers for each health score range',
+            'Create escalation workflows for different risk levels',
+            'Design targeted outreach templates for various scenarios',
+            'Set up success metrics tracking for intervention outcomes',
+            'Establish executive escalation procedures for critical accounts'
           ]
         }
       }
     ],
     keyTakeaways: [
-      'Health scores are predictive indicators, not just descriptive snapshots - they forecast future outcomes with 94% accuracy',
-      'Early intervention is exponentially more effective than crisis management - proactive approaches show 300% better success rates',
-      'Multiple data sources provide more accurate health assessments than single metrics - comprehensive analysis prevents blind spots',
-      'Continuous monitoring and automated alerts enable proactive rather than reactive customer success - customers report 85% faster issue resolution'
+      'Health scores are predictive indicators, not just descriptive snapshots - they forecast future outcomes',
+      'Early intervention is exponentially more effective than crisis management - act on trends, not events',
+      'Multiple data sources provide more accurate health assessments than single metrics',
+      'Continuous monitoring and automated alerts enable proactive rather than reactive customer success'
     ],
     nextSteps: [
-      'Set up health score monitoring alerts for your key accounts - start with top 20% by ARR value',
-      'Practice identifying risk patterns using the advanced analytics dashboard - spend 30 minutes daily reviewing trends',
-      'Develop standard intervention playbooks for each risk category - document what works for different scenarios',
-      'Begin tracking intervention success rates to optimize your approach - measure ROI of proactive efforts'
+      'Set up health score monitoring alerts for your key accounts',
+      'Practice identifying risk patterns using the advanced analytics dashboard',
+      'Develop standard intervention playbooks for each risk category',
+      'Begin tracking intervention success rates to optimize your approach'
     ]
   },
   'signal-interpretation': {
-    introduction: 'Develop expertise in identifying, prioritizing, and responding to customer signals effectively. Master SignalCX\'s advanced signal processing engine that analyzes 500+ signal types in real-time. Learn to distinguish between noise and meaningful patterns that drive customer success outcomes, and understand how our AI correlates signals across multiple dimensions to predict customer behavior using proven methodologies from successful customer success teams.',
+    introduction: 'Develop expertise in identifying, prioritizing, and responding to customer signals effectively. Master SignalCX\'s advanced signal processing engine that analyzes 500+ signal types in real-time. Learn to distinguish between noise and meaningful patterns that drive customer success outcomes, and understand how our AI correlates signals across multiple dimensions to predict customer behavior.',
     sections: [
       {
         title: 'Signal Categories, Types & Advanced Classification',
-        content: 'SignalCX processes five primary signal categories with advanced sub-classification: 1) Usage Patterns (login frequency, feature adoption velocity, data volume trends, session duration analysis), 2) Engagement Signals (meeting attendance rates, email response times, portal activity, content consumption), 3) Business Health (contract renewals, expansion indicators, procurement cycles, budget allocation signals), 4) Risk Indicators (support ticket escalations, stakeholder turnover, competitive activity, performance degradation), and 5) Opportunity Signals (new use cases discovery, team growth patterns, technology adoption, integration expansion). \n\n**Real-World Signal Analysis - InsureTech Solutions**: Over 30 days, SignalCX detected: \n• **Usage Pattern Signal**: 40% increase in fraud detection API calls (expansion indicator) \n• **Engagement Signal**: New stakeholders from claims department joining training sessions (adoption spread) \n• **Business Health Signal**: Procurement team requesting enterprise security documentation (upsell preparation) \n• **Risk Indicator**: None detected (healthy account status) \n• **Opportunity Signal**: Questions about machine learning capabilities in support tickets (new use case interest) \n\nCorrelation analysis revealed 92% probability of expansion opportunity. The signal combination led to $8.2M expansion deal within 90 days. Each signal is weighted based on historical correlation with success outcomes.',
+        content: 'SignalCX processes five primary signal categories with advanced sub-classification: 1) Usage Patterns (login frequency, feature adoption velocity, data volume trends, session duration analysis), 2) Engagement Signals (meeting attendance rates, email response times, portal activity, content consumption), 3) Business Health (contract renewals, expansion indicators, procurement cycles, budget allocation signals), 4) Risk Indicators (support ticket escalations, stakeholder turnover, competitive activity, performance degradation), and 5) Opportunity Signals (new use cases discovery, team growth patterns, technology adoption, integration expansion). Each signal is weighted based on historical correlation with success outcomes.',
         interactiveElements: {
           type: 'exercise',
           items: [
-            'Categorize 20 different signals from your current customer base - practice signal classification accuracy',
-            'Identify the highest-impact signals for your specific industry - understand vertical-specific patterns',
-            'Practice distinguishing between leading and lagging indicators - focus on predictive vs reactive signals',
-            'Map signals to customer journey stages for better context - understand timing implications'
+            'Categorize 20 different signals from your current customer base',
+            'Identify the highest-impact signals for your specific industry',
+            'Practice distinguishing between leading and lagging indicators',
+            'Map signals to customer journey stages for better context'
           ]
         }
       },
@@ -334,34 +333,34 @@ const trainingContent: Record<string, TrainingContent> = {
     ]
   },
   'ai-nba-generation': {
-    introduction: 'Understand how SignalCX\'s advanced AI engine generates and prioritizes next best actions using proprietary machine learning algorithms. Our NBA system combines deep learning, reinforcement learning, and expert business rules to provide contextually relevant recommendations with measurable confidence scores. Learn to work effectively with AI recommendations while applying your customer success expertise to achieve optimal outcomes, using proven human-AI collaboration strategies.',
+    introduction: 'Understand how SignalCX\'s advanced AI engine generates and prioritizes next best actions using proprietary machine learning algorithms. Our NBA system combines deep learning, reinforcement learning, and expert business rules to provide contextually relevant recommendations with measurable confidence scores. Learn to work effectively with AI recommendations while applying your customer success expertise to achieve optimal outcomes.',
     sections: [
       {
         title: 'AI Recommendation Engine Architecture & Machine Learning Models',
-        content: 'The NBA engine employs a sophisticated ensemble approach combining multiple machine learning algorithms: Gradient Boosting Models (for pattern recognition), Neural Networks (for complex relationship modeling), Reinforcement Learning (for outcome optimization), and Rule-Based Systems (for business logic enforcement). The system considers 200+ variables including account history, industry benchmarks, stakeholder preferences, timing factors, resource availability, and success probability. \n\n**Real Success Example - BioPharm Research**: When their usage patterns showed 30% research productivity improvement, the AI generated 4 NBAs: \n1. **Drug Discovery Platform Expansion** (96% confidence) - Estimated $9.2M ARR impact \n2. **Clinical Trial AI Integration** (89% confidence) - Estimated $3.7M ARR impact \n3. **Regulatory Compliance Automation** (84% confidence) - Estimated $1.8M ARR impact \n4. **Bioinformatics Team Training Program** (78% confidence) - Estimated $650K ARR impact \n\nThe CSM implemented the top 2 recommendations first, resulting in $12.1M expansion within 8 months. The confidence scores proved accurate - high confidence NBAs showed 94% success rate. Each recommendation comes with confidence scores (0-100%), expected outcome metrics, effort estimation, and risk assessment.',
+        content: 'The NBA engine employs a sophisticated ensemble approach combining multiple machine learning algorithms: Gradient Boosting Models (for pattern recognition), Neural Networks (for complex relationship modeling), Reinforcement Learning (for outcome optimization), and Rule-Based Systems (for business logic enforcement). The system considers 200+ variables including account history, industry benchmarks, stakeholder preferences, timing factors, resource availability, and success probability. Each recommendation comes with confidence scores (0-100%), expected outcome metrics, effort estimation, and risk assessment.',
         interactiveElements: {
           type: 'exercise',
           items: [
-            'Review 10 AI-generated NBAs and analyze their confidence scores and reasoning - understand what drives high confidence',
-            'Compare NBA recommendations across different account types and industries - notice industry-specific patterns',
-            'Examine the data points that contribute to high vs. low confidence recommendations - learn to interpret AI reasoning',
-            'Practice interpreting NBA effort estimation and resource requirements - plan implementation strategies',
-            'Use the AI metrics dashboard to track recommendation performance over time - measure your success rates'
+            'Review 10 AI-generated NBAs and analyze their confidence scores and reasoning',
+            'Compare NBA recommendations across different account types and industries',
+            'Examine the data points that contribute to high vs. low confidence recommendations',
+            'Practice interpreting NBA effort estimation and resource requirements',
+            'Use the AI metrics dashboard to track recommendation performance over time'
           ]
         }
       },
       {
         title: 'Advanced Decision Making Process & Human-AI Collaboration',
-        content: 'Learn to evaluate AI recommendations through a structured decision framework: 1) Confidence Score Analysis (>90% high confidence, 70-90% medium, <70% requires human judgment), 2) Supporting Data Review (signal strength, historical patterns, peer comparisons), 3) Contextual Knowledge Application (relationship dynamics, timing considerations, strategic priorities), 4) Risk-Benefit Assessment (potential upside vs. implementation risk), and 5) Resource Allocation (effort required vs. available capacity). \n\n**Human-AI Collaboration Case - CyberGuard Security**: AI recommended "Advanced Threat Detection Enhancement" with 91% confidence. The CSM analyzed: \n• **Supporting Data**: 42% efficiency increase in security operations, 96% threat detection accuracy \n• **Contextual Knowledge**: CISO recently mentioned interest in AI-powered security at industry conference \n• **Risk-Benefit**: High potential ($7.3M expansion) with medium implementation risk \n• **Resource Allocation**: Required dedicated security architect for 2 weeks \n\nThe CSM modified the AI recommendation by adding a pilot program approach and involving the CISO\'s preferred vendor partner. Result: $7.9M expansion (even better than AI prediction) with 100% stakeholder satisfaction. This demonstrates optimal human-AI collaboration - trusting AI insights while applying human judgment and relationship knowledge.',
+        content: 'Learn to evaluate AI recommendations through a structured decision framework: 1) Confidence Score Analysis (>90% high confidence, 70-90% medium, <70% requires human judgment), 2) Supporting Data Review (signal strength, historical patterns, peer comparisons), 3) Contextual Knowledge Application (relationship dynamics, timing considerations, strategic priorities), 4) Risk-Benefit Assessment (potential upside vs. implementation risk), and 5) Resource Allocation (effort required vs. available capacity). Master the art of human-AI collaboration by knowing when to trust, modify, or override AI recommendations.',
         interactiveElements: {
           type: 'exercise',
           items: [
-            'Review 5 high-confidence AI-generated NBAs for different account scenarios - practice systematic evaluation',
-            'Analyze and document the supporting data and reasoning for each recommendation - build evaluation skills',
-            'Practice modifying recommendations based on additional contextual knowledge - enhance AI suggestions with human insight',
-            'Track outcomes of implemented vs. modified vs. rejected recommendations - learn from your decisions',
-            'Develop personal criteria for when to trust AI recommendations vs. apply human judgment - create decision framework',
-            'Create feedback loops to improve AI recommendation accuracy over time - contribute to system learning'
+            'Review 5 high-confidence AI-generated NBAs for different account scenarios',
+            'Analyze and document the supporting data and reasoning for each recommendation',
+            'Practice modifying recommendations based on additional contextual knowledge',
+            'Track outcomes of implemented vs. modified vs. rejected recommendations',
+            'Develop personal criteria for when to trust AI recommendations vs. apply human judgment',
+            'Create feedback loops to improve AI recommendation accuracy over time'
           ]
         }
       },
@@ -397,47 +396,47 @@ const trainingContent: Record<string, TrainingContent> = {
     ]
   },
   'predictive-analytics': {
-    introduction: 'Leverage machine learning for proactive customer success management using SignalCX\'s advanced predictive modeling suite. Our ensemble AI approach combines multiple algorithms to forecast customer behavior with 94% accuracy. Learn to interpret predictive models, understand forecast confidence levels, and act on predictive insights to drive measurable business outcomes using proven predictive intervention strategies.',
+    introduction: 'Leverage machine learning for proactive customer success management using SignalCX\'s advanced predictive modeling suite. Our ensemble AI approach combines multiple algorithms to forecast customer behavior with 94% accuracy. Learn to interpret predictive models, understand forecast confidence levels, and act on predictive insights to drive measurable business outcomes.',
     sections: [
       {
         title: 'Advanced Predictive Modeling Fundamentals',
-        content: 'SignalCX uses sophisticated ensemble methods combining Gradient Boosting, Random Forest, Neural Networks, and Time Series Analysis to predict customer behavior. Models analyze 12 months of historical patterns, current signal trends, market conditions, and peer benchmarks to forecast outcomes with precise confidence intervals. Key predictions include churn risk probability (30, 60, 90-day horizons), expansion opportunity likelihood, engagement trajectory forecasting, and renewal probability scoring. \n\n**Predictive Success Story - TechCorp Solutions**: 90-day churn prediction model showed 23% probability (up from 8% previous month). Deep analysis revealed: \n• **Usage Patterns**: 15% decline in API calls over 6 weeks \n• **Engagement Trajectory**: Stakeholder meeting attendance dropping from 95% to 60% \n• **Support Complexity**: Ticket resolution time increased 40% \n• **Renewal Indicators**: No budget discussions initiated (typical timeline missed) \n\nPredictive intervention included: dedicated technical review, executive engagement, and renewal planning session. Churn probability dropped to 4% within 45 days and account renewed for $2.8M with 20% expansion. Each model undergoes continuous validation and retraining to maintain accuracy.',
+        content: 'SignalCX uses sophisticated ensemble methods combining Gradient Boosting, Random Forest, Neural Networks, and Time Series Analysis to predict customer behavior. Models analyze 12 months of historical patterns, current signal trends, market conditions, and peer benchmarks to forecast outcomes with precise confidence intervals. Key predictions include churn risk probability (30, 60, 90-day horizons), expansion opportunity likelihood, engagement trajectory forecasting, and renewal probability scoring. Each model undergoes continuous validation and retraining to maintain accuracy.',
         interactiveElements: {
           type: 'exercise',
           items: [
-            'Examine predictive model outputs for 10 different customer scenarios - understand various prediction types',
-            'Compare short-term vs. long-term prediction accuracy across model types - learn model strengths',
-            'Analyze how different input variables affect prediction confidence levels - understand key drivers',
-            'Practice interpreting confidence intervals and statistical significance markers - build statistical literacy'
+            'Examine predictive model outputs for 10 different customer scenarios',
+            'Compare short-term vs. long-term prediction accuracy across model types',
+            'Analyze how different input variables affect prediction confidence levels',
+            'Practice interpreting confidence intervals and statistical significance markers'
           ]
         }
       },
       {
         title: 'Risk Forecasting Techniques & Advanced Analytics',
-        content: 'Master the interpretation of sophisticated churn probability models that consider multiple risk dimensions: Behavioral Risk (usage patterns, engagement trends), Relationship Risk (stakeholder changes, satisfaction scores), Commercial Risk (contract terms, payment history), and Technical Risk (integration health, performance issues). Learn to understand model confidence levels (>95% high confidence, 85-95% medium, <85% requires validation), identify primary contributing factors using SHAP analysis, and translate predictions into actionable retention strategies. \n\n**Risk Forecasting Case Study - GlobalLogistics Corp**: Churn model detected concerning pattern despite 78 health score: \n• **Behavioral Risk**: Integration API calls decreased 22% over 8 weeks \n• **Relationship Risk**: Primary champion (VP Operations) announced departure in 60 days \n• **Commercial Risk**: Contract renewal discussions delayed twice \n• **Technical Risk**: Data sync errors increased 35% month-over-month \n\nCombined risk factors pushed churn probability to 71% (high risk threshold). Intervention strategy included: new champion identification and onboarding, technical architecture review, and contract renewal acceleration. Risk dropped to 18% within 30 days and account renewed with $1.2M expansion. Our advanced analytics include cohort analysis, survival curves, and risk factor attribution.',
+        content: 'Master the interpretation of sophisticated churn probability models that consider multiple risk dimensions: Behavioral Risk (usage patterns, engagement trends), Relationship Risk (stakeholder changes, satisfaction scores), Commercial Risk (contract terms, payment history), and Technical Risk (integration health, performance issues). Learn to understand model confidence levels (>95% high confidence, 85-95% medium, <85% requires validation), identify primary contributing factors using SHAP analysis, and translate predictions into actionable retention strategies. Our advanced analytics include cohort analysis, survival curves, and risk factor attribution.',
         interactiveElements: {
           type: 'exercise',
           items: [
-            'Interpret churn risk scores for your top 20 accounts using multi-dimensional analysis - practice comprehensive risk assessment',
-            'Identify and analyze the primary and secondary risk factors for each at-risk account - understand root causes',
-            'Develop targeted intervention strategies based on specific risk categories and timing - create action-oriented plans',
-            'Create comprehensive monitoring dashboards for predictive metrics and early warning systems - build proactive monitoring',
-            'Practice using survival analysis to understand customer lifecycle patterns - master advanced analytics techniques'
+            'Interpret churn risk scores for your top 20 accounts using multi-dimensional analysis',
+            'Identify and analyze the primary and secondary risk factors for each at-risk account',
+            'Develop targeted intervention strategies based on specific risk categories and timing',
+            'Create comprehensive monitoring dashboards for predictive metrics and early warning systems',
+            'Practice using survival analysis to understand customer lifecycle patterns'
           ]
         }
       },
       {
         title: 'Advanced Churn Prevention Strategies & Predictive Interventions',
-        content: 'Develop systematic approaches to address different types of churn risk using predictive insights and automated intervention frameworks. Learn to create targeted retention campaigns based on risk profiles: High Usage, Low Engagement (focus on value demonstration), High Engagement, Low Usage (feature adoption programs), Low Overall Activity (relationship rehabilitation), Contract-Related Risk (renewal preparation), and Technical Issues (support escalation). \n\n**Predictive Intervention Success - ManufacturingTech Solutions**: Predictive model identified 67% churn risk driven by "Low Overall Activity" pattern. Analysis showed: \n• Manufacturing operations team stopped using predictive maintenance features \n• Plant managers weren\'t attending monthly optimization reviews \n• ROI reports weren\'t being accessed by executive stakeholders \n\nAutomated intervention workflow triggered: \n1. **Week 1**: Personalized ROI report sent to C-suite with industry comparisons \n2. **Week 2**: Manufacturing efficiency workshop scheduled for plant managers \n3. **Week 3**: Dedicated customer success engineer assigned for hands-on optimization \n4. **Week 4**: Executive business review with concrete productivity metrics \n\nResult: 89% increase in platform engagement, 34% improvement in manufacturing efficiency metrics, and churn probability dropped to 12%. Account expanded by $3.4M for additional plant locations. Implement predictive intervention workflows that trigger automatically based on risk score changes, confidence levels, and timing optimization.',
+        content: 'Develop systematic approaches to address different types of churn risk using predictive insights and automated intervention frameworks. Learn to create targeted retention campaigns based on risk profiles: High Usage, Low Engagement (focus on value demonstration), High Engagement, Low Usage (feature adoption programs), Low Overall Activity (relationship rehabilitation), Contract-Related Risk (renewal preparation), and Technical Issues (support escalation). Implement predictive intervention workflows that trigger automatically based on risk score changes, confidence levels, and timing optimization.',
         interactiveElements: {
           type: 'checklist',
           items: [
-            'Design risk-specific intervention playbooks for each churn category - create detailed response strategies',
-            'Set up automated early warning systems with appropriate trigger thresholds - prevent missed opportunities',
-            'Create predictive retention campaigns with personalized messaging - tailor interventions to risk type',
-            'Establish success metrics and ROI tracking for predictive interventions - measure intervention effectiveness',
-            'Implement predictive workflow automation for different risk scenarios - scale your interventions',
-            'Design executive escalation procedures for high-value at-risk accounts - ensure proper stakeholder involvement'
+            'Design risk-specific intervention playbooks for each churn category',
+            'Set up automated early warning systems with appropriate trigger thresholds',
+            'Create predictive retention campaigns with personalized messaging',
+            'Establish success metrics and ROI tracking for predictive interventions',
+            'Implement predictive workflow automation for different risk scenarios',
+            'Design executive escalation procedures for high-value at-risk accounts'
           ]
         }
       }
@@ -458,192 +457,326 @@ const trainingContent: Record<string, TrainingContent> = {
     ]
   },
   'workflow-automation': {
-    introduction: 'Create and manage sophisticated automated workflows that respond intelligently to customer signals. Learn to design, test, and optimize automation while maintaining personal touch. Master the balance between efficiency and relationship quality using proven automation strategies from high-performing customer success teams.',
+    introduction: 'Create and manage sophisticated automated workflows that respond intelligently to customer signals using SignalCX\'s advanced workflow engine. Master the art of designing multi-step automation sequences that maintain the human touch while delivering consistent, timely responses at scale. Learn to build workflows that adapt dynamically to customer behavior patterns and business rules.',
     sections: [
       {
-        title: 'Workflow Design Principles',
-        content: 'Effective workflow automation follows key principles: clear trigger conditions, appropriate escalation paths, human oversight points, and measurable outcomes. Design workflows that enhance rather than replace human relationships. \n\n**Automation Success Example - SaaS Onboarding Workflow**: \n• **Trigger**: New customer contract signed \n• **Day 1**: Welcome email with setup guide and calendar booking link \n• **Day 3**: Automated health check - if setup incomplete, trigger CSM outreach \n• **Day 7**: Usage assessment - if below baseline, schedule training session \n• **Day 14**: Stakeholder satisfaction survey with NPS tracking \n• **Day 30**: Success milestone celebration or intervention workflow \n\nThis automated sequence achieved 40% faster time-to-value, 60% higher initial engagement, and 25% better 90-day retention rates while reducing CSM manual work by 15 hours per customer.'
-      },
-      {
-        title: 'Process Automation Framework',
-        content: 'Learn to map customer journey touchpoints, identify automation opportunities, and design workflows with appropriate decision trees. Master trigger configuration, action sequencing, and error handling for robust automated processes. \n\n**Enterprise Renewal Automation Case**: Fortune 500 customer with $12M ARR renewal approaching. Automated workflow triggered 180 days before renewal: \n• **Month 1**: Automated usage analytics report to demonstrate ROI \n• **Month 2**: Stakeholder satisfaction survey with executive summary \n• **Month 3**: Predictive value assessment showing potential savings \n• **Decision Point**: If satisfaction >8/10 and usage >baseline, trigger expansion discussion \n• **Month 4**: Renewal proposal with optimization recommendations \n• **Month 5**: Contract finalization support and success planning \n\nResult: 95% renewal rate with average 18% expansion, while reducing CSM renewal prep time by 12 hours per account.',
+        title: 'Advanced Workflow Design Principles & Architecture',
+        content: 'Effective workflow automation follows sophisticated design principles that balance efficiency with relationship quality: 1) Event-Driven Architecture (workflows triggered by specific customer signals), 2) Multi-Channel Coordination (seamless integration across email, Teams, CRM), 3) Conditional Logic Trees (decision points based on customer attributes and behavior), 4) Human-in-the-Loop Design (strategic oversight points for high-value interactions), 5) Rollback and Recovery Mechanisms (handling errors gracefully), and 6) Compliance and Audit Trails (maintaining full visibility). Each workflow should have clear success metrics, defined escalation paths, and built-in feedback loops for continuous improvement.',
         interactiveElements: {
           type: 'exercise',
           items: [
-            'Map the onboarding process for new customers - identify 5 automation opportunities',
-            'Design automated health check workflows - create decision trees for different scenarios',
-            'Create escalation paths for different risk levels - define when human intervention is needed',
-            'Build renewal reminder and follow-up sequences - automate routine renewal tasks'
+            'Design a multi-tier workflow architecture for customer onboarding with 3 decision points',
+            'Create conditional logic for risk-based customer engagement strategies',
+            'Map workflow touchpoints across Teams, Outlook, and Dynamics 365 integration',
+            'Design error handling and rollback procedures for failed workflow steps',
+            'Build compliance documentation and audit trails for workflow actions'
           ]
         }
       },
       {
-        title: 'Trigger Management and Optimization',
-        content: 'Develop expertise in setting appropriate workflow triggers, managing workflow performance, and optimizing automation based on outcomes. Learn to balance automation efficiency with relationship quality. \n\n**Trigger Optimization Success Story**: Initially, health score drop below 70 triggered immediate CSM outreach. Analysis showed 60% false positives causing "alert fatigue." Optimization process: \n• **Analysis**: Added velocity trigger (rate of change) \n• **Refinement**: Required 2+ consecutive weeks below threshold \n• **Enhancement**: Added context triggers (support tickets, usage patterns) \n• **Result**: 85% reduction in false positives, 40% faster response to real issues \n\nOptimized triggers improved CSM efficiency by 25% while increasing customer satisfaction scores from 7.2 to 8.4/10. Key lesson: triggers should be sophisticated enough to distinguish between noise and genuine signals.'
-      }
-    ],
-    keyTakeaways: [
-      'Automation should enhance, not replace, human relationships - the best workflows create more meaningful touchpoints',
-      'Proper trigger configuration is critical for workflow effectiveness - sophisticated triggers prevent alert fatigue',
-      'Continuous monitoring and optimization improve automation ROI - track both efficiency and relationship metrics',
-      'Successful automation requires careful balance between efficiency and personalization - customers should feel supported, not processed'
-    ],
-    nextSteps: [
-      'Design your first automated workflow using real customer journey data - start with high-volume, low-complexity processes',
-      'Test workflow logic with sample scenarios from your account base - validate before full deployment',
-      'Establish performance monitoring for automated processes - track both operational and customer satisfaction metrics',
-      'Create feedback loops with customers to refine automation - ensure workflows add value from customer perspective'
-    ]
-  },
-  'custom-segmentation': {
-    introduction: 'Build sophisticated customer segments that enable targeted success strategies. Learn advanced segmentation techniques and develop segments that drive better outcomes.',
-    sections: [
-      {
-        title: 'Advanced Segmentation Methodologies',
-        content: 'Move beyond simple demographic segmentation to behavior-based, value-based, and outcome-based segments. Learn to create dynamic segments that adapt to changing customer characteristics and business priorities.'
-      },
-      {
-        title: 'Data Analysis for Segmentation',
-        content: 'Master statistical techniques for identifying meaningful customer clusters. Learn to validate segment quality, measure segment stability, and ensure segments lead to differentiated strategies.',
+        title: 'Comprehensive Process Automation Framework & Implementation',
+        content: 'Learn to systematically identify, design, and implement automation opportunities across the entire customer lifecycle: Customer Journey Mapping (identify all touchpoints from onboarding to renewal), Signal-to-Action Workflows (automatic responses to specific behavioral patterns), Escalation Automation (tiered response system based on severity and impact), Cross-Functional Coordination (workflows spanning CS, Sales, and Support teams), Performance Monitoring (real-time workflow effectiveness tracking), and Continuous Optimization (A/B testing workflow variations). Master advanced trigger configuration including time-based delays, conditional branching, parallel processing, and exception handling for complex business scenarios.',
         interactiveElements: {
           type: 'exercise',
           items: [
-            'Analyze your customer base for natural segments',
-            'Create behavior-based segments using usage data',
-            'Develop value-based segments for different ARR tiers',
-            'Test segment effectiveness with A/B comparisons'
+            'Map your complete customer journey and identify 10+ automation opportunities',
+            'Design signal-triggered workflows for the top 5 customer success scenarios',
+            'Create automated escalation paths with appropriate stakeholder notifications',
+            'Build cross-team workflows that coordinate CS, Sales, and Support actions',
+            'Implement workflow performance dashboards with success metrics and KPIs',
+            'Design A/B test frameworks for workflow optimization and improvement'
           ]
         }
       },
       {
-        title: 'Strategic Segment Application',
-        content: 'Learn to translate segments into differentiated success strategies, resource allocation models, and targeted engagement approaches. Develop segment-specific playbooks and success metrics.'
-      }
-    ],
-    keyTakeaways: [
-      'Effective segments enable more targeted and efficient customer success',
-      'Segments should be actionable and lead to different strategies',
-      'Regular segment validation ensures continued relevance'
-    ],
-    nextSteps: [
-      'Create 3-5 strategic customer segments',
-      'Develop segment-specific success strategies',
-      'Implement segment-based monitoring and reporting'
-    ]
-  },
-  'custom-signals': {
-    introduction: 'Create custom signals tailored to your unique business model and customer base. Learn to identify business-specific patterns and translate them into automated signal detection.',
-    sections: [
-      {
-        title: 'Signal Creation Framework',
-        content: 'Learn systematic approaches to identifying potential signals in your business. Understand data requirements, threshold setting, and validation methodologies for custom signals that truly predict customer outcomes.'
-      },
-      {
-        title: 'Business Logic Development',
-        content: 'Master the art of translating business insights into algorithmic logic. Learn to create conditional rules, combine multiple data sources, and establish appropriate signal sensitivity levels.',
-        interactiveElements: {
-          type: 'exercise',
-          items: [
-            'Identify 3 unique patterns specific to your business model',
-            'Design signal logic for each identified pattern',
-            'Test signal accuracy against historical data',
-            'Refine signal parameters based on testing outcomes'
-          ]
-        }
-      },
-      {
-        title: 'Custom Analytics Implementation',
-        content: 'Develop skills in signal testing, validation, and deployment. Learn to measure signal effectiveness, adjust parameters based on outcomes, and integrate custom signals into broader workflows.'
-      }
-    ],
-    keyTakeaways: [
-      'Custom signals capture business-specific success patterns',
-      'Proper testing and validation are essential for signal accuracy',
-      'Regular refinement improves signal predictive power'
-    ],
-    nextSteps: [
-      'Identify potential custom signals for your business',
-      'Begin testing signal logic with historical data',
-      'Plan integration of custom signals into existing workflows'
-    ]
-  },
-  'dynamics-integration': {
-    introduction: 'Master the integration between SignalCX and Microsoft Dynamics 365. Learn to establish seamless data flow, synchronize customer records, and leverage CRM data for enhanced customer success. Understand real-world implementation challenges and proven solutions from successful enterprise deployments.',
-    sections: [
-      {
-        title: 'Integration Architecture',
-        content: 'Understand the technical architecture connecting SignalCX with Dynamics 365. Learn about API connections, data mapping, real-time synchronization, and security protocols that ensure reliable data exchange. \n\n**Enterprise Implementation Example**: GlobalTech Industries deployed SignalCX-D365 integration across 15,000 customer accounts: \n• **Challenge**: 3 different D365 instances with varying data schemas \n• **Solution**: Unified data mapping layer with automated schema detection \n• **Result**: 99.7% data accuracy, <5 second sync latency, 40% reduction in data entry errors \n\nThe integration automatically syncs account details, opportunity data, contact changes, and activity logs. Security protocols include OAuth 2.0 authentication, field-level encryption, and audit trail tracking for compliance requirements.'
-      },
-      {
-        title: 'Data Synchronization Setup',
-        content: 'Master field mapping between systems, establish synchronization schedules, and configure bi-directional data flow. Learn to handle data conflicts, maintain data quality, and troubleshoot common integration issues. \n\n**Synchronization Success Story - TechSolutions Corp**: \n• **Initial Challenge**: Customer data scattered across D365, SignalCX, and 3 other systems \n• **Implementation**: Real-time bi-directional sync with conflict resolution rules \n• **Data Mapping**: 47 fields synchronized including custom fields for industry-specific metrics \n• **Quality Assurance**: Duplicate detection, validation rules, and automated error reporting \n• **Outcome**: 95% reduction in data inconsistencies, 60% faster account updates, CSM productivity increased by 30% \n\nKey success factor: Comprehensive data governance strategy implemented before technical integration.',
+        title: 'Advanced Trigger Management, Performance Optimization & Analytics',
+        content: 'Develop expertise in sophisticated trigger management using statistical analysis, machine learning insights, and business intelligence: Dynamic Threshold Adjustment (triggers that adapt based on customer segments and historical patterns), Multi-Signal Correlation (workflows triggered by combinations of signals for higher accuracy), Time-Series Analysis (identifying optimal timing for workflow execution), Predictive Triggering (proactive workflows based on forecasted events), Load Balancing (distributing workflow execution for optimal performance), and Advanced Analytics (measuring workflow ROI, completion rates, and customer impact). Learn to optimize workflow performance through resource management, parallel processing, and intelligent queuing systems.',
         interactiveElements: {
           type: 'checklist',
           items: [
-            'Configure basic field mapping between systems - start with core account and contact fields',
-            'Set up account synchronization workflows - ensure customer data stays current across platforms',
-            'Test opportunity data flow from D365 to SignalCX - verify sales pipeline visibility',
-            'Verify contact and relationship data synchronization - maintain stakeholder relationship continuity',
-            'Implement data quality monitoring - set up alerts for sync failures or data conflicts',
-            'Create backup and recovery procedures - protect against data loss during sync issues'
+            'Configure dynamic triggers that adjust based on customer segment characteristics',
+            'Set up multi-signal correlation workflows for complex customer scenarios',
+            'Implement time-series analysis for optimal workflow timing and scheduling',
+            'Design predictive workflow triggers based on forecasted customer events',
+            'Create load balancing systems for high-volume workflow execution',
+            'Build comprehensive workflow analytics dashboards with ROI calculations',
+            'Establish continuous improvement processes for workflow optimization'
           ]
         }
-      },
-      {
-        title: 'CRM Workflow Integration',
-        content: 'Learn to leverage Dynamics 365 workflow capabilities within SignalCX processes. Create integrated workflows that update both systems, maintain data consistency, and enhance user experience across platforms. \n\n**Workflow Integration Example - Manufacturing Solutions Inc**: \n• **Use Case**: Automatic opportunity creation in D365 when SignalCX detects expansion signals \n• **Workflow**: Health score improvement + usage increase triggers NBA generation → Qualified expansion opportunity created in D365 → Sales team notified → CSM and AE collaborate on expansion strategy \n• **Results**: 45% increase in expansion opportunity identification, 25% higher close rates, 3x faster sales cycle due to warm handoffs \n\nIntegrated workflows eliminated manual data entry, reduced handoff delays, and created seamless customer experience across success and sales teams.'
       }
     ],
     keyTakeaways: [
-      'Successful integration requires careful planning and configuration - invest time upfront to avoid ongoing issues',
-      'Data quality in both systems affects integration effectiveness - clean data before integrating',
-      'Regular monitoring ensures continued synchronization accuracy - set up proactive monitoring and alerting',
-      'Workflow integration creates exponential value beyond simple data sync - think processes, not just data'
+      'Successful automation balances efficiency gains with relationship quality and maintains strategic human touchpoints',
+      'Multi-signal triggers and conditional logic create more accurate and contextually relevant automated responses',
+      'Proper workflow architecture includes error handling, rollback mechanisms, and comprehensive audit trails',
+      'Continuous monitoring and optimization through A/B testing significantly improve workflow effectiveness over time',
+      'Cross-functional workflows that coordinate multiple teams produce better customer outcomes than siloed automation'
     ],
     nextSteps: [
-      'Complete integration setup for your environment using provided implementation guide',
-      'Test all data flows and workflows with real customer scenarios',
-      'Establish monitoring and maintenance procedures with your IT team',
-      'Train team members on integrated workflows and troubleshooting procedures'
+      'Design and implement your first multi-step automated workflow with proper error handling',
+      'Set up comprehensive workflow monitoring dashboards and performance metrics',
+      'Create A/B testing framework to optimize workflow timing and messaging',
+      'Establish cross-team workflow coordination processes and escalation procedures',
+      'Begin advanced trigger optimization using multi-signal correlation and predictive analytics'
     ]
   },
-  'teams-collaboration': {
-    introduction: 'Enable seamless collaboration and real-time notifications through Microsoft Teams and Outlook integration. Learn to configure automated notifications, facilitate team collaboration, and enhance communication workflows. Master the tools that keep your entire customer success organization informed and coordinated.',
+  'custom-segmentation': {
+    introduction: 'Build sophisticated customer segmentation strategies that enable precision-targeted success approaches using advanced analytics and machine learning techniques. Move beyond simple demographic segmentation to behavior-based, value-based, and outcome-prediction models that drive measurable business impact. Learn to create dynamic segments that adapt to changing customer characteristics and deliver differentiated strategies.',
     sections: [
       {
-        title: 'Notification Configuration',
-        content: 'Set up intelligent notification systems that alert team members about critical customer events. Learn to configure notification rules, customize message formats, and establish appropriate escalation protocols. \n\n**Notification Strategy Success - Enterprise SaaS Company**: \n• **Challenge**: CS team of 25 people missing critical customer signals across 500+ accounts \n• **Solution**: Tiered notification system in Teams channels \n  - **Critical Alerts**: Health score drops >20 points → Direct message to account owner + manager \n  - **Opportunity Signals**: Expansion indicators → Account team channel notification \n  - **Milestone Celebrations**: Customer success achievements → Company-wide channel \n• **Results**: 90% faster response to critical issues, 40% increase in expansion opportunity capture, 25% improvement in team coordination \n\nKey insight: Right message, right person, right time - avoid notification fatigue through intelligent filtering.'
-      },
-      {
-        title: 'Collaboration Workflows',
-        content: 'Design collaborative processes that leverage Teams channels for account discussions, shared decision-making, and knowledge sharing. Learn to create account-specific channels and automated collaboration triggers. \n\n**Collaboration Excellence Example - FinTech Solutions**: \n• **Account-Specific Channels**: Top 50 accounts get dedicated Teams channels with account team, technical specialists, and executive sponsors \n• **Automated Updates**: SignalCX posts daily account health summaries, signal alerts, and milestone achievements \n• **Cross-functional Collaboration**: Sales, CS, Support, and Product teams coordinate seamlessly on customer issues \n• **Knowledge Sharing**: Best practices and successful interventions automatically shared across account channels \n• **Impact**: 60% reduction in email volume, 35% faster issue resolution, 50% improvement in cross-team collaboration scores \n\nChannels become "command centers" for strategic accounts, maintaining context and facilitating rapid response.',
+        title: 'Advanced Segmentation Methodologies & Statistical Frameworks',
+        content: 'Master multiple sophisticated segmentation approaches: Behavioral Clustering (using RFM analysis, usage patterns, and engagement metrics), Value-Based Segmentation (CLV modeling, expansion potential scoring, and profitability analysis), Outcome-Based Segmentation (success probability, churn risk, and growth trajectory), Psychographic Segmentation (company culture fit, decision-making patterns, and technology adoption profiles), and Dynamic Lifecycle Segmentation (adaptive segments based on customer maturity and evolution). Each methodology uses advanced statistical techniques including K-means clustering, hierarchical clustering, and machine learning algorithms to identify natural customer groupings with high predictive value.',
         interactiveElements: {
           type: 'exercise',
           items: [
-            'Set up Teams channels for high-value accounts - create structure for organized collaboration',
-            'Configure health score change notifications - ensure critical changes are immediately visible',
-            'Create escalation workflows for critical signals - define clear paths for urgent issues',
-            'Test notification delivery and formatting - verify messages are clear and actionable',
-            'Establish channel governance and best practices - maintain organized, productive collaboration'
+            'Perform RFM analysis on your customer base to identify behavioral clusters',
+            'Calculate Customer Lifetime Value (CLV) and create value-based segments',
+            'Use machine learning clustering to identify natural customer groupings',
+            'Develop psychographic profiles based on technology adoption patterns',
+            'Create dynamic lifecycle segments that adapt over time'
           ]
         }
       },
       {
-        title: 'Communication Enhancement',
-        content: 'Learn to use integration features that enhance customer communication, streamline internal coordination, and maintain comprehensive communication records within both systems. \n\n**Communication Integration Success - CloudTech Enterprises**: \n• **Unified Communication History**: All customer interactions (emails, calls, meetings) automatically logged in both SignalCX and Teams \n• **Context-Rich Notifications**: Teams alerts include customer history, recent interactions, and suggested next steps \n• **Automated Follow-ups**: Outlook integration sends personalized follow-up emails based on SignalCX insights \n• **Executive Visibility**: Senior leadership receives weekly summaries of key account activities and health trends \n• **Customer Impact**: Response times improved 50%, customer satisfaction increased from 7.8 to 9.1/10, executive engagement improved 200% \n\nIntegration creates seamless experience where all team members have complete context for every customer interaction.'
+        title: 'Advanced Data Analysis & Validation Techniques for Segmentation Excellence',
+        content: 'Learn sophisticated statistical methods for creating robust, actionable segments: Statistical Significance Testing (ensuring segment differences are meaningful), Discriminant Analysis (validating segment separation quality), Stability Testing (measuring segment consistency over time), Predictive Validation (testing segment effectiveness for forecasting outcomes), Cross-Validation Techniques (preventing overfitting and ensuring generalizability), and Segment Profiling (comprehensive characterization using multiple data dimensions). Master advanced analytics tools including correlation matrices, principal component analysis, and ensemble clustering methods to create segments with maximum business value and predictive accuracy.',
+        interactiveElements: {
+          type: 'exercise',
+          items: [
+            'Perform statistical significance testing on segment differences across key metrics',
+            'Conduct discriminant analysis to validate segment quality and separation',
+            'Implement stability testing to measure segment consistency across time periods',
+            'Design predictive validation frameworks to test segment forecasting accuracy',
+            'Create comprehensive segment profiles with behavioral and outcome characteristics',
+            'Build cross-validation processes to ensure segment reliability and generalizability'
+          ]
+        }
+      },
+      {
+        title: 'Strategic Segment Application & Advanced Operationalization Framework',
+        content: 'Transform statistical segments into strategic business assets through systematic operationalization: Segment-Specific Value Propositions (tailored messaging and positioning), Differentiated Engagement Models (customized touchpoint strategies and communication cadence), Resource Allocation Optimization (CSM assignment, tool access, and service levels), Personalized Success Metrics (segment-appropriate KPIs and success definitions), Targeted Intervention Strategies (risk mitigation and expansion approaches), and Cross-Functional Alignment (Sales, Marketing, and Product coordination). Develop comprehensive playbooks that translate segment insights into actionable strategies with measurable outcomes and continuous improvement loops.',
+        interactiveElements: {
+          type: 'checklist',
+          items: [
+            'Develop segment-specific value propositions and messaging frameworks',
+            'Design differentiated engagement models with customized touchpoint strategies',
+            'Create resource allocation models optimized for each customer segment',
+            'Define segment-appropriate success metrics and KPI frameworks',
+            'Build targeted intervention playbooks for different segment risk profiles',
+            'Establish cross-functional alignment processes for segment strategy execution',
+            'Implement segment performance monitoring and continuous improvement systems'
+          ]
+        }
       }
     ],
     keyTakeaways: [
-      'Integration improves team coordination and response times - proper setup reduces reaction time from hours to minutes',
-      'Proper notification configuration prevents alert fatigue - intelligent filtering is crucial for adoption',
-      'Collaborative workflows enhance team effectiveness - structured communication drives better outcomes',
-      'Context-rich integration creates better customer experiences - teams are more prepared for every interaction'
+      'Effective segmentation requires advanced statistical validation and should demonstrate significant predictive power',
+      'Dynamic segments that evolve with customers provide better long-term strategic value than static classifications',
+      'Segments must translate into differentiated strategies and resource allocation to deliver business impact',
+      'Cross-functional alignment and operationalization are critical for segment strategy success',
+      'Regular validation and refinement ensure segments remain relevant and effective over time'
     ],
     nextSteps: [
-      'Configure key notification workflows for your team structure and account priorities',
-      'Set up team collaboration channels with clear governance and purposes',
-      'Train team members on new collaboration processes and best practices',
-      'Establish feedback loops to optimize notification and collaboration effectiveness'
+      'Conduct comprehensive customer analysis to identify optimal segmentation variables',
+      'Implement advanced clustering techniques and validate segment quality statistically',
+      'Develop segment-specific strategies and resource allocation frameworks',
+      'Create operationalization playbooks for each identified customer segment',
+      'Establish measurement and continuous improvement processes for segmentation effectiveness'
+    ]
+  },
+  'custom-signals': {
+    introduction: 'Create powerful custom signals tailored to your unique business model, industry dynamics, and customer success patterns using advanced signal engineering techniques. Learn to identify business-specific behavioral patterns that traditional signals miss, translate domain expertise into algorithmic logic, and build predictive signals with measurable accuracy. Master the complete lifecycle from signal conception to deployment and continuous optimization.',
+    sections: [
+      {
+        title: 'Advanced Signal Creation Framework & Business Logic Engineering',
+        content: 'Learn systematic approaches to discovering and engineering high-value signals through comprehensive methodologies: Business Pattern Mining (identifying unique success/failure patterns in your customer base), Domain Expert Interviews (capturing tacit knowledge from experienced team members), Historical Data Analysis (statistical pattern recognition across customer outcomes), Competitive Intelligence Integration (signals based on market dynamics and competitor activity), Multi-Source Data Fusion (combining internal and external data sources), and Predictive Signal Validation (backtesting against historical outcomes). Master the translation of business intuition into algorithmic logic using conditional rules, mathematical formulas, and machine learning models that capture complex relationships and interactions.',
+        interactiveElements: {
+          type: 'exercise',
+          items: [
+            'Conduct comprehensive business pattern analysis to identify 5 unique success indicators',
+            'Interview domain experts to capture tacit knowledge about customer behavior patterns',
+            'Perform statistical analysis on historical data to discover hidden correlations',
+            'Design algorithms that translate business insights into measurable signal logic',
+            'Create multi-source data fusion strategies for comprehensive signal development',
+            'Build validation frameworks using backtesting and statistical significance testing'
+          ]
+        }
+      },
+      {
+        title: 'Sophisticated Business Logic Development & Algorithm Design',
+        content: 'Master the art of translating complex business insights into robust, scalable algorithmic systems: Conditional Logic Trees (nested if-then rules for complex decision making), Mathematical Modeling (statistical formulas that capture business relationships), Feature Engineering (creating meaningful variables from raw data sources), Threshold Optimization (data-driven parameter setting for maximum accuracy), Multi-Dimensional Scoring (combining multiple factors into composite signals), and Real-Time Processing Architecture (ensuring signals respond to events immediately). Learn advanced techniques including weighted scoring models, ensemble methods, and adaptive thresholds that improve signal accuracy and reduce false positives while maintaining sensitivity to important events.',
+        interactiveElements: {
+          type: 'exercise',
+          items: [
+            'Design complex conditional logic trees for your top 3 business-specific patterns',
+            'Develop mathematical models that capture key business relationships quantitatively',
+            'Engineer features from raw data sources that provide predictive signal value',
+            'Optimize signal thresholds using historical data and ROC curve analysis',
+            'Create multi-dimensional scoring systems that combine multiple signal inputs',
+            'Build real-time processing workflows for immediate signal detection and response',
+            'Implement ensemble methods to improve signal accuracy and reliability'
+          ]
+        }
+      },
+      {
+        title: 'Advanced Analytics Implementation, Validation & Continuous Optimization',
+        content: 'Develop comprehensive skills in signal testing, deployment, and lifecycle management using sophisticated analytical frameworks: A/B Testing Methodologies (comparing signal effectiveness against baselines), Statistical Validation (ensuring signal reliability and significance), Performance Monitoring (real-time signal accuracy and false positive/negative rates), Adaptive Learning Systems (signals that improve based on outcomes), Integration Testing (ensuring signals work within broader workflows), and Continuous Optimization Loops (regular refinement based on performance metrics). Master advanced analytics including precision/recall optimization, signal drift detection, and automated retraining processes that maintain signal effectiveness over time.',
+        interactiveElements: {
+          type: 'checklist',
+          items: [
+            'Design comprehensive A/B testing frameworks for signal effectiveness validation',
+            'Implement statistical validation processes including confidence intervals and significance testing',
+            'Build real-time performance monitoring dashboards for signal accuracy tracking',
+            'Create adaptive learning systems that improve signal performance based on outcomes',
+            'Establish integration testing procedures for signal deployment in production workflows',
+            'Develop continuous optimization processes including automated retraining and drift detection',
+            'Design signal lifecycle management processes for long-term effectiveness maintenance'
+          ]
+        }
+      }
+    ],
+    keyTakeaways: [
+      'Custom signals capture business-specific patterns that generic signals miss, providing competitive advantage',
+      'Proper statistical validation and backtesting are essential for reliable signal deployment in production',
+      'Combining multiple data sources and algorithmic approaches creates more robust and accurate signals',
+      'Continuous monitoring and optimization are critical for maintaining signal effectiveness over time',
+      'Integration with existing workflows and business processes determines signal adoption and impact'
+    ],
+    nextSteps: [
+      'Identify and validate 3-5 business-specific patterns for custom signal development',
+      'Build comprehensive testing and validation frameworks for signal accuracy measurement',
+      'Implement production-ready signal processing systems with real-time monitoring capabilities',
+      'Establish continuous improvement processes for signal optimization and maintenance',
+      'Begin integration of custom signals into automated workflows and decision-making processes'
+    ]
+  },
+  'dynamics-integration': {
+    introduction: 'Master the comprehensive integration between SignalCX and Microsoft Dynamics 365 to create a unified, intelligent customer success ecosystem. Learn to establish enterprise-grade data synchronization, implement bi-directional workflow automation, and leverage advanced CRM capabilities for enhanced customer success outcomes. Understand security protocols, performance optimization, and troubleshooting methodologies for mission-critical integrations.',
+    sections: [
+      {
+        title: 'Enterprise Integration Architecture & Security Framework',
+        content: 'Understand the sophisticated technical architecture that enables secure, scalable integration between SignalCX and Dynamics 365: OAuth 2.0 Authentication (secure API access with token management), RESTful API Architecture (standardized data exchange protocols), Data Encryption Standards (end-to-end security for sensitive customer information), Rate Limiting and Throttling (optimizing API calls for performance), Error Handling and Retry Logic (ensuring reliable data synchronization), and Audit Logging (comprehensive tracking for compliance and troubleshooting). Learn advanced security protocols including role-based access control, data residency requirements, and compliance frameworks (GDPR, SOC 2, ISO 27001) that ensure enterprise-grade security and regulatory adherence.',
+        interactiveElements: {
+          type: 'exercise',
+          items: [
+            'Configure OAuth 2.0 authentication and token management for secure API access',
+            'Set up comprehensive audit logging for integration activities and data access',
+            'Implement role-based access controls for different user types and data sensitivity levels',
+            'Design error handling and retry logic for reliable integration performance',
+            'Configure data encryption and security protocols for compliance requirements'
+          ]
+        }
+      },
+      {
+        title: 'Advanced Data Synchronization & Field Mapping Strategies',
+        content: 'Master sophisticated data synchronization techniques that ensure data consistency, integrity, and optimal performance: Bi-Directional Sync Patterns (managing data flow between systems without conflicts), Custom Field Mapping (translating data structures between platforms), Data Transformation Rules (cleaning and standardizing data during sync), Conflict Resolution Strategies (handling simultaneous updates across systems), Delta Synchronization (efficient updates of only changed data), and Data Validation Frameworks (ensuring data quality and consistency). Learn advanced techniques including custom object synchronization, relationship mapping, and performance optimization for large-scale data operations.',
+        interactiveElements: {
+          type: 'checklist',
+          items: [
+            'Configure comprehensive field mapping between SignalCX and Dynamics 365 entities',
+            'Set up bi-directional synchronization workflows with conflict resolution protocols',
+            'Implement data transformation rules for cleaning and standardizing information',
+            'Create delta synchronization processes for efficient large-scale data updates',
+            'Establish data validation frameworks to maintain consistency and quality',
+            'Design custom object synchronization for business-specific requirements',
+            'Test synchronization performance and optimize for enterprise-scale operations'
+          ]
+        }
+      },
+      {
+        title: 'Integrated CRM Workflow Automation & Advanced Process Orchestration',
+        content: 'Learn to create sophisticated integrated workflows that leverage the combined power of both platforms: Automated Lead-to-Customer Handoff (seamless transitions from Sales to Customer Success), Integrated Opportunity Management (coordinating expansion opportunities across teams), Cross-Platform Business Process Flows (workflows spanning multiple systems), Advanced Reporting and Analytics (unified dashboards with data from both systems), Notification and Alert Integration (coordinated messaging across platforms), and Performance Monitoring (tracking integrated workflow effectiveness). Master advanced orchestration techniques including event-driven workflows, conditional branching based on CRM data, and integrated escalation procedures that enhance customer outcomes.',
+        interactiveElements: {
+          type: 'exercise',
+          items: [
+            'Design automated handoff processes from Sales opportunities to Customer Success workflows',
+            'Create integrated opportunity management workflows for expansion and upsell coordination',
+            'Build cross-platform business process flows with appropriate decision points',
+            'Implement unified reporting dashboards that combine data from both systems',
+            'Set up coordinated notification systems across SignalCX and Dynamics 365',
+            'Establish performance monitoring for integrated workflows with success metrics'
+          ]
+        }
+      }
+    ],
+    keyTakeaways: [
+      'Enterprise-grade integration requires comprehensive security, performance optimization, and monitoring frameworks',
+      'Bi-directional synchronization with proper conflict resolution ensures data consistency across platforms',
+      'Integrated workflows that span multiple systems provide superior customer outcomes compared to siloed operations',
+      'Regular monitoring, validation, and optimization are essential for maintaining integration reliability',
+      'Proper architecture and planning enable scalable integrations that grow with business needs'
+    ],
+    nextSteps: [
+      'Complete comprehensive integration setup with full security and compliance configuration',
+      'Implement and test all critical data synchronization flows with performance monitoring',
+      'Design and deploy integrated workflows that enhance customer success operations',
+      'Establish ongoing monitoring, maintenance, and optimization procedures for the integration',
+      'Train team members on integrated workflow processes and troubleshooting procedures'
+    ]
+  },
+  'teams-collaboration': {
+    introduction: 'Enable seamless, intelligent collaboration and real-time communication through comprehensive Microsoft Teams and Outlook integration. Learn to configure advanced notification systems, facilitate cross-functional team coordination, and enhance communication workflows with AI-powered insights. Master the creation of collaborative customer success ecosystems that keep all stakeholders informed and engaged.',
+    sections: [
+      {
+        title: 'Advanced Notification Configuration & Intelligent Alert Systems',
+        content: 'Set up sophisticated, context-aware notification systems that deliver the right information to the right people at the optimal time: Role-Based Notification Routing (customized alerts based on user responsibilities and customer assignments), Severity-Tiered Alerting (escalation levels from informational to critical with appropriate urgency indicators), Intelligent Filtering (AI-powered relevance scoring to prevent alert fatigue), Notification Batching and Summarization (consolidating related alerts for improved efficiency), Cross-Channel Delivery (coordinated messaging across Teams, Outlook, and mobile), and Feedback Loops (tracking notification effectiveness and user response patterns). Learn advanced configuration techniques including conditional logic, time-based routing, and integration with external systems for comprehensive alert management.',
+        interactiveElements: {
+          type: 'exercise',
+          items: [
+            'Configure role-based notification routing for different team members and responsibilities',
+            'Set up severity-tiered alerting systems with appropriate escalation procedures',
+            'Implement intelligent filtering to reduce notification noise and improve relevance',
+            'Design notification batching strategies for improved team efficiency and focus',
+            'Create cross-channel delivery systems that reach users through preferred communication methods',
+            'Establish feedback loops to measure notification effectiveness and optimize delivery'
+          ]
+        }
+      },
+      {
+        title: 'Sophisticated Collaboration Workflows & Team Coordination Systems',
+        content: 'Design advanced collaborative processes that leverage Teams channels and integrated communication for superior customer outcomes: Account-Specific Collaboration Spaces (dedicated channels with relevant stakeholders and automated information sharing), Cross-Functional Workflow Coordination (seamless handoffs between CS, Sales, Support, and Product teams), Real-Time Decision Support (collaborative decision-making with integrated data and AI recommendations), Knowledge Sharing Automation (automatic capture and distribution of customer insights and best practices), Stakeholder Engagement Tracking (monitoring participation and ensuring appropriate involvement), and Performance Analytics (measuring collaboration effectiveness and team coordination quality). Master advanced techniques including workflow orchestration, automated escalation, and collaborative decision trees.',
+        interactiveElements: {
+          type: 'exercise',
+          items: [
+            'Create account-specific Teams channels with automated information sharing and stakeholder coordination',
+            'Design cross-functional workflows that ensure seamless handoffs and proper coordination',
+            'Implement real-time decision support systems with integrated data and recommendations',
+            'Set up knowledge sharing automation for capturing and distributing customer insights',
+            'Establish stakeholder engagement tracking to monitor participation and involvement',
+            'Build collaboration analytics to measure team coordination effectiveness and identify improvements'
+          ]
+        }
+      },
+      {
+        title: 'Enhanced Communication Optimization & Relationship Management Integration',
+        content: 'Learn to leverage advanced integration features that transform customer communication and internal coordination: Automated Context Sharing (relevant customer information automatically available in communication threads), Communication History Integration (complete conversation tracking across all channels and touchpoints), Intelligent Response Suggestions (AI-powered recommendations for communication content and timing), Sentiment Analysis Integration (real-time emotion detection in customer communications), Follow-up Automation (ensuring no communication falls through the cracks), and Relationship Mapping (visual representation of stakeholder relationships and communication patterns). Master sophisticated techniques including natural language processing, communication pattern analysis, and integrated relationship management for optimal customer engagement.',
+        interactiveElements: {
+          type: 'checklist',
+          items: [
+            'Configure automated context sharing for relevant customer information in all communications',
+            'Set up comprehensive communication history integration across all channels and touchpoints',
+            'Implement AI-powered response suggestions for improved communication quality and efficiency',
+            'Enable sentiment analysis integration for real-time emotional intelligence in customer interactions',
+            'Create follow-up automation systems to ensure consistent and timely communication',
+            'Build relationship mapping visualizations for better stakeholder coordination and engagement',
+            'Establish communication pattern analysis for continuous improvement and optimization'
+          ]
+        }
+      }
+    ],
+    keyTakeaways: [
+      'Intelligent notification systems with proper filtering and routing significantly improve team efficiency and response times',
+      'Collaborative workflows that span multiple teams and systems produce superior customer outcomes',
+      'Automated context sharing and communication history integration eliminate information silos and improve customer experience',
+      'Proper configuration and training are essential for user adoption and integration effectiveness',
+      'Continuous monitoring and optimization ensure collaboration systems remain effective and valuable over time'
+    ],
+    nextSteps: [
+      'Configure comprehensive notification workflows with intelligent filtering and routing',
+      'Set up advanced team collaboration channels with automated information sharing',
+      'Implement enhanced communication features including context sharing and history integration',
+      'Train team members on integrated collaboration processes and best practices',
+      'Establish monitoring and optimization procedures for ongoing communication system improvement'
     ]
   }
 };
