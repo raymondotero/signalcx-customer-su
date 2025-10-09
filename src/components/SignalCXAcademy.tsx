@@ -1567,41 +1567,32 @@ export function SignalCXAcademy() {
                     <div className="h-px bg-gradient-to-r from-primary via-transparent to-transparent flex-1"></div>
                   </div>
                   
-                  {trainingContent[activeModule.id].sections.map((section, index) => (
-                    <Card key={index} className="border-visible overflow-hidden">
-                      <CardHeader className="bg-gradient-to-r from-primary/5 to-accent/5">
-                        <CardTitle className="text-base flex items-center gap-3">
-                          <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold">
-                            {index + 1}
-                          </div>
-                          <span className="text-primary">{section.title}</span>
-                          <Badge variant="outline" className="ml-auto">
-                            {section.interactiveElements?.type === 'exercise' ? '💡 Interactive' : 
-                             section.interactiveElements?.type === 'quiz' ? '🧠 Quiz' : 
-                             section.interactiveElements?.type === 'checklist' ? '✅ Checklist' : '📖 Reading'}
-                          </Badge>
+                  {trainingContent[activeModule.id].sections.map((section, sectionIndex) => (
+                    <Card key={sectionIndex} className="border-visible">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                          {sectionIndex + 1}. {section.title}
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
                         <div className="prose prose-sm max-w-none">
                           {section.content.split('\n\n').map((paragraph, pIndex) => {
                             if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
-                              // Handle bold headers
                               return <h5 key={pIndex} className="font-semibold text-base mt-4 mb-2">{paragraph.slice(2, -2)}</h5>;
                             }
                             return <p key={pIndex} className="text-sm leading-relaxed mb-3 text-foreground">{paragraph}</p>;
                           })}
                         </div>
-                        
+
                         {section.interactiveElements && (
                           <div className="bg-gradient-to-br from-accent/5 to-primary/5 rounded-lg p-4 border border-accent/20">
                             <h5 className="font-medium text-sm mb-3 flex items-center gap-2 text-primary">
-                              {section.interactiveElements.type === 'quiz' && <Target className="w-4 h-4" />}
-                              {section.interactiveElements.type === 'exercise' && <PlayCircle className="w-4 h-4" />}
-                              {section.interactiveElements.type === 'checklist' && <CheckCircle className="w-4 h-4" />}
-                              {section.interactiveElements.type === 'quiz' && '🧠 Knowledge Check'}
-                              {section.interactiveElements.type === 'exercise' && '💡 Hands-on Exercise'}
-                              {section.interactiveElements.type === 'checklist' && '✅ Practice Checklist'}
+                              {section.interactiveElements.type === 'exercise' ? '💡 Interactive' : 
+                               section.interactiveElements.type === 'quiz' ? '🧠 Quiz' : 
+                               section.interactiveElements.type === 'checklist' ? '✅ Checklist' : '📝 Activity'}
+                              {section.interactiveElements.type === 'quiz' && 'Knowledge Check'}
+                              {section.interactiveElements.type === 'exercise' && 'Hands-on Exercise'}
+                              {section.interactiveElements.type === 'checklist' && 'Practice Checklist'}
                             </h5>
                             <div className="space-y-3">
                               {section.interactiveElements.items.map((item, itemIndex) => (
@@ -1617,20 +1608,10 @@ export function SignalCXAcademy() {
                                         size="sm" 
                                         className="mt-2 text-xs h-6 px-2 text-primary hover:bg-primary/10"
                                         onClick={() => {
-                                          // Navigate to relevant section of the application
-                                          if (item.includes('dashboard') || item.includes('TechCorp')) {
+                                          if (item.includes('dashboard')) {
                                             window.scrollTo({ top: 0, behavior: 'smooth' });
-                                            setTimeout(() => {
-                                              // Simulate clicking on TechCorp in the accounts table
-                                              const techCorpRow = Array.from(document.querySelectorAll('[data-slot="table-row"]'))
-                                                .find(row => row.textContent?.includes('TechCorp'));
-                                              if (techCorpRow) {
-                                                (techCorpRow as HTMLElement).click();
-                                                toast.success('Selected TechCorp to demonstrate signal analysis');
-                                              }
-                                            }, 1000);
-                                            toast.success('Navigate to the main dashboard - look for TechCorp Solutions');
-                                          } else if (item.includes('NBA') || item.includes('recommendations') || item.includes('AI-generated')) {
+                                            toast.success('Navigate to the main dashboard to complete this exercise');
+                                          } else if (item.includes('NBA') || item.includes('recommendations')) {
                                             const tabsSection = document.querySelector('[data-section="right-column"]');
                                             if (tabsSection) {
                                               tabsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1638,11 +1619,11 @@ export function SignalCXAcademy() {
                                                 const aiEngineTab = document.querySelector('[value="ai-engine"]') as HTMLElement;
                                                 if (aiEngineTab) {
                                                   aiEngineTab.click();
-                                                  toast.success('Explore AI-generated recommendations and confidence scores');
                                                 }
                                               }, 500);
                                             }
-                                          } else if (item.includes('signals') || item.includes('Live Signals') || item.includes('signal')) {
+                                            toast.success('Navigate to AI Engine tab to explore NBA generation');
+                                          } else if (item.includes('signals') || item.includes('Live Signals')) {
                                             const tabsSection = document.querySelector('[data-section="right-column"]');
                                             if (tabsSection) {
                                               tabsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1650,13 +1631,13 @@ export function SignalCXAcademy() {
                                                 const signalsTab = document.querySelector('[value="signals"]') as HTMLElement;
                                                 if (signalsTab) {
                                                   signalsTab.click();
-                                                  toast.success('Examine live customer signals and their severity levels');
                                                 }
                                               }, 500);
                                             }
+                                            toast.success('Navigate to Live Signals tab to explore signal analysis');
                                           } else if (item.includes('Heat Map') || item.includes('Predictive')) {
-                                            const heatMapButton = document.querySelector('button:has-text("🔥 Heat Map")') as HTMLElement;
-                                            if (heatMapButton) {
+                                            const heatMapButton = document.querySelector('button') as HTMLElement;
+                                            if (heatMapButton && heatMapButton.textContent?.includes('Heat Map')) {
                                               heatMapButton.click();
                                               toast.success('Opening Predictive Heat Map for portfolio analysis');
                                             } else {
@@ -1672,7 +1653,8 @@ export function SignalCXAcademy() {
                                               toast.success('Opening System Health to review integrations');
                                             }
                                           } else if (item.includes('ROI') || item.includes('Dashboard')) {
-                                            const roiButton = document.querySelector('button:has-text("ROI")') as HTMLElement;
+                                            const roiButton = Array.from(document.querySelectorAll('button'))
+                                              .find(btn => btn.textContent?.includes('ROI')) as HTMLElement;
                                             if (roiButton) {
                                               roiButton.click();
                                               toast.success('Opening ROI Dashboard to view platform value metrics');
