@@ -1537,58 +1537,169 @@ export function SignalCXAcademy() {
               </div>
             </div>
             <div className="space-y-6">
-              <div className="bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg p-6 border border-primary/20">
-                <p className="text-sm font-medium text-primary mb-4">{activeModule.description}</p>
-                {trainingContent[activeModule.id] && (
-                  <div>
-                    <h4 className="font-semibold text-lg mb-3">Course Introduction</h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {trainingContent[activeModule.id].introduction}
-                    </p>
+              <div className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg p-6 border border-primary/20">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <BookOpen className="w-6 h-6 text-primary" />
                   </div>
-                )}
+                  <div>
+                    <h4 className="text-lg font-semibold text-primary mb-2">Welcome to {activeModule.title}</h4>
+                    <p className="text-sm font-medium text-foreground mb-4">{activeModule.description}</p>
+                    {trainingContent[activeModule.id] && (
+                      <div>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {trainingContent[activeModule.id].introduction}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {trainingContent[activeModule.id] && (
                 <div className="space-y-6">
-                  <h4 className="font-semibold text-lg flex items-center gap-2">
-                    <BookOpen className="w-5 h-5 text-primary" />
-                    Learning Content
-                  </h4>
+                  <div className="flex items-center gap-3">
+                    <div className="h-px bg-gradient-to-r from-transparent via-primary to-transparent flex-1"></div>
+                    <h4 className="font-semibold text-lg flex items-center gap-2 text-primary">
+                      <PlayCircle className="w-5 h-5" />
+                      Training Modules
+                    </h4>
+                    <div className="h-px bg-gradient-to-r from-primary via-transparent to-transparent flex-1"></div>
+                  </div>
                   
                   {trainingContent[activeModule.id].sections.map((section, index) => (
-                    <Card key={index} className="border-visible">
-                      <CardHeader>
-                        <CardTitle className="text-base flex items-center gap-2">
-                          <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center text-xs font-bold">
+                    <Card key={index} className="border-visible overflow-hidden">
+                      <CardHeader className="bg-gradient-to-r from-primary/5 to-accent/5">
+                        <CardTitle className="text-base flex items-center gap-3">
+                          <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold">
                             {index + 1}
                           </div>
-                          {section.title}
+                          <span className="text-primary">{section.title}</span>
+                          <Badge variant="outline" className="ml-auto">
+                            {section.interactiveElements?.type === 'exercise' ? '💡 Interactive' : 
+                             section.interactiveElements?.type === 'quiz' ? '🧠 Quiz' : 
+                             section.interactiveElements?.type === 'checklist' ? '✅ Checklist' : '📖 Reading'}
+                          </Badge>
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <p className="text-sm leading-relaxed">{section.content}</p>
+                        <div className="prose prose-sm max-w-none">
+                          {section.content.split('\n\n').map((paragraph, pIndex) => {
+                            if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
+                              // Handle bold headers
+                              return <h5 key={pIndex} className="font-semibold text-base mt-4 mb-2">{paragraph.slice(2, -2)}</h5>;
+                            }
+                            return <p key={pIndex} className="text-sm leading-relaxed mb-3 text-foreground">{paragraph}</p>;
+                          })}
+                        </div>
                         
                         {section.interactiveElements && (
-                          <div className="bg-accent/10 rounded-lg p-4 border border-accent/20">
-                            <h5 className="font-medium text-sm mb-3 flex items-center gap-2">
+                          <div className="bg-gradient-to-br from-accent/5 to-primary/5 rounded-lg p-4 border border-accent/20">
+                            <h5 className="font-medium text-sm mb-3 flex items-center gap-2 text-primary">
                               {section.interactiveElements.type === 'quiz' && <Target className="w-4 h-4" />}
                               {section.interactiveElements.type === 'exercise' && <PlayCircle className="w-4 h-4" />}
                               {section.interactiveElements.type === 'checklist' && <CheckCircle className="w-4 h-4" />}
-                              {section.interactiveElements.type === 'quiz' && 'Knowledge Check'}
-                              {section.interactiveElements.type === 'exercise' && 'Hands-on Exercise'}
-                              {section.interactiveElements.type === 'checklist' && 'Practice Checklist'}
+                              {section.interactiveElements.type === 'quiz' && '🧠 Knowledge Check'}
+                              {section.interactiveElements.type === 'exercise' && '💡 Hands-on Exercise'}
+                              {section.interactiveElements.type === 'checklist' && '✅ Practice Checklist'}
                             </h5>
-                            <ul className="space-y-2">
+                            <div className="space-y-3">
                               {section.interactiveElements.items.map((item, itemIndex) => (
-                                <li key={itemIndex} className="flex items-start gap-3 text-sm">
-                                  <div className="w-5 h-5 mt-0.5 border-2 border-accent/40 rounded flex items-center justify-center flex-shrink-0">
-                                    <div className="w-2 h-2 bg-accent/60 rounded-full"></div>
+                                <div key={itemIndex} className="flex items-start gap-3 p-3 bg-white/50 rounded-md border border-accent/10 hover:border-accent/30 transition-colors">
+                                  <div className="w-6 h-6 mt-0.5 bg-primary/10 border-2 border-primary/20 rounded flex items-center justify-center flex-shrink-0">
+                                    <div className="w-2 h-2 bg-primary/60 rounded-full"></div>
                                   </div>
-                                  <span>{item}</span>
-                                </li>
+                                  <div className="flex-1">
+                                    <span className="text-sm text-foreground leading-relaxed">{item}</span>
+                                    {section.interactiveElements?.type === 'exercise' && (
+                                      <Button 
+                                        variant="ghost" 
+                                        size="sm" 
+                                        className="mt-2 text-xs h-6 px-2 text-primary hover:bg-primary/10"
+                                        onClick={() => {
+                                          // Navigate to relevant section of the application
+                                          if (item.includes('dashboard') || item.includes('TechCorp')) {
+                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                            setTimeout(() => {
+                                              // Simulate clicking on TechCorp in the accounts table
+                                              const techCorpRow = Array.from(document.querySelectorAll('[data-slot="table-row"]'))
+                                                .find(row => row.textContent?.includes('TechCorp'));
+                                              if (techCorpRow) {
+                                                (techCorpRow as HTMLElement).click();
+                                                toast.success('Selected TechCorp to demonstrate signal analysis');
+                                              }
+                                            }, 1000);
+                                            toast.success('Navigate to the main dashboard - look for TechCorp Solutions');
+                                          } else if (item.includes('NBA') || item.includes('recommendations') || item.includes('AI-generated')) {
+                                            const tabsSection = document.querySelector('[data-section="right-column"]');
+                                            if (tabsSection) {
+                                              tabsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                              setTimeout(() => {
+                                                const aiEngineTab = document.querySelector('[value="ai-engine"]') as HTMLElement;
+                                                if (aiEngineTab) {
+                                                  aiEngineTab.click();
+                                                  toast.success('Explore AI-generated recommendations and confidence scores');
+                                                }
+                                              }, 500);
+                                            }
+                                          } else if (item.includes('signals') || item.includes('Live Signals') || item.includes('signal')) {
+                                            const tabsSection = document.querySelector('[data-section="right-column"]');
+                                            if (tabsSection) {
+                                              tabsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                              setTimeout(() => {
+                                                const signalsTab = document.querySelector('[value="signals"]') as HTMLElement;
+                                                if (signalsTab) {
+                                                  signalsTab.click();
+                                                  toast.success('Examine live customer signals and their severity levels');
+                                                }
+                                              }, 500);
+                                            }
+                                          } else if (item.includes('Heat Map') || item.includes('Predictive')) {
+                                            const heatMapButton = document.querySelector('button:has-text("🔥 Heat Map")') as HTMLElement;
+                                            if (heatMapButton) {
+                                              heatMapButton.click();
+                                              toast.success('Opening Predictive Heat Map for portfolio analysis');
+                                            } else {
+                                              toast.success('Look for the Heat Map button in the header for predictive analysis');
+                                            }
+                                          } else if (item.includes('Health') || item.includes('system') || item.includes('integration')) {
+                                            const healthButtons = document.querySelectorAll('button');
+                                            const systemHealthBtn = Array.from(healthButtons).find(btn => 
+                                              btn.textContent?.includes('System') || btn.textContent?.includes('Health')
+                                            );
+                                            if (systemHealthBtn) {
+                                              (systemHealthBtn as HTMLElement).click();
+                                              toast.success('Opening System Health to review integrations');
+                                            }
+                                          } else if (item.includes('ROI') || item.includes('Dashboard')) {
+                                            const roiButton = document.querySelector('button:has-text("ROI")') as HTMLElement;
+                                            if (roiButton) {
+                                              roiButton.click();
+                                              toast.success('Opening ROI Dashboard to view platform value metrics');
+                                            } else {
+                                              toast.success('Look for the ROI Dashboard button in the header');
+                                            }
+                                          } else if (item.includes('notification') || item.includes('alert')) {
+                                            const testNotificationBtn = Array.from(document.querySelectorAll('button'))
+                                              .find(btn => btn.textContent?.includes('Test'));
+                                            if (testNotificationBtn) {
+                                              (testNotificationBtn as HTMLElement).click();
+                                              toast.success('Testing notification system');
+                                            } else {
+                                              toast.success('Explore notification settings in the header area');
+                                            }
+                                          } else {
+                                            toast.success('Exercise guidance provided - explore the mentioned features in the application');
+                                          }
+                                        }}
+                                      >
+                                        Try it →
+                                      </Button>
+                                    )}
+                                  </div>
+                                </div>
                               ))}
-                            </ul>
+                            </div>
                           </div>
                         )}
                       </CardContent>
@@ -1655,6 +1766,66 @@ export function SignalCXAcademy() {
                 </div>
                 
                 <div className="flex items-center gap-2">
+                  <Button 
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => {
+                      // Launch interactive demo based on module type
+                      if (activeModule.id.includes('fundamentals')) {
+                        // Demonstrate platform navigation
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        setTimeout(() => {
+                          const accountsSection = document.querySelector('.accounts-table');
+                          if (accountsSection) {
+                            accountsSection.scrollIntoView({ behavior: 'smooth' });
+                            toast.success('🎯 Demo: Explore the Accounts Table - click on any account to see NBA recommendations');
+                          }
+                        }, 1000);
+                      } else if (activeModule.id.includes('health-monitoring')) {
+                        // Highlight health score features
+                        const healthScoreElements = document.querySelectorAll('[data-health-score], .health-score');
+                        healthScoreElements.forEach((el, index) => {
+                          setTimeout(() => {
+                            el.classList.add('highlight-demo');
+                            setTimeout(() => el.classList.remove('highlight-demo'), 2000);
+                          }, index * 500);
+                        });
+                        toast.success('🎯 Demo: Health scores are highlighted - notice the color coding for risk levels');
+                      } else if (activeModule.id.includes('signal')) {
+                        // Navigate to signals and demonstrate analysis
+                        const tabsSection = document.querySelector('[data-section="right-column"]');
+                        if (tabsSection) {
+                          tabsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                          setTimeout(() => {
+                            const signalsTab = document.querySelector('[value="signals"]') as HTMLElement;
+                            if (signalsTab) {
+                              signalsTab.click();
+                              toast.success('🎯 Demo: Observe signal types, severity levels, and correlation patterns');
+                            }
+                          }, 500);
+                        }
+                      } else if (activeModule.id.includes('ai-nba')) {
+                        // Show NBA generation process
+                        const tabsSection = document.querySelector('[data-section="right-column"]');
+                        if (tabsSection) {
+                          tabsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                          setTimeout(() => {
+                            const aiEngineTab = document.querySelector('[value="ai-engine"]') as HTMLElement;
+                            if (aiEngineTab) {
+                              aiEngineTab.click();
+                              toast.success('🎯 Demo: Watch AI generate recommendations with confidence scores');
+                            }
+                          }, 500);
+                        }
+                      } else {
+                        toast.success('🎯 Demo mode activated - explore the application features mentioned in this module');
+                      }
+                    }}
+                    className="text-purple-700 border-purple-200 hover:bg-purple-50"
+                  >
+                    <PlayCircle className="w-4 h-4 mr-1" />
+                    🎯 Live Demo
+                  </Button>
                   <Button 
                     variant="outline"
                     onClick={() => {

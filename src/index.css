@@ -769,6 +769,82 @@ table thead th {
   font-family: var(--font-sans);
 }
 
+/* Learning and demo highlighting effects */
+.highlight-demo {
+  animation: demo-highlight 2s ease-in-out;
+  border: 2px solid var(--primary) !important;
+  box-shadow: 0 0 0 4px rgba(var(--primary), 0.3) !important;
+  border-radius: var(--radius) !important;
+}
+
+@keyframes demo-highlight {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(var(--primary), 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(var(--primary), 0.2);
+  }
+}
+
+/* Academy module content styling */
+.prose.prose-sm {
+  line-height: 1.6;
+}
+
+.prose.prose-sm h5 {
+  color: var(--primary);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Interactive exercise hover effects */
+.interactive-exercise {
+  transition: all 0.3s ease;
+}
+
+.interactive-exercise:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(var(--primary), 0.15);
+}
+
+/* Academy progress indicators */
+.progress-ring {
+  transition: stroke-dasharray 0.5s ease;
+}
+
+/* Learning path completion animations */
+@keyframes completion-celebration {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.completion-animation {
+  animation: completion-celebration 0.6s ease-in-out;
+}
+
+/* Enhanced scrollbars for academy content */
+.academy-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.academy-content::-webkit-scrollbar-track {
+  background: var(--muted);
+  border-radius: 3px;
+}
+
+.academy-content::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 3px;
+}
+
+.academy-content::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+  opacity: 0.8;
+}
+
 /* Responsive table adjustments */
 @media (max-width: 768px) {
   .chart-expansion-dialog {
