@@ -29,6 +29,7 @@ import { Dynamics365ConfigDialog } from '@/components/Dynamics365ConfigDialog';
 import { SignalCXAcademy } from '@/components/SignalCXAcademy';
 import OpportunityTrackingDashboard from '@/components/OpportunityTrackingDashboard';
 import { notificationService } from '@/services/notificationService';
+import { Analytics } from '@vercel/analytics/react';
 
 import { AccountDetailsDialog } from '@/components/AccountDetailsDialog';
 import { SystemHealthDialog } from '@/components/SystemHealthDialog';
@@ -859,6 +860,9 @@ function App() {
         onOpenChange={setSignalVisualizationOpen}
         selectedAccount={selectedAccount || undefined}
       />
+      
+      {/* Vercel Web Analytics */}
+      <Analytics />
     </div>
   );
 }
